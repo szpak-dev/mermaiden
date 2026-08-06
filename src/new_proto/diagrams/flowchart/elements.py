@@ -1,4 +1,15 @@
-from .diagram import FlowNode
+from new_proto.interface import Interface
+
+from ...core.element import Container, Entity
+
+
+class FlowNode(Entity):
+    pass
+
+
+class FlowNodeGroup(Entity, Container):
+    @Interface.prop
+    def children(self) -> tuple[FlowNode, ...]: ...
 
 
 class Start(FlowNode):

@@ -1,16 +1,8 @@
-from ...core.annotation import Annotation
-from ...core.constraint import Constraint
-from .diagram import Flow, FlowNode, FlowNodeGroup, FlowchartDiagram
-from .elements import Start
-
-
-class StartElement(Start):
-    def __init__(self, id: str):
-        self._id = id
-
-    @property
-    def id(self) -> str:
-        return self._id
+from ....core.annotation import Annotation
+from ....core.constraint import Constraint
+from ..diagram import FlowchartDiagram
+from ..elements import FlowNode, FlowNodeGroup
+from ..relations import Flow
 
 
 class Flowchart(FlowchartDiagram):
