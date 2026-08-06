@@ -6,11 +6,15 @@ from .relation import Relation
 
 
 class Constraint(Interface):
+    """A rule about complete diagram composition, not behavior of one entity."""
+
     @Interface.method
     def is_satisfied_by(self, diagram: DiagramQuery) -> bool: ...
 
 
 class ElementPresence(Constraint):
+    """Constrains the allowed number of elements of a given type in a diagram."""
+
     @Interface.prop
     def element(self) -> type[Element]: ...
 
@@ -22,6 +26,8 @@ class ElementPresence(Constraint):
 
 
 class RelationDegree(Constraint):
+    """Constrains how many relations of a given type involve an element type."""
+
     @Interface.prop
     def element(self) -> type[Element]: ...
 
