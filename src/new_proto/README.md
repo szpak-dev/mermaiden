@@ -41,6 +41,10 @@ read-only `DiagramView` contract through `root_elements`, `walk_elements`,
 mutation services. The generic `Renderer` strategy does not prescribe a
 technology or output type.
 
+The generic `rendering` adapter package provides strict Jinja-to-text rendering
+and canonical LF-only output. It contains no Mermaid syntax and can be reused by
+diagram-specific rendering packages.
+
 The proposed complete flowchart surface is documented in
 [`diagrams/flowchart/VOCABULARY.md`](diagrams/flowchart/VOCABULARY.md) and must
 be agreed before the domain or rendering packages are expanded.
