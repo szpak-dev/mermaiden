@@ -1,10 +1,22 @@
 from abc import abstractmethod
 
-from .base import Element
+from .base import Element, Relation
 
 
-class Relation(Element):
+class DirectedRelation(Relation):
     @property
     @abstractmethod
-    def endpoints(self) -> tuple[str, ...]:
+    def source(self) -> Element:
+        pass
+
+    @property
+    @abstractmethod
+    def target(self) -> Element:
+        pass
+
+
+class Association(Relation):
+    @property
+    @abstractmethod
+    def participants(self) -> tuple[Element, ...]:
         pass

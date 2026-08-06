@@ -1,8 +1,13 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 
 
 class Element(ABC):
-    @property
-    @abstractmethod
-    def kind(self) -> str:
-        pass
+    pass
+
+
+class Relation(ABC):
+    pass
+
+
+class Diagram(ABC):
+    pass
