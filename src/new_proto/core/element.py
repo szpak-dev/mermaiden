@@ -1,17 +1,13 @@
-from abc import abstractmethod
+from typing import runtime_checkable
 
 from .base import Element
 
 
+@runtime_checkable
 class Container(Element):
-    @property
-    @abstractmethod
-    def children(self) -> tuple[Element, ...]:
-        pass
+    children: tuple[Element, ...]
 
 
+@runtime_checkable
 class Entity(Element):
-    @property
-    @abstractmethod
-    def id(self) -> str:
-        pass
+    id: str

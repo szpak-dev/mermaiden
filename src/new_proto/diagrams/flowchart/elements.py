@@ -1,73 +1,73 @@
 from .base import FlowNode
 
 
-class StartNode(FlowNode):
+class Start(FlowNode):
     pass
 
 
-class TerminationNode(FlowNode):
+class Termination(FlowNode):
     pass
 
 
-class DecisionNode(FlowNode):
+class Decision(FlowNode):
     pass
 
 
-class ActionNode(FlowNode):
+class Action(FlowNode):
     pass
 
 
-class SubprocessNode(ActionNode):
+class Subprocess(Action):
     pass
 
 
-class ManualOperationNode(ActionNode):
+class ManualOperation(Action):
     pass
 
 
-class PreparationNode(ActionNode):
+class Preparation(Action):
     pass
 
 
-class ForkJoinNode(FlowNode):
+class ForkJoin(FlowNode):
     pass
 
 
-class JunctionNode(FlowNode):
+class Junction(FlowNode):
     pass
 
 
-class InputNode(FlowNode):
+class Input(FlowNode):
     pass
 
 
-class ManualInputNode(InputNode):
+class ManualInput(Input):
     pass
 
 
-class OutputNode(FlowNode):
+class Output(FlowNode):
     pass
 
 
-class DisplayNode(OutputNode):
+class Display(Output):
     pass
 
 
-class DocumentNode(FlowNode):
+class Document(FlowNode):
     pass
 
 
-class MultipleDocumentsNode(DocumentNode):
+class MultipleDocuments(Document):
     pass
 
 
-class DataStoreNode(FlowNode):
+class DataStore(FlowNode):
     pass
 
 
-class DatabaseNode(DataStoreNode):
+class Database(DataStore):
     pass
 
 
-class DelayNode(FlowNode):
+class Delay(FlowNode):
     pass

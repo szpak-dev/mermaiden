@@ -1,22 +1,14 @@
-from abc import abstractmethod
+from typing import runtime_checkable
 
 from .base import Element, Relation
 
 
+@runtime_checkable
 class DirectedRelation(Relation):
-    @property
-    @abstractmethod
-    def source(self) -> Element:
-        pass
-
-    @property
-    @abstractmethod
-    def target(self) -> Element:
-        pass
+   source: Element
+   target: Element
 
 
+@runtime_checkable
 class Association(Relation):
-    @property
-    @abstractmethod
-    def participants(self) -> tuple[Element, ...]:
-        pass
+    participants: tuple[Element, ...]

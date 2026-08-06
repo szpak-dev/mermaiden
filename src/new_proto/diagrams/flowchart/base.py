@@ -28,7 +28,7 @@ class Flow(DirectedRelation, ABC):
         pass
 
 
-class Flowchart(Diagram, ABC):
+class Flowchart(Diagram):
     @property
     @abstractmethod
     def elements(self) -> tuple[FlowNode | FlowNodeGroup, ...]:

@@ -1,19 +1,17 @@
 from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
 
 
 class Annotatable(ABC):
     pass
 
 
-class Element(ABC):
+@runtime_checkable
+class Element(Protocol):
     pass
 
 
-class Relation(ABC):
-    pass
-
-
-class Constraint(ABC):
+class Relation(Protocol):
     pass
 
 
@@ -34,3 +32,10 @@ class Diagram(ABC):
     @abstractmethod
     def relations(self) -> tuple[Relation, ...]:
         pass
+
+
+@runtime_checkable
+class Constraint(Protocol):
+    @abstractmethod
+    def is_satisfied_by(self, diagram: Diagram) -> bool:
+        raise NotImplementedError
