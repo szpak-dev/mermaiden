@@ -1,6 +1,6 @@
 """Framework-free contracts and values for every diagram domain."""
 
-from .annotation import Annotation, TargetKind, TargetRef
+from .annotation import Annotation, DataAnnotation, TargetKind, TargetRef
 from .constraint import (
     ChangeRejected,
     ChangeReport,
@@ -9,10 +9,11 @@ from .constraint import (
     ValidationReport,
     Violation,
 )
-from .diagram import Diagram, DiagramVisitor
+from .diagram import Diagram, DiagramView, DiagramVisitor
 from .element import Container, Element, Entity
 from .error import OperationError
 from .relation import Relation
+from .rendering import Renderer
 
 __all__ = [
     "Annotation",
@@ -21,12 +22,15 @@ __all__ = [
     "Constraint",
     "ConstraintLevel",
     "Container",
+    "DataAnnotation",
     "Diagram",
+    "DiagramView",
     "DiagramVisitor",
     "Element",
     "Entity",
     "OperationError",
     "Relation",
+    "Renderer",
     "TargetKind",
     "TargetRef",
     "ValidationReport",

@@ -18,20 +18,11 @@ class LabelsArePresent(Constraint):
         return ConstraintLevel.BLOCKING
 
     def visit(self, diagram: Diagram) -> tuple[Violation, ...]:
-        issues = [
+        return tuple(
             self.violation(
                 f"Element '{item.id}' requires a label.",
                 path=f"elements.{item.id}",
             )
             for item in diagram.walk_elements()
             if not item.label.strip()
-        ]
-        issues.extend(
-            self.violation(
-                f"Relation '{item.id}' requires a label.",
-                path=f"relations.{item.id}",
-            )
-            for item in diagram.find_relations()
-            if not item.label.strip()
         )
-        return tuple(issues)

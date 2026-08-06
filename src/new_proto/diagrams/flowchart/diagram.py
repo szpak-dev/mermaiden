@@ -9,7 +9,20 @@ from ...core.error import OperationError
 from ...runtime.diagrams.aggregate import DiagramAggregate
 from .annotations import Note
 from .changes import FlowchartChanges
-from .elements import Action, Decision, Direction, End, FlowGroup, FlowNode, Start
+from .elements import (
+    Action,
+    DataStore,
+    Decision,
+    Direction,
+    Document,
+    End,
+    FlowGroup,
+    FlowNode,
+    InputOutput,
+    Junction,
+    Start,
+    Subprocess,
+)
 from .observer import FlowchartObserver
 from .relations import ConditionalFlow, Flow
 
@@ -22,7 +35,7 @@ class Flowchart(DiagramAggregate):
     direction: Direction = Direction.TOP_DOWN
 
     @property
-    def id(self) -> str:
+    def kind(self) -> str:
         return "flowchart"
 
     def add_container(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
@@ -35,7 +48,7 @@ class Flowchart(DiagramAggregate):
         self,
         id: str,
         element_ids: Sequence[str],
-        label: str,
+        label: str = "",
     ) -> ChangeReport:
         operation = f"add flow '{id}'"
         candidate = self.relations.add(Flow(id, tuple(element_ids), label))
@@ -49,11 +62,14 @@ class Flowchart(DiagramAggregate):
         relation_ids: Sequence[str] = (),
     ) -> ChangeReport:
         operation = f"add note '{id}'"
-        targets = (
-            *(TargetRef(TargetKind.ELEMENT, item) for item in element_ids),
-            *(TargetRef(TargetKind.RELATION, item) for item in relation_ids),
-        )
-        candidate = self.annotations.add_annotation(Note(id, targets, dict(data)))
+        if relation_ids:
+            self.changes.reject(operation, "Flowchart notes can only target elements.")
+        if set(data) != {"text"} or not isinstance(data.get("text"), str):
+            self.changes.reject(operation, "Flowchart notes require exactly one string 'text' value.")
+        text = data["text"]
+        assert isinstance(text, str)
+        targets = tuple(TargetRef(TargetKind.ELEMENT, item) for item in element_ids)
+        candidate = self.annotations.add_annotation(Note(id, targets, text))
         return self.changes.apply(operation, candidate, self)
 
     def add_group(
@@ -85,12 +101,27 @@ class Flowchart(DiagramAggregate):
     def add_decision(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
         return self._add_node(Decision(id, label), parent_id, "decision")
 
+    def add_input_output(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
+        return self._add_node(InputOutput(id, label), parent_id, "input/output")
+
+    def add_data_store(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
+        return self._add_node(DataStore(id, label), parent_id, "data store")
+
+    def add_document(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
+        return self._add_node(Document(id, label), parent_id, "document")
+
+    def add_subprocess(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
+        return self._add_node(Subprocess(id, label), parent_id, "subprocess")
+
+    def add_junction(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
+        return self._add_node(Junction(id, label), parent_id, "junction")
+
     def add_flow(
         self,
         id: str,
         source_id: str,
         target_id: str,
-        label: str,
+        label: str = "",
     ) -> ChangeReport:
         return self.connect(id, (source_id, target_id), label)
 
@@ -100,12 +131,9 @@ class Flowchart(DiagramAggregate):
         source_id: str,
         target_id: str,
         condition: str,
-        label: str,
     ) -> ChangeReport:
         operation = f"add conditional flow '{id}'"
-        candidate = self.relations.add(
-            ConditionalFlow(id, (source_id, target_id), label, condition)
-        )
+        candidate = self.relations.add(ConditionalFlow(id, (source_id, target_id), condition))
         return self.changes.apply(operation, candidate, self)
 
     def add_note(
@@ -113,13 +141,11 @@ class Flowchart(DiagramAggregate):
         id: str,
         text: str,
         element_ids: Sequence[str] = (),
-        relation_ids: Sequence[str] = (),
     ) -> ChangeReport:
         return self.annotate(
             id,
             {"text": text},
             element_ids=element_ids,
-            relation_ids=relation_ids,
         )
 
     def remove_flow(self, id: str) -> ChangeReport:

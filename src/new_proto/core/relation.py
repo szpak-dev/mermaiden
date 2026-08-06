@@ -11,4 +11,4 @@ class Relation:
 
     id: str
     element_ids: tuple[str, ...]
-    label: str
+    label: str = ""

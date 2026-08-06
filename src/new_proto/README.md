@@ -35,6 +35,12 @@ The principal patterns are:
 - **Unit of Work / Memento** for stage, commit, and rollback,
 - **Strategy** through the injected change and inspection contracts.
 
-Rendering is intentionally outside this phase. A future renderer can consume
-the aggregate through `walk_elements`, `find_relations`, and
-`find_annotations`, without exposing runtime state or mutation services.
+Rendering implementations remain outside core. A renderer consumes the
+read-only `DiagramView` contract through `root_elements`, `walk_elements`,
+`find_relations`, and `find_annotations`, without access to runtime state or
+mutation services. The generic `Renderer` strategy does not prescribe a
+technology or output type.
+
+The proposed complete flowchart surface is documented in
+[`diagrams/flowchart/VOCABULARY.md`](diagrams/flowchart/VOCABULARY.md) and must
+be agreed before the domain or rendering packages are expanded.

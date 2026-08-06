@@ -3,7 +3,7 @@ from dataclasses import dataclass, replace
 
 from wireup import injectable
 
-from ...core.annotation import Annotation, TargetKind, TargetRef
+from ...core.annotation import Annotation, DataAnnotation, TargetKind, TargetRef
 from ...core.error import OperationError
 from .state import DiagramData, DiagramState
 
@@ -30,7 +30,7 @@ class Annotations:
             *(TargetRef(TargetKind.ELEMENT, item) for item in element_ids),
             *(TargetRef(TargetKind.RELATION, item) for item in relation_ids),
         )
-        return self.add_annotation(Annotation(id, targets, dict(data)))
+        return self.add_annotation(DataAnnotation(id, targets, dict(data)))
 
     def remove(self, id: str) -> DiagramData:
         if not any(item.id == id for item in self.state.current.annotations):

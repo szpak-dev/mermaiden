@@ -18,8 +18,14 @@ class TargetRef:
 
 @dataclass(frozen=True, slots=True)
 class Annotation:
-    """Additional non-structural data attached to elements or relations."""
+    """Typed non-structural data attached to elements or relations."""
 
     id: str
     targets: tuple[TargetRef, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class DataAnnotation(Annotation):
+    """Generic mapping-backed annotation used by the base diagram runtime."""
+
     data: Mapping[str, object]

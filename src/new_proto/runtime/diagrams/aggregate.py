@@ -28,8 +28,12 @@ class DiagramAggregate(Diagram):
     observer: ConstraintInspection
 
     @property
-    def id(self) -> str:
+    def kind(self) -> str:
         return "diagram"
+
+    @property
+    def root_elements(self) -> tuple[Element, ...]:
+        return self.state.current.elements
 
     def add_container(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
         operation = f"add container '{id}'"
@@ -51,7 +55,7 @@ class DiagramAggregate(Diagram):
         self,
         id: str,
         element_ids: Sequence[str],
-        label: str,
+        label: str = "",
     ) -> ChangeReport:
         operation = f"connect relation '{id}'"
         candidate = self.relations.connect(id, tuple(element_ids), label)
