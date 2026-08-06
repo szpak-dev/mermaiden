@@ -6,14 +6,16 @@ from .element import Element
 class Relation(Interface):
     """A connection between elements, independent of containment ownership.
 
-    A relation is neither an Element nor a child of a container.
+    A relation is neither an Element nor a child of a container. Its
+    participants are every element to which the relation refers.
     """
 
-    pass
+    @Interface.prop
+    def participants(self) -> tuple[Element, ...]: ...
 
 
 class DirectedRelation(Relation):
-    """A relation with distinct source and target endpoint roles."""
+    """A relation between exactly two participants with distinct endpoint roles."""
 
     @Interface.prop
     def source(self) -> Element: ...
@@ -23,7 +25,6 @@ class DirectedRelation(Relation):
 
 
 class Association(Relation):
-    """A relation among participants without a universal direction."""
+    """A relation among participants without universal endpoint roles."""
 
-    @Interface.prop
-    def participants(self) -> tuple[Element, ...]: ...
+    pass

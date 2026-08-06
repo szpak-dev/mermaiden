@@ -10,24 +10,19 @@ class Element(Interface):
 class Container(Element):
     """An element that owns direct child elements through the containment tree.
 
-    Ownership is distinct from diagram membership: every child remains available
-    through the containing diagram's complete element collection.
+    It describes ownership but does not change it: the containing Diagram keeps
+    this hierarchy and complete diagram membership consistent.
     """
 
     @Interface.prop
     def children(self) -> tuple[Element, ...]: ...
 
-    @Interface.method
-    def add_child(self, element: Element) -> None: ...
-
-    @Interface.method
-    def remove_child(self, element: Element) -> None: ...
-
 
 class Entity(Element):
     """An element with an identifier meaningful within its diagram.
 
-    Identifier uniqueness is a diagram constraint, not an Entity responsibility.
+    Identifier uniqueness is a diagram constraint, not an Entity responsibility;
+    the identifier is not globally scoped.
     """
 
     @Interface.prop
