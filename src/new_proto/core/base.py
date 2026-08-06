@@ -21,4 +21,12 @@ class Annotation(ABC):
 
 
 class Diagram(ABC):
-    pass
+    @property
+    @abstractmethod
+    def elements(self) -> tuple[Element, ...]:
+        pass
+
+    @property
+    @abstractmethod
+    def relations(self) -> tuple[Relation, ...]:
+        pass
