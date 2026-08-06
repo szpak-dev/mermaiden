@@ -2,7 +2,7 @@ from new_proto.interface import Interface
 
 from .element import Element
 from .diagram import DiagramContents
-from .relation import Relation
+from .relation import DirectedRelation, Relation
 
 
 class Constraint(Interface):
@@ -39,3 +39,17 @@ class RelationDegree(Constraint):
 
     @Interface.prop
     def maximum(self) -> int | None: ...
+
+
+class IncomingRelationDegree(RelationDegree):
+    """Constrains directed relations in which an element is their target."""
+
+    @Interface.prop
+    def relation(self) -> type[DirectedRelation]: ...
+
+
+class OutgoingRelationDegree(RelationDegree):
+    """Constrains directed relations in which an element is their source."""
+
+    @Interface.prop
+    def relation(self) -> type[DirectedRelation]: ...
