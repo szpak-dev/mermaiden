@@ -9,14 +9,14 @@ from ...core.diagram import Diagram
 
 @injectable
 @dataclass(frozen=True, slots=True)
-class DiagramValidator:
+class ConstraintObserver:
     constraints: Sequence[Constraint]
 
     def inspect(self, diagram: Diagram) -> ValidationReport:
-        domain = tuple(item for item in diagram.constraints if isinstance(item, Constraint))
-        violations = tuple(
-            issue
-            for constraint in (*self.constraints, *domain)
-            for issue in diagram.accept(constraint)
+        return ValidationReport(
+            tuple(
+                violation
+                for constraint in self.constraints
+                for violation in diagram.accept(constraint)
+            )
         )
-        return ValidationReport(violations)

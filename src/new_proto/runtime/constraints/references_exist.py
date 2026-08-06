@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from wireup import injectable
 
 from ...core.annotation import TargetKind
-from ...core.constraint import Constraint, Violation
+from ...core.constraint import Constraint, ConstraintLevel, Violation
 from ...core.diagram import Diagram
 
 
@@ -14,38 +14,33 @@ class ReferencesExist(Constraint):
     def code(self) -> str:
         return "structure.references"
 
+    @property
+    def level(self) -> ConstraintLevel:
+        return ConstraintLevel.BLOCKING
+
     def visit(self, diagram: Diagram) -> tuple[Violation, ...]:
-        element_ids = {item.id for item in diagram.elements}
-        relation_ids = {item.id for item in diagram.relations}
+        element_ids = {item.id for item in diagram.walk_elements()}
+        relation_ids = {item.id for item in diagram.find_relations()}
         issues: list[Violation] = []
-        for relation in diagram.relations:
-            for participant_id in relation.participant_ids:
-                if participant_id not in element_ids:
+        for relation in diagram.find_relations():
+            for element_id in relation.element_ids:
+                if element_id not in element_ids:
                     issues.append(
                         self.violation(
-                            f"Relation '{relation.id}' references unknown element '{participant_id}'.",
+                            f"Relation '{relation.id}' references unknown element '{element_id}'.",
                             path=f"relations.{relation.id}",
                         )
                     )
-        for element in diagram.elements:
-            if element.owner_id is not None and element.owner_id not in element_ids:
-                issues.append(
-                    self.violation(
-                        f"Element '{element.id}' references unknown owner '{element.owner_id}'.",
-                        path=f"elements.{element.id}.owner_id",
-                    )
-                )
-        for annotation in diagram.annotations:
+        for annotation in diagram.find_annotations():
             for target in annotation.targets:
                 exists = (
-                    (target.kind is TargetKind.DIAGRAM and target.id == diagram.id)
-                    or (target.kind is TargetKind.ELEMENT and target.id in element_ids)
+                    (target.kind is TargetKind.ELEMENT and target.id in element_ids)
                     or (target.kind is TargetKind.RELATION and target.id in relation_ids)
                 )
                 if not exists:
                     issues.append(
                         self.violation(
-                            f"Annotation '{annotation.id}' has unknown {target.kind} target '{target.id}'.",
+                            f"Annotation '{annotation.id}' references unknown target '{target.id}'.",
                             path=f"annotations.{annotation.id}",
                         )
                     )

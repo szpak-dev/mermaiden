@@ -6,12 +6,12 @@ from ...core.constraint import Constraint, ConstraintLevel, Violation
 from ...core.diagram import Diagram
 
 
-@injectable(as_type=Constraint, qualifier="relations_have_participants")
+@injectable(as_type=Constraint, qualifier="annotations_have_targets")
 @dataclass(frozen=True, slots=True)
-class RelationsHaveParticipants(Constraint):
+class AnnotationsHaveTargets(Constraint):
     @property
     def code(self) -> str:
-        return "structure.relation_participants"
+        return "structure.annotation_targets"
 
     @property
     def level(self) -> ConstraintLevel:
@@ -20,9 +20,9 @@ class RelationsHaveParticipants(Constraint):
     def visit(self, diagram: Diagram) -> tuple[Violation, ...]:
         return tuple(
             self.violation(
-                f"Relation '{item.id}' requires at least two elements.",
-                path=f"relations.{item.id}",
+                f"Annotation '{item.id}' requires at least one target.",
+                path=f"annotations.{item.id}",
             )
-            for item in diagram.find_relations()
-            if len(item.element_ids) < 2
+            for item in diagram.find_annotations()
+            if not item.targets
         )

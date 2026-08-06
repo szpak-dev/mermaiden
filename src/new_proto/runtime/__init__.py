@@ -1,23 +1,12 @@
-from .constraints import OwnershipIsValid, ReferencesExist, RelationsHaveParticipants
-from .diagrams import (
-    DiagramBuildError,
-    DiagramDraft,
-    DiagramService,
-    DiagramValidationError,
-    DiagramValidator,
-    DuplicateIdError,
-    FrozenDiagram,
-)
+"""Service composition for the default Diagram aggregate.
 
-__all__ = [
-    "DiagramBuildError",
-    "DiagramDraft",
-    "DiagramService",
-    "DiagramValidationError",
-    "DiagramValidator",
-    "DuplicateIdError",
-    "FrozenDiagram",
-    "OwnershipIsValid",
-    "ReferencesExist",
-    "RelationsHaveParticipants",
-]
+Import this module for Wireup discovery. Runtime collaborators are deliberately
+not part of its public API; consumers resolve the core ``Diagram`` interface.
+"""
+
+from . import constraints as _constraints
+from . import diagrams as _diagrams
+
+_DISCOVERY_MODULES = (_constraints, _diagrams)
+
+__all__: list[str] = []
