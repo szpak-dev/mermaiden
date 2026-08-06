@@ -1,21 +1,30 @@
-"""Stable, framework-free contracts for diagram domains."""
+"""Framework-free contracts and values for every diagram domain."""
 
 from .annotation import Annotation, TargetKind, TargetRef
-from .constraint import Constraint, Severity, ValidationReport, Violation
+from .constraint import (
+    ChangeRejected,
+    ChangeReport,
+    Constraint,
+    ConstraintLevel,
+    ValidationReport,
+    Violation,
+)
 from .diagram import Diagram, DiagramVisitor
-from .element import Container, Element
-from .relation import DirectedRelation, Relation
+from .element import Container, Element, Entity
+from .relation import Relation
 
 __all__ = [
     "Annotation",
+    "ChangeRejected",
+    "ChangeReport",
     "Constraint",
+    "ConstraintLevel",
     "Container",
     "Diagram",
     "DiagramVisitor",
-    "DirectedRelation",
     "Element",
+    "Entity",
     "Relation",
-    "Severity",
     "TargetKind",
     "TargetRef",
     "ValidationReport",

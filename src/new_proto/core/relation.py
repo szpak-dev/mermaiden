@@ -1,30 +1,14 @@
-from abc import ABC, abstractmethod
+from dataclasses import dataclass
 
 
-class Relation(ABC):
-    """An independently identified relationship between diagram elements."""
+@dataclass(frozen=True, slots=True)
+class Relation:
+    """An identified binding between at least two diagram elements.
 
-    @property
-    @abstractmethod
-    def id(self) -> str: ...
+    The aggregate, rather than this value object, verifies cardinality and
+    referential integrity against its current element state.
+    """
 
-    @property
-    @abstractmethod
-    def participant_ids(self) -> tuple[str, ...]: ...
-
-
-class DirectedRelation(Relation, ABC):
-    """A binary relation whose endpoints have source and target roles."""
-
-    @property
-    @abstractmethod
-    def source_id(self) -> str: ...
-
-    @property
-    @abstractmethod
-    def target_id(self) -> str: ...
-
-    @property
-    def participant_ids(self) -> tuple[str, str]:
-        return self.source_id, self.target_id
-
+    id: str
+    element_ids: tuple[str, ...]
+    label: str = ""

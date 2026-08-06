@@ -1,10 +1,10 @@
-from enum import StrEnum
 from abc import ABC, abstractmethod
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from typing import Protocol, TypeVar
 
 from .annotation import Annotation
-from .element import Element
+from .constraint import ChangeReport, ValidationReport
+from .element import Container, Element, Entity
 from .relation import Relation
 
 Result = TypeVar("Result", covariant=True)
@@ -14,42 +14,80 @@ class DiagramVisitor(Protocol[Result]):
     def visit(self, diagram: "Diagram") -> Result: ...
 
 
-class Direction(StrEnum):
-    TOP_DOWN = "TD"
-    LEFT_RIGHT = "LR"
-    RIGHT_LEFT = "RL"
-    BOTTOM_UP = "BT"
-
-
 class Diagram(ABC):
-    """Read-only aggregate root for diagram state.
+    """State-owning aggregate and the only authority over its building blocks.
 
-    Mutation deliberately does not appear in this contract.  Building is an
-    application/runtime concern, while a completed diagram is a domain value.
+    A new diagram is empty and ready for incremental construction. Operations
+    may leave it semantically incomplete, but must never commit structurally
+    corrupt state.
     """
 
     @property
     @abstractmethod
-    def id(self) -> str: ...
+    def id(self) -> str:
+        """Stable diagram-kind identifier, for example ``flowchart``."""
 
-    @property
     @abstractmethod
-    def elements(self) -> Sequence[Element]: ...
+    def add_container(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
+        """Add an empty container at the root or inside another container."""
 
-    @property
     @abstractmethod
-    def relations(self) -> Sequence[Relation]: ...
+    def add_entity(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
+        """Add an entity at the root or inside an existing container."""
 
-    @property
     @abstractmethod
-    def annotations(self) -> Sequence[Annotation]: ...
+    def connect(
+        self,
+        id: str,
+        element_ids: Sequence[str],
+        label: str = "",
+    ) -> ChangeReport:
+        """Bind at least two existing elements with a relation."""
 
-    @property
     @abstractmethod
-    def constraints(self) -> Sequence["DiagramVisitor[object]"]: ...
+    def annotate(
+        self,
+        id: str,
+        data: Mapping[str, object],
+        element_ids: Sequence[str] = (),
+        relation_ids: Sequence[str] = (),
+    ) -> ChangeReport:
+        """Attach non-structural data to existing elements or relations."""
+
+    @abstractmethod
+    def remove_element(self, id: str, *, cascade: bool = False) -> ChangeReport:
+        """Remove an element, rejecting dependent state unless cascade is explicit."""
+
+    @abstractmethod
+    def remove_relation(self, id: str) -> ChangeReport:
+        """Remove a relation by its diagram-local ID."""
+
+    @abstractmethod
+    def remove_annotation(self, id: str) -> ChangeReport:
+        """Remove an annotation by its diagram-local ID."""
+
+    @abstractmethod
+    def find_element(self, id: str) -> Element | None:
+        """Look up one element anywhere in the containment tree."""
+
+    @abstractmethod
+    def walk_elements(self, parent_id: str = "") -> Sequence[Element]:
+        """Traverse every element at the root or below one container."""
+
+    @abstractmethod
+    def find_relations(self, element_id: str = "") -> Sequence[Relation]:
+        """Return every relation or only relations containing one element."""
+
+    @abstractmethod
+    def find_annotations(self, target_id: str = "") -> Sequence[Annotation]:
+        """Return every annotation or only annotations for one target."""
+
+    @abstractmethod
+    def validate(self) -> ValidationReport:
+        """Inspect the current, possibly incomplete, diagram state."""
 
     def accept(self, visitor: DiagramVisitor[Result]) -> Result:
-        """Double-dispatch entry point used by constraints and renderers."""
-
         return visitor.visit(self)
 
+
+__all__ = ["Container", "Diagram", "DiagramVisitor", "Element", "Entity", "Relation"]

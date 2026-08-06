@@ -1,30 +1,24 @@
-from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import StrEnum
 
 
 class TargetKind(StrEnum):
-    DIAGRAM = "diagram"
     ELEMENT = "element"
     RELATION = "relation"
 
 
 @dataclass(frozen=True, slots=True)
 class TargetRef:
-    """Stable reference from an annotation to an annotatable diagram member."""
+    """Stable reference to an annotated diagram building block."""
 
     kind: TargetKind
     id: str
 
 
-class Annotation(ABC):
-    """Optional metadata kept separate from structural diagram semantics."""
+@dataclass(frozen=True, slots=True)
+class Annotation:
+    """Additional non-structural data attached to elements or relations."""
 
-    @property
-    @abstractmethod
-    def id(self) -> str: ...
-
-    @property
-    @abstractmethod
-    def targets(self) -> tuple[TargetRef, ...]: ...
-
+    id: str
+    targets: tuple[TargetRef, ...]
+    data: object | None = None

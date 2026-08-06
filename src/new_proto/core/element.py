@@ -1,20 +1,22 @@
-from abc import ABC, abstractmethod
+from abc import ABC
+from dataclasses import dataclass
 
 
+@dataclass(frozen=True, slots=True)
 class Element(ABC):
-    """A diagram member with an identity local to its diagram."""
+    """A named building block whose identity is local to one diagram."""
 
-    @property
-    @abstractmethod
-    def id(self) -> str: ...
-
-    @property
-    def owner_id(self) -> str | None:
-        """ID of the containing element, when the element is nested."""
-
-        return None
+    id: str
+    label: str
 
 
-class Container(Element, ABC):
-    """Marker for an element that may own other elements."""
+@dataclass(frozen=True, slots=True)
+class Entity(Element):
+    """An element representing one singular thing."""
 
+
+@dataclass(frozen=True, slots=True)
+class Container(Element):
+    """An element containing other elements recursively."""
+
+    elements: tuple[Element, ...] = ()
