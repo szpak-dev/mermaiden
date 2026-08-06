@@ -1,4 +1,8 @@
-from abc import ABC
+from abc import ABC, abstractmethod
+
+
+class Annotatable(ABC):
+    pass
 
 
 class Element(ABC):
@@ -7,6 +11,13 @@ class Element(ABC):
 
 class Relation(ABC):
     pass
+
+
+class Annotation(ABC):
+    @property
+    @abstractmethod
+    def targets(self) -> tuple[Annotatable, ...]:
+        pass
 
 
 class Diagram(ABC):
