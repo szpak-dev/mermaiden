@@ -476,6 +476,7 @@ source = { editable = "." }
 dependencies = [
     { name = "jinja2" },
     { name = "pydantic" },
+    { name = "wireup" },
 ]
 
 [package.optional-dependencies]
@@ -511,6 +512,7 @@ requires-dist = [
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=9" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.14" },
     { name = "twine", marker = "extra == 'dev'", specifier = ">=6" },
+    { name = "wireup", specifier = ">=2.12.0" },
 ]
 provides-extras = ["dev"]
 
@@ -899,4 +901,16 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/53/0c/06f8b233b8fd13b9e5ee11424ef85419ba0d8ba0b3138bf360be2ff56953/urllib3-2.7.0.tar.gz", hash = "sha256:231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c", size = 433602, upload-time = "2026-05-07T16:13:18.596Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7f/3e/5db95bcf282c52709639744ca2a8b149baccf648e39c8cc87553df9eae0c/urllib3-2.7.0-py3-none-any.whl", hash = "sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897", size = 131087, upload-time = "2026-05-07T16:13:17.151Z" },
+]
+
+[[package]]
+name = "wireup"
+version = "2.12.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/8b/13/45337aac6078b2e800e8ec26b845eb4c4a76eabc243658da89676da6af23/wireup-2.12.0.tar.gz", hash = "sha256:e21bf35356d5c670a66ab4e349fffdf58ce3e272dd233f6085885137315325e9", size = 8773922, upload-time = "2026-07-09T22:23:53.104Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2f/6b/330fda3bd0378b1e33738b30d47f25fafa9430ab4472ebb307a23f96d959/wireup-2.12.0-py3-none-any.whl", hash = "sha256:6d418626040e92dde7ecec0460d8712b97cf26466a24d962ed6b2e455739094b", size = 62187, upload-time = "2026-07-09T22:23:55.825Z" },
 ]

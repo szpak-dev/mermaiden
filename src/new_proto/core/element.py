@@ -4,18 +4,8 @@ from new_proto.interface import Interface
 class Element(Interface):
     """A thing that exists within a diagram and may combine element capabilities."""
 
-    pass
-
-
-class Container(Element):
-    """An element that owns direct child elements through the containment tree.
-
-    It describes ownership but does not change it: the containing Diagram keeps
-    this hierarchy and complete diagram membership consistent.
-    """
-
     @Interface.prop
-    def children(self) -> tuple[Element, ...]: ...
+    def id(self) -> str: ...
 
 
 class Entity(Element):
@@ -25,5 +15,15 @@ class Entity(Element):
     the identifier is not globally scoped.
     """
 
+    pass
+
+
+class Container(Entity):
+    """An element that owns direct child elements through the containment tree.
+
+    It describes ownership but does not change it: the containing Diagram keeps
+    this hierarchy and complete diagram membership consistent.
+    """
+
     @Interface.prop
-    def id(self) -> str: ...
+    def children(self) -> tuple[Element, ...]: ...

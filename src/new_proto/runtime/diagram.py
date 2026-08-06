@@ -1,20 +1,22 @@
+from dataclasses import dataclass, field
+
 from ..core.diagram import Diagram, DiagramContents
 from ..core.element import Container, Element
 from ..core.relation import Relation
 from .elements import ManagedContainer
 
 
+@dataclass(frozen=True)
 class InMemoryDiagram(Diagram):
-    def __init__(self):
-        self._elements: list[Element] = []
-        self._relations: list[Relation] = []
+    _elements: dict[str, Element] = field(init=False, default_factory=dict[str, Element])
+    _relations: list[Relation] = field(init=False, default_factory=list[Relation])
 
     def contents(self) -> DiagramContents:
-        return DiagramSnapshot(tuple(self._elements), tuple(self._relations))
+        return DiagramSnapshot(tuple(self._elements.values()), tuple(self._relations))
 
     def add_element(self, element: Element, *, owner: Container | None = None) -> None:
-        if self._contains_element(element):
-            raise ValueError("Element already belongs to this diagram.")
+        if element.id in self._elements:
+            raise ValueError(f"Element '{element.id}' is already registered.")
         if isinstance(element, Container) and not isinstance(element, ManagedContainer):
             raise TypeError("Container must be managed by this diagram runtime.")
         if owner is not None:
@@ -22,7 +24,7 @@ class InMemoryDiagram(Diagram):
                 raise ValueError("Element owner does not belong to this diagram.")
             if not isinstance(owner, ManagedContainer):
                 raise TypeError("Element owner must be managed by this diagram runtime.")
-        self._elements.append(element)
+        self._elements[element.id] = element
         if owner is not None:
             owner.attach(element)
 
@@ -35,11 +37,8 @@ class InMemoryDiagram(Diagram):
             if isinstance(current, ManagedContainer):
                 for child in current.children:
                     current.detach(child)
-        self._elements[:] = [
-            current
-            for current in self._elements
-            if not self._contains(removed, current)
-        ]
+        for current in removed:
+            self._elements.pop(current.id)
         self._relations[:] = [
             relation
             for relation in self._relations
@@ -57,13 +56,16 @@ class InMemoryDiagram(Diagram):
         self._relations[:] = [candidate for candidate in self._relations if candidate is not relation]
 
     def _contains_element(self, element: Element) -> bool:
-        return self._contains(self._elements, element)
+        return self._elements.get(element.id) is element
+
+    def _resolve_element(self, id: str) -> Element:
+        return self._elements[id]
 
     def _contains_relation(self, relation: Relation) -> bool:
         return self._contains(self._relations, relation)
 
     def _detach_from_owner(self, element: Element) -> None:
-        for candidate in self._elements:
+        for candidate in self._elements.values():
             if isinstance(candidate, ManagedContainer) and self._contains(candidate.children, element):
                 candidate.detach(element)
                 return
