@@ -40,7 +40,7 @@ class Diagram(ABC):
         self,
         id: str,
         element_ids: Sequence[str],
-        label: str = "",
+        label: str,
     ) -> ChangeReport:
         """Bind at least two existing elements with a relation."""
 

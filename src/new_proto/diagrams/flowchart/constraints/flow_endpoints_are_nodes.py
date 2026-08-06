@@ -2,9 +2,9 @@ from dataclasses import dataclass
 
 from wireup import injectable
 
-from ....core.constraint import Violation
+from ....core.constraint import ConstraintLevel, Violation
 from ....core.diagram import Diagram
-from ..elements.elements import FlowNode
+from ..elements import FlowNode
 from .constraint import FlowchartConstraint
 
 
@@ -15,14 +15,19 @@ class FlowEndpointsAreNodes(FlowchartConstraint):
     def code(self) -> str:
         return "flowchart.flow_endpoint"
 
+    @property
+    def level(self) -> ConstraintLevel:
+        return ConstraintLevel.BLOCKING
+
     def visit(self, diagram: Diagram) -> tuple[Violation, ...]:
-        elements = {item.id: item for item in diagram.elements}
+        elements = {item.id: item for item in diagram.walk_elements()}
         return tuple(
             self.violation(
                 f"Flow '{flow.id}' endpoints must both be flow nodes.",
                 path=f"relations.{flow.id}",
             )
             for flow in self.flows(diagram)
+            if len(flow.element_ids) == 2
             if flow.source_id in elements
             and flow.target_id in elements
             and not (

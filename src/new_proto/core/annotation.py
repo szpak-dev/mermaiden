@@ -1,3 +1,4 @@
+from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 
@@ -21,4 +22,4 @@ class Annotation:
 
     id: str
     targets: tuple[TargetRef, ...]
-    data: object | None = None
+    data: Mapping[str, object]

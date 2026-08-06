@@ -4,7 +4,7 @@ from wireup import injectable
 
 from ....core.constraint import Violation
 from ....core.diagram import Diagram
-from ..elements.elements import Start
+from ..elements import Start
 from .constraint import FlowchartConstraint
 
 
@@ -16,7 +16,7 @@ class ExactlyOneStart(FlowchartConstraint):
         return "flowchart.one_start"
 
     def visit(self, diagram: Diagram) -> tuple[Violation, ...]:
-        count = sum(isinstance(item, Start) for item in diagram.elements)
+        count = sum(isinstance(item, Start) for item in diagram.walk_elements())
         if count == 1:
             return ()
         return (self.violation(f"Flowchart requires exactly one start; found {count}."),)

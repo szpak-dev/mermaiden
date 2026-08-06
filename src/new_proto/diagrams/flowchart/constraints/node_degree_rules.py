@@ -5,7 +5,7 @@ from wireup import injectable
 
 from ....core.constraint import Violation
 from ....core.diagram import Diagram
-from ..elements.elements import Decision, End, FlowNode, Start
+from ..elements import Decision, End, FlowNode, Start
 from ..relations import Flow
 from .constraint import FlowchartConstraint
 
@@ -24,7 +24,7 @@ class NodeDegreeRules(FlowchartConstraint):
             incoming[flow.target_id].append(flow)
             outgoing[flow.source_id].append(flow)
         issues: list[Violation] = []
-        for node in diagram.elements:
+        for node in diagram.walk_elements():
             if isinstance(node, Start):
                 issues.extend(self._expect(node.id, len(incoming[node.id]), 0, 0, "incoming"))
                 issues.extend(self._expect(node.id, len(outgoing[node.id]), 1, 1, "outgoing"))

@@ -7,11 +7,12 @@ from ...core.annotation import Annotation, TargetKind
 from ...core.constraint import ChangeReport, ValidationReport
 from ...core.diagram import Diagram
 from ...core.element import Element
+from ...core.error import OperationError
 from ...core.relation import Relation
 from .annotations import Annotations
-from .changes import DiagramChanges
+from .changes import Changes
 from .elements import Elements
-from .observer import ConstraintObserver
+from .observer import ConstraintInspection
 from .relations import Relations
 from .state import DiagramState
 
@@ -23,8 +24,8 @@ class DiagramAggregate(Diagram):
     elements: Elements
     relations: Relations
     annotations: Annotations
-    changes: DiagramChanges
-    observer: ConstraintObserver
+    changes: Changes
+    observer: ConstraintInspection
 
     @property
     def id(self) -> str:
@@ -34,7 +35,7 @@ class DiagramAggregate(Diagram):
         operation = f"add container '{id}'"
         try:
             candidate = self.elements.add_container(id, label, parent_id)
-        except ValueError as error:
+        except OperationError as error:
             self.changes.reject(operation, str(error))
         return self.changes.apply(operation, candidate, self)
 
@@ -42,7 +43,7 @@ class DiagramAggregate(Diagram):
         operation = f"add entity '{id}'"
         try:
             candidate = self.elements.add_entity(id, label, parent_id)
-        except ValueError as error:
+        except OperationError as error:
             self.changes.reject(operation, str(error))
         return self.changes.apply(operation, candidate, self)
 
@@ -50,7 +51,7 @@ class DiagramAggregate(Diagram):
         self,
         id: str,
         element_ids: Sequence[str],
-        label: str = "",
+        label: str,
     ) -> ChangeReport:
         operation = f"connect relation '{id}'"
         candidate = self.relations.connect(id, tuple(element_ids), label)
@@ -91,14 +92,14 @@ class DiagramAggregate(Diagram):
                 )
             )
             if not cascade and (len(removed_ids) > 1 or dependent_relations or dependent_annotations):
-                raise ValueError(f"Element '{id}' still has dependants; use cascade=True.")
+                raise OperationError(f"Element '{id}' still has dependants; use cascade=True.")
             candidate = self.relations.without_elements(candidate, removed_ids)
             candidate = self.annotations.without_targets(
                 candidate,
                 removed_ids,
                 dependent_relations,
             )
-        except ValueError as error:
+        except OperationError as error:
             self.changes.reject(operation, str(error))
         return self.changes.apply(operation, candidate, self)
 
@@ -110,9 +111,9 @@ class DiagramAggregate(Diagram):
                 for annotation in self.state.current.annotations
                 for target in annotation.targets
             ):
-                raise ValueError(f"Relation '{id}' still has annotations; remove them first.")
+                raise OperationError(f"Relation '{id}' still has annotations; remove them first.")
             candidate = self.relations.remove(id)
-        except ValueError as error:
+        except OperationError as error:
             self.changes.reject(operation, str(error))
         return self.changes.apply(operation, candidate, self)
 
@@ -120,7 +121,7 @@ class DiagramAggregate(Diagram):
         operation = f"remove annotation '{id}'"
         try:
             candidate = self.annotations.remove(id)
-        except ValueError as error:
+        except OperationError as error:
             self.changes.reject(operation, str(error))
         return self.changes.apply(operation, candidate, self)
 

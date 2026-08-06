@@ -1,4 +1,3 @@
-from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Never
 
@@ -6,24 +5,17 @@ from wireup import injectable
 
 from ...core.constraint import ChangeReport
 from ...core.diagram import Diagram
-from .observer import ConstraintInspection
-from .state import DiagramData
-from .transaction import ChangeTransaction
+from ...runtime.diagrams.changes import Changes
+from ...runtime.diagrams.state import DiagramData
+from ...runtime.diagrams.transaction import ChangeTransaction
+from .observer import FlowchartObserver
 
 
-class Changes(ABC):
-    @abstractmethod
-    def apply(self, operation: str, candidate: DiagramData, diagram: Diagram) -> ChangeReport: ...
-
-    @abstractmethod
-    def reject(self, operation: str, message: str) -> Never: ...
-
-
-@injectable(as_type=Changes, lifetime="scoped")
+@injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
-class DiagramChanges(Changes):
+class FlowchartChanges(Changes):
     transaction: ChangeTransaction
-    observer: ConstraintInspection
+    observer: FlowchartObserver
 
     def apply(self, operation: str, candidate: DiagramData, diagram: Diagram) -> ChangeReport:
         return self.transaction.apply(operation, candidate, diagram, self.observer)

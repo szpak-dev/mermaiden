@@ -4,6 +4,7 @@ from wireup import injectable
 
 from ...core.annotation import Annotation
 from ...core.element import Element
+from ...core.error import OperationError
 from ...core.relation import Relation
 
 
@@ -26,7 +27,7 @@ class DiagramState:
 
     def stage(self, candidate: DiagramData) -> None:
         if self._candidate:
-            raise RuntimeError("A diagram change is already in progress.")
+            raise OperationError("A diagram change is already in progress.")
         self._candidate.append(candidate)
 
     def commit(self) -> None:

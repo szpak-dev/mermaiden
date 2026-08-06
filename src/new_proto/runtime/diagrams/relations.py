@@ -2,6 +2,7 @@ from dataclasses import dataclass, replace
 
 from wireup import injectable
 
+from ...core.error import OperationError
 from ...core.relation import Relation
 from .state import DiagramData, DiagramState
 
@@ -11,16 +12,18 @@ from .state import DiagramData, DiagramState
 class Relations:
     state: DiagramState
 
-    def connect(self, id: str, element_ids: tuple[str, ...], label: str = "") -> DiagramData:
-        relation = Relation(id, element_ids, label)
+    def add(self, relation: Relation) -> DiagramData:
         return replace(
             self.state.current,
             relations=(*self.state.current.relations, relation),
         )
 
+    def connect(self, id: str, element_ids: tuple[str, ...], label: str) -> DiagramData:
+        return self.add(Relation(id, element_ids, label))
+
     def remove(self, id: str) -> DiagramData:
         if not any(item.id == id for item in self.state.current.relations):
-            raise ValueError(f"Relation '{id}' does not exist.")
+            raise OperationError(f"Relation '{id}' does not exist.")
         return replace(
             self.state.current,
             relations=tuple(item for item in self.state.current.relations if item.id != id),

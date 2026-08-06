@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import StrEnum
 
-from ....core.element import Container, Element
+from ....core.element import Container, Entity
 
 
 class Direction(StrEnum):
@@ -12,18 +12,8 @@ class Direction(StrEnum):
 
 
 @dataclass(frozen=True, slots=True)
-class FlowNode(Element):
-    element_id: str
-    label: str
-    parent_id: str | None = None
-
-    @property
-    def id(self) -> str:
-        return self.element_id
-
-    @property
-    def owner_id(self) -> str | None:
-        return self.parent_id
+class FlowNode(Entity):
+    pass
 
 
 @dataclass(frozen=True, slots=True)
@@ -48,15 +38,4 @@ class Decision(FlowNode):
 
 @dataclass(frozen=True, slots=True)
 class FlowGroup(Container):
-    element_id: str
-    label: str
-    parent_id: str | None = None
     direction: Direction | None = None
-
-    @property
-    def id(self) -> str:
-        return self.element_id
-
-    @property
-    def owner_id(self) -> str | None:
-        return self.parent_id

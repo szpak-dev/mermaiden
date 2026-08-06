@@ -11,6 +11,7 @@ from .constraint import (
 )
 from .diagram import Diagram, DiagramVisitor
 from .element import Container, Element, Entity
+from .error import OperationError
 from .relation import Relation
 
 __all__ = [
@@ -24,6 +25,7 @@ __all__ = [
     "DiagramVisitor",
     "Element",
     "Entity",
+    "OperationError",
     "Relation",
     "TargetKind",
     "TargetRef",

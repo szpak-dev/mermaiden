@@ -3,6 +3,7 @@ from dataclasses import dataclass, replace
 from wireup import injectable
 
 from ...core.element import Container, Element, Entity
+from ...core.error import OperationError
 from .state import DiagramData, DiagramState
 
 
@@ -11,26 +12,20 @@ from .state import DiagramData, DiagramState
 class Elements:
     state: DiagramState
 
-    def add_container(self, id: str, label: str, parent_id: str = "") -> DiagramData:
-        elements = self._insert(
-            self.state.current.elements,
-            Container(id, label),
-            parent_id,
-        )
+    def add(self, element: Element, parent_id: str = "") -> DiagramData:
+        elements = self._insert(self.state.current.elements, element, parent_id)
         return replace(self.state.current, elements=elements)
 
+    def add_container(self, id: str, label: str, parent_id: str = "") -> DiagramData:
+        return self.add(Container(id, label), parent_id)
+
     def add_entity(self, id: str, label: str, parent_id: str = "") -> DiagramData:
-        elements = self._insert(
-            self.state.current.elements,
-            Entity(id, label),
-            parent_id,
-        )
-        return replace(self.state.current, elements=elements)
+        return self.add(Entity(id, label), parent_id)
 
     def remove(self, id: str) -> tuple[DiagramData, tuple[str, ...]]:
         target = self.find(id)
         if target is None:
-            raise ValueError(f"Element '{id}' does not exist.")
+            raise OperationError(f"Element '{id}' does not exist.")
         removed = tuple(item.id for item in self._walk((target,)))
         elements = self._remove(self.state.current.elements, id)
         return replace(self.state.current, elements=elements), removed
@@ -57,9 +52,9 @@ class Elements:
             return (*elements, element)
         parent = self.find(parent_id)
         if parent is None:
-            raise ValueError(f"Parent element '{parent_id}' does not exist.")
+            raise OperationError(f"Parent element '{parent_id}' does not exist.")
         if not isinstance(parent, Container):
-            raise ValueError(f"Parent element '{parent_id}' is not a container.")
+            raise OperationError(f"Parent element '{parent_id}' is not a container.")
         return self._append_child(elements, parent_id, element)
 
     def _append_child(

@@ -4,6 +4,7 @@ from dataclasses import dataclass, replace
 from wireup import injectable
 
 from ...core.annotation import Annotation, TargetKind, TargetRef
+from ...core.error import OperationError
 from .state import DiagramData, DiagramState
 
 
@@ -11,6 +12,12 @@ from .state import DiagramData, DiagramState
 @dataclass(frozen=True, slots=True)
 class Annotations:
     state: DiagramState
+
+    def add_annotation(self, annotation: Annotation) -> DiagramData:
+        return replace(
+            self.state.current,
+            annotations=(*self.state.current.annotations, annotation),
+        )
 
     def add(
         self,
@@ -23,15 +30,11 @@ class Annotations:
             *(TargetRef(TargetKind.ELEMENT, item) for item in element_ids),
             *(TargetRef(TargetKind.RELATION, item) for item in relation_ids),
         )
-        annotation = Annotation(id, targets, dict(data))
-        return replace(
-            self.state.current,
-            annotations=(*self.state.current.annotations, annotation),
-        )
+        return self.add_annotation(Annotation(id, targets, dict(data)))
 
     def remove(self, id: str) -> DiagramData:
         if not any(item.id == id for item in self.state.current.annotations):
-            raise ValueError(f"Annotation '{id}' does not exist.")
+            raise OperationError(f"Annotation '{id}' does not exist.")
         return replace(
             self.state.current,
             annotations=tuple(item for item in self.state.current.annotations if item.id != id),

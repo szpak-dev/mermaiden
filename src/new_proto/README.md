@@ -1,31 +1,40 @@
 # Diagram core prototype
 
-This prototype splits the model into five independent concepts:
+The model has five concepts:
 
-- **Diagram** is the immutable aggregate root and Visitor host.
-- **Element** is a contained thing with a diagram-local stable ID.
-- **Relation** connects element IDs but is never an element itself.
-- **Constraint** is a side-effect-free Visitor that produces structured
-  violations; constraints are policy, not mutation hooks.
-- **Annotation** targets a typed stable reference and does not change structural
-  semantics.
+- **Diagram** owns its state and is the Visitor host.
+- **Element** is either an entity or a recursively nested container.
+- **Relation** binds IDs of existing elements.
+- **Constraint** is a side-effect-free Visitor producing structured violations.
+- **Annotation** adds data through typed references to elements or relations.
 
-Dependency direction is `flowchart -> runtime -> core`. The core has no
-framework or Mermaid dependency. Every runtime behavior is a frozen dataclass
-service composed by `wireup`; typed dataclass fields are injection properties
-and no service has a handwritten constructor. Runtime is a stateless building
-environment: each operation transforms an immutable `DiagramDraft`, checks
-structural invariants, and emits an immutable snapshot. Flowchart injects that
-runtime service, its constraint-service set, and a Mermaid renderer service.
+Dependency direction is `flowchart -> runtime -> core`. Core is independent of
+Wireup and Mermaid. Runtime is a service-oriented building environment: frozen
+dataclass services receive dependencies through typed fields, while scoped
+`DiagramState` owns committed and staged state. No service has a handwritten
+constructor.
 
-The design intentionally uses these patterns:
+Every mutation is executed by a Unit of Work. An Observer evaluates constraints
+before and after staging the candidate. Blocking violations roll the candidate
+back atomically; advisory violations allow deliberately incomplete diagrams to
+be built and repaired incrementally.
 
-- **Visitor** for constraints and renderers (`diagram.accept(visitor)`),
-- **Immutable Builder** for atomic construction without shared mutable state,
-- **Facade** for the flowchart-specific building language,
-- **Strategy** for replaceable rendering,
-- **Aggregate/Snapshot** for publication of consistent immutable state.
+Flowchart is a separate aggregate resolved from the composition root. Its API
+uses domain operations such as `add_start`, `add_decision`, `add_flow`, and
+`remove_flow`. Callers pass primitive arguments; the aggregate creates its
+`FlowNode`, `Flow`, and `Note` values internally. Generic `Diagram` operations
+are mapped to the same flowchart vocabulary and the same constraint pipeline,
+so they cannot bypass domain rules.
 
-Adding another diagram type should require a domain package containing its
-elements, relations, annotations, constraints, builder facade, and renderer. It
-must not require edits to core or runtime.
+The principal patterns are:
+
+- **Aggregate** for state ownership and behavior boundaries,
+- **Composite** for recursive element containment,
+- **Visitor** for structural and diagram-specific constraints,
+- **Observer** for before/after constraint evaluation,
+- **Unit of Work / Memento** for stage, commit, and rollback,
+- **Strategy** through the injected change and inspection contracts.
+
+Rendering is intentionally outside this phase. A future renderer can consume
+the aggregate through `walk_elements`, `find_relations`, and
+`find_annotations`, without exposing runtime state or mutation services.
