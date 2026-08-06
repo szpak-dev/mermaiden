@@ -1,33 +1,9 @@
-from abc import ABCMeta, abstractmethod, update_abstractmethods
-from collections.abc import Callable
-from types import FunctionType
+"""Compatibility names for the prototype's public abstraction layer.
 
+The architecture uses normal Python abstract base classes and protocols.  A
+custom metaclass used to live here; keeping this small alias avoids coupling
+the core to metaclass magic while giving early callers a gentle migration.
+"""
 
-class _InterfaceMeta(ABCMeta):
-    def __new__(metaclass, name, bases, namespace):
-        if "Interface" in globals() and Interface in bases:
-            for member_name, member in tuple(namespace.items()):
-                if not member_name.startswith("__") and isinstance(member, FunctionType):
-                    namespace[member_name] = abstractmethod(member)
-        return super().__new__(metaclass, name, bases, namespace)
-
-    def __init__(cls, name, bases, namespace):
-        super().__init__(name, bases, namespace)
-        if bases:
-            for attribute in cls.__annotations__:
-                if attribute not in cls.__dict__:
-                    def getter(self):
-                        pass
-
-                    setattr(cls, attribute, property(abstractmethod(getter)))
-            update_abstractmethods(cls)
-
-
-class Interface(metaclass=_InterfaceMeta):
-    @staticmethod
-    def prop[Value](getter: Callable[..., Value]) -> property:
-        return property(abstractmethod(getter))
-
-    @staticmethod
-    def method[**Parameters, Result](method: Callable[Parameters, Result]) -> Callable[Parameters, Result]:
-        return abstractmethod(method)
+class Interface:
+    """Deprecated spelling for a framework-free abstract contract."""

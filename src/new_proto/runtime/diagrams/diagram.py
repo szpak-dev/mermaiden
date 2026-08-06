@@ -1,36 +1,36 @@
 from dataclasses import dataclass
 
 from ...core.annotation import Annotation
+from ...core.constraint import Constraint
 from ...core.diagram import Diagram, DiagramVisitor
 from ...core.element import Element
 from ...core.relation import Relation
-from ...runtime.diagrams import FrozenDiagram
-from .elements.elements import Direction
 
 
 @dataclass(frozen=True, slots=True)
-class Flowchart(Diagram):
-    """Flowchart aggregate decorating the generic immutable runtime state."""
-
-    state: FrozenDiagram
-    direction: Direction = Direction.TOP_DOWN
+class FrozenDiagram(Diagram):
+    diagram_id: str
+    element_values: tuple[Element, ...] = ()
+    relation_values: tuple[Relation, ...] = ()
+    annotation_values: tuple[Annotation, ...] = ()
+    constraint_values: tuple[Constraint, ...] = ()
 
     @property
     def id(self) -> str:
-        return self.state.id
+        return self.diagram_id
 
     @property
     def elements(self) -> tuple[Element, ...]:
-        return tuple(self.state.elements)
+        return self.element_values
 
     @property
     def relations(self) -> tuple[Relation, ...]:
-        return tuple(self.state.relations)
+        return self.relation_values
 
     @property
     def annotations(self) -> tuple[Annotation, ...]:
-        return tuple(self.state.annotations)
+        return self.annotation_values
 
     @property
     def constraints(self) -> tuple[DiagramVisitor[object], ...]:
-        return tuple(self.state.constraints)
+        return self.constraint_values
