@@ -1,10 +1,13 @@
-from ...core.constraint import ElementPresence
-from ...diagrams.flowchart.base import FlowNode
+# from typing import Protocol
+
+# from ...core.annotation import Constraint
+# from ...core.constraint import ElementPresence
+# from .elements import Start
 
 
-class FlowchartConstraint(ElementPresence):
-    element: type[FlowNode]
+# class FlowchartConstraint(Constraint, Protocol):
+#     pass
 
 
-class ExactlyOneStart(FlowchartConstraint):
-    pass
+# class ExactlyOneStart(FlowchartConstraint, ElementPresence):
+#     element = Start

@@ -1,11 +1,15 @@
-from typing import runtime_checkable
+from typing import Protocol, runtime_checkable
 
-from .base import Element, Relation
+
+@runtime_checkable
+class Relation(Protocol):
+    pass
+
 
 
 @runtime_checkable
 class DirectedRelation(Relation):
-   source: Element
+   source  Element
    target: Element
 
 

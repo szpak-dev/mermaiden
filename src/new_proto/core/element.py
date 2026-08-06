@@ -1,6 +1,9 @@
-from typing import runtime_checkable
+from typing import Protocol, runtime_checkable
 
-from .base import Element
+
+@runtime_checkable
+class Element(Protocol):
+    pass
 
 
 @runtime_checkable
