@@ -1,16 +1,13 @@
-from typing import Protocol, runtime_checkable
+from new_proto.interface import Interface
 
 
-@runtime_checkable
-class Element(Protocol):
+class Element(Interface):
     pass
 
 
-@runtime_checkable
 class Container(Element):
     children: tuple[Element, ...]
 
 
-@runtime_checkable
 class Entity(Element):
     id: str

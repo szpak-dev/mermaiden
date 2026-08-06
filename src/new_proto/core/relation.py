@@ -1,18 +1,16 @@
-from typing import Protocol, runtime_checkable
+from new_proto.interface import Interface
+
+from .element import Element
 
 
-@runtime_checkable
-class Relation(Protocol):
+class Relation(Interface):
     pass
 
 
-
-@runtime_checkable
 class DirectedRelation(Relation):
-   source  Element
+   source: Element
    target: Element
 
 
-@runtime_checkable
 class Association(Relation):
     participants: tuple[Element, ...]

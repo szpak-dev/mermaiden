@@ -1,13 +1,9 @@
-from abc import ABC, abstractmethod
-from typing import Protocol, runtime_checkable
+from new_proto.interface import Interface
 
 
-class Annotatable(ABC):
+class Annotatable(Interface):
     pass
 
 
-class Annotation(ABC):
-    @property
-    @abstractmethod
-    def targets(self) -> tuple[Annotatable, ...]:
-        pass
+class Annotation(Interface):
+    def targets(self) -> tuple[Annotatable, ...]: ...
