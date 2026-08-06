@@ -1,40 +1,21 @@
-# from abc import ABC, abstractmethod
-
-# from ...core.annotation import Diagram
-# from ...core.element import Container, Entity
-# from ...core.relation import DirectedRelation
+from ...core.diagram import Diagram
+from ...core.element import Container, Entity
+from ...core.relation import DirectedRelation
 
 
-# class FlowNode(Entity, ABC):
-#     pass
+class FlowNode(Entity):
+    pass
 
 
-# class FlowNodeGroup(Entity, Container, ABC):
-#     @property
-#     @abstractmethod
-#     def children(self) -> tuple[FlowNode, ...]:
-#         pass
+class FlowNodeGroup(Entity, Container):
+    children: tuple[FlowNode, ...]
 
 
-# class Flow(DirectedRelation, ABC):
-#     @property
-#     @abstractmethod
-#     def source(self) -> FlowNode:
-#         pass
-
-#     @property
-#     @abstractmethod
-#     def target(self) -> FlowNode:
-#         pass
+class Flow(DirectedRelation):
+    source: FlowNode
+    target: FlowNode
 
 
-# class Flowchart(Diagram):
-#     @property
-#     @abstractmethod
-#     def elements(self) -> tuple[FlowNode | FlowNodeGroup, ...]:
-#         pass
-
-#     @property
-#     @abstractmethod
-#     def relations(self) -> tuple[Flow, ...]:
-#         pass
+class Flowchart(Diagram):
+    elements: tuple[FlowNode | FlowNodeGroup, ...]
+    relations: tuple[Flow, ...]

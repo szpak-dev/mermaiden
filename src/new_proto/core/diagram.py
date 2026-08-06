@@ -1,9 +1,8 @@
-from new_proto.interface import Interface
+from .annotation import Annotation
+from .constraint import Constraint
+from .query import DiagramQuery
 
-from .element import Element
-from .relation import Relation
 
-
-class Diagram(Interface):
-    def elements(self) -> tuple[Element, ...]: ...
-    def relations(self) -> tuple[Relation, ...]: ...
+class Diagram(DiagramQuery):
+    annotations: tuple[Annotation, ...]
+    constraints: tuple[Constraint, ...]

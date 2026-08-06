@@ -8,8 +8,8 @@ class Relation(Interface):
 
 
 class DirectedRelation(Relation):
-   source: Element
-   target: Element
+    source: Element
+    target: Element
 
 
 class Association(Relation):
