@@ -8,8 +8,6 @@ from .diagrams import flowchart
 
 @dataclass(frozen=True, slots=True)
 class Application:
-    """Composition root. No domain service constructs its dependencies."""
-
     @staticmethod
     def create() -> SyncContainer:
         return create_sync_container(injectables=[runtime, flowchart])

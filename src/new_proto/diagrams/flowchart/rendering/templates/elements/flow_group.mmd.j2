@@ -1,0 +1,10 @@
+{{ "  " * depth }}subgraph {{ element.id | mmd_id("e") }}[{{ element.label | mmd_quote }}]
+{% if element.direction is not none %}
+{{ "  " * (depth + 1) }}direction {{ element.direction.value }}
+{% endif %}
+{% for child in element.elements %}
+{% with element=child, depth=depth + 1 %}
+{% include "elements/" ~ child.kind ~ ".mmd.j2" %}
+{% endwith %}
+{% endfor %}
+{{ "  " * depth }}end

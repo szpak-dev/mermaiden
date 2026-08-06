@@ -18,6 +18,7 @@ from .elements import (
     Subprocess,
 )
 from .relations import ConditionalFlow, Flow
+from .rendering import FlowchartMmdRenderer
 
 _DISCOVERY_MODULES = (_constraints,)
 
@@ -33,6 +34,7 @@ __all__ = [
     "FlowGroup",
     "FlowNode",
     "Flowchart",
+    "FlowchartMmdRenderer",
     "InputOutput",
     "Junction",
     "Note",

@@ -18,6 +18,8 @@ def create_jinja_environment(
         undefined=StrictUndefined,
         autoescape=False,
         keep_trailing_newline=True,
+        trim_blocks=True,
+        lstrip_blocks=True,
         newline_sequence="\n",
     )
     if filters is not None:

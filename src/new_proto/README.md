@@ -45,6 +45,10 @@ The generic `rendering` adapter package provides strict Jinja-to-text rendering
 and canonical LF-only output. It contains no Mermaid syntax and can be reused by
 diagram-specific rendering packages.
 
-The proposed complete flowchart surface is documented in
-[`diagrams/flowchart/VOCABULARY.md`](diagrams/flowchart/VOCABULARY.md) and must
-be agreed before the domain or rendering packages are expanded.
+The accepted initial flowchart surface is documented in
+[`diagrams/flowchart/VOCABULARY.md`](diagrams/flowchart/VOCABULARY.md).
+
+The flowchart rendering package emits deterministic `.mmd` text through Jinja
+snippets. Each semantic element, relation, and annotation owns its Mermaid
+representation in a template; renderer Python code only configures safe syntax
+filters and invokes the root template.
