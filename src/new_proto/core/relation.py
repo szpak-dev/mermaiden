@@ -8,9 +8,13 @@ class Relation(Interface):
 
 
 class DirectedRelation(Relation):
-    source: Element
-    target: Element
+    @Interface.prop
+    def source(self) -> Element: ...
+
+    @Interface.prop
+    def target(self) -> Element: ...
 
 
 class Association(Relation):
-    participants: tuple[Element, ...]
+    @Interface.prop
+    def participants(self) -> tuple[Element, ...]: ...

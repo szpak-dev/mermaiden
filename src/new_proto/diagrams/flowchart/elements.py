@@ -1,4 +1,4 @@
-from .base import FlowNode
+from .diagram import FlowNode
 
 
 class Start(FlowNode):

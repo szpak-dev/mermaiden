@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod, update_abstractmethods
+from collections.abc import Callable
 from types import FunctionType
 
 
@@ -23,4 +24,10 @@ class _InterfaceMeta(ABCMeta):
 
 
 class Interface(metaclass=_InterfaceMeta):
-    pass
+    @staticmethod
+    def prop[Value](getter: Callable[..., Value]) -> property:
+        return property(abstractmethod(getter))
+
+    @staticmethod
+    def method[**Parameters, Result](method: Callable[Parameters, Result]) -> Callable[Parameters, Result]:
+        return abstractmethod(method)

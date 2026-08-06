@@ -6,17 +6,30 @@ from .relation import Relation
 
 
 class Constraint(Interface):
+    @Interface.method
     def is_satisfied_by(self, diagram: DiagramQuery) -> bool: ...
 
 
 class ElementPresence(Constraint):
-    element: type[Element]
-    minimum: int
-    maximum: int | None
+    @Interface.prop
+    def element(self) -> type[Element]: ...
+
+    @Interface.prop
+    def minimum(self) -> int: ...
+
+    @Interface.prop
+    def maximum(self) -> int | None: ...
 
 
 class RelationDegree(Constraint):
-    element: type[Element]
-    relation: type[Relation]
-    minimum: int
-    maximum: int | None
+    @Interface.prop
+    def element(self) -> type[Element]: ...
+
+    @Interface.prop
+    def relation(self) -> type[Relation]: ...
+
+    @Interface.prop
+    def minimum(self) -> int: ...
+
+    @Interface.prop
+    def maximum(self) -> int | None: ...

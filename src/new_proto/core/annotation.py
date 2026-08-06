@@ -6,4 +6,5 @@ class Annotatable(Interface):
 
 
 class Annotation(Interface):
+    @Interface.method
     def targets(self) -> tuple[Annotatable, ...]: ...

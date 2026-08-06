@@ -6,8 +6,10 @@ class Element(Interface):
 
 
 class Container(Element):
-    children: tuple[Element, ...]
+    @Interface.prop
+    def children(self) -> tuple[Element, ...]: ...
 
 
 class Entity(Element):
-    id: str
+    @Interface.prop
+    def id(self) -> str: ...

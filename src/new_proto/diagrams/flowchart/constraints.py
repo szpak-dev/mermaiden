@@ -7,6 +7,14 @@ class FlowchartConstraint(Constraint):
 
 
 class ExactlyOneStart(FlowchartConstraint, ElementPresence):
-    element = Start
-    minimum = 1
-    maximum = 1
+    @property
+    def element(self) -> type[Start]:
+        return Start
+
+    @property
+    def minimum(self) -> int:
+        return 1
+
+    @property
+    def maximum(self) -> int:
+        return 1
