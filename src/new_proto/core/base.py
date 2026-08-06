@@ -13,6 +13,10 @@ class Relation(ABC):
     pass
 
 
+class Constraint(ABC):
+    pass
+
+
 class Annotation(ABC):
     @property
     @abstractmethod
