@@ -1,7 +1,7 @@
 from new_proto.interface import Interface
 
 from .element import Element
-from .query import DiagramQuery
+from .diagram import DiagramContents
 from .relation import Relation
 
 
@@ -9,7 +9,7 @@ class Constraint(Interface):
     """A rule about complete diagram composition, not behavior of one entity."""
 
     @Interface.method
-    def is_satisfied_by(self, diagram: DiagramQuery) -> bool: ...
+    def is_satisfied_by(self, diagram_contents: DiagramContents) -> bool: ...
 
 
 class ElementPresence(Constraint):

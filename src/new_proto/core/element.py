@@ -17,6 +17,12 @@ class Container(Element):
     @Interface.prop
     def children(self) -> tuple[Element, ...]: ...
 
+    @Interface.method
+    def add_child(self, element: Element) -> None: ...
+
+    @Interface.method
+    def remove_child(self, element: Element) -> None: ...
+
 
 class Entity(Element):
     """An element with an identifier meaningful within its diagram.

@@ -10,5 +10,5 @@ class Annotatable(Interface):
 class Annotation(Interface):
     """Optional meaning attached only to explicitly annotatable diagram targets."""
 
-    @Interface.method
+    @Interface.prop
     def targets(self) -> tuple[Annotatable, ...]: ...
