@@ -12,9 +12,24 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         ("classDiagram", "class", "ClassDiagramConfig"),
         ("flowchart", "flowchart", "FlowchartDiagramConfig"),
         ("sequenceDiagram", "sequence", "SequenceDiagramConfig"),
+        ("swimlane-beta", "swimlane", "SwimlaneDiagramConfig"),
         ("treeView-beta", "treeView", "TreeViewDiagramConfig"),
     ]
-    assert all(item.configuration.values == {"wrap": True} for item in report.diagrams)
+    configurations = {item.diagram_id: item.configuration.values for item in report.diagrams}
+    assert all(
+        values == {"wrap": True}
+        for diagram_id, values in configurations.items()
+        if diagram_id != "swimlane-beta"
+    )
+    assert configurations["swimlane-beta"] == {
+        "wrap": True,
+        "swimlane": {
+            "lineHops": "arc",
+            "ignoreCrossLaneEdges": True,
+            "optimizeRanksByCrossings": True,
+            "automaticLaneOrdering": False,
+        },
+    }
     upstream = {item.config_key: item for item in Application.create().mermaid_diagram_configs()}
     assert all(
         item.configuration.schema_definition == upstream[item.configuration.config_key].schema_definition

@@ -1,0 +1,4 @@
+{% import "templates/macros/document.mmd.j2" as mmd with context %}
+subgraph {{ element.id | mermaid_id("e") }} [{{ element.label | mermaid_quote }}]{{ "\n" -}}
+{{ mmd.elements(element.elements, 1, element.id) }}
+end{{ "\n" -}}

@@ -13,6 +13,7 @@ from ..diagrams.sequence.annotations import NotePosition
 from ..diagrams.sequence.diagram import SequenceDiagram
 from ..diagrams.sequence.elements import ParticipantKind
 from ..diagrams.sequence.relations import ControlKind, MessageKind
+from ..diagrams.swimlane.diagram import SwimlaneDiagram
 from ..diagrams.treeview.diagram import TreeView
 from .service import MermaidRenderer
 
@@ -127,10 +128,31 @@ class DiagramFixtures:
         sequence.add_note("web_note", "Gateway", "web", position=NotePosition.RIGHT)
         sequence.add_note("sequence_note", "Asynchronous", "api", "events", position=NotePosition.OVER)
 
+        swimlane = self.registry.get("swimlane-beta").diagram
+        assert isinstance(swimlane, SwimlaneDiagram)
+        swimlane.add_lane("customer", "Customer")
+        swimlane.add_lane("support", "Support")
+        swimlane.add_lane("engineering", "Engineering")
+        swimlane.add_start("request", "Request service", "customer")
+        swimlane.add_activity("triage", "Triage request", "support")
+        swimlane.add_decision("known", "Known issue?", "support")
+        swimlane.add_activity("answer", "Send answer", "support")
+        swimlane.add_activity("investigate", "Investigate issue", "engineering")
+        swimlane.add_connector("handoff", "Handoff", "engineering")
+        swimlane.add_end("receive", "Receive update", "customer")
+        swimlane.add_flow("request_triage", "request", "triage")
+        swimlane.add_flow("triage_known", "triage", "known")
+        swimlane.add_conditional_flow("known_answer", "known", "answer", "Yes")
+        swimlane.add_conditional_flow("known_investigate", "known", "investigate", "No")
+        swimlane.add_flow("investigate_handoff", "investigate", "handoff")
+        swimlane.add_flow("handoff_answer", "handoff", "answer")
+        swimlane.add_flow("answer_receive", "answer", "receive")
+
         return {
             "flowchart": self.renderer.render(flowchart),
             "treeview": self.renderer.render(treeview),
             "classdiagram": self.renderer.render(classes),
             "architecture": self.renderer.render(architecture),
             "sequence": self.renderer.render(sequence),
+            "swimlane": self.renderer.render(swimlane),
         }

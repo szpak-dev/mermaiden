@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from typing import Protocol, TypeVar
 
 from .annotation import Annotation
@@ -18,6 +18,10 @@ class DiagramView(ABC):
     @property
     @abstractmethod
     def kind(self) -> str: ...
+
+    @property
+    @abstractmethod
+    def mermaid_configuration(self) -> Mapping[str, object]: ...
 
     @property
     @abstractmethod

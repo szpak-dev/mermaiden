@@ -1,6 +1,7 @@
 import base64
 import json
 import re
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -41,7 +42,7 @@ class MermaidRenderer:
             template_prefix=self._template_prefix(diagram),
         )
         source = self._canonical_text(body)
-        return self._wrap(source) if self.wrap else source
+        return self._wrap(source, diagram.mermaid_configuration) if self.wrap else source
 
     @staticmethod
     def _template_prefix(diagram: DiagramView) -> str:
@@ -76,5 +77,6 @@ class MermaidRenderer:
         return "\n".join(line for line in lines if line).rstrip("\n") + "\n"
 
     @staticmethod
-    def _wrap(body: str) -> str:
-        return f"---\nconfig:\n  wrap: true\n---\n{body}"
+    def _wrap(body: str, configuration: Mapping[str, object]) -> str:
+        entries = "".join(f"  {key}: {json.dumps(value, ensure_ascii=False)}\n" for key, value in configuration.items())
+        return f"---\nconfig:\n  wrap: true\n{entries}---\n{body}"

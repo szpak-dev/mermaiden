@@ -51,11 +51,27 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             "Note left of user: Caller",
             "Note right of web: Gateway",
         ),
+        "swimlane": (
+            "swimlane-beta TD",
+            'subgraph e_v_customer ["Customer"]',
+            'e_v_request(["Request service"])',
+            'e_v_known{"Known issue?"}',
+            'e_v_handoff(("Handoff"))',
+            'e_v_known -->|"Yes"| e_v_answer',
+            'e_v_known -->|"No"| e_v_investigate',
+        ),
     }
 
     assert diagrams.keys() == expected.keys()
     for name, fragments in expected.items():
         source = diagrams[name]
-        assert source.startswith("---\nconfig:\n  wrap: true\n---\n")
+        if name == "swimlane":
+            assert source.startswith(
+                "---\nconfig:\n  wrap: true\n"
+                '  swimlane: {"lineHops": "arc", "ignoreCrossLaneEdges": true, '
+                '"optimizeRanksByCrossings": true, "automaticLaneOrdering": false}\n---\n'
+            )
+        else:
+            assert source.startswith("---\nconfig:\n  wrap: true\n---\n")
         for fragment in fragments:
             assert fragment in source

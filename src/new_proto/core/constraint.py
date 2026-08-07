@@ -15,6 +15,9 @@ class ConstraintLevel(StrEnum):
 
 
 class ConstraintDiagram(Protocol):
+    @property
+    def root_elements(self) -> Sequence[Element]: ...
+
     def walk_elements(self, parent_id: str = "") -> Sequence[Element]: ...
 
     def find_relations(self, element_id: str = "") -> Sequence[Relation]: ...

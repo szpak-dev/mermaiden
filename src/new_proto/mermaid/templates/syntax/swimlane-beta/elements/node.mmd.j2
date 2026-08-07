@@ -1,0 +1,2 @@
+{% set shapes = {"swimlane_node": ("[", "]"), "activity": ("[", "]"), "start": ("([", "])"), "end": ("([", "])"), "decision": ("{", "}"), "connector": ("((", "))")} %}
+{{ element.id | mermaid_id("e") }}{{ shapes[element.kind][0] }}{{ element.label | mermaid_quote }}{{ shapes[element.kind][1] }}{{ "\n" -}}

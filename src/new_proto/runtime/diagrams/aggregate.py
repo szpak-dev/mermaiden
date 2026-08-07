@@ -55,6 +55,10 @@ class DiagramAggregate(Diagram):
         return "diagram"
 
     @property
+    def mermaid_configuration(self) -> Mapping[str, object]:
+        return {}
+
+    @property
     def root_elements(self) -> tuple[Element, ...]:
         return self.state.current.elements
 
