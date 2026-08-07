@@ -1,0 +1,6 @@
+{% if element.comment %}%% {{ element.comment }}{{ "\n" -}}{% endif %}
+namespace {{ element.id }} {
+{% for child in element.elements %}
+{% set element = child %}{% include "elements/" ~ element.kind ~ ".mmd.j2" %}
+{% endfor %}
+}{{ "\n" -}}

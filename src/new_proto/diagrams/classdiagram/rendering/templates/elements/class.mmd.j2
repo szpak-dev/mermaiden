@@ -1,0 +1,12 @@
+{% if element.comment %}%% {{ element.comment }}{{ "\n" -}}{% endif %}
+class {{ element.id }} { {{ "\n" -}}
+{% for annotation in element.annotations %}
+  <<{{ annotation }}>>{{ "\n" -}}
+{% endfor %}
+{% for attribute in element.attributes %}
+  {{ attribute }}{{ "\n" -}}
+{% endfor %}
+{% for method in element.methods %}
+  {{ method }}{{ "\n" -}}
+{% endfor %}
+}{{ "\n" -}}
