@@ -1,0 +1,3 @@
+journey{{ "\n" -}}
+{% if diagram.title %}title {{ diagram.title }}{{ "\n" -}}{% endif %}
+{% for section in diagram.root_elements %}section {{ section.label }}{{ "\n" -}}{% for task in section.elements %}{{ task.label }}: {{ task.score }}: {{ task.actors | join(", ") }}{{ "\n" -}}{% endfor %}{% endfor %}

@@ -10,6 +10,7 @@ def test_registry_lists_every_implemented_diagram_with_mermaid_metadata() -> Non
         ("architecture-beta", "architecture", "ArchitectureDiagramConfig"),
         ("classDiagram", "class", "ClassDiagramConfig"),
         ("flowchart", "flowchart", "FlowchartDiagramConfig"),
+        ("journey", "journey", "JourneyDiagramConfig"),
         ("mindmap", "mindmap", "MindmapDiagramConfig"),
         ("pie", "pie", "PieDiagramConfig"),
         ("requirementDiagram", "requirement", "RequirementDiagramConfig"),

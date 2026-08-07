@@ -8,6 +8,7 @@ from ..diagrams.classdiagram.diagram import ClassDiagram
 from ..diagrams.classdiagram.elements import ClassAttribute, ClassMethod
 from ..diagrams.classdiagram.relations import ClassRelationKind
 from ..diagrams.flowchart.diagram import Flowchart
+from ..diagrams.journey.diagram import Journey
 from ..diagrams.mindmap.diagram import Mindmap
 from ..diagrams.pie.diagram import PieDiagram
 from ..diagrams.registry import DiagramRegistry
@@ -286,6 +287,13 @@ class DiagramFixtures:
         sankey.add_flow("grid_industry", "grid", "industry", 342.165)
         sankey.add_flow("grid_homes", "grid", "homes", 113.726)
 
+        journey = self.registry.get("journey").diagram
+        assert isinstance(journey, Journey)
+        journey.set_title("Working day")
+        journey.add_section("work", "Go to work")
+        journey.add_task("tea", "Make tea", 5, ("Me",), "work")
+        journey.add_task("work_task", "Do work", 1, ("Me", "Cat"), "work")
+
         return {
             "flowchart": self.renderer.render(flowchart),
             "treeview": self.renderer.render(treeview),
@@ -297,6 +305,7 @@ class DiagramFixtures:
             "pie": self.renderer.render(pie),
             "timeline": self.renderer.render(timeline),
             "sankey": self.renderer.render(sankey),
+            "journey": self.renderer.render(journey),
             "state": self.renderer.render(state),
             "swimlane": self.renderer.render(swimlane),
         }

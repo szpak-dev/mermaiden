@@ -82,6 +82,7 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
         ),
         "timeline": ("timeline", "title Modwire history", "section Foundation", "2024 : Prototype : First release"),
         "sankey": ("sankey", '"Electricity grid","Industry",342.165', '"Electricity grid","Homes",113.726'),
+        "journey": ("journey", "title Working day", "section Go to work", "Make tea: 5: Me", "Do work: 1: Me, Cat"),
         "state": (
             "stateDiagram-v2 TD",
             'state "Still" as s_v_still',

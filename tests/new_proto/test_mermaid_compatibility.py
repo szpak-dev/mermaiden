@@ -11,6 +11,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         ("architecture-beta", "architecture", "ArchitectureDiagramConfig"),
         ("classDiagram", "class", "ClassDiagramConfig"),
         ("flowchart", "flowchart", "FlowchartDiagramConfig"),
+        ("journey", "journey", "JourneyDiagramConfig"),
         ("mindmap", "mindmap", "MindmapDiagramConfig"),
         ("pie", "pie", "PieDiagramConfig"),
         ("requirementDiagram", "requirement", "RequirementDiagramConfig"),
