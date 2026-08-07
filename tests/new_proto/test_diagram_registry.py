@@ -13,6 +13,7 @@ def test_registry_lists_every_implemented_diagram_with_mermaid_metadata() -> Non
         ("flowchart", "flowchart", "FlowchartDiagramConfig"),
         ("journey", "journey", "JourneyDiagramConfig"),
         ("mindmap", "mindmap", "MindmapDiagramConfig"),
+        ("packet", "packet", "PacketDiagramConfig"),
         ("pie", "pie", "PieDiagramConfig"),
         ("radar-beta", "radar", "RadarDiagramConfig"),
         ("requirementDiagram", "requirement", "RequirementDiagramConfig"),

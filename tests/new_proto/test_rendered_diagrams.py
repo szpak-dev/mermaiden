@@ -81,6 +81,7 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             '"Cats" : 85',
             '"Rats" : 15',
         ),
+        "packet": ("packet", "title UDP packet", '+16: "Source port"', '32-47: "Length"'),
         "timeline": ("timeline", "title Modwire history", "section Foundation", "2024 : Prototype : First release"),
         "sankey": ("sankey", '"Electricity grid","Industry",342.165', '"Electricity grid","Homes",113.726'),
         "journey": ("journey", "title Working day", "section Go to work", "Make tea: 5: Me", "Do work: 1: Me, Cat"),
@@ -155,6 +156,8 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             )
         elif name == "block":
             assert source.startswith("---\nconfig:\n  wrap: true\n  block: {\"padding\": 8}\n---\n")
+        elif name == "packet":
+            assert source.startswith("---\nconfig:\n  wrap: true\n  packet: {")
         elif name == "radar":
             assert source.startswith("---\nconfig:\n  wrap: true\n  radar: {")
         else:

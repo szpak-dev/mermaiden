@@ -11,6 +11,7 @@ from ..diagrams.classdiagram.relations import ClassRelationKind
 from ..diagrams.flowchart.diagram import Flowchart
 from ..diagrams.journey.diagram import Journey
 from ..diagrams.mindmap.diagram import Mindmap
+from ..diagrams.packet.diagram import Packet
 from ..diagrams.pie.diagram import PieDiagram
 from ..diagrams.radar.diagram import Radar
 from ..diagrams.registry import DiagramRegistry
@@ -327,6 +328,14 @@ class DiagramFixtures:
         block.add_block("api", "API", parent_id="backend")
         block.add_block("database", "Database", parent_id="backend")
 
+        packet = self.registry.get("packet").diagram
+        assert isinstance(packet, Packet)
+        packet.set_title("UDP packet")
+        packet.add_bits("source", "Source port", 16)
+        packet.add_bits("destination", "Destination port", 16)
+        packet.add_field("length", "Length", 32, 47)
+        packet.add_field("checksum", "Checksum", 48, 63)
+
         return {
             "flowchart": self.renderer.render(flowchart),
             "treeview": self.renderer.render(treeview),
@@ -342,6 +351,7 @@ class DiagramFixtures:
             "venn": self.renderer.render(venn),
             "radar": self.renderer.render(radar),
             "block": self.renderer.render(block),
+            "packet": self.renderer.render(packet),
             "state": self.renderer.render(state),
             "swimlane": self.renderer.render(swimlane),
         }
