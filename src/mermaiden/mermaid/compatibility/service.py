@@ -3,8 +3,8 @@ from dataclasses import dataclass
 from wireup import injectable
 
 from ...diagrams.application import DiagramsApplication
-from ..fixtures import DiagramFixtures
 from ..application import MermaidApplication
+from ..fixtures import DiagramFixtures
 from .configuration import ConfigurationViolation, DiagramConfigurationContract, MermaidConfiguration
 from .parser import MermaidSyntaxValidator, MermaidSyntaxViolation
 from .schema import MermaidSchemaLock, MermaidSchemaStore

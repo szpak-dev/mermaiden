@@ -5,6 +5,7 @@ from pathlib import Path
 
 from wireup import injectable
 
+
 @injectable
 @dataclass(frozen=True, slots=True)
 class MermaidPreview:

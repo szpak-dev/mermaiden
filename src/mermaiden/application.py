@@ -1,6 +1,7 @@
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from inspect import signature
+
 from wireup import SyncContainer, create_sync_container
 
 import mermaiden
@@ -31,7 +32,7 @@ class DiagramCommand:
 @dataclass(frozen=True, slots=True)
 class Application:
     _container: SyncContainer
-    _codec: DiagramSnapshotCodec = DiagramSnapshotCodec()
+    _codec: DiagramSnapshotCodec = field(default_factory=DiagramSnapshotCodec)
 
     @classmethod
     def create(cls) -> "Application":

@@ -6,10 +6,10 @@ from wireup import SyncContainer, create_sync_container
 
 import mermaiden
 
+from .mermaid.application import MermaidPreviewApplication
 from .mermaid.compatibility import CompatibilityReport, MermaidCompatibilityService
 from .mermaid.compatibility.schema import MermaidDiagramConfig, MermaidSchemaStore
 from .mermaid.fixtures import DiagramFixtures
-from .mermaid.application import MermaidPreviewApplication
 
 
 @dataclass(frozen=True, slots=True)

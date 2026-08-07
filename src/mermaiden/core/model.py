@@ -10,7 +10,7 @@ class ValueModel(BaseModel):
         names = tuple(type(self).model_fields)
         if len(arguments) > len(names):
             raise TypeError(f"{type(self).__name__} accepts at most {len(names)} positional arguments.")
-        positional = dict(zip(names, arguments))
+        positional = dict(zip(names, arguments, strict=False))
         duplicates = positional.keys() & values.keys()
         if duplicates:
             raise TypeError(f"{type(self).__name__} received duplicate fields: {', '.join(sorted(duplicates))}.")
