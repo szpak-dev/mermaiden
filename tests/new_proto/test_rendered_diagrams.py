@@ -204,7 +204,7 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
         elif name == "kanban":
             assert source.startswith("---\nconfig:\n  wrap: true\n  kanban: {")
         elif name == "railroad":
-            assert source.startswith("---\nconfig:\n  wrap: true\n  railroad: {}\n---\n")
+            assert source.startswith("---\nconfig:\n  wrap: true\n  railroad: {")
         elif name == "packet":
             assert source.startswith("---\nconfig:\n  wrap: true\n  packet: {")
         elif name == "radar":

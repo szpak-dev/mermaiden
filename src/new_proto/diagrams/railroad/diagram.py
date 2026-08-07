@@ -8,7 +8,7 @@ from ...core.constraint import ChangeReport
 from ..base import DiagramModel
 from .configuration import RailroadDiagramConfiguration
 from .constraints.constraint import RailroadDiagramConstraint
-from .elements import NonTerminal, Terminal
+from .elements import Alternative, Group, NonTerminal, Optional, Repetition, Special, Terminal
 from .elements import Sequence as RailroadSequence
 
 
@@ -34,3 +34,18 @@ class RailroadDiagram(DiagramModel):
 
     def add_non_terminal(self, id: str, label: str, rule_id: str) -> ChangeReport:
         return self._add_element(f"add non-terminal '{id}'", NonTerminal(id, label), rule_id)
+
+    def add_special(self, id: str, label: str, parent_id: str) -> ChangeReport:
+        return self._add_element(f"add special sequence '{id}'", Special(id, label), parent_id)
+
+    def add_alternative(self, id: str, parent_id: str) -> ChangeReport:
+        return self._add_element(f"add alternative '{id}'", Alternative(id, id), parent_id)
+
+    def add_optional(self, id: str, parent_id: str) -> ChangeReport:
+        return self._add_element(f"add optional '{id}'", Optional(id, id), parent_id)
+
+    def add_repetition(self, id: str, parent_id: str) -> ChangeReport:
+        return self._add_element(f"add repetition '{id}'", Repetition(id, id), parent_id)
+
+    def add_group(self, id: str, parent_id: str) -> ChangeReport:
+        return self._add_element(f"add group '{id}'", Group(id, id), parent_id)

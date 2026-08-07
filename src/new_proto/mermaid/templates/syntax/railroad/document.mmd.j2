@@ -1,2 +1,0 @@
-railroad-ebnf-beta{{ "\n" -}}
-{% for rule in diagram.root_elements %}{{ rule.id | mermaid_id("r") }} = {% for term in rule.elements %}{% if term.kind == "terminal" %}{{ term.label | mermaid_quote }}{% else %}{{ term.label }}{% endif %}{% if not loop.last %} {% endif %}{% endfor %} ;{{ "\n" -}}{% endfor %}
