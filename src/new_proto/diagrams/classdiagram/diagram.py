@@ -7,26 +7,14 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..base import DefinedDiagram, DiagramDefinition
 from .annotations import ClassNotes
-from .changes import ClassDiagramChanges
 from .elements import Class, ClassAttribute, ClassMethod, ClassNamespace
 from .observer import ClassDiagramObserver
 from .relations import ClassRelation, ClassRelationKind
-from .runtime import (
-    ClassDiagramAnnotations,
-    ClassDiagramElements,
-    ClassDiagramRelations,
-    ClassDiagramState,
-)
 
 
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class ClassDiagram(DefinedDiagram):
-    state: ClassDiagramState
-    elements: ClassDiagramElements
-    relations: ClassDiagramRelations
-    annotations: ClassDiagramAnnotations
-    changes: ClassDiagramChanges
     observer: ClassDiagramObserver
 
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(

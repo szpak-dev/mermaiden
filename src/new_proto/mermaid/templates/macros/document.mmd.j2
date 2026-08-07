@@ -1,0 +1,28 @@
+{% macro render(depth) -%}
+{% set source -%}{{ caller() }}{%- endset %}
+{{ source | indent(depth * 2, true) }}
+{%- endmacro %}
+
+{% macro elements(items, depth=1, parent_id="") -%}
+{% for item in items -%}
+{% with element=item, parent_id=parent_id -%}
+{% call render(depth) %}{% include template_prefix ~ "/elements/" ~ element.kind ~ ".mmd.j2" %}{% endcall %}
+{% endwith -%}
+{% endfor -%}
+{%- endmacro %}
+
+{% macro relations(items, depth=1) -%}
+{% for relation in items -%}
+{% with relation=relation -%}
+{% call render(depth) %}{% include template_prefix ~ "/relations/" ~ relation.kind ~ ".mmd.j2" ignore missing %}{% endcall %}
+{% endwith -%}
+{% endfor -%}
+{%- endmacro %}
+
+{% macro annotations(items, depth=1) -%}
+{% for annotation in items -%}
+{% with annotation=annotation -%}
+{% call render(depth) %}{% include template_prefix ~ "/annotations/" ~ annotation.kind ~ ".mmd.j2" ignore missing %}{% endcall %}
+{% endwith -%}
+{% endfor -%}
+{%- endmacro %}

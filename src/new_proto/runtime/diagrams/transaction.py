@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from typing import Never
 
-from wireup import injectable
-
 from ...core.constraint import (
     ChangeRejected,
     ChangeReport,
@@ -15,7 +13,6 @@ from .observer import ConstraintInspection
 from .state import DiagramData, DiagramState
 
 
-@injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class ChangeTransaction:
     state: DiagramState

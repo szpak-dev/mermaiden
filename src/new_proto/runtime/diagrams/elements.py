@@ -1,13 +1,10 @@
 from dataclasses import dataclass, replace
 
-from wireup import injectable
-
 from ...core.element import Container, Element
 from ...core.error import OperationError
 from .state import DiagramData, DiagramState
 
 
-@injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Elements:
     state: DiagramState

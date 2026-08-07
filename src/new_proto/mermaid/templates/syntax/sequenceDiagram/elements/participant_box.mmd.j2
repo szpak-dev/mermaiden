@@ -1,0 +1,3 @@
+{% import "templates/macros/document.mmd.j2" as mmd with context %}
+box{% if element.color %} {{ element.color }}{% endif %} {{ element.label }}{{ "\n" -}}
+{{ mmd.elements(element.elements, 1, element.id) }}end{{ "\n" -}}

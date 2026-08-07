@@ -1,5 +1,6 @@
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Never
 
 from wireup import injectable
 
@@ -9,23 +10,32 @@ from ...core.diagram import Diagram
 from ...core.element import Element
 from ...core.error import OperationError
 from ...core.relation import Relation
-from .annotations import Annotations
-from .changes import Changes
-from .elements import Elements
 from .observer import ConstraintInspection
-from .relations import Relations
-from .state import DiagramState
+from .runtime import DiagramRuntime
+from .state import DiagramData
 
 
 @injectable(as_type=Diagram, lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class DiagramAggregate(Diagram):
-    state: DiagramState
-    elements: Elements
-    relations: Relations
-    annotations: Annotations
-    changes: Changes
     observer: ConstraintInspection
+    runtime: DiagramRuntime = field(default_factory=DiagramRuntime)
+
+    @property
+    def state(self):
+        return self.runtime.state
+
+    @property
+    def elements(self):
+        return self.runtime.elements
+
+    @property
+    def relations(self):
+        return self.runtime.relations
+
+    @property
+    def annotations(self):
+        return self.runtime.annotations
 
     @property
     def kind(self) -> str:
@@ -39,14 +49,14 @@ class DiagramAggregate(Diagram):
         try:
             candidate = self.elements.add(element, parent_id)
         except OperationError as error:
-            self.changes.reject(operation, str(error))
-        return self.changes.apply(operation, candidate, self)
+            self._reject(operation, str(error))
+        return self._apply(operation, candidate)
 
     def _add_relation(self, operation: str, relation: Relation) -> ChangeReport:
-        return self.changes.apply(operation, self.relations.add(relation), self)
+        return self._apply(operation, self.relations.add(relation))
 
     def _add_annotation(self, operation: str, annotation: Annotation) -> ChangeReport:
-        return self.changes.apply(operation, self.annotations.add_annotation(annotation), self)
+        return self._apply(operation, self.annotations.add_annotation(annotation))
 
     def remove_element(self, id: str, *, cascade: bool = False) -> ChangeReport:
         operation = f"remove element '{id}'"
@@ -75,8 +85,8 @@ class DiagramAggregate(Diagram):
                 dependent_relations,
             )
         except OperationError as error:
-            self.changes.reject(operation, str(error))
-        return self.changes.apply(operation, candidate, self)
+            self._reject(operation, str(error))
+        return self._apply(operation, candidate)
 
     def remove_relation(self, id: str) -> ChangeReport:
         operation = f"remove relation '{id}'"
@@ -89,16 +99,16 @@ class DiagramAggregate(Diagram):
                 raise OperationError(f"Relation '{id}' still has annotations; remove them first.")
             candidate = self.relations.remove(id)
         except OperationError as error:
-            self.changes.reject(operation, str(error))
-        return self.changes.apply(operation, candidate, self)
+            self._reject(operation, str(error))
+        return self._apply(operation, candidate)
 
     def remove_annotation(self, id: str) -> ChangeReport:
         operation = f"remove annotation '{id}'"
         try:
             candidate = self.annotations.remove(id)
         except OperationError as error:
-            self.changes.reject(operation, str(error))
-        return self.changes.apply(operation, candidate, self)
+            self._reject(operation, str(error))
+        return self._apply(operation, candidate)
 
     def find_element(self, id: str) -> Element | None:
         return self.elements.find(id)
@@ -114,3 +124,9 @@ class DiagramAggregate(Diagram):
 
     def validate(self) -> ValidationReport:
         return self.observer.inspect(self)
+
+    def _apply(self, operation: str, candidate: DiagramData) -> ChangeReport:
+        return self.runtime.transaction.apply(operation, candidate, self, self.observer)
+
+    def _reject(self, operation: str, message: str) -> Never:
+        self.runtime.transaction.reject(operation, message)

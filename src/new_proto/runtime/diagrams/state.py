@@ -1,7 +1,5 @@
 from dataclasses import dataclass, field
 
-from wireup import injectable
-
 from ...core.annotation import Annotation
 from ...core.element import Element
 from ...core.error import OperationError
@@ -15,7 +13,6 @@ class DiagramData:
     annotations: tuple[Annotation, ...] = ()
 
 
-@injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class DiagramState:
     _committed: list[DiagramData] = field(default_factory=lambda: [DiagramData()], init=False)

@@ -1,0 +1,5 @@
+{% import "templates/macros/document.mmd.j2" as mmd with context %}
+{{ diagram.kind }}{% if diagram.direction is defined %} {{ diagram.direction.value }}{% endif %}{{ "\n" -}}
+{{ mmd.elements(diagram.root_elements) }}
+{{ mmd.relations(diagram.find_relations()) }}
+{{ mmd.annotations(diagram.find_annotations()) }}

@@ -1,0 +1,5 @@
+{% import "templates/macros/document.mmd.j2" as mmd with context %}
+{% if element.comment %}%% {{ element.comment }}{{ "\n" -}}{% endif %}
+namespace {{ element.id }} {
+{{ mmd.elements(element.elements, 1, element.id) }}
+{{ "}" }}{{ "\n" -}}

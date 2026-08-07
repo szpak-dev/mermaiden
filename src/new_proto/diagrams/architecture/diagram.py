@@ -6,21 +6,14 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..base import DefinedDiagram, DiagramDefinition
 from .annotations import ArchitectureNotes
-from .changes import ArchitectureChanges
 from .elements import ArchitectureGroup, Junction, Service
 from .observer import ArchitectureObserver
 from .relations import Edge, Port
-from .runtime import ArchitectureAnnotations, ArchitectureElements, ArchitectureRelations, ArchitectureState
 
 
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Architecture(DefinedDiagram):
-    state: ArchitectureState
-    elements: ArchitectureElements
-    relations: ArchitectureRelations
-    annotations: ArchitectureAnnotations
-    changes: ArchitectureChanges
     observer: ArchitectureObserver
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(
         "architecture-beta", "service", "group", "edge", "note", Service, ArchitectureGroup, Edge, ArchitectureNotes()

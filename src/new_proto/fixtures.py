@@ -7,12 +7,12 @@ from .diagrams.classdiagram.diagram import ClassDiagram
 from .diagrams.classdiagram.elements import ClassAttribute, ClassMethod
 from .diagrams.classdiagram.relations import ClassRelationKind
 from .diagrams.flowchart.diagram import Flowchart
-from .diagrams.rendering import MermaidRenderer
 from .diagrams.sequence.annotations import NotePosition
 from .diagrams.sequence.diagram import SequenceDiagram
 from .diagrams.sequence.elements import ParticipantKind
 from .diagrams.sequence.relations import ControlKind, MessageKind
 from .diagrams.treeview.diagram import TreeView
+from .mermaid.service import MermaidRenderer
 
 
 def rendered_diagrams() -> dict[str, str]:

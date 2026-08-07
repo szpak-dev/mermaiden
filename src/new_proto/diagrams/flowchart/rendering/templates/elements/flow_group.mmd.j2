@@ -1,7 +1,0 @@
-{% import "rendering/templates/format.mmd.j2" as mmd with context %}
-subgraph {{ element.id | mmd_id("e") }}[{{ element.label | mmd_quote }}]{{ "\n" -}}
-{% if element.direction is not none %}
-  direction {{ element.direction.value }}{{ "\n" -}}
-{% endif %}
-{{ mmd.elements(element.elements, 1, element.id) }}
-end{{ "\n" -}}

@@ -1,6 +1,6 @@
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
-from typing import ClassVar, Never, Protocol
+from typing import ClassVar, Protocol
 
 from ..core.annotation import Annotation
 from ..core.constraint import ChangeReport, Constraint, ValidationReport
@@ -9,21 +9,7 @@ from ..core.element import Element
 from ..core.error import OperationError
 from ..core.relation import Relation
 from ..runtime.diagrams.aggregate import DiagramAggregate
-from ..runtime.diagrams.changes import Changes
 from ..runtime.diagrams.observer import ConstraintInspection
-from ..runtime.diagrams.state import DiagramData
-from ..runtime.diagrams.transaction import ChangeTransaction
-
-
-class DiagramChanges[TransactionT: ChangeTransaction, ObserverT: ConstraintInspection](Changes):
-    transaction: TransactionT
-    observer: ObserverT
-
-    def apply(self, operation: str, candidate: DiagramData, diagram: Diagram) -> ChangeReport:
-        return self.transaction.apply(operation, candidate, diagram, self.observer)
-
-    def reject(self, operation: str, message: str) -> Never:
-        return self.transaction.reject(operation, message)
 
 
 class DiagramObserver[ConstraintT: Constraint](ConstraintInspection):
@@ -97,5 +83,5 @@ class DefinedDiagram(DiagramAggregate):
         try:
             annotation = self.definition.annotation.create(id, data, element_ids, relation_ids)
         except OperationError as error:
-            self.changes.reject(operation, str(error))
+            self._reject(operation, str(error))
         return self._add_annotation(operation, annotation)

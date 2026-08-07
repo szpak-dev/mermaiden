@@ -2,9 +2,9 @@ import pytest
 
 from new_proto.application import Application
 from new_proto.core import ChangeRejected
-from new_proto.diagrams import MermaidRenderer
-from new_proto.diagrams.flowchart import Flowchart
-from new_proto.diagrams.treeview import TreeView
+from new_proto.diagrams.flowchart.diagram import Flowchart
+from new_proto.diagrams.treeview.diagram import TreeView
+from new_proto.mermaid.service import MermaidRenderer
 
 
 def test_mermaid_renderer_wraps_treeview_and_flowchart() -> None:

@@ -1,0 +1,4 @@
+{{ annotation.id | mermaid_id("a") }}@{ shape: comment, label: {{ annotation.text | mermaid_quote }} }{{ "\n" -}}
+{% for target in annotation.targets %}
+{{ target.id | mermaid_id("e") }} -.-> {{ annotation.id | mermaid_id("a") }}{{ "\n" -}}
+{% endfor %}

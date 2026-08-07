@@ -11,7 +11,6 @@ from .diagram import Diagram, DiagramView, DiagramVisitor
 from .element import Container, Element, Entity
 from .error import OperationError
 from .relation import Relation
-from .rendering import Renderer
 
 __all__ = [
     "Annotation",
@@ -28,7 +27,6 @@ __all__ = [
     "Entity",
     "OperationError",
     "Relation",
-    "Renderer",
     "TargetKind",
     "TargetRef",
     "ValidationReport",

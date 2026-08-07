@@ -4,10 +4,8 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ...core.relation import Relation
 from ..base import DefinedDiagram, DiagramDefinition
 from .annotations import TreeAnnotations
-from .changes import TreeViewChanges
 from .elements import TreeItem
 from .observer import TreeViewObserver
 from .relations import TreeBranch
@@ -16,11 +14,6 @@ from .relations import TreeBranch
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class TreeView(DefinedDiagram):
-    state: TreeViewState
-    elements: TreeViewElements
-    relations: TreeViewRelations
-    annotations: TreeViewAnnotations
-    changes: TreeViewChanges
     observer: TreeViewObserver
 
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(
@@ -34,6 +27,15 @@ class TreeView(DefinedDiagram):
         relation=TreeBranch,
         annotation=TreeAnnotations(),
     )
+
+    @property
+    def root_elements(self) -> tuple[TreeItem, ...]:
+        child_ids = {
+            relation.child_id
+            for relation in self.find_relations()
+            if isinstance(relation, TreeBranch) and len(relation.element_ids) == 2
+        }
+        return tuple(item for item in super().root_elements if isinstance(item, TreeItem) and item.id not in child_ids)
 
     def add_item(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
         return self.add_entity(id, label, parent_id)

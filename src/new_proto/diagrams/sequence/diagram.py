@@ -6,21 +6,14 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..base import DefinedDiagram, DiagramDefinition
 from .annotations import NotePosition, SequenceNotes
-from .changes import SequenceChanges
 from .elements import Participant, ParticipantBox, ParticipantKind
 from .observer import SequenceObserver
 from .relations import Control, ControlKind, Directive, DirectiveKind, Message, MessageKind, ParticipantEvent
-from .runtime import SequenceAnnotations, SequenceElements, SequenceRelations, SequenceState
 
 
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class SequenceDiagram(DefinedDiagram):
-    state: SequenceState
-    elements: SequenceElements
-    relations: SequenceRelations
-    annotations: SequenceAnnotations
-    changes: SequenceChanges
     observer: SequenceObserver
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(
         "sequenceDiagram",
@@ -92,7 +85,7 @@ class SequenceDiagram(DefinedDiagram):
         )
 
     def _anchors(self, operation: str) -> tuple[str, str]:
-        participants = tuple(item.id for item in self.walk_elements() if isinstance(item, Participant))
+        participants = [item.id for item in self.walk_elements() if isinstance(item, Participant)]
         if len(participants) < 2:
-            self.changes.reject(operation, "Sequence directives require two participants.")
+            self._reject(operation, "Sequence directives require two participants.")
         return participants[0], participants[1]
