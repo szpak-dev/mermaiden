@@ -5,11 +5,6 @@ from typing import ClassVar
 
 from ...core.annotation import Annotation, TargetKind, TargetRef
 from ...core.error import OperationError
-from ..domain import DiagramAnnotationMember
-
-
-class StateAnnotationMember(DiagramAnnotationMember):
-    description: ClassVar[str] = "a state note"
 
 
 class NotePosition(StrEnum):
@@ -18,7 +13,7 @@ class NotePosition(StrEnum):
 
 
 @dataclass(frozen=True, slots=True)
-class StateNote(Annotation, StateAnnotationMember):
+class StateNote(Annotation):
     kind: ClassVar[str] = "state_note"
     text: str
     position: NotePosition

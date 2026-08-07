@@ -1,21 +1,13 @@
-from abc import ABC
-from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, Violation
-from ..domain import (
-    DiagramAnnotationMember,
-)
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 from .elements import Actor, Command, Event, Swimlane, View
 from .relations import Flow
 
 
-class EventModelingDiagramConstraint(Constraint, ABC):
+class EventModelingDiagramConstraint(BlockingConstraint):
     pass
-
-class EventModelingAnnotationMember(DiagramAnnotationMember):
-    description: ClassVar[str] = "valid in Event Modeling diagram"
 
 
 @injectable(as_type=EventModelingDiagramConstraint, qualifier="eventmodeling_structure")

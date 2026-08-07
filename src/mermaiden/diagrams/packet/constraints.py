@@ -1,25 +1,13 @@
-from abc import ABC
-from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
-from ..domain import (
-    DiagramAnnotationMember,
-    DiagramRelationMember,
-)
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 from .elements import PacketField
 
 
-class PacketConstraint(Constraint, ABC):
+class PacketConstraint(BlockingConstraint):
     pass
 
-class PacketRelationMember(DiagramRelationMember):
-    description: ClassVar[str] = "valid in a packet diagram"
-
-
-class PacketAnnotationMember(DiagramAnnotationMember):
-    description: ClassVar[str] = "valid in a packet diagram"
 
 
 @injectable(as_type=PacketConstraint, qualifier="packet_structure")
@@ -28,9 +16,6 @@ class PacketStructure(PacketConstraint):
     def code(self) -> str:
         return "packet.structure"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         return tuple(

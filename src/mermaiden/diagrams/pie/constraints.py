@@ -1,25 +1,13 @@
-from abc import ABC
-from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
-from ..domain import (
-    DiagramAnnotationMember,
-    DiagramRelationMember,
-)
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 from .elements import PieSlice
 
 
-class PieConstraint(Constraint, ABC):
+class PieConstraint(BlockingConstraint):
     pass
 
-class PieRelationMember(DiagramRelationMember):
-    description: ClassVar[str] = "valid in a pie chart"
-
-
-class PieAnnotationMember(DiagramAnnotationMember):
-    description: ClassVar[str] = "valid in a pie chart"
 
 
 @injectable(as_type=PieConstraint, qualifier="pie_slice_values")
@@ -28,9 +16,6 @@ class SlicesArePositive(PieConstraint):
     def code(self) -> str:
         return "pie.positive_slice"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         return tuple(

@@ -103,7 +103,7 @@ class Constraint(ABC):
         return Violation(code=self.code, message=message, path=path, level=self.level)
 
 
-class BlockingConstraint(Constraint):
+class BlockingConstraint(Constraint, ABC):
     @property
     def level(self) -> ConstraintLevel:
         return ConstraintLevel.BLOCKING

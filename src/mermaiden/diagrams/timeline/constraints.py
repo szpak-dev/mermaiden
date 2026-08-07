@@ -1,24 +1,12 @@
-from abc import ABC
-from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, Violation
-from ..domain import (
-    DiagramAnnotationMember,
-    DiagramRelationMember,
-)
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 
 
-class TimelineConstraint(Constraint, ABC):
+class TimelineConstraint(BlockingConstraint):
     pass
 
-class TimelineRelationMember(DiagramRelationMember):
-    description: ClassVar[str] = "valid in a timeline"
-
-
-class TimelineAnnotationMember(DiagramAnnotationMember):
-    description: ClassVar[str] = "valid in a timeline"
 
 
 @injectable(as_type=TimelineConstraint, qualifier="timeline_structure")

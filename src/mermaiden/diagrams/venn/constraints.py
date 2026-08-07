@@ -1,25 +1,13 @@
-from abc import ABC
-from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
-from ..domain import (
-    DiagramAnnotationMember,
-    DiagramRelationMember,
-)
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 from .elements import VennSet, VennUnion
 
 
-class VennConstraint(Constraint, ABC):
+class VennConstraint(BlockingConstraint):
     pass
 
-class VennRelationMember(DiagramRelationMember):
-    description: ClassVar[str] = "valid in a Venn diagram"
-
-
-class VennAnnotationMember(DiagramAnnotationMember):
-    description: ClassVar[str] = "valid in a Venn diagram"
 
 
 @injectable(as_type=VennConstraint, qualifier="venn_structure")
@@ -28,9 +16,6 @@ class VennStructure(VennConstraint):
     def code(self) -> str:
         return "venn.structure"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         known_sets = {item.id for item in diagram.walk_elements() if isinstance(item, VennSet)}

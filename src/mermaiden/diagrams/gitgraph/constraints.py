@@ -1,20 +1,12 @@
-from abc import ABC
-from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
-from ..domain import (
-    DiagramAnnotationMember,
-)
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 from .elements import Branch, Checkout, Commit
 
 
-class GitGraphDiagramConstraint(Constraint, ABC):
+class GitGraphDiagramConstraint(BlockingConstraint):
     pass
-
-class GitGraphAnnotationMember(DiagramAnnotationMember):
-    description: ClassVar[str] = "valid in Git Graph"
 
 
 @injectable(as_type=GitGraphDiagramConstraint, qualifier="gitgraph_structure")
@@ -23,9 +15,6 @@ class GitGraphDiagramStructure(GitGraphDiagramConstraint):
     def code(self) -> str:
         return "gitgraph.structure"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         branches = tuple(item for item in diagram.root_elements if isinstance(item, Branch))

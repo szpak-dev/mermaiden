@@ -1,25 +1,13 @@
-from abc import ABC
-from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
-from ..domain import (
-    DiagramAnnotationMember,
-    DiagramRelationMember,
-)
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 from .elements import Column, Task
 
 
-class KanbanDiagramConstraint(Constraint, ABC):
+class KanbanDiagramConstraint(BlockingConstraint):
     pass
 
-class KanbanRelationMember(DiagramRelationMember):
-    description: ClassVar[str] = "valid in Kanban diagram"
-
-
-class KanbanAnnotationMember(DiagramAnnotationMember):
-    description: ClassVar[str] = "valid in Kanban diagram"
 
 
 @injectable(as_type=KanbanDiagramConstraint, qualifier="kanban_structure")
@@ -28,9 +16,6 @@ class KanbanDiagramStructure(KanbanDiagramConstraint):
     def code(self) -> str:
         return "kanban.structure"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         priorities = {"Very High", "High", "Low", "Very Low"}

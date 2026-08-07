@@ -1,20 +1,12 @@
-from abc import ABC
-from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, Violation
-from ..domain import (
-    DiagramAnnotationMember,
-)
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 from .elements import Category, Cause, Effect
 
 
-class IshikawaDiagramConstraint(Constraint, ABC):
+class IshikawaDiagramConstraint(BlockingConstraint):
     pass
-
-class IshikawaAnnotationMember(DiagramAnnotationMember):
-    description: ClassVar[str] = "valid in Ishikawa diagram"
 
 
 @injectable(as_type=IshikawaDiagramConstraint, qualifier="ishikawa_structure")

@@ -5,23 +5,17 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import SankeyDiagramConfiguration
-from .constraints import SankeyAnnotationMember, SankeyConstraint
-from .elements import SankeyElementMember, SankeyNode
-from .relations import SankeyLink, SankeyRelationMember
+from .constraints import SankeyConstraint
+from .elements import SankeyNode
+from .relations import SankeyLink
 
 
 @injectable(as_type=DiagramModel, qualifier="sankey", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Sankey(DiagramModel):
     constraints: Sequence[SankeyConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "sankey.member_type",
-        SankeyElementMember,
-        SankeyRelationMember,
-        SankeyAnnotationMember,
-    )
     configuration: SankeyDiagramConfiguration = field(default_factory=SankeyDiagramConfiguration, init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(
         "sankey",

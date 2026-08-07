@@ -5,23 +5,17 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import C4ContextDiagramConfiguration
-from .constraints import C4AnnotationMember, C4ContextDiagramConstraint
-from .elements import C4ElementMember, Person, System, SystemDb, SystemQueue
-from .relations import C4RelationMember, Relationship
+from .constraints import C4ContextDiagramConstraint
+from .elements import Person, System, SystemDb, SystemQueue
+from .relations import Relationship
 
 
 @injectable(as_type=DiagramModel, qualifier="c4", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class C4ContextDiagram(DiagramModel):
     constraints: Sequence[C4ContextDiagramConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "c4.member_type",
-        C4ElementMember,
-        C4RelationMember,
-        C4AnnotationMember,
-    )
     configuration: C4ContextDiagramConfiguration = field(default_factory=C4ContextDiagramConfiguration, init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(
         "C4Context",

@@ -3,13 +3,13 @@ from collections import defaultdict, deque
 from wireup import injectable
 
 from ...core.annotation import TargetKind
-from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 from .annotations import Note
 from .elements import Decision, End, FlowNode, Junction, Start
 from .relations import ConditionalFlow, Flow
 
 
-class FlowchartConstraint(Constraint):
+class FlowchartConstraint(BlockingConstraint):
     @staticmethod
     def flows(diagram: ConstraintDiagram) -> tuple[Flow, ...]:
         return tuple(item for item in diagram.find_relations() if isinstance(item, Flow))
@@ -20,9 +20,6 @@ class ConditionalFlowsHaveConditions(FlowchartConstraint):
     def code(self) -> str:
         return "flowchart.conditional_flow_condition"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         return tuple(
@@ -106,9 +103,6 @@ class FlowEndpointsAreNodes(FlowchartConstraint):
     def code(self) -> str:
         return "flowchart.flow_endpoint"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         elements = {item.id: item for item in diagram.walk_elements()}
@@ -130,9 +124,6 @@ class FlowsAreBinary(FlowchartConstraint):
     def code(self) -> str:
         return "flowchart.binary_flow"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         return tuple(
@@ -215,9 +206,6 @@ class NotesAreValid(FlowchartConstraint):
     def code(self) -> str:
         return "flowchart.note"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues: list[Violation] = []

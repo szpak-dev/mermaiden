@@ -2,15 +2,10 @@ from dataclasses import dataclass
 from typing import ClassVar
 
 from ...core.element import Container
-from ..domain import DiagramElementMember
-
-
-class MindmapElementMember(DiagramElementMember):
-    description: ClassVar[str] = "a mindmap node"
 
 
 @dataclass(frozen=True, slots=True)
-class MindmapNode(Container, MindmapElementMember):
+class MindmapNode(Container):
     kind: ClassVar[str] = "mindmap_node"
 
 

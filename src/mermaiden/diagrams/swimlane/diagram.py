@@ -5,24 +5,18 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from ..flowchart.elements import Direction
 from .configuration import SwimlaneConfiguration
-from .constraints import SwimlaneAnnotationMember, SwimlaneConstraint
-from .elements import Activity, Connector, Decision, End, Start, Swimlane, SwimlaneElementMember, SwimlaneNode
-from .relations import ConditionalFlow, Flow, SwimlaneRelationMember
+from .constraints import SwimlaneConstraint
+from .elements import Activity, Connector, Decision, End, Start, Swimlane, SwimlaneNode
+from .relations import ConditionalFlow, Flow
 
 
 @injectable(as_type=DiagramModel, qualifier="swimlane", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class SwimlaneDiagram(DiagramModel):
     constraints: Sequence[SwimlaneConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "swimlane.member_type",
-        SwimlaneElementMember,
-        SwimlaneRelationMember,
-        SwimlaneAnnotationMember,
-    )
     configuration: SwimlaneConfiguration = field(default_factory=SwimlaneConfiguration, init=False)
     direction: Direction = field(default=Direction.TOP_DOWN, init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(

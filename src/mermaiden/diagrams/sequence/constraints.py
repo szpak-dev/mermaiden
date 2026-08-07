@@ -2,10 +2,10 @@
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, Violation
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 
 
-class SequenceConstraint(Constraint):
+class SequenceConstraint(BlockingConstraint):
     pass
 
 

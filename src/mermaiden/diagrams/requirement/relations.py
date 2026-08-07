@@ -3,11 +3,6 @@ from enum import StrEnum
 from typing import ClassVar
 
 from ...core.relation import Relation
-from ..domain import DiagramRelationMember
-
-
-class RequirementRelationMember(DiagramRelationMember):
-    description: ClassVar[str] = "a requirement relation"
 
 
 class RequirementRelationKind(StrEnum):
@@ -21,7 +16,7 @@ class RequirementRelationKind(StrEnum):
 
 
 @dataclass(frozen=True, slots=True)
-class RequirementRelation(Relation, RequirementRelationMember):
+class RequirementRelation(Relation):
     kind: ClassVar[str] = "requirement_relation"
     relation_kind: RequirementRelationKind = RequirementRelationKind.TRACES
 

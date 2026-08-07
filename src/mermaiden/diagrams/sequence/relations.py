@@ -3,11 +3,6 @@ from enum import StrEnum
 from typing import ClassVar
 
 from ...core.relation import Relation
-from ..domain import DiagramRelationMember
-
-
-class SequenceRelationMember(DiagramRelationMember):
-    description: ClassVar[str] = "a sequence event"
 
 
 class MessageKind(StrEnum):
@@ -36,7 +31,7 @@ class DirectiveKind(StrEnum):
 
 
 @dataclass(frozen=True, slots=True)
-class Message(Relation, SequenceRelationMember):
+class Message(Relation):
     kind: ClassVar[str] = "message"
     message_kind: MessageKind = MessageKind.SOLID
     activate: bool = False
@@ -52,18 +47,18 @@ class Message(Relation, SequenceRelationMember):
 
 
 @dataclass(frozen=True, slots=True)
-class ParticipantEvent(Relation, SequenceRelationMember):
+class ParticipantEvent(Relation):
     kind: ClassVar[str] = "participant_event"
     action: str = "activate"
 
 
 @dataclass(frozen=True, slots=True)
-class Control(Relation, SequenceRelationMember):
+class Control(Relation):
     kind: ClassVar[str] = "control"
     control_kind: ControlKind = ControlKind.END
 
 
 @dataclass(frozen=True, slots=True)
-class Directive(Relation, SequenceRelationMember):
+class Directive(Relation):
     kind: ClassVar[str] = "directive"
     directive_kind: DirectiveKind = DirectiveKind.AUTONUMBER

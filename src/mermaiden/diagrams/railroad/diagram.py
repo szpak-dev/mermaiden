@@ -5,10 +5,10 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import RailroadDiagramConfiguration
-from .constraints import RailroadAnnotationMember, RailroadDiagramConstraint, RailroadRelationMember
-from .elements import Alternative, Group, NonTerminal, Optional, RailroadElementMember, Repetition, Special, Terminal
+from .constraints import RailroadDiagramConstraint
+from .elements import Alternative, Group, NonTerminal, Optional, Repetition, Special, Terminal
 from .elements import Sequence as RailroadSequence
 
 
@@ -16,12 +16,6 @@ from .elements import Sequence as RailroadSequence
 @dataclass(frozen=True, slots=True)
 class RailroadDiagram(DiagramModel):
     constraints: Sequence[RailroadDiagramConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "railroad.member_type",
-        RailroadElementMember,
-        RailroadRelationMember,
-        RailroadAnnotationMember,
-    )
     configuration: RailroadDiagramConfiguration = field(default_factory=RailroadDiagramConfiguration, init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(
         "railroad-ebnf-beta",

@@ -1,21 +1,13 @@
-from abc import ABC
-from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
-from ..domain import (
-    DiagramAnnotationMember,
-)
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 from .elements import C4Element
 from .relations import Relationship
 
 
-class C4ContextDiagramConstraint(Constraint, ABC):
+class C4ContextDiagramConstraint(BlockingConstraint):
     pass
-
-class C4AnnotationMember(DiagramAnnotationMember):
-    description: ClassVar[str] = "valid in C4 Context diagram"
 
 
 @injectable(as_type=C4ContextDiagramConstraint, qualifier="c4_structure")
@@ -24,9 +16,6 @@ class C4ContextDiagramStructure(C4ContextDiagramConstraint):
     def code(self) -> str:
         return "c4.structure"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues = [

@@ -2,7 +2,13 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import ClassVar
 
-from ..core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, ValidationReport, Violation
+from ..core.constraint import (
+    BlockingConstraint,
+    Constraint,
+    ConstraintDiagram,
+    ValidationReport,
+    Violation,
+)
 from ..core.diagram import Diagram
 from ..runtime.diagrams.aggregate import DiagramAggregate
 from ..runtime.domain import ConstraintInspection
@@ -20,80 +26,41 @@ class DiagramObserver[ConstraintT: Constraint](ConstraintInspection):
         return ValidationReport((*structural.violations, *domain))
 
 
-class DiagramMember:
-    description: ClassVar[str]
-
-
-class DiagramElementMember(DiagramMember):
-    pass
-
-
-class DiagramRelationMember(DiagramMember):
-    pass
-
-
-class DiagramAnnotationMember(DiagramMember):
-    pass
-
-
 @dataclass(frozen=True, slots=True)
-class DiagramMembersConstraint(Constraint):
-    member_code: str
-    element_member_type: type[DiagramElementMember]
-    relation_member_type: type[DiagramRelationMember]
-    annotation_member_type: type[DiagramAnnotationMember]
+class DiagramMembers(BlockingConstraint):
+    package: str
 
     @property
     def code(self) -> str:
-        return self.member_code
+        return f"{self.package.rsplit('.', maxsplit=1)[-1]}.member_type"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues = [
             self.violation(
-                f"Element '{item.id}' is not {self.element_member_type.description}.",
+                f"Element '{item.id}' does not belong to this diagram.",
                 path=f"elements.{item.id}",
             )
             for item in diagram.walk_elements()
-            if not isinstance(item, self.element_member_type)
+            if item.__class__.__module__ != f"{self.package}.elements"
         ]
         issues.extend(
             self.violation(
-                f"Relation '{item.id}' is not {self.relation_member_type.description}.",
+                f"Relation '{item.id}' does not belong to this diagram.",
                 path=f"relations.{item.id}",
             )
             for item in diagram.find_relations()
-            if not isinstance(item, self.relation_member_type)
+            if item.__class__.__module__ != f"{self.package}.relations"
         )
         issues.extend(
             self.violation(
-                f"Annotation '{item.id}' is not {self.annotation_member_type.description}.",
+                f"Annotation '{item.id}' does not belong to this diagram.",
                 path=f"annotations.{item.id}",
             )
             for item in diagram.find_annotations()
-            if not isinstance(item, self.annotation_member_type)
+            if item.__class__.__module__ != f"{self.package}.annotations"
         )
         return tuple(issues)
-
-
-@dataclass(frozen=True, slots=True)
-class DiagramMembers:
-    code: str
-    element_member_type: type[DiagramElementMember]
-    relation_member_type: type[DiagramRelationMember]
-    annotation_member_type: type[DiagramAnnotationMember]
-
-    @property
-    def constraint(self) -> DiagramMembersConstraint:
-        return DiagramMembersConstraint(
-            self.code,
-            self.element_member_type,
-            self.relation_member_type,
-            self.annotation_member_type,
-        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -107,7 +74,6 @@ class DiagramDefinition:
 @dataclass(frozen=True, slots=True)
 class DiagramModel(DiagramAggregate):
     definition: ClassVar[DiagramDefinition]
-    members: ClassVar[DiagramMembers]
     structure: ConstraintInspection
     constraints: Sequence[Constraint]
     configuration: MermaidDiagramConfiguration
@@ -122,4 +88,5 @@ class DiagramModel(DiagramAggregate):
 
     @property
     def observer(self) -> DiagramObserver[Constraint]:
-        return DiagramObserver(self.structure, (self.members.constraint, *self.constraints))
+        members = DiagramMembers(type(self).__module__.removesuffix(".diagram"))
+        return DiagramObserver(self.structure, (members, *self.constraints))

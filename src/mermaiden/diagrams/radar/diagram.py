@@ -5,22 +5,16 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import RadarConfiguration
-from .constraints import RadarAnnotationMember, RadarConstraint, RadarRelationMember
-from .elements import RadarAxis, RadarCurve, RadarElementMember
+from .constraints import RadarConstraint
+from .elements import RadarAxis, RadarCurve
 
 
 @injectable(as_type=DiagramModel, qualifier="radar", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Radar(DiagramModel):
     constraints: Sequence[RadarConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "radar.member_type",
-        RadarElementMember,
-        RadarRelationMember,
-        RadarAnnotationMember,
-    )
     configuration: RadarConfiguration = field(default_factory=RadarConfiguration, init=False)
     title: str = field(default="", init=False)
     show_legend: bool = field(default=True, init=False)

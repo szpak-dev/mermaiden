@@ -3,11 +3,6 @@ from enum import StrEnum
 from typing import ClassVar
 
 from ...core.element import Container, Entity
-from ..domain import DiagramElementMember
-
-
-class ClassDiagramElementMember(DiagramElementMember):
-    description: ClassVar[str] = "a class"
 
 
 class Visibility(StrEnum):
@@ -40,7 +35,7 @@ class ClassMethod:
 
 
 @dataclass(frozen=True, slots=True)
-class Class(Entity, ClassDiagramElementMember):
+class Class(Entity):
     kind: ClassVar[str] = "class"
     attributes: tuple[str | ClassAttribute, ...] = ()
     methods: tuple[str | ClassMethod, ...] = ()
@@ -49,6 +44,6 @@ class Class(Entity, ClassDiagramElementMember):
 
 
 @dataclass(frozen=True, slots=True)
-class ClassNamespace(Container, ClassDiagramElementMember):
+class ClassNamespace(Container):
     kind: ClassVar[str] = "class_namespace"
     comment: str = ""

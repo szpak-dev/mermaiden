@@ -1,15 +1,14 @@
-from abc import ABC
 
 from wireup import injectable
 
 from ...core.annotation import TargetKind
-from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 from .annotations import StateNote
 from .elements import CompositeState, StateNode
 from .relations import StateTransition
 
 
-class StateDiagramConstraint(Constraint, ABC):
+class StateDiagramConstraint(BlockingConstraint):
     @staticmethod
     def transitions(diagram: ConstraintDiagram) -> tuple[StateTransition, ...]:
         return tuple(item for item in diagram.find_relations() if isinstance(item, StateTransition))
@@ -20,9 +19,6 @@ class NotesAreValid(StateDiagramConstraint):
     def code(self) -> str:
         return "state.note"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         elements = {item.id: item for item in diagram.walk_elements()}
@@ -41,9 +37,6 @@ class TransitionsAreValid(StateDiagramConstraint):
     def code(self) -> str:
         return "state.transition"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         elements = {item.id: item for item in diagram.walk_elements()}

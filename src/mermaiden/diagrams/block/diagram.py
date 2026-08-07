@@ -5,22 +5,16 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import BlockDiagramConfiguration
-from .constraints import BlockAnnotationMember, BlockDiagramConstraint, BlockRelationMember
-from .elements import BlockElementMember, BlockGroup, BlockNode, BlockSpace
+from .constraints import BlockDiagramConstraint
+from .elements import BlockGroup, BlockNode, BlockSpace
 
 
 @injectable(as_type=DiagramModel, qualifier="block", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class BlockDiagram(DiagramModel):
     constraints: Sequence[BlockDiagramConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "block.member_type",
-        BlockElementMember,
-        BlockRelationMember,
-        BlockAnnotationMember,
-    )
     configuration: BlockDiagramConfiguration = field(default_factory=BlockDiagramConfiguration, init=False)
     columns: int | None = field(default=None, init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(

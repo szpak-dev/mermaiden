@@ -1,25 +1,13 @@
-from abc import ABC
-from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, Violation
-from ..domain import (
-    DiagramAnnotationMember,
-    DiagramRelationMember,
-)
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 from .elements import MindmapNode
 
 
-class MindmapConstraint(Constraint, ABC):
+class MindmapConstraint(BlockingConstraint):
     pass
 
-class MindmapRelationMember(DiagramRelationMember):
-    description: ClassVar[str] = "valid in a mindmap"
-
-
-class MindmapAnnotationMember(DiagramAnnotationMember):
-    description: ClassVar[str] = "valid in a mindmap"
 
 
 @injectable(as_type=MindmapConstraint, qualifier="mindmap_root")

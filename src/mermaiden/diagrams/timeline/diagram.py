@@ -5,22 +5,16 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import TimelineDiagramConfiguration
-from .constraints import TimelineAnnotationMember, TimelineConstraint, TimelineRelationMember
-from .elements import TimelineElementMember, TimelineEvent, TimelinePeriod, TimelineSection
+from .constraints import TimelineConstraint
+from .elements import TimelineEvent, TimelinePeriod, TimelineSection
 
 
 @injectable(as_type=DiagramModel, qualifier="timeline", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Timeline(DiagramModel):
     constraints: Sequence[TimelineConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "timeline.member_type",
-        TimelineElementMember,
-        TimelineRelationMember,
-        TimelineAnnotationMember,
-    )
     configuration: TimelineDiagramConfiguration = field(default_factory=TimelineDiagramConfiguration, init=False)
     title: str = field(default="", init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(

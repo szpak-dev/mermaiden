@@ -5,8 +5,8 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
-from .annotations import FlowchartAnnotationMember, Notes
+from ..domain import DiagramDefinition, DiagramModel
+from .annotations import Notes
 from .configuration import FlowchartDiagramConfiguration
 from .constraints import FlowchartConstraint
 from .elements import (
@@ -16,7 +16,6 @@ from .elements import (
     Direction,
     Document,
     End,
-    FlowchartElementMember,
     FlowGroup,
     FlowNode,
     InputOutput,
@@ -24,19 +23,13 @@ from .elements import (
     Start,
     Subprocess,
 )
-from .relations import ConditionalFlow, Flow, FlowchartRelationMember
+from .relations import ConditionalFlow, Flow
 
 
 @injectable(as_type=DiagramModel, qualifier="flowchart", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Flowchart(DiagramModel):
     constraints: Sequence[FlowchartConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "flowchart.member_type",
-        FlowchartElementMember,
-        FlowchartRelationMember,
-        FlowchartAnnotationMember,
-    )
     configuration: FlowchartDiagramConfiguration = field(default_factory=FlowchartDiagramConfiguration, init=False)
     direction: Direction = field(default=Direction.TOP_DOWN, init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(

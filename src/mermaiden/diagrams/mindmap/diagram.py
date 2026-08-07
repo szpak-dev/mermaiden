@@ -5,22 +5,16 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import MindmapDiagramConfiguration
-from .constraints import MindmapAnnotationMember, MindmapConstraint, MindmapRelationMember
-from .elements import Bang, Circle, Cloud, Hexagon, MindmapElementMember, MindmapNode, RoundedSquare, Square
+from .constraints import MindmapConstraint
+from .elements import Bang, Circle, Cloud, Hexagon, MindmapNode, RoundedSquare, Square
 
 
 @injectable(as_type=DiagramModel, qualifier="mindmap", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Mindmap(DiagramModel):
     constraints: Sequence[MindmapConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "mindmap.member_type",
-        MindmapElementMember,
-        MindmapRelationMember,
-        MindmapAnnotationMember,
-    )
     configuration: MindmapDiagramConfiguration = field(default_factory=MindmapDiagramConfiguration, init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(
         "mindmap",

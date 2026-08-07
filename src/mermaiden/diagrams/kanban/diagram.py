@@ -5,22 +5,16 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import KanbanDiagramConfiguration
-from .constraints import KanbanAnnotationMember, KanbanDiagramConstraint, KanbanRelationMember
-from .elements import Column, KanbanElementMember, Task
+from .constraints import KanbanDiagramConstraint
+from .elements import Column, Task
 
 
 @injectable(as_type=DiagramModel, qualifier="kanban", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class KanbanDiagram(DiagramModel):
     constraints: Sequence[KanbanDiagramConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "kanban.member_type",
-        KanbanElementMember,
-        KanbanRelationMember,
-        KanbanAnnotationMember,
-    )
     configuration: KanbanDiagramConfiguration = field(default_factory=KanbanDiagramConfiguration, init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(
         "kanban",

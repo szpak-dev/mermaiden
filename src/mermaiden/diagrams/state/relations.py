@@ -2,15 +2,10 @@ from dataclasses import dataclass
 from typing import ClassVar
 
 from ...core.relation import Relation
-from ..domain import DiagramRelationMember
-
-
-class StateRelationMember(DiagramRelationMember):
-    description: ClassVar[str] = "a state transition"
 
 
 @dataclass(frozen=True, slots=True)
-class StateTransition(Relation, StateRelationMember):
+class StateTransition(Relation):
     kind: ClassVar[str] = "state_transition"
     scope_id: str = ""
     source_terminal: bool = False

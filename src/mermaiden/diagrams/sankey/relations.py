@@ -2,15 +2,10 @@ from dataclasses import dataclass
 from typing import ClassVar
 
 from ...core.relation import Relation
-from ..domain import DiagramRelationMember
-
-
-class SankeyRelationMember(DiagramRelationMember):
-    description: ClassVar[str] = "a Sankey link"
 
 
 @dataclass(frozen=True, slots=True)
-class SankeyLink(Relation, SankeyRelationMember):
+class SankeyLink(Relation):
     kind: ClassVar[str] = "sankey_link"
     value: float = 0
 

@@ -1,25 +1,13 @@
-from abc import ABC
-from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
-from ..domain import (
-    DiagramAnnotationMember,
-    DiagramRelationMember,
-)
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 from .elements import RadarAxis, RadarCurve
 
 
-class RadarConstraint(Constraint, ABC):
+class RadarConstraint(BlockingConstraint):
     pass
 
-class RadarRelationMember(DiagramRelationMember):
-    description: ClassVar[str] = "valid in a radar chart"
-
-
-class RadarAnnotationMember(DiagramAnnotationMember):
-    description: ClassVar[str] = "valid in a radar chart"
 
 
 @injectable(as_type=RadarConstraint, qualifier="radar_structure")
@@ -28,9 +16,6 @@ class RadarStructure(RadarConstraint):
     def code(self) -> str:
         return "radar.structure"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         axes = tuple(item for item in diagram.root_elements if isinstance(item, RadarAxis))

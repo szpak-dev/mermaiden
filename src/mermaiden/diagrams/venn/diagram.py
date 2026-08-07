@@ -5,22 +5,16 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import VennConfiguration
-from .constraints import VennAnnotationMember, VennConstraint, VennRelationMember
-from .elements import VennElementMember, VennSet, VennText, VennUnion
+from .constraints import VennConstraint
+from .elements import VennSet, VennText, VennUnion
 
 
 @injectable(as_type=DiagramModel, qualifier="venn", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Venn(DiagramModel):
     constraints: Sequence[VennConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "venn.member_type",
-        VennElementMember,
-        VennRelationMember,
-        VennAnnotationMember,
-    )
     configuration: VennConfiguration = field(default_factory=VennConfiguration, init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(
         "venn-beta",

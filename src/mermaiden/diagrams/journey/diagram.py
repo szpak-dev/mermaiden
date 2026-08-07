@@ -5,22 +5,16 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import JourneyDiagramConfiguration
-from .constraints import JourneyAnnotationMember, JourneyConstraint, JourneyRelationMember
-from .elements import JourneyElementMember, JourneySection, JourneyTask
+from .constraints import JourneyConstraint
+from .elements import JourneySection, JourneyTask
 
 
 @injectable(as_type=DiagramModel, qualifier="journey", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Journey(DiagramModel):
     constraints: Sequence[JourneyConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "journey.member_type",
-        JourneyElementMember,
-        JourneyRelationMember,
-        JourneyAnnotationMember,
-    )
     configuration: JourneyDiagramConfiguration = field(default_factory=JourneyDiagramConfiguration, init=False)
     title: str = field(default="", init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(

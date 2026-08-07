@@ -5,22 +5,16 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import GanttConfiguration
-from .constraints import GanttAnnotationMember, GanttConstraint, GanttRelationMember
-from .elements import GanttElementMember, Marker, Milestone, Section, Task
+from .constraints import GanttConstraint
+from .elements import Marker, Milestone, Section, Task
 
 
 @injectable(as_type=DiagramModel, qualifier="gantt", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Gantt(DiagramModel):
     constraints: Sequence[GanttConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "gantt.member_type",
-        GanttElementMember,
-        GanttRelationMember,
-        GanttAnnotationMember,
-    )
     configuration: GanttConfiguration = field(default_factory=GanttConfiguration, init=False)
     title: str = field(default="", init=False)
     date_format: str = field(default="YYYY-MM-DD", init=False)

@@ -1,21 +1,13 @@
-from abc import ABC
-from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
-from ..domain import (
-    DiagramAnnotationMember,
-)
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 from .elements import Domain
 from .relations import Transition
 
 
-class CynefinDiagramConstraint(Constraint, ABC):
+class CynefinDiagramConstraint(BlockingConstraint):
     pass
-
-class CynefinAnnotationMember(DiagramAnnotationMember):
-    description: ClassVar[str] = "valid in Cynefin diagram"
 
 
 @injectable(as_type=CynefinDiagramConstraint, qualifier="cynefin_structure")
@@ -24,9 +16,6 @@ class CynefinDiagramStructure(CynefinDiagramConstraint):
     def code(self) -> str:
         return "cynefin.structure"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         domains = {item.id: item for item in diagram.walk_elements() if isinstance(item, Domain)}

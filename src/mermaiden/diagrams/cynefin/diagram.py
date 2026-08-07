@@ -5,23 +5,17 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import CynefinDiagramConfiguration
-from .constraints import CynefinAnnotationMember, CynefinDiagramConstraint
-from .elements import CynefinElementMember, Domain, DomainKind
-from .relations import CynefinRelationMember, Transition
+from .constraints import CynefinDiagramConstraint
+from .elements import Domain, DomainKind
+from .relations import Transition
 
 
 @injectable(as_type=DiagramModel, qualifier="cynefin", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class CynefinDiagram(DiagramModel):
     constraints: Sequence[CynefinDiagramConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "cynefin.member_type",
-        CynefinElementMember,
-        CynefinRelationMember,
-        CynefinAnnotationMember,
-    )
     configuration: CynefinDiagramConfiguration = field(default_factory=CynefinDiagramConfiguration, init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(
         "cynefin-beta",

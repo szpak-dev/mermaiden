@@ -5,25 +5,19 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from ..flowchart.elements import Direction
-from .annotations import NotePosition, StateAnnotationMember, StateNote, StateNotes
+from .annotations import NotePosition, StateNote, StateNotes
 from .configuration import StateDiagramConfiguration
 from .constraints import StateDiagramConstraint
-from .elements import Choice, CompositeState, Final, Fork, Initial, Join, State, StateElementMember, StateNode
-from .relations import StateRelationMember, StateTransition
+from .elements import Choice, CompositeState, Final, Fork, Initial, Join, State, StateNode
+from .relations import StateTransition
 
 
 @injectable(as_type=DiagramModel, qualifier="state", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class StateDiagram(DiagramModel):
     constraints: Sequence[StateDiagramConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "state.member_type",
-        StateElementMember,
-        StateRelationMember,
-        StateAnnotationMember,
-    )
     configuration: StateDiagramConfiguration = field(default_factory=StateDiagramConfiguration, init=False)
     direction: Direction = field(default=Direction.TOP_DOWN, init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(

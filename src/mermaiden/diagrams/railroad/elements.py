@@ -2,48 +2,43 @@ from dataclasses import dataclass
 from typing import ClassVar
 
 from ...core.element import Container, Entity
-from ..domain import DiagramElementMember
-
-
-class RailroadElementMember(DiagramElementMember):
-    description: ClassVar[str] = "valid in Railroad diagram"
 
 
 @dataclass(frozen=True, slots=True)
-class Terminal(Entity, RailroadElementMember):
+class Terminal(Entity):
     kind: ClassVar[str] = "terminal"
 
 
 @dataclass(frozen=True, slots=True)
-class NonTerminal(Entity, RailroadElementMember):
+class NonTerminal(Entity):
     kind: ClassVar[str] = "nonterminal"
 
 
 @dataclass(frozen=True, slots=True)
-class Special(Entity, RailroadElementMember):
+class Special(Entity):
     kind: ClassVar[str] = "special"
 
 
 @dataclass(frozen=True, slots=True)
-class Sequence(Container, RailroadElementMember):
+class Sequence(Container):
     kind: ClassVar[str] = "sequence"
 
 
 @dataclass(frozen=True, slots=True)
-class Alternative(Container, RailroadElementMember):
+class Alternative(Container):
     kind: ClassVar[str] = "alternative"
 
 
 @dataclass(frozen=True, slots=True)
-class Optional(Container, RailroadElementMember):
+class Optional(Container):
     kind: ClassVar[str] = "optional"
 
 
 @dataclass(frozen=True, slots=True)
-class Repetition(Container, RailroadElementMember):
+class Repetition(Container):
     kind: ClassVar[str] = "repetition"
 
 
 @dataclass(frozen=True, slots=True)
-class Group(Container, RailroadElementMember):
+class Group(Container):
     kind: ClassVar[str] = "group"

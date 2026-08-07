@@ -5,24 +5,18 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
-from .annotations import TreeAnnotations, TreeViewAnnotationMember
+from ..domain import DiagramDefinition, DiagramModel
+from .annotations import TreeAnnotations
 from .configuration import TreeViewDiagramConfiguration
 from .constraints import TreeViewConstraint
-from .elements import TreeItem, TreeViewElementMember
-from .relations import TreeBranch, TreeViewRelationMember
+from .elements import TreeItem
+from .relations import TreeBranch
 
 
 @injectable(as_type=DiagramModel, qualifier="treeview", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class TreeView(DiagramModel):
     constraints: Sequence[TreeViewConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "treeview.members",
-        TreeViewElementMember,
-        TreeViewRelationMember,
-        TreeViewAnnotationMember,
-    )
     configuration: TreeViewDiagramConfiguration = field(default_factory=TreeViewDiagramConfiguration, init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(
         "treeView-beta",

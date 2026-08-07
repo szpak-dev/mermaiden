@@ -1,19 +1,11 @@
-from abc import ABC
-from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, Violation
-from ..domain import (
-    DiagramAnnotationMember,
-)
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 
 
-class EntityRelationshipDiagramConstraint(Constraint, ABC):
+class EntityRelationshipDiagramConstraint(BlockingConstraint):
     pass
-
-class EntityRelationshipAnnotationMember(DiagramAnnotationMember):
-    description: ClassVar[str] = "valid in an ER diagram"
 
 
 @injectable(as_type=EntityRelationshipDiagramConstraint, qualifier="er_structure")

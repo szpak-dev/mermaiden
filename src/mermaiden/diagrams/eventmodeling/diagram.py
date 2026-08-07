@@ -5,23 +5,17 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import EventModelingDiagramConfiguration
-from .constraints import EventModelingAnnotationMember, EventModelingDiagramConstraint
-from .elements import Actor, Command, Event, EventModelingElementMember, Swimlane, View
-from .relations import EventModelingRelationMember, Flow
+from .constraints import EventModelingDiagramConstraint
+from .elements import Actor, Command, Event, Swimlane, View
+from .relations import Flow
 
 
 @injectable(as_type=DiagramModel, qualifier="eventmodeling", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class EventModelingDiagram(DiagramModel):
     constraints: Sequence[EventModelingDiagramConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "eventmodeling.member_type",
-        EventModelingElementMember,
-        EventModelingRelationMember,
-        EventModelingAnnotationMember,
-    )
     configuration: EventModelingDiagramConfiguration = field(
         default_factory=EventModelingDiagramConfiguration,
         init=False,

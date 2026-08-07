@@ -1,25 +1,13 @@
-from abc import ABC
-from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, Violation
-from ..domain import (
-    DiagramAnnotationMember,
-    DiagramRelationMember,
-)
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 from .elements import Alternative, Group, Optional, Repetition, Sequence
 
 
-class RailroadDiagramConstraint(Constraint, ABC):
+class RailroadDiagramConstraint(BlockingConstraint):
     pass
 
-class RailroadRelationMember(DiagramRelationMember):
-    description: ClassVar[str] = "valid in Railroad diagram"
-
-
-class RailroadAnnotationMember(DiagramAnnotationMember):
-    description: ClassVar[str] = "valid in Railroad diagram"
 
 
 @injectable(as_type=RailroadDiagramConstraint, qualifier="railroad_structure")

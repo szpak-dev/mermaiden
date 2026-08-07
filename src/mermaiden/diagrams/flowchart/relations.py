@@ -2,15 +2,10 @@ from dataclasses import dataclass
 from typing import ClassVar
 
 from ...core.relation import Relation
-from ..domain import DiagramRelationMember
-
-
-class FlowchartRelationMember(DiagramRelationMember):
-    description: ClassVar[str] = "a flow"
 
 
 @dataclass(frozen=True, slots=True)
-class Flow(Relation, FlowchartRelationMember):
+class Flow(Relation):
     kind: ClassVar[str] = "flow"
 
     @property

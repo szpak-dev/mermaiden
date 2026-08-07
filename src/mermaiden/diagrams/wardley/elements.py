@@ -2,15 +2,10 @@ from dataclasses import dataclass
 from typing import ClassVar
 
 from ...core.element import Container, Entity
-from ..domain import DiagramElementMember
-
-
-class WardleyElementMember(DiagramElementMember):
-    description: ClassVar[str] = "valid in Wardley map"
 
 
 @dataclass(frozen=True, slots=True)
-class Component(Entity, WardleyElementMember):
+class Component(Entity):
     kind: ClassVar[str] = "component"
     visibility: float = 0
     evolution: float = 0
@@ -19,11 +14,11 @@ class Component(Entity, WardleyElementMember):
 
 
 @dataclass(frozen=True, slots=True)
-class Evolution(Entity, WardleyElementMember):
+class Evolution(Entity):
     kind: ClassVar[str] = "evolution"
     target: float = 0
 
 
 @dataclass(frozen=True, slots=True)
-class Pipeline(Container, WardleyElementMember):
+class Pipeline(Container):
     kind: ClassVar[str] = "pipeline"

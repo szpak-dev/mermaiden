@@ -1,24 +1,12 @@
-from abc import ABC
-from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, Violation
-from ..domain import (
-    DiagramAnnotationMember,
-    DiagramRelationMember,
-)
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 
 
-class JourneyConstraint(Constraint, ABC):
+class JourneyConstraint(BlockingConstraint):
     pass
 
-class JourneyRelationMember(DiagramRelationMember):
-    description: ClassVar[str] = "valid in a user journey"
-
-
-class JourneyAnnotationMember(DiagramAnnotationMember):
-    description: ClassVar[str] = "valid in a user journey"
 
 
 @injectable(as_type=JourneyConstraint, qualifier="journey_structure")

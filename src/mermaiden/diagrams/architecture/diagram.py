@@ -5,24 +5,18 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
-from .annotations import ArchitectureAnnotationMember, ArchitectureNotes
+from ..domain import DiagramDefinition, DiagramModel
+from .annotations import ArchitectureNotes
 from .configuration import ArchitectureDiagramConfiguration
 from .constraints import ArchitectureConstraint
-from .elements import ArchitectureElementMember, ArchitectureGroup, Junction, Service
-from .relations import ArchitectureRelationMember, Edge, Port
+from .elements import ArchitectureGroup, Junction, Service
+from .relations import Edge, Port
 
 
 @injectable(as_type=DiagramModel, qualifier="architecture", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Architecture(DiagramModel):
     constraints: Sequence[ArchitectureConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "architecture.members",
-        ArchitectureElementMember,
-        ArchitectureRelationMember,
-        ArchitectureAnnotationMember,
-    )
     configuration: ArchitectureDiagramConfiguration = field(
         default_factory=ArchitectureDiagramConfiguration,
         init=False,

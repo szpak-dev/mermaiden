@@ -1,24 +1,12 @@
-from abc import ABC
-from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, Violation
-from ..domain import (
-    DiagramAnnotationMember,
-    DiagramRelationMember,
-)
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 
 
-class BlockDiagramConstraint(Constraint, ABC):
+class BlockDiagramConstraint(BlockingConstraint):
     pass
 
-class BlockRelationMember(DiagramRelationMember):
-    description: ClassVar[str] = "valid in a block diagram"
-
-
-class BlockAnnotationMember(DiagramAnnotationMember):
-    description: ClassVar[str] = "valid in a block diagram"
 
 
 @injectable(as_type=BlockDiagramConstraint, qualifier="block_structure")

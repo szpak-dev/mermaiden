@@ -5,23 +5,17 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import EntityRelationshipDiagramConfiguration
-from .constraints import EntityRelationshipAnnotationMember, EntityRelationshipDiagramConstraint
-from .elements import Entity, EntityAttribute, EntityRelationshipElementMember
-from .relations import EntityRelationship, EntityRelationshipRelationMember
+from .constraints import EntityRelationshipDiagramConstraint
+from .elements import Entity, EntityAttribute
+from .relations import EntityRelationship
 
 
 @injectable(as_type=DiagramModel, qualifier="er", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class EntityRelationshipDiagram(DiagramModel):
     constraints: Sequence[EntityRelationshipDiagramConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "er.member_type",
-        EntityRelationshipElementMember,
-        EntityRelationshipRelationMember,
-        EntityRelationshipAnnotationMember,
-    )
     configuration: EntityRelationshipDiagramConfiguration = field(
         default_factory=EntityRelationshipDiagramConfiguration,
         init=False,

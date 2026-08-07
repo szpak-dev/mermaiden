@@ -3,11 +3,6 @@ from enum import StrEnum
 from typing import ClassVar
 
 from ...core.element import Container, Entity
-from ..domain import DiagramElementMember
-
-
-class FlowchartElementMember(DiagramElementMember):
-    description: ClassVar[str] = "a flowchart element"
 
 
 class Direction(StrEnum):
@@ -18,7 +13,7 @@ class Direction(StrEnum):
 
 
 @dataclass(frozen=True, slots=True)
-class FlowNode(Entity, FlowchartElementMember):
+class FlowNode(Entity):
     kind: ClassVar[str] = "flow_node"
 
 
@@ -68,6 +63,6 @@ class Junction(FlowNode):
 
 
 @dataclass(frozen=True, slots=True)
-class FlowGroup(Container, FlowchartElementMember):
+class FlowGroup(Container):
     kind: ClassVar[str] = "flow_group"
     direction: Direction | None = None

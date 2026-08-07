@@ -5,23 +5,16 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import IshikawaDiagramConfiguration
-from .constraints import IshikawaAnnotationMember, IshikawaDiagramConstraint
-from .elements import Category, Cause, Effect, IshikawaElementMember
-from .relations import IshikawaRelationMember
+from .constraints import IshikawaDiagramConstraint
+from .elements import Category, Cause, Effect
 
 
 @injectable(as_type=DiagramModel, qualifier="ishikawa", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class IshikawaDiagram(DiagramModel):
     constraints: Sequence[IshikawaDiagramConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "ishikawa.member_type",
-        IshikawaElementMember,
-        IshikawaRelationMember,
-        IshikawaAnnotationMember,
-    )
     configuration: IshikawaDiagramConfiguration = field(default_factory=IshikawaDiagramConfiguration, init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(
         "ishikawa-beta",

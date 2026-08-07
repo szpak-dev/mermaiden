@@ -5,23 +5,17 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import WardleyDiagramConfiguration
-from .constraints import WardleyAnnotationMember, WardleyDiagramConstraint
-from .elements import Component, Evolution, WardleyElementMember
-from .relations import Dependency, WardleyRelationMember
+from .constraints import WardleyDiagramConstraint
+from .elements import Component, Evolution
+from .relations import Dependency
 
 
 @injectable(as_type=DiagramModel, qualifier="wardley", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class WardleyDiagram(DiagramModel):
     constraints: Sequence[WardleyDiagramConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "wardley.member_type",
-        WardleyElementMember,
-        WardleyRelationMember,
-        WardleyAnnotationMember,
-    )
     configuration: WardleyDiagramConfiguration = field(default_factory=WardleyDiagramConfiguration, init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(
         "wardley-beta",

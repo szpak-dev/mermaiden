@@ -1,15 +1,14 @@
-from abc import ABC
 
 from wireup import injectable
 
 from ...core.annotation import TargetKind
-from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 from .annotations import TreeAnnotation
 from .elements import TreeItem
 from .relations import TreeBranch
 
 
-class TreeViewConstraint(Constraint, ABC):
+class TreeViewConstraint(BlockingConstraint):
     @staticmethod
     def branches(diagram: ConstraintDiagram) -> tuple[TreeBranch, ...]:
         return tuple(item for item in diagram.find_relations() if isinstance(item, TreeBranch))
@@ -20,9 +19,6 @@ class AnnotationsAreValid(TreeViewConstraint):
     def code(self) -> str:
         return "treeview.annotations"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues: list[Violation] = []
@@ -51,9 +47,6 @@ class BranchesAreAcyclic(TreeViewConstraint):
     def code(self) -> str:
         return "treeview.acyclic"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         children: dict[str, list[str]] = {}
@@ -88,9 +81,6 @@ class BranchesAreValid(TreeViewConstraint):
     def code(self) -> str:
         return "treeview.branches"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         elements = {item.id: item for item in diagram.walk_elements()}

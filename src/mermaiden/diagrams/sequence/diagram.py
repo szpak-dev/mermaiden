@@ -5,11 +5,11 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
-from .annotations import NotePosition, SequenceAnnotationMember, SequenceNotes
+from ..domain import DiagramDefinition, DiagramModel
+from .annotations import NotePosition, SequenceNotes
 from .configuration import SequenceDiagramConfiguration
 from .constraints import SequenceConstraint
-from .elements import Participant, ParticipantBox, ParticipantKind, SequenceElementMember
+from .elements import Participant, ParticipantBox, ParticipantKind
 from .relations import (
     Control,
     ControlKind,
@@ -18,7 +18,6 @@ from .relations import (
     Message,
     MessageKind,
     ParticipantEvent,
-    SequenceRelationMember,
 )
 
 
@@ -26,12 +25,6 @@ from .relations import (
 @dataclass(frozen=True, slots=True)
 class SequenceDiagram(DiagramModel):
     constraints: Sequence[SequenceConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "sequence.members",
-        SequenceElementMember,
-        SequenceRelationMember,
-        SequenceAnnotationMember,
-    )
     configuration: SequenceDiagramConfiguration = field(default_factory=SequenceDiagramConfiguration, init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(
         "sequenceDiagram",

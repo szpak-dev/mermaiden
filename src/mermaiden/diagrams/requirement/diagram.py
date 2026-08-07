@@ -5,30 +5,23 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import RequirementDiagramConfiguration
-from .constraints import RequirementAnnotationMember, RequirementDiagramConstraint
+from .constraints import RequirementDiagramConstraint
 from .elements import (
     Requirement,
     RequirementElement,
-    RequirementElementMember,
     RequirementType,
     Risk,
     VerificationMethod,
 )
-from .relations import RequirementRelation, RequirementRelationKind, RequirementRelationMember
+from .relations import RequirementRelation, RequirementRelationKind
 
 
 @injectable(as_type=DiagramModel, qualifier="requirement", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class RequirementDiagram(DiagramModel):
     constraints: Sequence[RequirementDiagramConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "requirement.member_type",
-        RequirementElementMember,
-        RequirementRelationMember,
-        RequirementAnnotationMember,
-    )
     configuration: RequirementDiagramConfiguration = field(default_factory=RequirementDiagramConfiguration, init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(
         "requirementDiagram",

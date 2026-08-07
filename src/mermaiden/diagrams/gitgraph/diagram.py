@@ -5,23 +5,16 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import GitGraphDiagramConfiguration
-from .constraints import GitGraphAnnotationMember, GitGraphDiagramConstraint
-from .elements import Branch, Checkout, Commit, GitGraphElementMember
-from .relations import GitGraphRelationMember
+from .constraints import GitGraphDiagramConstraint
+from .elements import Branch, Checkout, Commit
 
 
 @injectable(as_type=DiagramModel, qualifier="gitgraph", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class GitGraphDiagram(DiagramModel):
     constraints: Sequence[GitGraphDiagramConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "gitgraph.member_type",
-        GitGraphElementMember,
-        GitGraphRelationMember,
-        GitGraphAnnotationMember,
-    )
     configuration: GitGraphDiagramConfiguration = field(default_factory=GitGraphDiagramConfiguration, init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(
         "gitGraph",

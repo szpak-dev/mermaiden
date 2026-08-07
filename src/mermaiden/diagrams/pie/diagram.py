@@ -5,22 +5,16 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import PieDiagramConfiguration
-from .constraints import PieAnnotationMember, PieConstraint, PieRelationMember
-from .elements import PieElementMember, PieSlice
+from .constraints import PieConstraint
+from .elements import PieSlice
 
 
 @injectable(as_type=DiagramModel, qualifier="pie", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class PieDiagram(DiagramModel):
     constraints: Sequence[PieConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "pie.member_type",
-        PieElementMember,
-        PieRelationMember,
-        PieAnnotationMember,
-    )
     configuration: PieDiagramConfiguration = field(default_factory=PieDiagramConfiguration, init=False)
     title: str = field(default="", init=False)
     show_data: bool = field(default=False, init=False)

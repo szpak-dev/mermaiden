@@ -3,11 +3,6 @@ from enum import StrEnum
 from typing import ClassVar
 
 from ...core.element import Entity
-from ..domain import DiagramElementMember
-
-
-class CynefinElementMember(DiagramElementMember):
-    description: ClassVar[str] = "valid in Cynefin diagram"
 
 
 class DomainKind(StrEnum):
@@ -19,6 +14,6 @@ class DomainKind(StrEnum):
 
 
 @dataclass(frozen=True, slots=True)
-class Domain(Entity, CynefinElementMember):
+class Domain(Entity):
     kind: ClassVar[str] = "domain"
     domain: DomainKind = DomainKind.COMPLEX

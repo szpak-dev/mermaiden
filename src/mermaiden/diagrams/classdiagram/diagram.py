@@ -5,24 +5,18 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
-from .annotations import ClassDiagramAnnotationMember, ClassNotes
+from ..domain import DiagramDefinition, DiagramModel
+from .annotations import ClassNotes
 from .configuration import ClassDiagramConfiguration
 from .constraints import ClassDiagramConstraint
-from .elements import Class, ClassAttribute, ClassDiagramElementMember, ClassMethod, ClassNamespace
-from .relations import ClassDiagramRelationMember, ClassRelation, ClassRelationKind
+from .elements import Class, ClassAttribute, ClassMethod, ClassNamespace
+from .relations import ClassRelation, ClassRelationKind
 
 
 @injectable(as_type=DiagramModel, qualifier="classdiagram", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class ClassDiagram(DiagramModel):
     constraints: Sequence[ClassDiagramConstraint]
-    members: ClassVar[DiagramMembers] = DiagramMembers(
-        "classdiagram.members",
-        ClassDiagramElementMember,
-        ClassDiagramRelationMember,
-        ClassDiagramAnnotationMember,
-    )
     configuration: ClassDiagramConfiguration = field(default_factory=ClassDiagramConfiguration, init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(
         "classDiagram",

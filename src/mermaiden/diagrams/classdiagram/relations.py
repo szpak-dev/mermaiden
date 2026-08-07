@@ -3,11 +3,6 @@ from enum import StrEnum
 from typing import ClassVar
 
 from ...core.relation import Relation
-from ..domain import DiagramRelationMember
-
-
-class ClassDiagramRelationMember(DiagramRelationMember):
-    description: ClassVar[str] = "a class relation"
 
 
 class ClassRelationKind(StrEnum):
@@ -20,7 +15,7 @@ class ClassRelationKind(StrEnum):
 
 
 @dataclass(frozen=True, slots=True)
-class ClassRelation(Relation, ClassDiagramRelationMember):
+class ClassRelation(Relation):
     kind: ClassVar[str] = "class_relation"
     relation_kind: ClassRelationKind = ClassRelationKind.ASSOCIATION
     source_label: str = ""

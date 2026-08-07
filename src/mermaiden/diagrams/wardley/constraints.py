@@ -1,20 +1,12 @@
-from abc import ABC
-from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
-from ..domain import (
-    DiagramAnnotationMember,
-)
+from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
 from .elements import Component, Evolution
 
 
-class WardleyDiagramConstraint(Constraint, ABC):
+class WardleyDiagramConstraint(BlockingConstraint):
     pass
-
-class WardleyAnnotationMember(DiagramAnnotationMember):
-    description: ClassVar[str] = "valid in Wardley map"
 
 
 @injectable(as_type=WardleyDiagramConstraint, qualifier="wardley_structure")
@@ -23,9 +15,6 @@ class WardleyDiagramStructure(WardleyDiagramConstraint):
     def code(self) -> str:
         return "wardley.structure"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         components = {item.id for item in diagram.walk_elements() if isinstance(item, Component)}
