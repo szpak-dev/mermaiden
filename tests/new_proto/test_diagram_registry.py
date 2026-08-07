@@ -24,7 +24,7 @@ def test_registry_lists_every_implemented_diagram_with_mermaid_metadata() -> Non
         ("packet", "packet", "PacketDiagramConfig"),
         ("pie", "pie", "PieDiagramConfig"),
         ("radar-beta", "radar", "RadarDiagramConfig"),
-        ("railroad", "railroad", "RailroadDiagramConfig"),
+        ("railroad-ebnf-beta", "railroad", "RailroadDiagramConfig"),
         ("requirementDiagram", "requirement", "RequirementDiagramConfig"),
         ("sankey", "sankey", "SankeyDiagramConfig"),
         ("sequenceDiagram", "sequence", "SequenceDiagramConfig"),

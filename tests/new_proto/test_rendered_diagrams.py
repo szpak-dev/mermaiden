@@ -47,6 +47,10 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             'k_v_docs["Create documentation"]@{ ticket: "MC-2037", priority: "High" }',
             'k_v_render["Create renderer"]@{ assigned: "knsv" }',
         ),
+        "railroad": (
+            "railroad-ebnf-beta",
+            'r_v_expression = term "+" term ;',
+        ),
         "treeview": (
             "treeView-beta",
             "root/",
@@ -199,6 +203,8 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             assert source.startswith("---\nconfig:\n  wrap: true\n  cynefin: {")
         elif name == "kanban":
             assert source.startswith("---\nconfig:\n  wrap: true\n  kanban: {")
+        elif name == "railroad":
+            assert source.startswith("---\nconfig:\n  wrap: true\n  railroad: {}\n---\n")
         elif name == "packet":
             assert source.startswith("---\nconfig:\n  wrap: true\n  packet: {")
         elif name == "radar":

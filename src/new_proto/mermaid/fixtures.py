@@ -21,6 +21,7 @@ from ..diagrams.mindmap.diagram import Mindmap
 from ..diagrams.packet.diagram import Packet
 from ..diagrams.pie.diagram import PieDiagram
 from ..diagrams.radar.diagram import Radar
+from ..diagrams.railroad.diagram import RailroadDiagram
 from ..diagrams.registry import DiagramRegistry
 from ..diagrams.requirement.diagram import RequirementDiagram
 from ..diagrams.requirement.elements import RequirementType, Risk, VerificationMethod
@@ -388,6 +389,13 @@ class DiagramFixtures:
         kanban.add_task("docs", "Create documentation", "todo", ticket="MC-2037", priority="High")
         kanban.add_task("render", "Create renderer", "doing", assigned="knsv")
 
+        railroad = self.registry.get("railroad-ebnf-beta").diagram
+        assert isinstance(railroad, RailroadDiagram)
+        railroad.add_rule("expression", "expression")
+        railroad.add_non_terminal("term", "term", "expression")
+        railroad.add_terminal("plus", "+", "expression")
+        railroad.add_non_terminal("term_repeat", "term", "expression")
+
         return {
             "flowchart": self.renderer.render(flowchart),
             "treeview": self.renderer.render(treeview),
@@ -410,6 +418,7 @@ class DiagramFixtures:
             "c4": self.renderer.render(c4),
             "cynefin": self.renderer.render(cynefin),
             "kanban": self.renderer.render(kanban),
+            "railroad": self.renderer.render(railroad),
             "state": self.renderer.render(state),
             "swimlane": self.renderer.render(swimlane),
         }
