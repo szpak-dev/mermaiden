@@ -23,14 +23,25 @@ class DiagramCompatibility:
 
 
 @dataclass(frozen=True, slots=True)
+class MissingDiagramCompatibility:
+    config_key: str
+    schema_definition: str
+
+
+@dataclass(frozen=True, slots=True)
 class CompatibilityReport:
     lock: MermaidSchemaLock
     diagrams: tuple[DiagramCompatibility, ...]
+    missing_diagrams: tuple[MissingDiagramCompatibility, ...]
     syntax_violations: tuple[MermaidSyntaxViolation, ...] = ()
 
     @property
     def valid(self) -> bool:
-        return all(diagram.valid for diagram in self.diagrams) and not self.syntax_violations
+        return (
+            all(diagram.valid for diagram in self.diagrams)
+            and not self.missing_diagrams
+            and not self.syntax_violations
+        )
 
 
 @injectable(lifetime="scoped")
@@ -50,14 +61,21 @@ class MermaidCompatibility:
     def _inspect(self, syntax_violations: tuple[MermaidSyntaxViolation, ...]) -> CompatibilityReport:
         lock = self.schemas.lock()
         configuration = MermaidConfiguration(self.schemas.load())
-        diagrams = tuple(
-            DiagramCompatibility(
-                info.id,
-                info.config_key,
-                info.schema_definition,
-                configuration.validate(self.renderer.render(info.diagram)),
-                configuration.supports(info.config_key, info.schema_definition),
+        diagrams: list[DiagramCompatibility] = []
+        missing: list[MissingDiagramCompatibility] = []
+        for upstream in self.schemas.diagram_configs():
+            try:
+                info = self.registry.get_by_config_key(upstream.config_key)
+            except KeyError:
+                missing.append(MissingDiagramCompatibility(upstream.config_key, upstream.schema_definition))
+                continue
+            diagrams.append(
+                DiagramCompatibility(
+                    info.id,
+                    info.config_key,
+                    info.schema_definition,
+                    configuration.validate(self.renderer.render(info.diagram)),
+                    configuration.supports(info.config_key, info.schema_definition),
+                )
             )
-            for info in self.registry
-        )
-        return CompatibilityReport(lock, diagrams, syntax_violations)
+        return CompatibilityReport(lock, tuple(diagrams), tuple(missing), syntax_violations)

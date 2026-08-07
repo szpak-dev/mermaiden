@@ -5,7 +5,8 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
     report = Application.create().compatibility_report()
 
     assert report.lock.mermaid_version == "11.16.0"
-    assert report.valid
+    assert not report.valid
+    assert any(item.config_key == "mindmap" for item in report.missing_diagrams)
     assert [(item.diagram_id, item.config_key, item.schema_definition) for item in report.diagrams] == [
         ("architecture-beta", "architecture", "ArchitectureDiagramConfig"),
         ("classDiagram", "class", "ClassDiagramConfig"),

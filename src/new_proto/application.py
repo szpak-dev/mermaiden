@@ -86,6 +86,8 @@ class Application:
             report = application.verify_compatibility()
             for diagram in report.diagrams:
                 print(f"{diagram.diagram_id}: {'valid' if diagram.valid else 'invalid'}")
+            for diagram in report.missing_diagrams:
+                print(f"{diagram.config_key}: not implemented ({diagram.schema_definition})")
             for violation in report.syntax_violations:
                 print(f"{violation.diagram_id}: {violation.output}")
             if not report.valid:
