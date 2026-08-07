@@ -84,7 +84,7 @@ class MermaidCompatibilityService:
                 missing.append(MissingDiagramCompatibility(
                     upstream.config_key, upstream.schema_definition))
                 continue
-            source = self.renderer.render(info.diagram)
+            source = self.renderer.render(self.registry.get_diagram(info.id))
             local = configuration.local_contract(
                 info.config_key, info.schema_definition, source)
             sources[info.id] = fixture_sources[info.id] if verify_syntax and info.id in fixture_sources else source

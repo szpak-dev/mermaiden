@@ -2,27 +2,30 @@ import argparse
 from dataclasses import dataclass
 from pathlib import Path
 
-from .application import Application
+from wireup import SyncContainer, create_sync_container
+
+import mermaiden
+
 from .mermaid.compatibility import CompatibilityReport, MermaidCompatibilityService
 from .mermaid.compatibility.schema import MermaidDiagramConfig, MermaidSchemaStore
 from .mermaid.fixtures import DiagramFixtures
-from .mermaid.domain import MermaidPreview
+from .mermaid.application import MermaidPreviewApplication
 
 
 @dataclass(frozen=True, slots=True)
 class MermaidenCli:
-    application: Application
+    _container: SyncContainer
 
     @classmethod
     def create(cls) -> "MermaidenCli":
-        return cls(Application.create())
+        return cls(create_sync_container(injectables=[mermaiden], config={}))
 
     def mermaid_diagram_configs(self) -> tuple[MermaidDiagramConfig, ...]:
-        with self.application.container.enter_scope() as scope:
+        with self._container.enter_scope() as scope:
             return scope.get(MermaidSchemaStore).diagram_configs()
 
     def rendered_diagrams(self) -> dict[str, str]:
-        with self.application.container.enter_scope() as scope:
+        with self._container.enter_scope() as scope:
             return scope.get(DiagramFixtures).render()
 
     def write_fixtures(self, output: Path) -> tuple[Path, ...]:
@@ -30,16 +33,16 @@ class MermaidenCli:
         return tuple(self._write_source(output, name, source) for name, source in self.rendered_diagrams().items())
 
     def write_preview(self, output: Path) -> Path:
-        with self.application.container.enter_scope() as scope:
-            preview = scope.get(MermaidPreview)
+        with self._container.enter_scope() as scope:
+            preview = scope.get(MermaidPreviewApplication)
             return preview.write_sources(self.rendered_diagrams(), output)
 
     def compatibility_report(self) -> CompatibilityReport:
-        with self.application.container.enter_scope() as scope:
+        with self._container.enter_scope() as scope:
             return scope.get(MermaidCompatibilityService).inspect()
 
     def verify_compatibility(self) -> CompatibilityReport:
-        with self.application.container.enter_scope() as scope:
+        with self._container.enter_scope() as scope:
             return scope.get(MermaidCompatibilityService).verify()
 
     @staticmethod

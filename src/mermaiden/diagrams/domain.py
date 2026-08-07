@@ -8,7 +8,7 @@ from ..core.diagram import Diagram
 from ..core.element import Element
 from ..core.relation import Relation
 from ..runtime.diagrams.aggregate import DiagramAggregate
-from ..runtime.diagrams.observer import ConstraintInspection
+from ..runtime.domain import ConstraintInspection
 
 
 @dataclass(frozen=True, slots=True)

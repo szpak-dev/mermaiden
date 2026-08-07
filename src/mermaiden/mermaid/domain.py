@@ -1,22 +1,13 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping
 from dataclasses import dataclass
 from html import escape
 from pathlib import Path
 
 from wireup import injectable
 
-from ..core.diagram import DiagramView
-from .application import MermaidApplication
-
-
 @injectable
 @dataclass(frozen=True, slots=True)
 class MermaidPreview:
-    mermaid_app: MermaidApplication
-
-    def write(self, diagrams: Sequence[DiagramView], output: Path) -> Path:
-        return self.write_sources({diagram.kind: self.mermaid_app.render(diagram) for diagram in diagrams}, output)
-
     def write_sources(self, sources: Mapping[str, str], output: Path) -> Path:
         sections = "\n".join(self._source_section(name, source)
                              for name, source in sources.items())

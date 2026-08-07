@@ -1,7 +1,7 @@
 import base64
 import json
 import re
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -9,6 +9,7 @@ from jinja2 import Environment, FileSystemLoader, StrictUndefined
 from wireup import injectable
 
 from ..core.diagram import DiagramView
+from .domain import MermaidPreview
 
 
 @injectable
@@ -43,6 +44,7 @@ class MermaidApplication:
         )
         source = self._canonical_text(body)
         return self._wrap(source, diagram.mermaid_configuration) if self.wrap else source
+
 
     @staticmethod
     def _template_prefix(diagram: DiagramView) -> str:
@@ -84,3 +86,16 @@ class MermaidApplication:
         entries = "".join(
             f"  {key}: {json.dumps(value, ensure_ascii=False)}\n" for key, value in configuration.items())
         return f"---\nconfig:\n  wrap: true\n{entries}---\n{body}"
+
+
+@injectable
+@dataclass(frozen=True, slots=True)
+class MermaidPreviewApplication:
+    preview: MermaidPreview
+    renderer: MermaidApplication
+
+    def write(self, diagrams: Sequence[DiagramView], output: Path) -> Path:
+        return self.preview.write_sources({diagram.kind: self.renderer.render(diagram) for diagram in diagrams}, output)
+
+    def write_sources(self, sources: Mapping[str, str], output: Path) -> Path:
+        return self.preview.write_sources(sources, output)

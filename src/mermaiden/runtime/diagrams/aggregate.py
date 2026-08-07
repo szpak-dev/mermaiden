@@ -10,8 +10,8 @@ from ...core.diagram import Diagram
 from ...core.element import Element
 from ...core.error import OperationError
 from ...core.relation import Relation
-from .observer import ConstraintInspection
-from .runtime import DiagramRuntime
+from ..application import DiagramRuntime
+from ..domain import ConstraintInspection
 from .state import DiagramData
 
 

@@ -8,27 +8,21 @@ from .domain import DiagramModel
 
 @dataclass(frozen=True, slots=True)
 class DiagramInfo:
-    diagram: DiagramModel
+    id: str
+    name: str
+    diagram_type: type[DiagramModel]
+    config_key: str
+    schema_definition: str
 
-    @property
-    def id(self) -> str:
-        return self.diagram.syntax
-
-    @property
-    def name(self) -> str:
-        return self.diagram.name
-
-    @property
-    def diagram_type(self) -> type[DiagramModel]:
-        return type(self.diagram)
-
-    @property
-    def config_key(self) -> str:
-        return self.diagram.config_key
-
-    @property
-    def schema_definition(self) -> str:
-        return self.diagram.schema_definition
+    @classmethod
+    def from_diagram(cls, diagram: DiagramModel) -> "DiagramInfo":
+        return cls(
+            id=diagram.syntax,
+            name=diagram.name,
+            diagram_type=type(diagram),
+            config_key=diagram.config_key,
+            schema_definition=diagram.schema_definition,
+        )
 
     @property
     def syntax_id(self) -> str:
@@ -41,7 +35,7 @@ class DiagramsApplication:
     diagrams: Sequence[DiagramModel]
 
     def available(self) -> tuple[DiagramInfo, ...]:
-        return tuple(sorted((DiagramInfo(diagram) for diagram in self.diagrams), key=lambda item: item.id))
+        return tuple(sorted((DiagramInfo.from_diagram(diagram) for diagram in self.diagrams), key=lambda item: item.id))
 
     def get(self, diagram_id: str) -> DiagramInfo:
         for diagram in self.available():
@@ -56,6 +50,13 @@ class DiagramsApplication:
                 return diagram
         available = ", ".join(diagram.config_key for diagram in self.available())
         raise KeyError(f"Unknown Mermaid config key '{config_key}'. Available config keys: {available}.")
+
+    def get_diagram(self, diagram_id: str) -> DiagramModel:
+        for diagram in self.diagrams:
+            if diagram.syntax == diagram_id:
+                return diagram
+        self.get(diagram_id)
+        raise AssertionError("Unreachable.")
 
     def find(self, diagram: DiagramModel) -> DiagramInfo | None:
         return next((item for item in self.available() if item.id == diagram.kind), None)

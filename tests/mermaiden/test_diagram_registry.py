@@ -52,7 +52,7 @@ def test_every_registered_diagram_has_an_explicit_document_template() -> None:
     templates = set(renderer.environment.list_templates())
 
     assert {
-        renderer.document_template(item.diagram)
+        f"templates/syntax/{item.id}/document.mmd.j2"
         for item in Application.create().available_diagrams()
     } == {
         template
