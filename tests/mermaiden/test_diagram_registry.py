@@ -1,7 +1,7 @@
 import pytest
 
-from modwire_mermaid.application import Application
-from modwire_mermaid.mermaid.service import MermaidRenderer
+from mermaiden.application import Application
+from mermaiden.mermaid.service import MermaidRenderer
 
 
 def test_registry_lists_every_implemented_diagram_with_mermaid_metadata() -> None:

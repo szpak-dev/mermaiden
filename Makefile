@@ -7,11 +7,11 @@ $(PYTHON):
 	python3 -m venv $(VENV)
 
 compat: $(PYTHON)
-	@PYTHONPATH=src $(PYTHON) -m modwire_mermaid.application compat
+	@PYTHONPATH=src $(PYTHON) -m mermaiden.application compat
 
 diagrams-validate: $(PYTHON)
-	@PYTHONPATH=src $(PYTHON) -m modwire_mermaid.application fixtures
-	@PYTHONPATH=src $(PYTHON) -m modwire_mermaid.application preview --output .preview/index.html
+	@PYTHONPATH=src $(PYTHON) -m mermaiden.application fixtures
+	@PYTHONPATH=src $(PYTHON) -m mermaiden.application preview --output .preview/index.html
 	@mkdir -p .preview/.validation
 	@: > .preview/.validation/diagrams.md; for file in .preview/*.mmd; do printf '## %s\n\n```mermaid\n' "$$(basename "$$file" .mmd)" >> .preview/.validation/diagrams.md; awk '1' "$$file" >> .preview/.validation/diagrams.md; printf '```\n\n' >> .preview/.validation/diagrams.md; done
 	@npx --yes --package=@mermaid-js/mermaid-cli mmdc -i .preview/.validation/diagrams.md -o .preview/.validation/diagrams.rendered.md

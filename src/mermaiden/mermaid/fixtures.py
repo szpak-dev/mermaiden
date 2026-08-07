@@ -304,7 +304,7 @@ class DiagramFixtures:
 
         mindmap = self.registry.get("mindmap").diagram
         assert isinstance(mindmap, Mindmap)
-        mindmap.add_root("root", "Modwire")
+        mindmap.add_root("root", "Mermaiden")
         mindmap.add_node("domain", "Domain model", "root")
         mindmap.add_square("contracts", "Contracts", "domain")
         mindmap.add_rounded_square("services", "Services", "domain")
@@ -323,7 +323,7 @@ class DiagramFixtures:
 
         timeline = self.registry.get("timeline").diagram
         assert isinstance(timeline, Timeline)
-        timeline.set_title("Modwire history")
+        timeline.set_title("Mermaiden history")
         timeline.add_section("foundation", "Foundation")
         timeline.add_period("2024", "2024", "foundation")
         timeline.add_event("prototype", "Prototype", "2024")

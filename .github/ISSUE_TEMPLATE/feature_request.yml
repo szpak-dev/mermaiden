@@ -2,8 +2,6 @@ name: Feature request
 description: Propose a new user-facing capability or behavior.
 title: "Feature: "
 type: Feature
-projects:
-  - modwire/1
 body:
   - type: markdown
     attributes:

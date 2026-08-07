@@ -2,8 +2,6 @@ name: Task
 description: Propose concrete implementation, maintenance, documentation, or release work.
 title: "Task: "
 type: Task
-projects:
-  - modwire/1
 body:
   - type: markdown
     attributes:

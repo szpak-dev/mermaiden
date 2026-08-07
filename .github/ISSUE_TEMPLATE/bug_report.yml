@@ -2,8 +2,6 @@ name: Bug report
 description: Report incorrect or unexpected existing behavior.
 title: "Bug: "
 type: Bug
-projects:
-  - modwire/1
 body:
   - type: markdown
     attributes:

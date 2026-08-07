@@ -507,7 +507,7 @@ wheels = [
 ]
 
 [[package]]
-name = "modwire-mermaid"
+name = "mermaiden"
 source = { editable = "." }
 dependencies = [
     { name = "jinja2" },

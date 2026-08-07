@@ -1,4 +1,4 @@
-from modwire_mermaid.application import Application
+from mermaiden.application import Application
 
 
 def test_rendered_diagrams_cover_every_supported_building_block() -> None:
@@ -110,7 +110,7 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
         ),
         "mindmap": (
             "mindmap",
-            '"Modwire"',
+            '"Mermaiden"',
             'm_v_contracts["Contracts"]',
             'm_v_services("Services")',
             'm_v_runtime(("Runtime"))',
@@ -126,7 +126,7 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             '"Rats" : 15',
         ),
         "packet": ("packet", "title UDP packet", '+16: "Source port"', '32-47: "Length"'),
-        "timeline": ("timeline", "title Modwire history", "section Foundation", "2024 : Prototype : First release"),
+        "timeline": ("timeline", "title Mermaiden history", "section Foundation", "2024 : Prototype : First release"),
         "sankey": ("sankey", '"Electricity grid","Industry",342.165', '"Electricity grid","Homes",113.726'),
         "journey": ("journey", "title Working day", "section Go to work", "Make tea: 5: Me", "Do work: 1: Me, Cat"),
         "venn": (

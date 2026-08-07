@@ -1,6 +1,6 @@
-# modwire-mermaid
+# mermaiden
 
-`modwire-mermaid` generates deterministic Mermaid source from typed Python diagram models. It supports the Mermaid syntax families registered by the package and validates each diagram before rendering its text.
+`mermaiden` generates deterministic Mermaid source from typed Python diagram models. It supports the Mermaid syntax families registered by the package and validates each diagram before rendering its text.
 
 The package produces Mermaid text only. Render it with Mermaid in a browser, Markdown viewer, or your own CLI workflow.
 
@@ -9,13 +9,13 @@ The package produces Mermaid text only. Render it with Mermaid in a browser, Mar
 Python 3.12 or later is required.
 
 ```sh
-pip install modwire-mermaid
+pip install mermaiden
 ```
 
 ## Quick start
 
 ```python
-from modwire_mermaid.application import Application
+from mermaiden.application import Application
 
 application = Application.create()
 source = application.rendered_diagrams()["flowchart"]

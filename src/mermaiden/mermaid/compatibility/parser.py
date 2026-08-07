@@ -26,7 +26,7 @@ class MermaidSyntaxValidator:
         )
         if incomplete:
             return incomplete
-        with tempfile.TemporaryDirectory(prefix="modwire-mermaid-") as temporary:
+        with tempfile.TemporaryDirectory(prefix="mermaiden-") as temporary:
             root = Path(temporary)
             input_path = root / "diagrams.md"
             output_path = root / "diagrams.rendered.md"
