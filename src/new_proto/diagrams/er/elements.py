@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from typing import ClassVar
 
-from ...core.element import Container, Entity as EntityNode
+from ...core.element import Container
+from ...core.element import Entity as EntityNode
 
 
 @dataclass(frozen=True, slots=True)

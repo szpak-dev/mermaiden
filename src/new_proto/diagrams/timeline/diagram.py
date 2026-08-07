@@ -6,7 +6,7 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport, Constraint, ConstraintDiagram, Violation
-from ..base import DiagramModel
+from ..base import DiagramMembersConstraint, DiagramModel
 from .elements import TimelineEvent, TimelinePeriod, TimelineSection
 
 
@@ -22,6 +22,20 @@ class TimelineStructure(TimelineConstraint):
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         return ()
+
+
+@injectable(as_type=TimelineConstraint, qualifier="timeline_members")
+class TimelineMembers(DiagramMembersConstraint, TimelineConstraint):
+    element_types: ClassVar = (TimelineSection, TimelinePeriod, TimelineEvent)
+    relation_types: ClassVar = ()
+    annotation_types: ClassVar = ()
+    element_description: ClassVar[str] = "valid in a timeline"
+    relation_description: ClassVar[str] = "valid in a timeline"
+    annotation_description: ClassVar[str] = "valid in a timeline"
+
+    @property
+    def code(self) -> str:
+        return "timeline.member_type"
 
 
 @injectable(as_type=DiagramModel, qualifier="timeline", lifetime="scoped")
