@@ -2,7 +2,7 @@ from dataclasses import dataclass, replace
 
 from wireup import injectable
 
-from ...core.element import Container, Element, Entity
+from ...core.element import Container, Element
 from ...core.error import OperationError
 from .state import DiagramData, DiagramState
 
@@ -15,12 +15,6 @@ class Elements:
     def add(self, element: Element, parent_id: str = "") -> DiagramData:
         elements = self._insert(self.state.current.elements, element, parent_id)
         return replace(self.state.current, elements=elements)
-
-    def add_container(self, id: str, label: str, parent_id: str = "") -> DiagramData:
-        return self.add(Container(id, label), parent_id)
-
-    def add_entity(self, id: str, label: str, parent_id: str = "") -> DiagramData:
-        return self.add(Entity(id, label), parent_id)
 
     def remove(self, id: str) -> tuple[DiagramData, tuple[str, ...]]:
         target = self.find(id)

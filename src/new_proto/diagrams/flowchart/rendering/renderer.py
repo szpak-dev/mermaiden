@@ -1,10 +1,10 @@
 from dataclasses import dataclass
+from typing import ClassVar
 
 from jinja2 import PackageLoader
 from wireup import injectable
 
 from ....core.diagram import DiagramView
-from ....core.error import OperationError
 from ....rendering.jinja import JinjaTextRenderer, create_jinja_environment
 from ...rendering import DiagramMmdRenderer
 from ..diagram import Flowchart
@@ -15,17 +15,11 @@ from .syntax import mermaid_identifier, mermaid_quote
 class FlowchartMmdRenderer(DiagramMmdRenderer):
     template: JinjaTextRenderer[Flowchart]
 
-    def render(self, diagram: Flowchart) -> str:
-        return self.template.render(diagram)
+    diagram_type: ClassVar[type[DiagramView]] = Flowchart
 
-    def can_render(self, diagram: DiagramView) -> bool:
-        return isinstance(diagram, Flowchart)
-
-    def render_body(self, diagram: DiagramView) -> str:
-        if not self.can_render(diagram):
-            raise OperationError(f"Flowchart renderer cannot render diagram kind '{diagram.kind}'.")
+    def _render(self, diagram: DiagramView) -> str:
         assert isinstance(diagram, Flowchart)
-        return self.render(diagram)
+        return self.template.render(diagram)
 
 
 @injectable(as_type=DiagramMmdRenderer, qualifier="flowchart")

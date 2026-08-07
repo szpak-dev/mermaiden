@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
 from dataclasses import dataclass
+from typing import ClassVar
 
 from wireup import injectable
 
@@ -9,11 +10,18 @@ from ..core.error import OperationError
 
 
 class DiagramMmdRenderer(ABC):
-    @abstractmethod
-    def can_render(self, diagram: DiagramView) -> bool: ...
+    diagram_type: ClassVar[type[DiagramView]]
+
+    def can_render(self, diagram: DiagramView) -> bool:
+        return isinstance(diagram, self.diagram_type)
+
+    def render_body(self, diagram: DiagramView) -> str:
+        if not self.can_render(diagram):
+            raise OperationError(f"Mermaid renderer cannot render diagram kind '{diagram.kind}'.")
+        return self._render(diagram)
 
     @abstractmethod
-    def render_body(self, diagram: DiagramView) -> str: ...
+    def _render(self, diagram: DiagramView) -> str: ...
 
 
 @injectable

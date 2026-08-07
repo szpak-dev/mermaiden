@@ -8,8 +8,6 @@ if TYPE_CHECKING:
 
 
 class ConstraintLevel(StrEnum):
-    """Determines whether a violation prevents an atomic state change."""
-
     BLOCKING = "blocking"
     ADVISORY = "advisory"
 
@@ -48,8 +46,6 @@ class ValidationReport:
 
 @dataclass(frozen=True, slots=True)
 class ChangeReport:
-    """Constraint delta produced by one attempted aggregate operation."""
-
     operation: str
     before: ValidationReport
     after: ValidationReport
@@ -79,8 +75,6 @@ class ChangeRejected(RuntimeError):
 
 
 class Constraint(ABC):
-    """A side-effect-free Visitor evaluating one rule against a Diagram."""
-
     @property
     @abstractmethod
     def code(self) -> str: ...

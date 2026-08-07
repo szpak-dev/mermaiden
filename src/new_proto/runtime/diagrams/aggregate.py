@@ -3,10 +3,10 @@ from dataclasses import dataclass
 
 from wireup import injectable
 
-from ...core.annotation import Annotation, TargetKind
+from ...core.annotation import Annotation, DataAnnotation, TargetKind, TargetRef
 from ...core.constraint import ChangeReport, ValidationReport
 from ...core.diagram import Diagram
-from ...core.element import Element
+from ...core.element import Container, Element, Entity
 from ...core.error import OperationError
 from ...core.relation import Relation
 from .annotations import Annotations
@@ -35,21 +35,24 @@ class DiagramAggregate(Diagram):
     def root_elements(self) -> tuple[Element, ...]:
         return self.state.current.elements
 
-    def add_container(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        operation = f"add container '{id}'"
+    def _add_element(self, operation: str, element: Element, parent_id: str = "") -> ChangeReport:
         try:
-            candidate = self.elements.add_container(id, label, parent_id)
+            candidate = self.elements.add(element, parent_id)
         except OperationError as error:
             self.changes.reject(operation, str(error))
         return self.changes.apply(operation, candidate, self)
 
+    def _add_relation(self, operation: str, relation: Relation) -> ChangeReport:
+        return self.changes.apply(operation, self.relations.add(relation), self)
+
+    def _add_annotation(self, operation: str, annotation: Annotation) -> ChangeReport:
+        return self.changes.apply(operation, self.annotations.add_annotation(annotation), self)
+
+    def add_container(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
+        return self._add_element(f"add container '{id}'", Container(id, label), parent_id)
+
     def add_entity(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        operation = f"add entity '{id}'"
-        try:
-            candidate = self.elements.add_entity(id, label, parent_id)
-        except OperationError as error:
-            self.changes.reject(operation, str(error))
-        return self.changes.apply(operation, candidate, self)
+        return self._add_element(f"add entity '{id}'", Entity(id, label), parent_id)
 
     def connect(
         self,
@@ -57,9 +60,7 @@ class DiagramAggregate(Diagram):
         element_ids: Sequence[str],
         label: str = "",
     ) -> ChangeReport:
-        operation = f"connect relation '{id}'"
-        candidate = self.relations.connect(id, tuple(element_ids), label)
-        return self.changes.apply(operation, candidate, self)
+        return self._add_relation(f"connect relation '{id}'", Relation(id, tuple(element_ids), label))
 
     def annotate(
         self,
@@ -68,14 +69,11 @@ class DiagramAggregate(Diagram):
         element_ids: Sequence[str] = (),
         relation_ids: Sequence[str] = (),
     ) -> ChangeReport:
-        operation = f"add annotation '{id}'"
-        candidate = self.annotations.add(
-            id,
-            data,
-            tuple(element_ids),
-            tuple(relation_ids),
+        targets = (
+            *(TargetRef(TargetKind.ELEMENT, item) for item in element_ids),
+            *(TargetRef(TargetKind.RELATION, item) for item in relation_ids),
         )
-        return self.changes.apply(operation, candidate, self)
+        return self._add_annotation(f"add annotation '{id}'", DataAnnotation(id, targets, dict(data)))
 
     def remove_element(self, id: str, *, cascade: bool = False) -> ChangeReport:
         operation = f"remove element '{id}'"

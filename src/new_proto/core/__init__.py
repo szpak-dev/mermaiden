@@ -1,5 +1,3 @@
-"""Framework-free contracts and values for every diagram domain."""
-
 from .annotation import Annotation, DataAnnotation, TargetKind, TargetRef
 from .constraint import (
     ChangeRejected,

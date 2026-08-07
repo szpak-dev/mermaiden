@@ -11,8 +11,6 @@ def create_jinja_environment(
     *,
     filters: Mapping[str, Callable[..., object]] | None = None,
 ) -> Environment:
-    """Create the strict deterministic environment shared by text renderers."""
-
     environment = Environment(
         loader=loader,
         undefined=StrictUndefined,

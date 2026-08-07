@@ -1,12 +1,12 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass
+from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.annotation import TargetKind, TargetRef
 from ...core.constraint import ChangeReport
-from ..base import DomainDiagram
-from .annotations import Note
+from ..base import DefinedDiagram, DiagramDefinition
+from .annotations import Notes
 from .changes import FlowchartChanges
 from .elements import (
     Action,
@@ -28,45 +28,22 @@ from .relations import ConditionalFlow, Flow
 
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
-class Flowchart(DomainDiagram):
+class Flowchart(DefinedDiagram):
     changes: FlowchartChanges
     observer: FlowchartObserver
     direction: Direction = Direction.TOP_DOWN
 
-    @property
-    def kind(self) -> str:
-        return "flowchart"
-
-    def add_container(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self.add_group(id, label, parent_id)
-
-    def add_entity(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self.add_node(id, label, parent_id)
-
-    def connect(
-        self,
-        id: str,
-        element_ids: Sequence[str],
-        label: str = "",
-    ) -> ChangeReport:
-        return self._add_relation(f"add flow '{id}'", Flow(id, tuple(element_ids), label))
-
-    def annotate(
-        self,
-        id: str,
-        data: Mapping[str, object],
-        element_ids: Sequence[str] = (),
-        relation_ids: Sequence[str] = (),
-    ) -> ChangeReport:
-        operation = f"add note '{id}'"
-        if relation_ids:
-            self.changes.reject(operation, "Flowchart notes can only target elements.")
-        if set(data) != {"text"} or not isinstance(data.get("text"), str):
-            self.changes.reject(operation, "Flowchart notes require exactly one string 'text' value.")
-        text = data["text"]
-        assert isinstance(text, str)
-        targets = tuple(TargetRef(TargetKind.ELEMENT, item) for item in element_ids)
-        return self._add_annotation(operation, Note(id, targets, text))
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        kind="flowchart",
+        entity_name="node",
+        container_name="flow group",
+        relation_name="flow",
+        annotation_name="note",
+        entity=FlowNode,
+        container=FlowGroup,
+        relation=Flow,
+        annotation=Notes(),
+    )
 
     def add_group(
         self,
@@ -82,7 +59,7 @@ class Flowchart(DomainDiagram):
         )
 
     def add_node(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self._add_node(FlowNode(id, label), parent_id, "node")
+        return self.add_entity(id, label, parent_id)
 
     def add_start(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
         return self._add_node(Start(id, label), parent_id, "start")

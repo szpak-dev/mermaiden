@@ -18,9 +18,6 @@ class Relations:
             relations=(*self.state.current.relations, relation),
         )
 
-    def connect(self, id: str, element_ids: tuple[str, ...], label: str = "") -> DiagramData:
-        return self.add(Relation(id, element_ids, label))
-
     def remove(self, id: str) -> DiagramData:
         if not any(item.id == id for item in self.state.current.relations):
             raise OperationError(f"Relation '{id}' does not exist.")
