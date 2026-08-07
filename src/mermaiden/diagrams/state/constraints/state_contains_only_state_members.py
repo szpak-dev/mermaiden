@@ -2,7 +2,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...base import DiagramMembersConstraint
+from ...domain import DiagramMembersConstraint
 from ..annotations import StateNote
 from ..elements import CompositeState, StateNode
 from ..relations import StateTransition

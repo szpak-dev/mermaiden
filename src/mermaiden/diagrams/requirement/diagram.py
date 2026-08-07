@@ -5,7 +5,7 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DiagramModel
+from ..domain import DiagramModel
 from .configuration import RequirementDiagramConfiguration
 from .constraints.constraint import RequirementDiagramConstraint
 from .elements import Requirement, RequirementElement, RequirementType, Risk, VerificationMethod

@@ -1,7 +1,7 @@
 import pytest
 
 from mermaiden.application import Application
-from mermaiden.mermaid.service import MermaidRenderer
+from mermaiden.mermaid.application import MermaidApplication
 
 
 def test_registry_lists_every_implemented_diagram_with_mermaid_metadata() -> None:
@@ -48,7 +48,7 @@ def test_registry_returns_detailed_information_by_mermaid_syntax_id() -> None:
 
 
 def test_every_registered_diagram_has_an_explicit_document_template() -> None:
-    renderer = MermaidRenderer()
+    renderer = MermaidApplication()
     templates = set(renderer.environment.list_templates())
 
     assert {
@@ -59,13 +59,6 @@ def test_every_registered_diagram_has_an_explicit_document_template() -> None:
         for template in templates
         if template.startswith("templates/syntax/") and template.endswith("/document.mmd.j2")
     }
-
-
-def test_registry_returns_detailed_information_by_mermaid_config_key() -> None:
-    diagram = Application.create().diagram_info_for_config("architecture")
-
-    assert diagram.id == "architecture-beta"
-    assert diagram.schema_definition == "ArchitectureDiagramConfig"
 
 
 def test_registry_explains_unknown_diagram_ids() -> None:

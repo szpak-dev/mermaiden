@@ -1,8 +1,8 @@
-from mermaiden.application import Application
+from mermaiden.cli import MermaidenCli
 
 
 def test_rendered_diagrams_cover_every_supported_building_block() -> None:
-    diagrams = Application.create().rendered_diagrams()
+    diagrams = MermaidenCli.create().rendered_diagrams()
 
     expected = {
         "flowchart": (

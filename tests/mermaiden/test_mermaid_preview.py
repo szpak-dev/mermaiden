@@ -1,11 +1,11 @@
 from pathlib import Path
 
-from mermaiden.application import Application
+from mermaiden.cli import MermaidenCli
 
 
 def test_mermaid_preview_writes_rendered_diagrams(tmp_path: Path) -> None:
     output = tmp_path / "preview" / "index.html"
-    result = Application.create().write_preview(output)
+    result = MermaidenCli.create().write_preview(output)
 
     assert result == output
     preview = output.read_text(encoding="utf-8")

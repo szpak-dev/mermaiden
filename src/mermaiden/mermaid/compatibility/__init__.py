@@ -1,3 +1,3 @@
-from .service import CompatibilityReport, MermaidCompatibility
+from .service import CompatibilityReport, MermaidCompatibilityService
 
-__all__ = ["CompatibilityReport", "MermaidCompatibility"]
+__all__ = ["CompatibilityReport", "MermaidCompatibilityService"]

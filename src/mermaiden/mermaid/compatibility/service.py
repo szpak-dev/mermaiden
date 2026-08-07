@@ -2,9 +2,9 @@ from dataclasses import dataclass
 
 from wireup import injectable
 
-from ...diagrams.registry import DiagramRegistry
+from ...diagrams.application import DiagramsApplication
 from ..fixtures import DiagramFixtures
-from ..service import MermaidRenderer
+from ..application import MermaidApplication
 from .configuration import ConfigurationViolation, DiagramConfigurationContract, MermaidConfiguration
 from .parser import MermaidSyntaxValidator, MermaidSyntaxViolation
 from .schema import MermaidSchemaLock, MermaidSchemaStore
@@ -57,11 +57,11 @@ class CompatibilityReport:
 
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
-class MermaidCompatibility:
+class MermaidCompatibilityService:
     fixtures: DiagramFixtures
     syntax: MermaidSyntaxValidator
-    registry: DiagramRegistry
-    renderer: MermaidRenderer
+    registry: DiagramsApplication
+    renderer: MermaidApplication
     schemas: MermaidSchemaStore
 
     def inspect(self) -> CompatibilityReport:
@@ -81,10 +81,12 @@ class MermaidCompatibility:
             try:
                 info = self.registry.get_by_config_key(upstream.config_key)
             except KeyError:
-                missing.append(MissingDiagramCompatibility(upstream.config_key, upstream.schema_definition))
+                missing.append(MissingDiagramCompatibility(
+                    upstream.config_key, upstream.schema_definition))
                 continue
             source = self.renderer.render(info.diagram)
-            local = configuration.local_contract(info.config_key, info.schema_definition, source)
+            local = configuration.local_contract(
+                info.config_key, info.schema_definition, source)
             sources[info.id] = fixture_sources[info.id] if verify_syntax and info.id in fixture_sources else source
             diagrams.append(
                 DiagramCompatibility(
@@ -94,5 +96,6 @@ class MermaidCompatibility:
                     configuration.supports(local, upstream),
                 )
             )
-        syntax_violations = self.syntax.validate(sources) if verify_syntax else ()
+        syntax_violations = self.syntax.validate(
+            sources) if verify_syntax else ()
         return CompatibilityReport(lock, tuple(diagrams), tuple(missing), syntax_violations)

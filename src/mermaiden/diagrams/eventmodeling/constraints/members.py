@@ -2,7 +2,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...base import DiagramMembersConstraint
+from ...domain import DiagramMembersConstraint
 from ..elements import Actor, Command, Event, Swimlane, View
 from ..relations import Flow
 from .constraint import EventModelingDiagramConstraint

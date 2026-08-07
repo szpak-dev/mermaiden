@@ -2,7 +2,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...base import DiagramMembersConstraint
+from ...domain import DiagramMembersConstraint
 from ..elements import Person, System, SystemDb, SystemQueue
 from ..relations import Relationship
 from .constraint import C4ContextDiagramConstraint

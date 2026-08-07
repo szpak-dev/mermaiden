@@ -2,7 +2,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...base import DiagramMembersConstraint
+from ...domain import DiagramMembersConstraint
 from ..elements import Domain
 from ..relations import Transition
 from .constraint import CynefinDiagramConstraint

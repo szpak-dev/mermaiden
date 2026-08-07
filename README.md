@@ -18,11 +18,11 @@ pip install mermaiden
 from mermaiden.application import Application
 
 application = Application.create()
-source = application.rendered_diagrams()["flowchart"]
-print(source)
+diagrams = application.available_diagrams()
+print(diagrams)
 ```
 
-`Application.available_diagrams()` returns the supported diagram catalog. `Application.diagram_info(diagram_id)` returns the typed diagram API for an individual syntax.
+`Application.available_diagrams()` returns the supported diagram catalog. `Application.diagram_info(diagram_id)` returns the typed diagram API for an individual syntax. CLI workflows are available through `python -m mermaiden.cli`.
 
 ## Development
 

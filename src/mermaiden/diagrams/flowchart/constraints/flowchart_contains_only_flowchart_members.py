@@ -2,7 +2,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...base import DiagramMembersConstraint
+from ...domain import DiagramMembersConstraint
 from ..annotations import Note
 from ..elements import FlowGroup, FlowNode
 from ..relations import Flow

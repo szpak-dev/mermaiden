@@ -3,7 +3,7 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import Constraint
-from ..base import DiagramMembersConstraint
+from ..domain import DiagramMembersConstraint
 from .annotations import ArchitectureNote
 from .elements import ArchitectureGroup, Junction, Service
 from .relations import Edge

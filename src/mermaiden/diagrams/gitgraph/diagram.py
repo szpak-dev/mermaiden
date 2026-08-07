@@ -5,7 +5,7 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DiagramModel
+from ..domain import DiagramModel
 from .configuration import GitGraphDiagramConfiguration
 from .constraints.constraint import GitGraphDiagramConstraint
 from .elements import Branch, Checkout, Commit

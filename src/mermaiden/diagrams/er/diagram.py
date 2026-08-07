@@ -5,7 +5,7 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DiagramModel
+from ..domain import DiagramModel
 from .configuration import EntityRelationshipDiagramConfiguration
 from .constraints.constraint import EntityRelationshipDiagramConstraint
 from .elements import Entity, EntityAttribute

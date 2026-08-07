@@ -6,7 +6,7 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport, Constraint, ConstraintDiagram, Violation
-from ..base import DiagramMembersConstraint, DiagramModel
+from ..domain import DiagramMembersConstraint, DiagramModel
 from .elements import JourneySection, JourneyTask
 
 

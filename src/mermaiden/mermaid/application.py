@@ -13,7 +13,7 @@ from ..core.diagram import DiagramView
 
 @injectable
 @dataclass(frozen=True, slots=True)
-class MermaidRenderer:
+class MermaidApplication:
     wrap: bool = field(default=True, init=False)
     environment: Environment = field(init=False)
 
@@ -81,5 +81,6 @@ class MermaidRenderer:
 
     @staticmethod
     def _wrap(body: str, configuration: Mapping[str, object]) -> str:
-        entries = "".join(f"  {key}: {json.dumps(value, ensure_ascii=False)}\n" for key, value in configuration.items())
+        entries = "".join(
+            f"  {key}: {json.dumps(value, ensure_ascii=False)}\n" for key, value in configuration.items())
         return f"---\nconfig:\n  wrap: true\n{entries}---\n{body}"

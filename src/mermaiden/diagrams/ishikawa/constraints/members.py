@@ -2,7 +2,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...base import DiagramMembersConstraint
+from ...domain import DiagramMembersConstraint
 from ..elements import Category, Cause, Effect
 from ..relations import CauseRelation
 from .constraint import IshikawaDiagramConstraint

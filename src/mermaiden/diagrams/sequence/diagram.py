@@ -5,7 +5,7 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DiagramModel
+from ..domain import DiagramModel
 from .annotations import NotePosition, SequenceNotes
 from .constraints import SequenceConstraint
 from .elements import Participant, ParticipantBox, ParticipantKind

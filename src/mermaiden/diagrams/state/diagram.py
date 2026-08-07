@@ -5,7 +5,7 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DiagramModel
+from ..domain import DiagramModel
 from ..flowchart.elements import Direction
 from .annotations import NotePosition, StateNote, StateNotes
 from .configuration import StateDiagramConfiguration

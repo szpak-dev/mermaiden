@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 from wireup import injectable
 
-from .base import DiagramModel
+from .domain import DiagramModel
 
 
 @dataclass(frozen=True, slots=True)
@@ -37,7 +37,7 @@ class DiagramInfo:
 
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
-class DiagramRegistry:
+class DiagramsApplication:
     diagrams: Sequence[DiagramModel]
 
     def available(self) -> tuple[DiagramInfo, ...]:

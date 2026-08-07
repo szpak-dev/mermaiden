@@ -5,7 +5,7 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DiagramModel
+from ..domain import DiagramModel
 from .configuration import C4ContextDiagramConfiguration
 from .constraints.constraint import C4ContextDiagramConstraint
 from .elements import Person, System, SystemDb, SystemQueue

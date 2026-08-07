@@ -3,7 +3,7 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
-from ..base import DiagramMembersConstraint
+from ..domain import DiagramMembersConstraint
 from .annotations import ClassNote
 from .elements import Class, ClassNamespace
 from .relations import ClassRelation

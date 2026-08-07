@@ -2,7 +2,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...base import DiagramMembersConstraint
+from ...domain import DiagramMembersConstraint
 from ..elements import Entity, EntityAttribute
 from ..relations import EntityRelationship
 from .constraint import EntityRelationshipDiagramConstraint

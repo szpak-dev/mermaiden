@@ -5,7 +5,7 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DiagramModel
+from ..domain import DiagramModel
 from .configuration import GanttConfiguration
 from .constraints.constraint import GanttConstraint
 from .elements import Marker, Milestone, Section, Task

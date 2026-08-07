@@ -6,19 +6,20 @@ from pathlib import Path
 from wireup import injectable
 
 from ..core.diagram import DiagramView
-from .service import MermaidRenderer
+from .application import MermaidApplication
 
 
 @injectable
 @dataclass(frozen=True, slots=True)
 class MermaidPreview:
-    renderer: MermaidRenderer
+    mermaid_app: MermaidApplication
 
     def write(self, diagrams: Sequence[DiagramView], output: Path) -> Path:
-        return self.write_sources({diagram.kind: self.renderer.render(diagram) for diagram in diagrams}, output)
+        return self.write_sources({diagram.kind: self.mermaid_app.render(diagram) for diagram in diagrams}, output)
 
     def write_sources(self, sources: Mapping[str, str], output: Path) -> Path:
-        sections = "\n".join(self._source_section(name, source) for name, source in sources.items())
+        sections = "\n".join(self._source_section(name, source)
+                             for name, source in sources.items())
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(self._document(sections), encoding="utf-8")
         return output

@@ -5,7 +5,7 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DiagramModel
+from ..domain import DiagramModel
 from .configuration import RailroadDiagramConfiguration
 from .constraints.constraint import RailroadDiagramConstraint
 from .elements import Alternative, Group, NonTerminal, Optional, Repetition, Special, Terminal
