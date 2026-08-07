@@ -1,0 +1,4 @@
+{% import "templates/macros/document.mmd.j2" as mmd with context %}
+requirementDiagram{{ "\n" -}}
+{{ mmd.elements(diagram.root_elements) }}
+{{ mmd.relations(diagram.find_relations()) }}

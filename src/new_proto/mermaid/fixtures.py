@@ -9,6 +9,9 @@ from ..diagrams.classdiagram.elements import ClassAttribute, ClassMethod
 from ..diagrams.classdiagram.relations import ClassRelationKind
 from ..diagrams.flowchart.diagram import Flowchart
 from ..diagrams.registry import DiagramRegistry
+from ..diagrams.requirement.diagram import RequirementDiagram
+from ..diagrams.requirement.elements import RequirementType, Risk, VerificationMethod
+from ..diagrams.requirement.relations import RequirementRelationKind
 from ..diagrams.sequence.annotations import NotePosition
 from ..diagrams.sequence.diagram import SequenceDiagram
 from ..diagrams.sequence.elements import ParticipantKind
@@ -184,12 +187,73 @@ class DiagramFixtures:
         state.add_transition("end_caps_lock", "caps_lock_off", "active_final", composite_id="active")
         state.add_note("moving_note", "moving", "A moving system", StateNotePosition.RIGHT)
 
+        requirements = self.registry.get("requirementDiagram").diagram
+        assert isinstance(requirements, RequirementDiagram)
+        requirements.add_requirement(
+            "system",
+            "REQ-001",
+            "The system provides secure access.",
+            RequirementType.REQUIREMENT,
+            Risk.HIGH,
+            VerificationMethod.TEST,
+        )
+        requirements.add_requirement(
+            "login",
+            "REQ-002",
+            "Users can sign in.",
+            RequirementType.FUNCTIONAL,
+            Risk.MEDIUM,
+            VerificationMethod.DEMONSTRATION,
+        )
+        requirements.add_requirement(
+            "api",
+            "REQ-003",
+            "The API is documented.",
+            RequirementType.INTERFACE,
+            Risk.LOW,
+            VerificationMethod.INSPECTION,
+        )
+        requirements.add_requirement(
+            "latency",
+            "REQ-004",
+            "Responses complete within 100ms.",
+            RequirementType.PERFORMANCE,
+            Risk.HIGH,
+            VerificationMethod.ANALYSIS,
+        )
+        requirements.add_requirement(
+            "device",
+            "REQ-005",
+            "The device withstands heat.",
+            RequirementType.PHYSICAL,
+            Risk.MEDIUM,
+            VerificationMethod.TEST,
+        )
+        requirements.add_requirement(
+            "policy",
+            "REQ-006",
+            "Access follows policy.",
+            RequirementType.DESIGN_CONSTRAINT,
+            Risk.LOW,
+            VerificationMethod.INSPECTION,
+        )
+        requirements.add_element("service", "software", "docs/service.md")
+        requirements.add_element("test_suite", "test", "tests/requirements.py")
+        requirements.add_relation("system_contains_login", "system", "login", RequirementRelationKind.CONTAINS)
+        requirements.add_relation("login_copies_api", "login", "api", RequirementRelationKind.COPIES)
+        requirements.add_relation("api_derives_latency", "api", "latency", RequirementRelationKind.DERIVES)
+        requirements.add_relation("service_satisfies_system", "service", "system", RequirementRelationKind.SATISFIES)
+        requirements.add_relation("test_verifies_login", "test_suite", "login", RequirementRelationKind.VERIFIES)
+        requirements.add_relation("policy_refines_system", "policy", "system", RequirementRelationKind.REFINES)
+        requirements.add_relation("device_traces_policy", "device", "policy", RequirementRelationKind.TRACES)
+
         return {
             "flowchart": self.renderer.render(flowchart),
             "treeview": self.renderer.render(treeview),
             "classdiagram": self.renderer.render(classes),
             "architecture": self.renderer.render(architecture),
             "sequence": self.renderer.render(sequence),
+            "requirement": self.renderer.render(requirements),
             "state": self.renderer.render(state),
             "swimlane": self.renderer.render(swimlane),
         }

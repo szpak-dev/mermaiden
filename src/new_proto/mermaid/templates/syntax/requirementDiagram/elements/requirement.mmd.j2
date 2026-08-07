@@ -1,0 +1,6 @@
+{{ element.requirement_type.value }} {{ element.id | mermaid_id("r") }} {
+  id: {{ element.requirement_id | mermaid_quote }}
+  text: {{ element.text | mermaid_quote }}
+  risk: {{ element.risk.value }}
+  verifymethod: {{ element.verification_method.value }}
+}{{ "\n" -}}

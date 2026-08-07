@@ -11,6 +11,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         ("architecture-beta", "architecture", "ArchitectureDiagramConfig"),
         ("classDiagram", "class", "ClassDiagramConfig"),
         ("flowchart", "flowchart", "FlowchartDiagramConfig"),
+        ("requirementDiagram", "requirement", "RequirementDiagramConfig"),
         ("sequenceDiagram", "sequence", "SequenceDiagramConfig"),
         ("stateDiagram-v2", "state", "StateDiagramConfig"),
         ("swimlane-beta", "swimlane", "SwimlaneDiagramConfig"),
@@ -20,7 +21,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
     assert all(
         values == {"wrap": True}
         for diagram_id, values in configurations.items()
-        if diagram_id not in {"stateDiagram-v2", "swimlane-beta"}
+        if diagram_id not in {"requirementDiagram", "stateDiagram-v2", "swimlane-beta"}
     )
     assert configurations["swimlane-beta"] == {
         "wrap": True,
@@ -35,6 +36,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         "wrap": True,
         "state": {"titleTopMargin": 25, "useMaxWidth": True, "defaultRenderer": "dagre-wrapper"},
     }
+    assert configurations["requirementDiagram"]["requirement"]["useMaxWidth"] is True
     upstream = {item.config_key: item for item in Application.create().mermaid_diagram_configs()}
     assert all(
         item.configuration.schema_definition == upstream[item.configuration.config_key].schema_definition

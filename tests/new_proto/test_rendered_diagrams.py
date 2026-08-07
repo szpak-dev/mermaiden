@@ -51,6 +51,18 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             "Note left of user: Caller",
             "Note right of web: Gateway",
         ),
+        "requirement": (
+            "requirementDiagram",
+            "functionalRequirement r_v_login {",
+            'id: "REQ-002"',
+            'text: "Users can sign in."',
+            "performanceRequirement r_v_latency {",
+            "designConstraint r_v_policy {",
+            "element r_v_service {",
+            'docref: "docs/service.md"',
+            "r_v_service - satisfies -> r_v_system",
+            "r_v_test_suite - verifies -> r_v_login",
+        ),
         "state": (
             "stateDiagram-v2 TD",
             'state "Still" as s_v_still',
@@ -76,7 +88,9 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
     assert diagrams.keys() == expected.keys()
     for name, fragments in expected.items():
         source = diagrams[name]
-        if name == "state":
+        if name == "requirement":
+            assert source.startswith("---\nconfig:\n  wrap: true\n  requirement: {")
+        elif name == "state":
             assert source.startswith(
                 "---\nconfig:\n  wrap: true\n"
                 '  state: {"titleTopMargin": 25, "useMaxWidth": true, "defaultRenderer": "dagre-wrapper"}\n---\n'
