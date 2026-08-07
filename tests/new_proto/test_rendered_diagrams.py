@@ -1,8 +1,8 @@
-from new_proto.fixtures import rendered_diagrams
+from new_proto.application import Application
 
 
 def test_rendered_diagrams_cover_every_supported_building_block() -> None:
-    diagrams = rendered_diagrams()
+    diagrams = Application.create().rendered_diagrams()
 
     expected = {
         "flowchart": (

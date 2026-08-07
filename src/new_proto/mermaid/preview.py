@@ -1,4 +1,4 @@
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from html import escape
 from pathlib import Path
@@ -15,16 +15,20 @@ class MermaidPreview:
     renderer: MermaidRenderer
 
     def write(self, diagrams: Sequence[DiagramView], output: Path) -> Path:
-        sections = "\n".join(self._section(diagram) for diagram in diagrams)
+        return self.write_sources({diagram.kind: self.renderer.render(diagram) for diagram in diagrams}, output)
+
+    def write_sources(self, sources: Mapping[str, str], output: Path) -> Path:
+        sections = "\n".join(self._source_section(name, source) for name, source in sources.items())
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(self._document(sections), encoding="utf-8")
         return output
 
-    def _section(self, diagram: DiagramView) -> str:
+    @staticmethod
+    def _source_section(name: str, source: str) -> str:
         return (
             "<section>"
-            f"<h2>{escape(diagram.kind)}</h2>"
-            f'<pre class="mermaid">{escape(self.renderer.render(diagram))}</pre>'
+            f"<h2>{escape(name)}</h2>"
+            f'<pre class="mermaid">{escape(source)}</pre>'
             "</section>"
         )
 

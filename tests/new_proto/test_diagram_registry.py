@@ -1,13 +1,10 @@
 import pytest
 
 from new_proto.application import Application
-from new_proto.diagrams.registry import DiagramRegistry
 
 
 def test_registry_lists_every_implemented_diagram_with_mermaid_metadata() -> None:
-    container = Application.create()
-    with container.enter_scope() as scope:
-        diagrams = scope.get(DiagramRegistry).available()
+    diagrams = Application.create().available_diagrams()
 
     assert [(item.id, item.config_key, item.schema_definition) for item in diagrams] == [
         ("architecture-beta", "architecture", "ArchitectureDiagramConfig"),
@@ -20,9 +17,7 @@ def test_registry_lists_every_implemented_diagram_with_mermaid_metadata() -> Non
 
 
 def test_registry_returns_detailed_information_by_mermaid_syntax_id() -> None:
-    container = Application.create()
-    with container.enter_scope() as scope:
-        diagram = scope.get(DiagramRegistry).get("sequenceDiagram")
+    diagram = Application.create().diagram_info("sequenceDiagram")
 
     assert diagram.name == "Sequence diagram"
     assert diagram.syntax_id == "sequenceDiagram"
@@ -30,6 +25,5 @@ def test_registry_returns_detailed_information_by_mermaid_syntax_id() -> None:
 
 
 def test_registry_explains_unknown_diagram_ids() -> None:
-    container = Application.create()
-    with container.enter_scope() as scope, pytest.raises(KeyError, match="Unknown diagram 'unknown'"):
-        scope.get(DiagramRegistry).get("unknown")
+    with pytest.raises(KeyError, match="Unknown diagram 'unknown'"):
+        Application.create().diagram_info("unknown")

@@ -1,6 +1,7 @@
-from pathlib import Path
+from dataclasses import dataclass
 
-from .application import Application
+from wireup import injectable
+
 from .diagrams.architecture.diagram import Architecture
 from .diagrams.architecture.relations import Port
 from .diagrams.classdiagram.diagram import ClassDiagram
@@ -16,12 +17,14 @@ from .diagrams.treeview.diagram import TreeView
 from .mermaid.service import MermaidRenderer
 
 
-def rendered_diagrams() -> dict[str, str]:
-    container = Application.create()
-    with container.enter_scope() as scope:
-        renderer = scope.get(MermaidRenderer)
-        registry = scope.get(DiagramRegistry)
-        flowchart = registry.get("flowchart").diagram
+@injectable(lifetime="scoped")
+@dataclass(frozen=True, slots=True)
+class DiagramFixtures:
+    renderer: MermaidRenderer
+    registry: DiagramRegistry
+
+    def render(self) -> dict[str, str]:
+        flowchart = self.registry.get("flowchart").diagram
         assert isinstance(flowchart, Flowchart)
         flowchart.add_group("entry", "Entry")
         flowchart.add_group("process", "Process")
@@ -36,7 +39,7 @@ def rendered_diagrams() -> dict[str, str]:
         flowchart.add_note("work_note", "Process work", ("work",))
         flowchart.add_note("end_note", "Finish process", ("end",))
 
-        treeview = registry.get("treeView-beta").diagram
+        treeview = self.registry.get("treeView-beta").diagram
         assert isinstance(treeview, TreeView)
         for id, label in (("root", "root/"), ("source", "src/"), ("tests", "tests/"), ("readme", "README.md")):
             treeview.add_item(id, label)
@@ -50,7 +53,7 @@ def rendered_diagrams() -> dict[str, str]:
         treeview.add_annotation("tests_note", "tests", icon="test")
         treeview.add_annotation("readme_note", "readme", highlight=True, description="Documentation")
 
-        classes = registry.get("classDiagram").diagram
+        classes = self.registry.get("classDiagram").diagram
         assert isinstance(classes, ClassDiagram)
         classes.add_namespace("domain", "Domain", comment="Domain types")
         classes.add_class(
@@ -69,7 +72,7 @@ def rendered_diagrams() -> dict[str, str]:
         classes.add_note("duck_note", "Duck", "Concrete type")
         classes.add_note("pond_note", "Pond", "Aggregate")
 
-        architecture = registry.get("architecture-beta").diagram
+        architecture = self.registry.get("architecture-beta").diagram
         assert isinstance(architecture, Architecture)
         for id, label in (("clients", "Clients"), ("platform", "Platform"), ("data", "Data")):
             architecture.add_group(id, label, columns=2)
@@ -84,7 +87,7 @@ def rendered_diagrams() -> dict[str, str]:
         architecture.add_note("api_note", "api", "Public API")
         architecture.add_note("database_note", "database", "Persistent storage")
 
-        sequence = registry.get("sequenceDiagram").diagram
+        sequence = self.registry.get("sequenceDiagram").diagram
         assert isinstance(sequence, SequenceDiagram)
         sequence.add_box("clients", "Clients", "#E3F2FD")
         sequence.add_participant("user", "User", ParticipantKind.ACTOR, "clients")
@@ -113,20 +116,9 @@ def rendered_diagrams() -> dict[str, str]:
         sequence.add_note("sequence_note", "Asynchronous", "api", "events", position=NotePosition.OVER)
 
         return {
-            "flowchart": renderer.render(flowchart),
-            "treeview": renderer.render(treeview),
-            "classdiagram": renderer.render(classes),
-            "architecture": renderer.render(architecture),
-            "sequence": renderer.render(sequence),
+            "flowchart": self.renderer.render(flowchart),
+            "treeview": self.renderer.render(treeview),
+            "classdiagram": self.renderer.render(classes),
+            "architecture": self.renderer.render(architecture),
+            "sequence": self.renderer.render(sequence),
         }
-
-
-def main() -> None:
-    output = Path(".preview")
-    output.mkdir(exist_ok=True)
-    for name, source in rendered_diagrams().items():
-        (output / f"{name}.mmd").write_text(source, encoding="utf-8")
-
-
-if __name__ == "__main__":
-    main()
