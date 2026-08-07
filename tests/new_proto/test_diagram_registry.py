@@ -7,6 +7,7 @@ def test_registry_lists_every_implemented_diagram_with_mermaid_metadata() -> Non
     diagrams = Application.create().available_diagrams()
 
     assert [(item.id, item.config_key, item.schema_definition) for item in diagrams] == [
+        ("C4Context", "c4", "C4DiagramConfig"),
         ("architecture-beta", "architecture", "ArchitectureDiagramConfig"),
         ("block", "block", "BlockDiagramConfig"),
         ("classDiagram", "class", "ClassDiagramConfig"),

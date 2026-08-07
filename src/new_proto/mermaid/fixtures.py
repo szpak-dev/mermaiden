@@ -5,6 +5,7 @@ from wireup import injectable
 from ..diagrams.architecture.diagram import Architecture
 from ..diagrams.architecture.relations import Port
 from ..diagrams.block.diagram import BlockDiagram
+from ..diagrams.c4.diagram import C4ContextDiagram
 from ..diagrams.classdiagram.diagram import ClassDiagram
 from ..diagrams.classdiagram.elements import ClassAttribute, ClassMethod
 from ..diagrams.classdiagram.relations import ClassRelationKind
@@ -362,6 +363,14 @@ class DiagramFixtures:
         gitgraph.checkout("checkout_main", "main")
         gitgraph.add_commit("release", "RELEASE", tag="v1.1.0")
 
+        c4 = self.registry.get("C4Context").diagram
+        assert isinstance(c4, C4ContextDiagram)
+        c4.add_person("customer", "Customer", "A personal banking customer")
+        c4.add_system("banking", "Internet Banking System", "Provides online banking", "Python")
+        c4.add_database("accounts", "Accounts Database", "Stores account balances", "PostgreSQL")
+        c4.add_relationship("uses", "customer", "banking", "Uses")
+        c4.add_relationship("reads", "banking", "accounts", "Reads account data")
+
         return {
             "flowchart": self.renderer.render(flowchart),
             "treeview": self.renderer.render(treeview),
@@ -381,6 +390,7 @@ class DiagramFixtures:
             "er": self.renderer.render(er),
             "gantt": self.renderer.render(gantt),
             "gitgraph": self.renderer.render(gitgraph),
+            "c4": self.renderer.render(c4),
             "state": self.renderer.render(state),
             "swimlane": self.renderer.render(swimlane),
         }

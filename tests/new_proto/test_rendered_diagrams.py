@@ -26,6 +26,13 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             'commit id: "FEATURE" type: HIGHLIGHT',
             "checkout main",
         ),
+        "c4": (
+            "C4Context",
+            'Person(customer, "Customer", "A personal banking customer")',
+            'System(banking, "Internet Banking System", "Provides online banking", "Python")',
+            'SystemDb(accounts, "Accounts Database", "Stores account balances", "PostgreSQL")',
+            'Rel(customer, banking, "Uses")',
+        ),
         "treeview": (
             "treeView-beta",
             "root/",
@@ -172,6 +179,8 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             assert source.startswith("---\nconfig:\n  wrap: true\n  gantt: {")
         elif name == "gitgraph":
             assert source.startswith("---\nconfig:\n  wrap: true\n  gitGraph: {")
+        elif name == "c4":
+            assert source.startswith("---\nconfig:\n  wrap: true\n  c4: {}\n---\n")
         elif name == "packet":
             assert source.startswith("---\nconfig:\n  wrap: true\n  packet: {")
         elif name == "radar":
