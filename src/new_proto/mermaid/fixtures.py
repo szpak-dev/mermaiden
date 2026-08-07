@@ -13,6 +13,8 @@ from ..diagrams.sequence.annotations import NotePosition
 from ..diagrams.sequence.diagram import SequenceDiagram
 from ..diagrams.sequence.elements import ParticipantKind
 from ..diagrams.sequence.relations import ControlKind, MessageKind
+from ..diagrams.state.annotations import NotePosition as StateNotePosition
+from ..diagrams.state.diagram import StateDiagram
 from ..diagrams.swimlane.diagram import SwimlaneDiagram
 from ..diagrams.treeview.diagram import TreeView
 from .service import MermaidRenderer
@@ -148,11 +150,46 @@ class DiagramFixtures:
         swimlane.add_flow("handoff_answer", "handoff", "answer")
         swimlane.add_flow("answer_receive", "answer", "receive")
 
+        state = self.registry.get("stateDiagram-v2").diagram
+        assert isinstance(state, StateDiagram)
+        state.add_state("still", "Still")
+        state.add_state("moving", "Moving")
+        state.add_state("crash", "Crash")
+        state.add_initial("initial")
+        state.add_final("final")
+        state.add_choice("decision", "Route")
+        state.add_fork("fork", "Fork")
+        state.add_join("join", "Join")
+        state.add_composite("active", "Active")
+        state.add_initial("active_initial", "active")
+        state.add_final("active_final", "active")
+        state.add_state("num_lock_off", "Num lock off", "active")
+        state.add_state("num_lock_on", "Num lock on", "active")
+        state.add_state("caps_lock_off", "Caps lock off", "active")
+        state.add_transition("start_still", "initial", "still")
+        state.add_transition("still_moving", "still", "moving", "accelerate")
+        state.add_transition("moving_decision", "moving", "decision")
+        state.add_transition("decision_active", "decision", "active", "continue")
+        state.add_transition("decision_crash", "decision", "crash", "fail")
+        state.add_transition("active_fork", "active", "fork")
+        state.add_transition("fork_still", "fork", "still")
+        state.add_transition("fork_crash", "fork", "crash")
+        state.add_transition("still_join", "still", "join")
+        state.add_transition("crash_join", "crash", "join")
+        state.add_transition("end_join", "join", "final")
+        state.add_transition("start_num_lock", "active_initial", "num_lock_off", composite_id="active")
+        state.add_transition("num_lock_toggle", "num_lock_off", "num_lock_on", "toggle", "active")
+        state.add_transition("end_num_lock", "num_lock_on", "active_final", composite_id="active")
+        state.add_transition("start_caps_lock", "active_initial", "caps_lock_off", composite_id="active")
+        state.add_transition("end_caps_lock", "caps_lock_off", "active_final", composite_id="active")
+        state.add_note("moving_note", "moving", "A moving system", StateNotePosition.RIGHT)
+
         return {
             "flowchart": self.renderer.render(flowchart),
             "treeview": self.renderer.render(treeview),
             "classdiagram": self.renderer.render(classes),
             "architecture": self.renderer.render(architecture),
             "sequence": self.renderer.render(sequence),
+            "state": self.renderer.render(state),
             "swimlane": self.renderer.render(swimlane),
         }

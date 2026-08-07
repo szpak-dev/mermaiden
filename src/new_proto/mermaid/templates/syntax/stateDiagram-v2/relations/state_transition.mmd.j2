@@ -1,0 +1,1 @@
+{% if relation.source_terminal %}[*]{% else %}{{ relation.source_id | mermaid_id("s") }}{% endif %} --> {% if relation.target_terminal %}[*]{% else %}{{ relation.target_id | mermaid_id("s") }}{% endif %}{% if relation.label %}: {{ relation.label | mermaid_quote }}{% endif %}{{ "\n" -}}

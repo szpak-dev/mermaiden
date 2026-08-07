@@ -1,0 +1,22 @@
+{% macro render(items, scope) -%}
+{% for item in items -%}
+{% with element=item -%}
+{% if element.kind == "composite_state" -%}
+{% if element.label %}{{ element.id | mermaid_id("s") }}: {{ element.label | mermaid_quote }}{{ "\n" -}}{% endif %}
+state {{ element.id | mermaid_id("s") }} { {{ "\n" -}}
+{{ render(element.elements, element.id) | indent(2, true) }}
+}{{ "\n" -}}
+{% else -%}
+{% include template_prefix ~ "/elements/" ~ element.kind ~ ".mmd.j2" -%}
+{% endif -%}
+{% endwith -%}
+{% endfor -%}
+{% for relation in diagram.transitions_for(scope) -%}
+{% with relation=relation -%}{% include template_prefix ~ "/relations/state_transition.mmd.j2" -%}{% endwith -%}
+{% endfor -%}
+{% for annotation in diagram.notes_for(scope) -%}
+{% with annotation=annotation -%}{% include template_prefix ~ "/annotations/state_note.mmd.j2" -%}{% endwith -%}
+{% endfor -%}
+{%- endmacro %}
+stateDiagram-v2 {{ diagram.direction.value }}{{ "\n" -}}
+{{ render(diagram.root_elements, "") }}

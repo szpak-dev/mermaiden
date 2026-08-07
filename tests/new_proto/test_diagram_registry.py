@@ -11,6 +11,7 @@ def test_registry_lists_every_implemented_diagram_with_mermaid_metadata() -> Non
         ("classDiagram", "class", "ClassDiagramConfig"),
         ("flowchart", "flowchart", "FlowchartDiagramConfig"),
         ("sequenceDiagram", "sequence", "SequenceDiagramConfig"),
+        ("stateDiagram-v2", "state", "StateDiagramConfig"),
         ("swimlane-beta", "swimlane", "SwimlaneDiagramConfig"),
         ("treeView-beta", "treeView", "TreeViewDiagramConfig"),
     ]

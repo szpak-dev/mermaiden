@@ -12,6 +12,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         ("classDiagram", "class", "ClassDiagramConfig"),
         ("flowchart", "flowchart", "FlowchartDiagramConfig"),
         ("sequenceDiagram", "sequence", "SequenceDiagramConfig"),
+        ("stateDiagram-v2", "state", "StateDiagramConfig"),
         ("swimlane-beta", "swimlane", "SwimlaneDiagramConfig"),
         ("treeView-beta", "treeView", "TreeViewDiagramConfig"),
     ]
@@ -19,7 +20,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
     assert all(
         values == {"wrap": True}
         for diagram_id, values in configurations.items()
-        if diagram_id != "swimlane-beta"
+        if diagram_id not in {"stateDiagram-v2", "swimlane-beta"}
     )
     assert configurations["swimlane-beta"] == {
         "wrap": True,
@@ -29,6 +30,10 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
             "optimizeRanksByCrossings": True,
             "automaticLaneOrdering": False,
         },
+    }
+    assert configurations["stateDiagram-v2"] == {
+        "wrap": True,
+        "state": {"titleTopMargin": 25, "useMaxWidth": True, "defaultRenderer": "dagre-wrapper"},
     }
     upstream = {item.config_key: item for item in Application.create().mermaid_diagram_configs()}
     assert all(

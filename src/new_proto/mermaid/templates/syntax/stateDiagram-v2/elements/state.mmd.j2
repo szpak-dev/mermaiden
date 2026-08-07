@@ -1,0 +1,1 @@
+{% if element.label %}state {{ element.label | mermaid_quote }} as {{ element.id | mermaid_id("s") }}{{ "\n" -}}{% else %}{{ element.id | mermaid_id("s") }}{{ "\n" -}}{% endif %}

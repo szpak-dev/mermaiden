@@ -51,6 +51,17 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             "Note left of user: Caller",
             "Note right of web: Gateway",
         ),
+        "state": (
+            "stateDiagram-v2 TD",
+            'state "Still" as s_v_still',
+            "state s_v_decision <<choice>>",
+            "state s_v_fork <<fork>>",
+            "state s_v_join <<join>>",
+            's_v_active: "Active"',
+            "state s_v_active {",
+            "[*] --> s_v_num_lock_off",
+            'note right of s_v_moving : "A moving system"',
+        ),
         "swimlane": (
             "swimlane-beta TD",
             'subgraph e_v_customer ["Customer"]',
@@ -65,7 +76,12 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
     assert diagrams.keys() == expected.keys()
     for name, fragments in expected.items():
         source = diagrams[name]
-        if name == "swimlane":
+        if name == "state":
+            assert source.startswith(
+                "---\nconfig:\n  wrap: true\n"
+                '  state: {"titleTopMargin": 25, "useMaxWidth": true, "defaultRenderer": "dagre-wrapper"}\n---\n'
+            )
+        elif name == "swimlane":
             assert source.startswith(
                 "---\nconfig:\n  wrap: true\n"
                 '  swimlane: {"lineHops": "arc", "ignoreCrossLaneEdges": true, '
