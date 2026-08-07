@@ -37,6 +37,7 @@ from ..diagrams.swimlane.diagram import SwimlaneDiagram
 from ..diagrams.timeline.diagram import Timeline
 from ..diagrams.treeview.diagram import TreeView
 from ..diagrams.venn.diagram import Venn
+from ..diagrams.wardley.diagram import WardleyDiagram
 from .service import MermaidRenderer
 
 
@@ -396,6 +397,15 @@ class DiagramFixtures:
         railroad.add_terminal("plus", "+", "expression")
         railroad.add_non_terminal("term_repeat", "term", "expression")
 
+        wardley = self.registry.get("wardley-beta").diagram
+        assert isinstance(wardley, WardleyDiagram)
+        wardley.add_anchor("business", "Business", 0.95, 0.63)
+        wardley.add_component("tea", "Cup of Tea", 0.79, 0.61, "build")
+        wardley.add_component("water", "Hot Water", 0.52, 0.8)
+        wardley.add_dependency("business_tea", "business", "tea")
+        wardley.add_dependency("tea_water", "tea", "water")
+        wardley.add_evolution("water_evolve", "water", 0.89)
+
         return {
             "flowchart": self.renderer.render(flowchart),
             "treeview": self.renderer.render(treeview),
@@ -419,6 +429,7 @@ class DiagramFixtures:
             "cynefin": self.renderer.render(cynefin),
             "kanban": self.renderer.render(kanban),
             "railroad": self.renderer.render(railroad),
+            "wardley": self.renderer.render(wardley),
             "state": self.renderer.render(state),
             "swimlane": self.renderer.render(swimlane),
         }

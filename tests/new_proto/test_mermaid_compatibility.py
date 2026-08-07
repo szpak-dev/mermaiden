@@ -5,12 +5,8 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
     report = Application.create().compatibility_report()
 
     assert report.lock.mermaid_version == "11.16.0"
-    assert not report.valid
-    assert all(
-        item.config_key
-        not in {"c4", "cynefin", "eventmodeling", "gitGraph", "ishikawa", "kanban", "railroad"}
-        for item in report.missing_diagrams
-    )
+    assert report.valid
+    assert not report.missing_diagrams
     assert [(item.diagram_id, item.config_key, item.schema_definition) for item in report.diagrams] == [
         ("architecture-beta", "architecture", "ArchitectureDiagramConfig"),
         ("block", "block", "BlockDiagramConfig"),
@@ -38,6 +34,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         ("timeline", "timeline", "TimelineDiagramConfig"),
         ("treeView-beta", "treeView", "TreeViewDiagramConfig"),
         ("venn-beta", "venn", "VennDiagramConfig"),
+        ("wardley-beta", "wardley-beta", "WardleyDiagramConfig"),
     ]
     configurations = {item.diagram_id: item.configuration.values for item in report.diagrams}
     assert all(
@@ -62,7 +59,8 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
             "requirementDiagram",
             "stateDiagram-v2",
             "swimlane-beta",
-            "venn-beta",
+                "venn-beta",
+                "wardley-beta",
         }
     )
     assert configurations["swimlane-beta"] == {

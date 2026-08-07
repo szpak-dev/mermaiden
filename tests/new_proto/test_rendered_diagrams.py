@@ -51,6 +51,13 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             "railroad-ebnf-beta",
             'r_v_expression = term "+" term ;',
         ),
+        "wardley": (
+            "wardley-beta",
+            'anchor "Business" [0.95, 0.63]',
+            'component "Cup of Tea" [0.79, 0.61] (build)',
+            '"Business" -> "Cup of Tea"',
+            'evolve "Hot Water" 0.89',
+        ),
         "treeview": (
             "treeView-beta",
             "root/",
@@ -205,6 +212,8 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             assert source.startswith("---\nconfig:\n  wrap: true\n  kanban: {")
         elif name == "railroad":
             assert source.startswith("---\nconfig:\n  wrap: true\n  railroad: {")
+        elif name == "wardley":
+            assert source.startswith("---\nconfig:\n  wrap: true\n  wardley-beta: {}\n---\n")
         elif name == "packet":
             assert source.startswith("---\nconfig:\n  wrap: true\n  packet: {")
         elif name == "radar":
