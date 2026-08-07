@@ -8,7 +8,7 @@ The model has five concepts:
 - **Constraint** is a side-effect-free Visitor producing structured violations.
 - **Annotation** adds data through typed references to elements or relations.
 
-Dependency direction is `flowchart -> runtime -> core`. Core is independent of
+Dependency direction is `flowchart/treeview -> runtime -> core`. Core is independent of
 Wireup and Mermaid. Runtime is a service-oriented building environment: frozen
 dataclass services receive dependencies through typed fields, while scoped
 `DiagramState` owns committed and staged state. No service has a handwritten
@@ -19,7 +19,7 @@ before and after staging the candidate. Blocking violations roll the candidate
 back atomically; advisory violations allow deliberately incomplete diagrams to
 be built and repaired incrementally.
 
-Flowchart is a separate aggregate resolved from the composition root. Its API
+Flowchart and Tree View are separate aggregates resolved from the composition root. Flowchart's API
 uses domain operations such as `add_start`, `add_decision`, `add_flow`, and
 `remove_flow`. Callers pass primitive arguments; the aggregate creates its
 `FlowNode`, `Flow`, and `Note` values internally. Generic `Diagram` operations
@@ -48,7 +48,9 @@ diagram-specific rendering packages.
 The accepted initial flowchart surface is documented in
 [`diagrams/flowchart/VOCABULARY.md`](diagrams/flowchart/VOCABULARY.md).
 
-The flowchart rendering package emits deterministic `.mmd` text through Jinja
+Each diagram rendering package emits deterministic Mermaid body text through Jinja
 snippets. Each semantic element, relation, and annotation owns its Mermaid
 representation in a template; renderer Python code only configures safe syntax
-filters and invokes the root template.
+filters and invokes the root template. The composition root exposes one
+`MermaidRenderer`, which dispatches every supported diagram and applies the
+same default Mermaid `wrap: true` document configuration.

@@ -29,8 +29,6 @@ def create_jinja_environment(
 
 @dataclass(frozen=True, slots=True)
 class JinjaTextRenderer[SourceT]:
-    """Render one typed source through a named Jinja template."""
-
     environment: Environment
     template_name: str
     context_name: str = "diagram"

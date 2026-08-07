@@ -5,8 +5,7 @@ from wireup import injectable
 
 from ...core.annotation import TargetKind, TargetRef
 from ...core.constraint import ChangeReport
-from ...core.error import OperationError
-from ...runtime.diagrams.aggregate import DiagramAggregate
+from ..base import DomainDiagram
 from .annotations import Note
 from .changes import FlowchartChanges
 from .elements import (
@@ -29,7 +28,7 @@ from .relations import ConditionalFlow, Flow
 
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
-class Flowchart(DiagramAggregate):
+class Flowchart(DomainDiagram):
     changes: FlowchartChanges
     observer: FlowchartObserver
     direction: Direction = Direction.TOP_DOWN
@@ -50,9 +49,7 @@ class Flowchart(DiagramAggregate):
         element_ids: Sequence[str],
         label: str = "",
     ) -> ChangeReport:
-        operation = f"add flow '{id}'"
-        candidate = self.relations.add(Flow(id, tuple(element_ids), label))
-        return self.changes.apply(operation, candidate, self)
+        return self._add_relation(f"add flow '{id}'", Flow(id, tuple(element_ids), label))
 
     def annotate(
         self,
@@ -69,8 +66,7 @@ class Flowchart(DiagramAggregate):
         text = data["text"]
         assert isinstance(text, str)
         targets = tuple(TargetRef(TargetKind.ELEMENT, item) for item in element_ids)
-        candidate = self.annotations.add_annotation(Note(id, targets, text))
-        return self.changes.apply(operation, candidate, self)
+        return self._add_annotation(operation, Note(id, targets, text))
 
     def add_group(
         self,
@@ -79,12 +75,11 @@ class Flowchart(DiagramAggregate):
         parent_id: str = "",
         direction: Direction | None = None,
     ) -> ChangeReport:
-        operation = f"add flow group '{id}'"
-        try:
-            candidate = self.elements.add(FlowGroup(id, label, (), direction), parent_id)
-        except OperationError as error:
-            self.changes.reject(operation, str(error))
-        return self.changes.apply(operation, candidate, self)
+        return self._add_element(
+            f"add flow group '{id}'",
+            FlowGroup(id, label, (), direction),
+            parent_id,
+        )
 
     def add_node(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
         return self._add_node(FlowNode(id, label), parent_id, "node")
@@ -132,9 +127,10 @@ class Flowchart(DiagramAggregate):
         target_id: str,
         condition: str,
     ) -> ChangeReport:
-        operation = f"add conditional flow '{id}'"
-        candidate = self.relations.add(ConditionalFlow(id, (source_id, target_id), condition))
-        return self.changes.apply(operation, candidate, self)
+        return self._add_relation(
+            f"add conditional flow '{id}'",
+            ConditionalFlow(id, (source_id, target_id), condition),
+        )
 
     def add_note(
         self,
@@ -152,9 +148,4 @@ class Flowchart(DiagramAggregate):
         return self.remove_relation(id)
 
     def _add_node(self, node: FlowNode, parent_id: str, kind: str) -> ChangeReport:
-        operation = f"add {kind} '{node.id}'"
-        try:
-            candidate = self.elements.add(node, parent_id)
-        except OperationError as error:
-            self.changes.reject(operation, str(error))
-        return self.changes.apply(operation, candidate, self)
+        return self._add_element(f"add {kind} '{node.id}'", node, parent_id)

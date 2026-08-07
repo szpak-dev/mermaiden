@@ -5,11 +5,11 @@ from wireup import injectable
 
 from ...runtime.diagrams.observer import ConstraintInspection
 from ..base import DiagramObserver
-from .constraints.constraint import FlowchartConstraint
+from .constraints.constraint import TreeViewConstraint
 
 
 @injectable
 @dataclass(frozen=True, slots=True)
-class FlowchartObserver(DiagramObserver[FlowchartConstraint]):
+class TreeViewObserver(DiagramObserver[TreeViewConstraint]):
     structure: ConstraintInspection
-    constraints: Sequence[FlowchartConstraint]
+    constraints: Sequence[TreeViewConstraint]
