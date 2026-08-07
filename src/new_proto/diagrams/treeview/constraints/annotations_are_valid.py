@@ -1,16 +1,12 @@
-from dataclasses import dataclass
-
 from wireup import injectable
 
 from ....core.annotation import TargetKind
-from ....core.constraint import ConstraintLevel, Violation
-from ....core.diagram import Diagram
+from ....core.constraint import ConstraintDiagram, ConstraintLevel, Violation
 from ..annotations import TreeAnnotation
 from .constraint import TreeViewConstraint
 
 
 @injectable(as_type=TreeViewConstraint, qualifier="treeview_annotations")
-@dataclass(frozen=True, slots=True)
 class AnnotationsAreValid(TreeViewConstraint):
     @property
     def code(self) -> str:
@@ -20,7 +16,7 @@ class AnnotationsAreValid(TreeViewConstraint):
     def level(self) -> ConstraintLevel:
         return ConstraintLevel.BLOCKING
 
-    def visit(self, diagram: Diagram) -> tuple[Violation, ...]:
+    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues: list[Violation] = []
         for annotation in diagram.find_annotations():
             if not isinstance(annotation, TreeAnnotation):

@@ -1,24 +1,16 @@
-from dataclasses import dataclass
-
 from wireup import injectable
 
 from ...core.annotation import TargetKind
-from ...core.constraint import Constraint, ConstraintLevel, Violation
-from ...core.diagram import Diagram
+from ...core.constraint import BlockingConstraint, Constraint, ConstraintDiagram, Violation
 
 
 @injectable(as_type=Constraint, qualifier="references_exist")
-@dataclass(frozen=True, slots=True)
-class ReferencesExist(Constraint):
+class ReferencesExist(BlockingConstraint):
     @property
     def code(self) -> str:
         return "structure.references"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
-
-    def visit(self, diagram: Diagram) -> tuple[Violation, ...]:
+    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         element_ids = {item.id for item in diagram.walk_elements()}
         relation_ids = {item.id for item in diagram.find_relations()}
         issues: list[Violation] = []
@@ -33,9 +25,8 @@ class ReferencesExist(Constraint):
                     )
         for annotation in diagram.find_annotations():
             for target in annotation.targets:
-                exists = (
-                    (target.kind is TargetKind.ELEMENT and target.id in element_ids)
-                    or (target.kind is TargetKind.RELATION and target.id in relation_ids)
+                exists = (target.kind is TargetKind.ELEMENT and target.id in element_ids) or (
+                    target.kind is TargetKind.RELATION and target.id in relation_ids
                 )
                 if not exists:
                     issues.append(

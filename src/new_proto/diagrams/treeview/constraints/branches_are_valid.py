@@ -1,15 +1,11 @@
-from dataclasses import dataclass
-
 from wireup import injectable
 
-from ....core.constraint import ConstraintLevel, Violation
-from ....core.diagram import Diagram
+from ....core.constraint import ConstraintDiagram, ConstraintLevel, Violation
 from ..elements import TreeItem
 from .constraint import TreeViewConstraint
 
 
 @injectable(as_type=TreeViewConstraint, qualifier="treeview_branches")
-@dataclass(frozen=True, slots=True)
 class BranchesAreValid(TreeViewConstraint):
     @property
     def code(self) -> str:
@@ -19,7 +15,7 @@ class BranchesAreValid(TreeViewConstraint):
     def level(self) -> ConstraintLevel:
         return ConstraintLevel.BLOCKING
 
-    def visit(self, diagram: Diagram) -> tuple[Violation, ...]:
+    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         elements = {item.id: item for item in diagram.walk_elements()}
         parents: set[str] = set()
         issues: list[Violation] = []

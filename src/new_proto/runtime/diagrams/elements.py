@@ -66,9 +66,7 @@ class Elements:
 
     def _remove(self, elements: tuple[Element, ...], id: str) -> tuple[Element, ...]:
         return tuple(
-            replace(element, elements=self._remove(element.elements, id))
-            if isinstance(element, Container)
-            else element
+            replace(element, elements=self._remove(element.elements, id)) if isinstance(element, Container) else element
             for element in elements
             if element.id != id
         )

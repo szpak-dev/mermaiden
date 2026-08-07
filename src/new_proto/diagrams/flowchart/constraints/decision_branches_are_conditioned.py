@@ -1,22 +1,18 @@
-from dataclasses import dataclass
-
 from wireup import injectable
 
-from ....core.constraint import Violation
-from ....core.diagram import Diagram
+from ....core.constraint import ConstraintDiagram, Violation
 from ..elements import Decision
 from ..relations import ConditionalFlow
 from .constraint import FlowchartConstraint
 
 
 @injectable(as_type=FlowchartConstraint, qualifier="decision_branches_are_conditioned")
-@dataclass(frozen=True, slots=True)
 class DecisionBranchesAreConditioned(FlowchartConstraint):
     @property
     def code(self) -> str:
         return "flowchart.decision_conditions"
 
-    def visit(self, diagram: Diagram) -> tuple[Violation, ...]:
+    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues: list[Violation] = []
         flows = self.flows(diagram)
         for decision in (item for item in diagram.walk_elements() if isinstance(item, Decision)):

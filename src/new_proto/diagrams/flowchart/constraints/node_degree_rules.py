@@ -1,23 +1,20 @@
 from collections import defaultdict
-from dataclasses import dataclass
 
 from wireup import injectable
 
-from ....core.constraint import Violation
-from ....core.diagram import Diagram
+from ....core.constraint import ConstraintDiagram, Violation
 from ..elements import Decision, End, FlowNode, Junction, Start
 from ..relations import Flow
 from .constraint import FlowchartConstraint
 
 
 @injectable(as_type=FlowchartConstraint, qualifier="node_degree_rules")
-@dataclass(frozen=True, slots=True)
 class NodeDegreeRules(FlowchartConstraint):
     @property
     def code(self) -> str:
         return "flowchart.node_degree"
 
-    def visit(self, diagram: Diagram) -> tuple[Violation, ...]:
+    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         incoming: defaultdict[str, list[Flow]] = defaultdict(list)
         outgoing: defaultdict[str, list[Flow]] = defaultdict(list)
         for flow in self.flows(diagram):

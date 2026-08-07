@@ -1,22 +1,19 @@
 from collections import defaultdict, deque
-from dataclasses import dataclass
 
 from wireup import injectable
 
-from ....core.constraint import Violation
-from ....core.diagram import Diagram
+from ....core.constraint import ConstraintDiagram, Violation
 from ..elements import FlowNode, Start
 from .constraint import FlowchartConstraint
 
 
 @injectable(as_type=FlowchartConstraint, qualifier="every_node_is_reachable")
-@dataclass(frozen=True, slots=True)
 class EveryNodeIsReachable(FlowchartConstraint):
     @property
     def code(self) -> str:
         return "flowchart.reachable"
 
-    def visit(self, diagram: Diagram) -> tuple[Violation, ...]:
+    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         starts = [item for item in diagram.walk_elements() if isinstance(item, Start)]
         if len(starts) != 1:
             return ()

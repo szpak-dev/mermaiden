@@ -1,9 +1,9 @@
-from dataclasses import dataclass
+from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintLevel, Violation
-from ...core.diagram import Diagram
+from ...core.constraint import Constraint
+from ..base import DiagramMembersConstraint
 from .annotations import SequenceNote
 from .elements import Participant, ParticipantBox
 from .relations import Control, Directive, Message, ParticipantEvent
@@ -14,32 +14,14 @@ class SequenceConstraint(Constraint):
 
 
 @injectable(as_type=SequenceConstraint, qualifier="sequence_members")
-@dataclass(frozen=True, slots=True)
-class SequenceMembers(SequenceConstraint):
+class SequenceMembers(DiagramMembersConstraint, SequenceConstraint):
+    element_types: ClassVar = (Participant, ParticipantBox)
+    relation_types: ClassVar = (Message, ParticipantEvent, Control, Directive)
+    annotation_types: ClassVar = (SequenceNote,)
+    element_description: ClassVar[str] = "a sequence member"
+    relation_description: ClassVar[str] = "a sequence event"
+    annotation_description: ClassVar[str] = "a sequence note"
+
     @property
     def code(self) -> str:
         return "sequence.members"
-
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
-
-    def visit(self, diagram: Diagram) -> tuple[Violation, ...]:
-        members = Participant | ParticipantBox
-        relations = Message | ParticipantEvent | Control | Directive
-        issues = [
-            self.violation(f"Element '{item.id}' is not a sequence member.")
-            for item in diagram.walk_elements()
-            if not isinstance(item, members)
-        ]
-        issues.extend(
-            self.violation(f"Relation '{item.id}' is not a sequence event.")
-            for item in diagram.find_relations()
-            if not isinstance(item, relations)
-        )
-        issues.extend(
-            self.violation(f"Annotation '{item.id}' is not a sequence note.")
-            for item in diagram.find_annotations()
-            if not isinstance(item, SequenceNote)
-        )
-        return tuple(issues)

@@ -1,31 +1,22 @@
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DefinedDiagram, DiagramDefinition
+from ..base import DiagramModel
 from .annotations import NotePosition, SequenceNotes
+from .constraints import SequenceConstraint
 from .elements import Participant, ParticipantBox, ParticipantKind
-from .observer import SequenceObserver
 from .relations import Control, ControlKind, Directive, DirectiveKind, Message, MessageKind, ParticipantEvent
 
 
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
-class SequenceDiagram(DefinedDiagram):
-    observer: SequenceObserver
-    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
-        "sequenceDiagram",
-        "participant",
-        "box",
-        "message",
-        "note",
-        Participant,
-        ParticipantBox,
-        Message,
-        SequenceNotes(),
-    )
+class SequenceDiagram(DiagramModel):
+    constraints: Sequence[SequenceConstraint]
+    syntax: ClassVar[str] = "sequenceDiagram"
 
     def add_box(self, id: str, label: str, color: str = "") -> ChangeReport:
         return self._add_element(f"add box '{id}'", ParticipantBox(id, label, (), color))
@@ -76,7 +67,13 @@ class SequenceDiagram(DefinedDiagram):
     def add_note(
         self, id: str, text: str, *participant_ids: str, position: NotePosition = NotePosition.OVER
     ) -> ChangeReport:
-        return self.annotate(id, {"text": text, "position": position}, participant_ids)
+        return self._annotate(
+            f"add note '{id}'",
+            SequenceNotes(),
+            id,
+            {"text": text, "position": position},
+            participant_ids,
+        )
 
     def _event(self, id: str, participant_id: str, action: str) -> ChangeReport:
         return self._add_relation(

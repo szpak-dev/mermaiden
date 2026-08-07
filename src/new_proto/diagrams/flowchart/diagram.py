@@ -5,8 +5,9 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DefinedDiagram, DiagramDefinition
+from ..base import DiagramModel
 from .annotations import Notes
+from .constraints.constraint import FlowchartConstraint
 from .elements import (
     Action,
     DataStore,
@@ -21,27 +22,15 @@ from .elements import (
     Start,
     Subprocess,
 )
-from .observer import FlowchartObserver
 from .relations import ConditionalFlow, Flow
 
 
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
-class Flowchart(DefinedDiagram):
-    observer: FlowchartObserver
+class Flowchart(DiagramModel):
+    constraints: Sequence[FlowchartConstraint]
     direction: Direction = Direction.TOP_DOWN
-
-    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
-        kind="flowchart",
-        entity_name="node",
-        container_name="flow group",
-        relation_name="flow",
-        annotation_name="note",
-        entity=FlowNode,
-        container=FlowGroup,
-        relation=Flow,
-        annotation=Notes(),
-    )
+    syntax: ClassVar[str] = "flowchart"
 
     def add_group(
         self,
@@ -57,7 +46,7 @@ class Flowchart(DefinedDiagram):
         )
 
     def add_node(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self.add_entity(id, label, parent_id)
+        return self._add_node(FlowNode(id, label), parent_id, "node")
 
     def add_start(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
         return self._add_node(Start(id, label), parent_id, "start")
@@ -93,7 +82,7 @@ class Flowchart(DefinedDiagram):
         target_id: str,
         label: str = "",
     ) -> ChangeReport:
-        return self.connect(id, (source_id, target_id), label)
+        return self._add_relation(f"add flow '{id}'", Flow(id, (source_id, target_id), label))
 
     def add_conditional_flow(
         self,
@@ -113,10 +102,12 @@ class Flowchart(DefinedDiagram):
         text: str,
         element_ids: Sequence[str] = (),
     ) -> ChangeReport:
-        return self.annotate(
+        return self._annotate(
+            f"add note '{id}'",
+            Notes(),
             id,
             {"text": text},
-            element_ids=element_ids,
+            element_ids,
         )
 
     def remove_flow(self, id: str) -> ChangeReport:

@@ -5,29 +5,18 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DefinedDiagram, DiagramDefinition
+from ..base import DiagramModel
 from .annotations import ClassNotes
+from .constraints import ClassDiagramConstraint
 from .elements import Class, ClassAttribute, ClassMethod, ClassNamespace
-from .observer import ClassDiagramObserver
 from .relations import ClassRelation, ClassRelationKind
 
 
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
-class ClassDiagram(DefinedDiagram):
-    observer: ClassDiagramObserver
-
-    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
-        kind="classDiagram",
-        entity_name="class",
-        container_name="class",
-        relation_name="class relation",
-        annotation_name="class note",
-        entity=Class,
-        container=Class,
-        relation=ClassRelation,
-        annotation=ClassNotes(),
-    )
+class ClassDiagram(DiagramModel):
+    constraints: Sequence[ClassDiagramConstraint]
+    syntax: ClassVar[str] = "classDiagram"
 
     def add_class(
         self,
@@ -65,4 +54,4 @@ class ClassDiagram(DefinedDiagram):
         )
 
     def add_note(self, id: str, class_id: str, text: str) -> ChangeReport:
-        return self.annotate(id, {"text": text}, (class_id,))
+        return self._annotate(f"add class note '{id}'", ClassNotes(), id, {"text": text}, (class_id,))

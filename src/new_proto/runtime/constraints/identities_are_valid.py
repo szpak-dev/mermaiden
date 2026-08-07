@@ -1,24 +1,17 @@
 from collections import Counter
-from dataclasses import dataclass
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintLevel, Violation
-from ...core.diagram import Diagram
+from ...core.constraint import BlockingConstraint, Constraint, ConstraintDiagram, Violation
 
 
 @injectable(as_type=Constraint, qualifier="identities_are_valid")
-@dataclass(frozen=True, slots=True)
-class IdentitiesAreValid(Constraint):
+class IdentitiesAreValid(BlockingConstraint):
     @property
     def code(self) -> str:
         return "structure.identities"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
-
-    def visit(self, diagram: Diagram) -> tuple[Violation, ...]:
+    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         groups = (
             ("element", tuple(item.id for item in diagram.walk_elements())),
             ("relation", tuple(item.id for item in diagram.find_relations())),

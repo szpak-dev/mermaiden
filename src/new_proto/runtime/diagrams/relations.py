@@ -25,14 +25,10 @@ class Relations:
 
     def without_elements(self, data: DiagramData, element_ids: tuple[str, ...]) -> DiagramData:
         removed = set(element_ids)
-        relations = tuple(
-            item for item in data.relations if not removed.intersection(item.element_ids)
-        )
+        relations = tuple(item for item in data.relations if not removed.intersection(item.element_ids))
         return replace(data, relations=relations)
 
     def find(self, element_id: str = "") -> tuple[Relation, ...]:
         if not element_id:
             return self.state.current.relations
-        return tuple(
-            item for item in self.state.current.relations if element_id in item.element_ids
-        )
+        return tuple(item for item in self.state.current.relations if element_id in item.element_ids)

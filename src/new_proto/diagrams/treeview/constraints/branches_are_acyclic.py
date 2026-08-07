@@ -1,14 +1,10 @@
-from dataclasses import dataclass
-
 from wireup import injectable
 
-from ....core.constraint import ConstraintLevel, Violation
-from ....core.diagram import Diagram
+from ....core.constraint import ConstraintDiagram, ConstraintLevel, Violation
 from .constraint import TreeViewConstraint
 
 
 @injectable(as_type=TreeViewConstraint, qualifier="treeview_acyclic")
-@dataclass(frozen=True, slots=True)
 class BranchesAreAcyclic(TreeViewConstraint):
     @property
     def code(self) -> str:
@@ -18,7 +14,7 @@ class BranchesAreAcyclic(TreeViewConstraint):
     def level(self) -> ConstraintLevel:
         return ConstraintLevel.BLOCKING
 
-    def visit(self, diagram: Diagram) -> tuple[Violation, ...]:
+    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         children: dict[str, list[str]] = {}
         for branch in self.branches(diagram):
             if len(branch.element_ids) == 2:

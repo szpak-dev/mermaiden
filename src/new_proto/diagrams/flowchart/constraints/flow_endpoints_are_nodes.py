@@ -1,15 +1,11 @@
-from dataclasses import dataclass
-
 from wireup import injectable
 
-from ....core.constraint import ConstraintLevel, Violation
-from ....core.diagram import Diagram
+from ....core.constraint import ConstraintDiagram, ConstraintLevel, Violation
 from ..elements import FlowNode
 from .constraint import FlowchartConstraint
 
 
 @injectable(as_type=FlowchartConstraint, qualifier="flow_endpoints_are_nodes")
-@dataclass(frozen=True, slots=True)
 class FlowEndpointsAreNodes(FlowchartConstraint):
     @property
     def code(self) -> str:
@@ -19,7 +15,7 @@ class FlowEndpointsAreNodes(FlowchartConstraint):
     def level(self) -> ConstraintLevel:
         return ConstraintLevel.BLOCKING
 
-    def visit(self, diagram: Diagram) -> tuple[Violation, ...]:
+    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         elements = {item.id: item for item in diagram.walk_elements()}
         return tuple(
             self.violation(

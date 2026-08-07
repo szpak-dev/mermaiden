@@ -1,16 +1,12 @@
-from dataclasses import dataclass
-
 from wireup import injectable
 
 from ....core.annotation import TargetKind
-from ....core.constraint import ConstraintLevel, Violation
-from ....core.diagram import Diagram
+from ....core.constraint import ConstraintDiagram, ConstraintLevel, Violation
 from ..annotations import Note
 from .constraint import FlowchartConstraint
 
 
 @injectable(as_type=FlowchartConstraint, qualifier="notes_are_valid")
-@dataclass(frozen=True, slots=True)
 class NotesAreValid(FlowchartConstraint):
     @property
     def code(self) -> str:
@@ -20,7 +16,7 @@ class NotesAreValid(FlowchartConstraint):
     def level(self) -> ConstraintLevel:
         return ConstraintLevel.BLOCKING
 
-    def visit(self, diagram: Diagram) -> tuple[Violation, ...]:
+    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues: list[Violation] = []
         for note in (item for item in diagram.find_annotations() if isinstance(item, Note)):
             if not note.text.strip():

@@ -1,23 +1,15 @@
-from dataclasses import dataclass
-
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintLevel, Violation
-from ...core.diagram import Diagram
+from ...core.constraint import BlockingConstraint, Constraint, ConstraintDiagram, Violation
 
 
 @injectable(as_type=Constraint, qualifier="relations_have_participants")
-@dataclass(frozen=True, slots=True)
-class RelationsHaveParticipants(Constraint):
+class RelationsHaveParticipants(BlockingConstraint):
     @property
     def code(self) -> str:
         return "structure.relation_participants"
 
-    @property
-    def level(self) -> ConstraintLevel:
-        return ConstraintLevel.BLOCKING
-
-    def visit(self, diagram: Diagram) -> tuple[Violation, ...]:
+    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         return tuple(
             self.violation(
                 f"Relation '{item.id}' requires at least two elements.",

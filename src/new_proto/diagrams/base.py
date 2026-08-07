@@ -1,17 +1,17 @@
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import ClassVar, Protocol
+from typing import ClassVar
 
 from ..core.annotation import Annotation
-from ..core.constraint import ChangeReport, Constraint, ValidationReport
+from ..core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, ValidationReport, Violation
 from ..core.diagram import Diagram
 from ..core.element import Element
-from ..core.error import OperationError
 from ..core.relation import Relation
 from ..runtime.diagrams.aggregate import DiagramAggregate
 from ..runtime.diagrams.observer import ConstraintInspection
 
 
+@dataclass(frozen=True, slots=True)
 class DiagramObserver[ConstraintT: Constraint](ConstraintInspection):
     structure: ConstraintInspection
     constraints: Sequence[ConstraintT]
@@ -22,66 +22,50 @@ class DiagramObserver[ConstraintT: Constraint](ConstraintInspection):
         return ValidationReport((*structural.violations, *domain))
 
 
-class AnnotationFactory(Protocol):
-    def create(
-        self,
-        id: str,
-        data: Mapping[str, object],
-        element_ids: Sequence[str],
-        relation_ids: Sequence[str],
-    ) -> Annotation: ...
+class DiagramMembersConstraint(Constraint):
+    element_types: ClassVar[tuple[type[Element], ...]]
+    relation_types: ClassVar[tuple[type[Relation], ...]]
+    annotation_types: ClassVar[tuple[type[Annotation], ...]]
+    element_description: ClassVar[str]
+    relation_description: ClassVar[str]
+    annotation_description: ClassVar[str]
+
+    @property
+    def level(self) -> ConstraintLevel:
+        return ConstraintLevel.BLOCKING
+
+    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
+        issues = [
+            self.violation(f"Element '{item.id}' is not {self.element_description}.", path=f"elements.{item.id}")
+            for item in diagram.walk_elements()
+            if not isinstance(item, self.element_types)
+        ]
+        issues.extend(
+            self.violation(f"Relation '{item.id}' is not {self.relation_description}.", path=f"relations.{item.id}")
+            for item in diagram.find_relations()
+            if not isinstance(item, self.relation_types)
+        )
+        issues.extend(
+            self.violation(
+                f"Annotation '{item.id}' is not {self.annotation_description}.",
+                path=f"annotations.{item.id}",
+            )
+            for item in diagram.find_annotations()
+            if not isinstance(item, self.annotation_types)
+        )
+        return tuple(issues)
 
 
 @dataclass(frozen=True, slots=True)
-class DiagramDefinition:
-    kind: str
-    entity_name: str
-    container_name: str
-    relation_name: str
-    annotation_name: str
-    entity: Callable[[str, str], Element]
-    container: Callable[[str, str], Element]
-    relation: Callable[[str, tuple[str, ...], str], Relation]
-    annotation: AnnotationFactory
-
-
-class DefinedDiagram(DiagramAggregate):
-    definition: ClassVar[DiagramDefinition]
+class DiagramModel(DiagramAggregate):
+    syntax: ClassVar[str]
+    structure: ConstraintInspection
+    constraints: Sequence[Constraint]
 
     @property
     def kind(self) -> str:
-        return self.definition.kind
+        return self.syntax
 
-    def add_container(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self._add_element(
-            f"add {self.definition.container_name} '{id}'",
-            self.definition.container(id, label),
-            parent_id,
-        )
-
-    def add_entity(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self._add_element(
-            f"add {self.definition.entity_name} '{id}'",
-            self.definition.entity(id, label),
-            parent_id,
-        )
-
-    def connect(self, id: str, element_ids: Sequence[str], label: str = "") -> ChangeReport:
-        return self._add_relation(
-            f"add {self.definition.relation_name} '{id}'",
-            self.definition.relation(id, tuple(element_ids), label),
-        )
-
-    def annotate(
-        self,
-        id: str,
-        data: Mapping[str, object],
-        element_ids: Sequence[str] = (),
-        relation_ids: Sequence[str] = (),
-    ) -> ChangeReport:
-        operation = f"add {self.definition.annotation_name} '{id}'"
-        try:
-            annotation = self.definition.annotation.create(id, data, element_ids, relation_ids)
-        except OperationError as error:
-            self._reject(operation, str(error))
-        return self._add_annotation(operation, annotation)
+    @property
+    def observer(self) -> DiagramObserver[Constraint]:
+        return DiagramObserver(self.structure, self.constraints)

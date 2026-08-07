@@ -1,6 +1,6 @@
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
-from typing import Never
+from typing import Never, Protocol
 
 from wireup import injectable
 
@@ -15,11 +15,24 @@ from .runtime import DiagramRuntime
 from .state import DiagramData
 
 
+class AnnotationFactory(Protocol):
+    def create(
+        self,
+        id: str,
+        data: Mapping[str, object],
+        element_ids: Sequence[str],
+        relation_ids: Sequence[str],
+    ) -> Annotation: ...
+
+
 @injectable(as_type=Diagram, lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class DiagramAggregate(Diagram):
-    observer: ConstraintInspection
-    runtime: DiagramRuntime = field(default_factory=DiagramRuntime)
+    runtime: DiagramRuntime = field(default_factory=DiagramRuntime, kw_only=True)
+
+    @property
+    def observer(self) -> ConstraintInspection:
+        raise NotImplementedError
 
     @property
     def state(self):
@@ -58,14 +71,27 @@ class DiagramAggregate(Diagram):
     def _add_annotation(self, operation: str, annotation: Annotation) -> ChangeReport:
         return self._apply(operation, self.annotations.add_annotation(annotation))
 
+    def _annotate(
+        self,
+        operation: str,
+        factory: AnnotationFactory,
+        id: str,
+        data: Mapping[str, object],
+        element_ids: Sequence[str] = (),
+        relation_ids: Sequence[str] = (),
+    ) -> ChangeReport:
+        try:
+            annotation = factory.create(id, data, element_ids, relation_ids)
+        except OperationError as error:
+            self._reject(operation, str(error))
+        return self._add_annotation(operation, annotation)
+
     def remove_element(self, id: str, *, cascade: bool = False) -> ChangeReport:
         operation = f"remove element '{id}'"
         try:
             candidate, removed_ids = self.elements.remove(id)
             dependent_relations = tuple(
-                item.id
-                for item in self.state.current.relations
-                if set(item.element_ids).intersection(removed_ids)
+                item.id for item in self.state.current.relations if set(item.element_ids).intersection(removed_ids)
             )
             dependent_annotations = tuple(
                 item.id

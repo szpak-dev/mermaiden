@@ -7,13 +7,13 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
     expected = {
         "flowchart": (
             "flowchart TD",
-            'shape: circle',
-            'shape: diam',
-            'shape: rect',
-            'shape: dbl-circ',
+            "shape: circle",
+            "shape: diam",
+            "shape: rect",
+            "shape: dbl-circ",
             "@-->",
-            'yes',
-            'Process work',
+            "yes",
+            "Process work",
         ),
         "treeview": (
             "treeView-beta",

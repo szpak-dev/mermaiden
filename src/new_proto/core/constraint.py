@@ -1,15 +1,25 @@
 from abc import ABC, abstractmethod
+from collections.abc import Sequence
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import TYPE_CHECKING
+from typing import Protocol
 
-if TYPE_CHECKING:
-    from .diagram import Diagram
+from .annotation import Annotation
+from .element import Element
+from .relation import Relation
 
 
 class ConstraintLevel(StrEnum):
     BLOCKING = "blocking"
     ADVISORY = "advisory"
+
+
+class ConstraintDiagram(Protocol):
+    def walk_elements(self, parent_id: str = "") -> Sequence[Element]: ...
+
+    def find_relations(self, element_id: str = "") -> Sequence[Relation]: ...
+
+    def find_annotations(self, target_id: str = "") -> Sequence[Annotation]: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -84,7 +94,13 @@ class Constraint(ABC):
         return ConstraintLevel.ADVISORY
 
     @abstractmethod
-    def visit(self, diagram: "Diagram") -> tuple[Violation, ...]: ...
+    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]: ...
 
     def violation(self, message: str, *, path: str = "") -> Violation:
         return Violation(code=self.code, message=message, path=path, level=self.level)
+
+
+class BlockingConstraint(Constraint):
+    @property
+    def level(self) -> ConstraintLevel:
+        return ConstraintLevel.BLOCKING

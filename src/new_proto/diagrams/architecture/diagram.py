@@ -1,23 +1,22 @@
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DefinedDiagram, DiagramDefinition
+from ..base import DiagramModel
 from .annotations import ArchitectureNotes
+from .constraints import ArchitectureConstraint
 from .elements import ArchitectureGroup, Junction, Service
-from .observer import ArchitectureObserver
 from .relations import Edge, Port
 
 
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
-class Architecture(DefinedDiagram):
-    observer: ArchitectureObserver
-    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
-        "architecture-beta", "service", "group", "edge", "note", Service, ArchitectureGroup, Edge, ArchitectureNotes()
-    )
+class Architecture(DiagramModel):
+    constraints: Sequence[ArchitectureConstraint]
+    syntax: ClassVar[str] = "architecture-beta"
 
     def add_group(self, id: str, label: str, parent_id: str = "", columns: int = 1) -> ChangeReport:
         return self._add_element(f"add group '{id}'", ArchitectureGroup(id, label, (), columns), parent_id)
@@ -40,4 +39,4 @@ class Architecture(DefinedDiagram):
         return self._add_relation(f"add edge '{id}'", Edge(id, (source_id, target_id), label, source_port, target_port))
 
     def add_note(self, id: str, element_id: str, text: str) -> ChangeReport:
-        return self.annotate(id, {"text": text}, (element_id,))
+        return self._annotate(f"add note '{id}'", ArchitectureNotes(), id, {"text": text}, (element_id,))

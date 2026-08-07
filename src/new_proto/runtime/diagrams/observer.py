@@ -20,9 +20,5 @@ class ConstraintObserver(ConstraintInspection):
 
     def inspect(self, diagram: Diagram) -> ValidationReport:
         return ValidationReport(
-            tuple(
-                violation
-                for constraint in self.constraints
-                for violation in diagram.accept(constraint)
-            )
+            tuple(violation for constraint in self.constraints for violation in diagram.accept(constraint))
         )

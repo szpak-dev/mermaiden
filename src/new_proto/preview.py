@@ -11,7 +11,7 @@ def main() -> None:
     sections = "\n".join(
         "<section>"
         f"<h2>{escape(source.stem)}</h2>"
-        f"<pre class=\"mermaid\">{escape(source.read_text(encoding='utf-8'))}</pre>"
+        f'<pre class="mermaid">{escape(source.read_text(encoding="utf-8"))}</pre>'
         "</section>"
         for source in arguments.sources
     )

@@ -27,8 +27,8 @@ def test_mermaid_renderer_wraps_treeview_and_flowchart() -> None:
         flowchart.add_start("start", "Start")
         flowchart.add_end("end", "End")
         flowchart.add_flow("flow", "start", "end")
-        assert scope.get(MermaidRenderer).render(flowchart).startswith(
-            "---\nconfig:\n  wrap: true\n---\nflowchart TD\n"
+        assert (
+            scope.get(MermaidRenderer).render(flowchart).startswith("---\nconfig:\n  wrap: true\n---\nflowchart TD\n")
         )
 
 

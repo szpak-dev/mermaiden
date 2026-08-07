@@ -46,7 +46,5 @@ class Annotations:
         if not target_id:
             return self.state.current.annotations
         return tuple(
-            item
-            for item in self.state.current.annotations
-            if any(target.id == target_id for target in item.targets)
+            item for item in self.state.current.annotations if any(target.id == target_id for target in item.targets)
         )
