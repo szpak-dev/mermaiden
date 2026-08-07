@@ -32,7 +32,7 @@ jobs:
         with:
           name: python-package-distributions
           path: dist/
-      - run: gh release upload "${{ github.event.release.tag_name }}" dist/* --clobber
+      - run: gh release upload "${{ github.event.release.tag_name }}" dist/* --clobber --repo "${{ github.repository }}"
         env:
           GH_TOKEN: ${{ github.token }}
 
