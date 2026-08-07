@@ -6,6 +6,8 @@ from ..diagrams.architecture.diagram import Architecture
 from ..diagrams.architecture.relations import Port
 from ..diagrams.block.diagram import BlockDiagram
 from ..diagrams.c4.diagram import C4ContextDiagram
+from ..diagrams.cynefin.diagram import CynefinDiagram
+from ..diagrams.cynefin.elements import DomainKind
 from ..diagrams.classdiagram.diagram import ClassDiagram
 from ..diagrams.classdiagram.elements import ClassAttribute, ClassMethod
 from ..diagrams.classdiagram.relations import ClassRelationKind
@@ -371,6 +373,13 @@ class DiagramFixtures:
         c4.add_relationship("uses", "customer", "banking", "Uses")
         c4.add_relationship("reads", "banking", "accounts", "Reads account data")
 
+        cynefin = self.registry.get("cynefin-beta").diagram
+        assert isinstance(cynefin, CynefinDiagram)
+        cynefin.add_item("investigate", "Investigate root cause", DomainKind.COMPLEX)
+        cynefin.add_item("analyze", "Analyze performance data", DomainKind.COMPLICATED)
+        cynefin.add_item("restart", "Restart service", DomainKind.CLEAR)
+        cynefin.add_transition("pattern", "investigate", "analyze", "Pattern identified")
+
         return {
             "flowchart": self.renderer.render(flowchart),
             "treeview": self.renderer.render(treeview),
@@ -391,6 +400,7 @@ class DiagramFixtures:
             "gantt": self.renderer.render(gantt),
             "gitgraph": self.renderer.render(gitgraph),
             "c4": self.renderer.render(c4),
+            "cynefin": self.renderer.render(cynefin),
             "state": self.renderer.render(state),
             "swimlane": self.renderer.render(swimlane),
         }
