@@ -7,7 +7,9 @@ from wireup import SyncContainer, create_sync_container
 import new_proto
 
 from .diagrams.registry import DiagramInfo, DiagramRegistry
-from .fixtures import DiagramFixtures
+from .mermaid.compatibility import CompatibilityReport, MermaidCompatibility
+from .mermaid.compatibility.schema import MermaidDiagramConfig, MermaidSchemaStore
+from .mermaid.fixtures import DiagramFixtures
 from .mermaid.preview import MermaidPreview
 
 
@@ -27,6 +29,14 @@ class Application:
         with self.container.enter_scope() as scope:
             return scope.get(DiagramRegistry).get(diagram_id)
 
+    def diagram_info_for_config(self, config_key: str) -> DiagramInfo:
+        with self.container.enter_scope() as scope:
+            return scope.get(DiagramRegistry).get_by_config_key(config_key)
+
+    def mermaid_diagram_configs(self) -> tuple[MermaidDiagramConfig, ...]:
+        with self.container.enter_scope() as scope:
+            return scope.get(MermaidSchemaStore).diagram_configs()
+
     def rendered_diagrams(self) -> dict[str, str]:
         with self.container.enter_scope() as scope:
             return scope.get(DiagramFixtures).render()
@@ -42,6 +52,14 @@ class Application:
             preview = scope.get(MermaidPreview)
             return preview.write_sources(self.rendered_diagrams(), output)
 
+    def compatibility_report(self) -> CompatibilityReport:
+        with self.container.enter_scope() as scope:
+            return scope.get(MermaidCompatibility).inspect()
+
+    def verify_compatibility(self) -> CompatibilityReport:
+        with self.container.enter_scope() as scope:
+            return scope.get(MermaidCompatibility).verify()
+
     @staticmethod
     def _write_source(output: Path, name: str, source: str) -> Path:
         path = output / f"{name}.mmd"
@@ -56,6 +74,7 @@ class Application:
         fixtures.add_argument("--output", "-o", type=Path, default=Path(".preview"))
         preview = commands.add_parser("preview")
         preview.add_argument("--output", "-o", type=Path, default=Path(".preview/index.html"))
+        commands.add_parser("compat")
         arguments = parser.parse_args()
         application = cls.create()
         if arguments.command == "fixtures":
@@ -63,6 +82,14 @@ class Application:
                 print(path)
         if arguments.command == "preview":
             print(application.write_preview(arguments.output))
+        if arguments.command == "compat":
+            report = application.verify_compatibility()
+            for diagram in report.diagrams:
+                print(f"{diagram.diagram_id}: {'valid' if diagram.valid else 'invalid'}")
+            for violation in report.syntax_violations:
+                print(f"{violation.diagram_id}: {violation.output}")
+            if not report.valid:
+                raise SystemExit(1)
 
 
 if __name__ == "__main__":

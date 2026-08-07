@@ -1,10 +1,13 @@
-.PHONY: docs docs-check test verify
+.PHONY: compat docs docs-check test verify
 
 docs:
 	uv run python scripts/generate_docs.py
 
 docs-check:
 	uv run python scripts/generate_docs.py --check
+
+compat:
+	PYTHONPATH=src .venv/bin/python -m new_proto.application compat
 
 test:
 	PYTHONPATH=src .venv/bin/python -m new_proto.application fixtures

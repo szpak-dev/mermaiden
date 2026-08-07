@@ -24,6 +24,13 @@ def test_registry_returns_detailed_information_by_mermaid_syntax_id() -> None:
     assert diagram.config_key == "sequence"
 
 
+def test_registry_returns_detailed_information_by_mermaid_config_key() -> None:
+    diagram = Application.create().diagram_info_for_config("architecture")
+
+    assert diagram.id == "architecture-beta"
+    assert diagram.schema_definition == "ArchitectureDiagramConfig"
+
+
 def test_registry_explains_unknown_diagram_ids() -> None:
     with pytest.raises(KeyError, match="Unknown diagram 'unknown'"):
         Application.create().diagram_info("unknown")

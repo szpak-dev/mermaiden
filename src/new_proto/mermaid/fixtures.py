@@ -2,19 +2,19 @@ from dataclasses import dataclass
 
 from wireup import injectable
 
-from .diagrams.architecture.diagram import Architecture
-from .diagrams.architecture.relations import Port
-from .diagrams.classdiagram.diagram import ClassDiagram
-from .diagrams.classdiagram.elements import ClassAttribute, ClassMethod
-from .diagrams.classdiagram.relations import ClassRelationKind
-from .diagrams.flowchart.diagram import Flowchart
-from .diagrams.registry import DiagramRegistry
-from .diagrams.sequence.annotations import NotePosition
-from .diagrams.sequence.diagram import SequenceDiagram
-from .diagrams.sequence.elements import ParticipantKind
-from .diagrams.sequence.relations import ControlKind, MessageKind
-from .diagrams.treeview.diagram import TreeView
-from .mermaid.service import MermaidRenderer
+from ..diagrams.architecture.diagram import Architecture
+from ..diagrams.architecture.relations import Port
+from ..diagrams.classdiagram.diagram import ClassDiagram
+from ..diagrams.classdiagram.elements import ClassAttribute, ClassMethod
+from ..diagrams.classdiagram.relations import ClassRelationKind
+from ..diagrams.flowchart.diagram import Flowchart
+from ..diagrams.registry import DiagramRegistry
+from ..diagrams.sequence.annotations import NotePosition
+from ..diagrams.sequence.diagram import SequenceDiagram
+from ..diagrams.sequence.elements import ParticipantKind
+from ..diagrams.sequence.relations import ControlKind, MessageKind
+from ..diagrams.treeview.diagram import TreeView
+from .service import MermaidRenderer
 
 
 @injectable(lifetime="scoped")
@@ -31,10 +31,22 @@ class DiagramFixtures:
         flowchart.add_start("start", "Start", "entry")
         flowchart.add_decision("ready", "Ready?", "entry")
         flowchart.add_action("work", "Work", "process")
+        flowchart.add_node("node", "Node", "process")
+        flowchart.add_input_output("input", "Input", "process")
+        flowchart.add_data_store("data", "Data", "process")
+        flowchart.add_document("document", "Document", "process")
+        flowchart.add_subprocess("subprocess", "Subprocess", "process")
+        flowchart.add_junction("junction", "Junction", "process")
         flowchart.add_end("end", "End", "process")
         flowchart.add_flow("start_ready", "start", "ready")
         flowchart.add_conditional_flow("ready_work", "ready", "work", "yes")
-        flowchart.add_flow("work_end", "work", "end")
+        flowchart.add_flow("work_node", "work", "node")
+        flowchart.add_flow("node_input", "node", "input")
+        flowchart.add_flow("input_data", "input", "data")
+        flowchart.add_flow("data_document", "data", "document")
+        flowchart.add_flow("document_subprocess", "document", "subprocess")
+        flowchart.add_flow("subprocess_junction", "subprocess", "junction")
+        flowchart.add_flow("junction_end", "junction", "end")
         flowchart.add_note("start_note", "Start process", ("start",))
         flowchart.add_note("work_note", "Process work", ("work",))
         flowchart.add_note("end_note", "Finish process", ("end",))
