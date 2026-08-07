@@ -63,7 +63,7 @@ target-version = "py312"
 select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
 
 [tool.pyright]
-include = ["src", "compatibility", "scripts/generate_compatibility.py"]
+include = ["src", "tests"]
 pythonVersion = "3.12"
 typeCheckingMode = "strict"
 venvPath = "."

@@ -3,6 +3,7 @@
 .ruff_cache/
 __pycache__/
 *.py[cod]
+src/modwire_mermaid/_version.py
 dist/
 .compatibility-artifacts/
 .preview/

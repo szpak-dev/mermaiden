@@ -1,4 +1,4 @@
-from new_proto.application import Application
+from modwire_mermaid.application import Application
 
 
 def test_application_renders_treeview_and_flowchart() -> None:

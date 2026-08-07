@@ -4,7 +4,7 @@ from pathlib import Path
 
 from wireup import SyncContainer, create_sync_container
 
-import new_proto
+import modwire_mermaid
 
 from .diagrams.registry import DiagramInfo, DiagramRegistry
 from .mermaid.compatibility import CompatibilityReport, MermaidCompatibility
@@ -19,7 +19,7 @@ class Application:
 
     @classmethod
     def create(cls) -> "Application":
-        return cls(create_sync_container(injectables=[new_proto], config={}))
+        return cls(create_sync_container(injectables=[modwire_mermaid], config={}))
 
     def available_diagrams(self) -> tuple[DiagramInfo, ...]:
         with self.container.enter_scope() as scope:

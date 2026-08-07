@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from new_proto.application import Application
+from modwire_mermaid.application import Application
 
 
 def test_mermaid_preview_writes_rendered_diagrams(tmp_path: Path) -> None:

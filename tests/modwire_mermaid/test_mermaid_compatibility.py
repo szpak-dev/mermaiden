@@ -1,4 +1,4 @@
-from new_proto.application import Application
+from modwire_mermaid.application import Application
 
 
 def test_application_validates_every_registered_diagram_against_pinned_mermaid_schema() -> None:

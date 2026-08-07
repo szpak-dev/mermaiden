@@ -10,13 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  verify:
-    uses: modwire/modwire-architecture/.github/workflows/python-package.yml@workflows-v1
-    with:
-      python-versions: '["3.12", "3.13", "3.14"]'
-      build-python-version: "3.12"
-
-  docs-check:
+  ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -24,14 +18,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - run: python -m pip install -e ".[dev]"
-
-  package-content:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-node@v6
         with:
-          python-version: "3.12"
-          cache: pip
-      - run: python -m pip install build twine
+          node-version-file: .node-version
+      - run: make ci

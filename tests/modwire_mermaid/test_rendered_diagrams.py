@@ -1,4 +1,4 @@
-from new_proto.application import Application
+from modwire_mermaid.application import Application
 
 
 def test_rendered_diagrams_cover_every_supported_building_block() -> None:

@@ -37,7 +37,7 @@ class MermaidRenderer:
         object.__setattr__(self, "environment", environment)
 
     def render(self, diagram: DiagramView) -> str:
-        body = self.environment.get_template(self._document_template(diagram)).render(
+        body = self.environment.get_template(self.document_template(diagram)).render(
             diagram=diagram,
             template_prefix=self._template_prefix(diagram),
         )
@@ -48,7 +48,7 @@ class MermaidRenderer:
     def _template_prefix(diagram: DiagramView) -> str:
         return f"templates/syntax/{diagram.kind}"
 
-    def _document_template(self, diagram: DiagramView) -> str:
+    def document_template(self, diagram: DiagramView) -> str:
         return f"{self._template_prefix(diagram)}/document.mmd.j2"
 
     @staticmethod

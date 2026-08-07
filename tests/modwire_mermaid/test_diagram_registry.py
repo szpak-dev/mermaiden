@@ -1,7 +1,7 @@
 import pytest
 
-from new_proto.application import Application
-from new_proto.mermaid.service import MermaidRenderer
+from modwire_mermaid.application import Application
+from modwire_mermaid.mermaid.service import MermaidRenderer
 
 
 def test_registry_lists_every_implemented_diagram_with_mermaid_metadata() -> None:
@@ -52,7 +52,7 @@ def test_every_registered_diagram_has_an_explicit_document_template() -> None:
     templates = set(renderer.environment.list_templates())
 
     assert {
-        renderer._document_template(item.diagram)
+        renderer.document_template(item.diagram)
         for item in Application.create().available_diagrams()
     } == {
         template
