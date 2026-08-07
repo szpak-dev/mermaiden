@@ -1,19 +1,11 @@
-from pydantic import BaseModel, ConfigDict
-
-from ..configuration import MermaidDiagramConfiguration
+from ..configuration import MermaidConfigurationModel, MermaidDiagramConfiguration
 
 
-class GitGraphNodeLabel(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
+class GitGraphNodeLabel(MermaidConfigurationModel):
     width: float = 75
     height: float = 100
     x: float = -25
     y: float = 0
-
-    def to_mermaid(self) -> dict[str, float]:
-        return {"width": self.width, "height": self.height, "x": self.x, "y": self.y}
-
 
 class GitGraphDiagramConfiguration(MermaidDiagramConfiguration):
     title_top_margin: int = 25
@@ -26,17 +18,3 @@ class GitGraphDiagramConfiguration(MermaidDiagramConfiguration):
     rotate_commit_label: bool = True
     parallel_commits: bool = False
     arrow_marker_absolute: bool = False
-
-    def to_mermaid(self) -> dict[str, object]:
-        return {
-            "titleTopMargin": self.title_top_margin,
-            "diagramPadding": self.diagram_padding,
-            "nodeLabel": self.node_label.to_mermaid(),
-            "mainBranchName": self.main_branch_name,
-            "mainBranchOrder": self.main_branch_order,
-            "showCommitLabel": self.show_commit_label,
-            "showBranches": self.show_branches,
-            "rotateCommitLabel": self.rotate_commit_label,
-            "parallelCommits": self.parallel_commits,
-            "arrowMarkerAbsolute": self.arrow_marker_absolute,
-        }

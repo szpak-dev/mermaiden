@@ -11,16 +11,3 @@ class EntityRelationshipDiagramConfiguration(MermaidDiagramConfiguration):
     stroke: str = "gray"
     fill: str = "honeydew"
     use_max_width: bool = True
-
-    def to_mermaid(self) -> dict[str, object]:
-        return {
-            "titleTopMargin": self.title_top_margin,
-            "diagramPadding": self.diagram_padding,
-            "layoutDirection": self.layout_direction,
-            "minEntityWidth": self.min_entity_width,
-            "minEntityHeight": self.min_entity_height,
-            "entityPadding": self.entity_padding,
-            "stroke": self.stroke,
-            "fill": self.fill,
-            "useMaxWidth": self.use_max_width,
-        }

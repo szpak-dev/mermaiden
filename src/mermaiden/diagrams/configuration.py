@@ -1,26 +1,35 @@
 from collections.abc import Mapping
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, SerializeAsAny
 
 
-class MermaidConfiguration(BaseModel):
-    model_config = ConfigDict(frozen=True)
+class MermaidConfigurationNaming:
+    @staticmethod
+    def to_camel_case(value: str) -> str:
+        first, *remaining = value.split("_")
+        return first + "".join(word.capitalize() for word in remaining)
+
+
+class MermaidConfigurationModel(BaseModel):
+    model_config = ConfigDict(
+        alias_generator=MermaidConfigurationNaming.to_camel_case,
+        frozen=True,
+        populate_by_name=True,
+    )
+
+
+class MermaidConfiguration(MermaidConfigurationModel):
 
     wrap: bool = True
-    diagrams: Mapping[str, "MermaidDiagramConfiguration"]
+    diagrams: Mapping[str, SerializeAsAny["MermaidDiagramConfiguration"]]
 
     def to_mermaid(self) -> dict[str, object]:
-        return {
-            "wrap": self.wrap,
-            **{source: configuration.to_mermaid() for source, configuration in self.diagrams.items()},
-        }
+        document = self.model_dump(mode="json", by_alias=True)
+        diagrams = document.pop("diagrams")
+        return {**document, **diagrams}
 
 
-class MermaidDiagramConfiguration(BaseModel):
-    model_config = ConfigDict(frozen=True)
+class MermaidDiagramConfiguration(MermaidConfigurationModel):
 
     def document(self, source: str) -> MermaidConfiguration:
         return MermaidConfiguration(diagrams={source: self})
-
-    def to_mermaid(self) -> dict[str, object]:
-        return self.model_dump(mode="json", by_alias=True)

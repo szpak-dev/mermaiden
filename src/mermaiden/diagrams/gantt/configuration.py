@@ -15,20 +15,3 @@ class GanttConfiguration(MermaidDiagramConfiguration):
     use_max_width: bool = True
     top_axis: bool = False
     weekday: str = "sunday"
-
-    def to_mermaid(self) -> dict[str, object]:
-        return {
-            "titleTopMargin": self.title_top_margin,
-            "barHeight": self.bar_height,
-            "topPadding": self.top_padding,
-            "rightPadding": self.right_padding,
-            "leftPadding": self.left_padding,
-            "gridLineStartPadding": self.grid_line_start_padding,
-            "fontSize": self.font_size,
-            "sectionFontSize": self.section_font_size,
-            "numberSectionStyles": self.number_section_styles,
-            "axisFormat": self.axis_format,
-            "useMaxWidth": self.use_max_width,
-            "topAxis": self.top_axis,
-            "weekday": self.weekday,
-        }

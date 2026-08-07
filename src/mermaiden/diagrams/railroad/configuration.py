@@ -9,14 +9,3 @@ class RailroadDiagramConfiguration(MermaidDiagramConfiguration):
     arc_radius: float = 10
     font_size: float = 14
     font_family: str = "monospace"
-
-    def to_mermaid(self) -> dict[str, object]:
-        return {
-            "compactMode": self.compact_mode,
-            "padding": self.padding,
-            "verticalSeparation": self.vertical_separation,
-            "horizontalSeparation": self.horizontal_separation,
-            "arcRadius": self.arc_radius,
-            "fontSize": self.font_size,
-            "fontFamily": self.font_family,
-        }
