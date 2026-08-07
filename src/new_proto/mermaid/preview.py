@@ -1,0 +1,46 @@
+from collections.abc import Sequence
+from dataclasses import dataclass
+from html import escape
+from pathlib import Path
+
+from wireup import injectable
+
+from ..core.diagram import DiagramView
+from .service import MermaidRenderer
+
+
+@injectable
+@dataclass(frozen=True, slots=True)
+class MermaidPreview:
+    renderer: MermaidRenderer
+
+    def write(self, diagrams: Sequence[DiagramView], output: Path) -> Path:
+        sections = "\n".join(self._section(diagram) for diagram in diagrams)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(self._document(sections), encoding="utf-8")
+        return output
+
+    def _section(self, diagram: DiagramView) -> str:
+        return (
+            "<section>"
+            f"<h2>{escape(diagram.kind)}</h2>"
+            f'<pre class="mermaid">{escape(self.renderer.render(diagram))}</pre>'
+            "</section>"
+        )
+
+    @staticmethod
+    def _document(sections: str) -> str:
+        return f"""<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Mermaid previews</title>
+<style>body {{ font-family: sans-serif; margin: 2rem; }} section {{ margin-block: 3rem; }}</style>
+<body>
+{sections}
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+mermaid.initialize({{ startOnLoad: true }});
+</script>
+</body>
+</html>
+"""

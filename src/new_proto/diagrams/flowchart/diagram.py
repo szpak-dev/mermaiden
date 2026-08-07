@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
@@ -25,12 +25,15 @@ from .elements import (
 from .relations import ConditionalFlow, Flow
 
 
-@injectable(lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="flowchart", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Flowchart(DiagramModel):
     constraints: Sequence[FlowchartConstraint]
-    direction: Direction = Direction.TOP_DOWN
+    direction: Direction = field(default=Direction.TOP_DOWN, init=False)
     syntax: ClassVar[str] = "flowchart"
+    name: ClassVar[str] = "Flowchart"
+    config_key: ClassVar[str] = "flowchart"
+    schema_definition: ClassVar[str] = "FlowchartDiagramConfig"
 
     def add_group(
         self,

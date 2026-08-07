@@ -13,7 +13,7 @@ from ..core.diagram import DiagramView
 @injectable
 @dataclass(frozen=True, slots=True)
 class MermaidRenderer:
-    wrap: bool = True
+    wrap: bool = field(default=True, init=False)
     environment: Environment = field(init=False)
 
     def __post_init__(self) -> None:

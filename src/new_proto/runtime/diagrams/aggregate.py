@@ -28,7 +28,7 @@ class AnnotationFactory(Protocol):
 @injectable(as_type=Diagram, lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class DiagramAggregate(Diagram):
-    runtime: DiagramRuntime = field(default_factory=DiagramRuntime, kw_only=True)
+    runtime: DiagramRuntime = field(default_factory=DiagramRuntime, init=False)
 
     @property
     def observer(self) -> ConstraintInspection:

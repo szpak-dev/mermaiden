@@ -59,6 +59,9 @@ class DiagramMembersConstraint(Constraint):
 @dataclass(frozen=True, slots=True)
 class DiagramModel(DiagramAggregate):
     syntax: ClassVar[str]
+    name: ClassVar[str]
+    config_key: ClassVar[str]
+    schema_definition: ClassVar[str]
     structure: ConstraintInspection
     constraints: Sequence[Constraint]
 

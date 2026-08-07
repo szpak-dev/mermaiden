@@ -12,11 +12,14 @@ from .elements import Class, ClassAttribute, ClassMethod, ClassNamespace
 from .relations import ClassRelation, ClassRelationKind
 
 
-@injectable(lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="classdiagram", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class ClassDiagram(DiagramModel):
     constraints: Sequence[ClassDiagramConstraint]
     syntax: ClassVar[str] = "classDiagram"
+    name: ClassVar[str] = "Class diagram"
+    config_key: ClassVar[str] = "class"
+    schema_definition: ClassVar[str] = "ClassDiagramConfig"
 
     def add_class(
         self,

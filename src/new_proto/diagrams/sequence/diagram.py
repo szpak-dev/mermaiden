@@ -12,11 +12,14 @@ from .elements import Participant, ParticipantBox, ParticipantKind
 from .relations import Control, ControlKind, Directive, DirectiveKind, Message, MessageKind, ParticipantEvent
 
 
-@injectable(lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="sequence", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class SequenceDiagram(DiagramModel):
     constraints: Sequence[SequenceConstraint]
     syntax: ClassVar[str] = "sequenceDiagram"
+    name: ClassVar[str] = "Sequence diagram"
+    config_key: ClassVar[str] = "sequence"
+    schema_definition: ClassVar[str] = "SequenceDiagramConfig"
 
     def add_box(self, id: str, label: str, color: str = "") -> ChangeReport:
         return self._add_element(f"add box '{id}'", ParticipantBox(id, label, (), color))

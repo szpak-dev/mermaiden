@@ -12,11 +12,14 @@ from .elements import TreeItem
 from .relations import TreeBranch
 
 
-@injectable(lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="treeview", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class TreeView(DiagramModel):
     constraints: Sequence[TreeViewConstraint]
     syntax: ClassVar[str] = "treeView-beta"
+    name: ClassVar[str] = "Tree view"
+    config_key: ClassVar[str] = "treeView"
+    schema_definition: ClassVar[str] = "TreeViewDiagramConfig"
 
     @property
     def root_elements(self) -> tuple[TreeItem, ...]:

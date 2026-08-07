@@ -3,6 +3,7 @@ import pytest
 from new_proto.application import Application
 from new_proto.core import ChangeRejected
 from new_proto.diagrams.flowchart.diagram import Flowchart
+from new_proto.diagrams.registry import DiagramRegistry
 from new_proto.diagrams.treeview.diagram import TreeView
 from new_proto.mermaid.service import MermaidRenderer
 
@@ -10,7 +11,9 @@ from new_proto.mermaid.service import MermaidRenderer
 def test_mermaid_renderer_wraps_treeview_and_flowchart() -> None:
     container = Application.create()
     with container.enter_scope() as scope:
-        tree = scope.get(TreeView)
+        registry = scope.get(DiagramRegistry)
+        tree = registry.get("treeView-beta").diagram
+        assert isinstance(tree, TreeView)
         tree.add_item("project", "project/")
         tree.add_item("src", "src/")
         tree.add_item("app", "App.tsx")
@@ -23,7 +26,8 @@ def test_mermaid_renderer_wraps_treeview_and_flowchart() -> None:
             "    project/\n        src/\n            App.tsx :::highlight icon(logos:react) ## main\n"
         )
 
-        flowchart = scope.get(Flowchart)
+        flowchart = registry.get("flowchart").diagram
+        assert isinstance(flowchart, Flowchart)
         flowchart.add_start("start", "Start")
         flowchart.add_end("end", "End")
         flowchart.add_flow("flow", "start", "end")
@@ -35,7 +39,8 @@ def test_mermaid_renderer_wraps_treeview_and_flowchart() -> None:
 def test_treeview_rejects_cycles() -> None:
     container = Application.create()
     with container.enter_scope() as scope:
-        tree = scope.get(TreeView)
+        tree = scope.get(DiagramRegistry).get("treeView-beta").diagram
+        assert isinstance(tree, TreeView)
         tree.add_item("one", "one")
         tree.add_item("two", "two")
         tree.add_branch("one-two", "one", "two")

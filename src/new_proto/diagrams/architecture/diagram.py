@@ -12,11 +12,14 @@ from .elements import ArchitectureGroup, Junction, Service
 from .relations import Edge, Port
 
 
-@injectable(lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="architecture", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Architecture(DiagramModel):
     constraints: Sequence[ArchitectureConstraint]
     syntax: ClassVar[str] = "architecture-beta"
+    name: ClassVar[str] = "Architecture diagram"
+    config_key: ClassVar[str] = "architecture"
+    schema_definition: ClassVar[str] = "ArchitectureDiagramConfig"
 
     def add_group(self, id: str, label: str, parent_id: str = "", columns: int = 1) -> ChangeReport:
         return self._add_element(f"add group '{id}'", ArchitectureGroup(id, label, (), columns), parent_id)

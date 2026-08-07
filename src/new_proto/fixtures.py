@@ -7,6 +7,7 @@ from .diagrams.classdiagram.diagram import ClassDiagram
 from .diagrams.classdiagram.elements import ClassAttribute, ClassMethod
 from .diagrams.classdiagram.relations import ClassRelationKind
 from .diagrams.flowchart.diagram import Flowchart
+from .diagrams.registry import DiagramRegistry
 from .diagrams.sequence.annotations import NotePosition
 from .diagrams.sequence.diagram import SequenceDiagram
 from .diagrams.sequence.elements import ParticipantKind
@@ -19,7 +20,9 @@ def rendered_diagrams() -> dict[str, str]:
     container = Application.create()
     with container.enter_scope() as scope:
         renderer = scope.get(MermaidRenderer)
-        flowchart = scope.get(Flowchart)
+        registry = scope.get(DiagramRegistry)
+        flowchart = registry.get("flowchart").diagram
+        assert isinstance(flowchart, Flowchart)
         flowchart.add_group("entry", "Entry")
         flowchart.add_group("process", "Process")
         flowchart.add_start("start", "Start", "entry")
@@ -33,7 +36,8 @@ def rendered_diagrams() -> dict[str, str]:
         flowchart.add_note("work_note", "Process work", ("work",))
         flowchart.add_note("end_note", "Finish process", ("end",))
 
-        treeview = scope.get(TreeView)
+        treeview = registry.get("treeView-beta").diagram
+        assert isinstance(treeview, TreeView)
         for id, label in (("root", "root/"), ("source", "src/"), ("tests", "tests/"), ("readme", "README.md")):
             treeview.add_item(id, label)
         for id, parent, child in (
@@ -46,7 +50,8 @@ def rendered_diagrams() -> dict[str, str]:
         treeview.add_annotation("tests_note", "tests", icon="test")
         treeview.add_annotation("readme_note", "readme", highlight=True, description="Documentation")
 
-        classes = scope.get(ClassDiagram)
+        classes = registry.get("classDiagram").diagram
+        assert isinstance(classes, ClassDiagram)
         classes.add_namespace("domain", "Domain", comment="Domain types")
         classes.add_class(
             "Animal",
@@ -64,7 +69,8 @@ def rendered_diagrams() -> dict[str, str]:
         classes.add_note("duck_note", "Duck", "Concrete type")
         classes.add_note("pond_note", "Pond", "Aggregate")
 
-        architecture = scope.get(Architecture)
+        architecture = registry.get("architecture-beta").diagram
+        assert isinstance(architecture, Architecture)
         for id, label in (("clients", "Clients"), ("platform", "Platform"), ("data", "Data")):
             architecture.add_group(id, label, columns=2)
         architecture.add_service("web", "Web", "clients")
@@ -78,7 +84,8 @@ def rendered_diagrams() -> dict[str, str]:
         architecture.add_note("api_note", "api", "Public API")
         architecture.add_note("database_note", "database", "Persistent storage")
 
-        sequence = scope.get(SequenceDiagram)
+        sequence = registry.get("sequenceDiagram").diagram
+        assert isinstance(sequence, SequenceDiagram)
         sequence.add_box("clients", "Clients", "#E3F2FD")
         sequence.add_participant("user", "User", ParticipantKind.ACTOR, "clients")
         sequence.add_participant("web", "Web", ParticipantKind.BOUNDARY, "clients")
