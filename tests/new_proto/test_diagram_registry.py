@@ -16,6 +16,7 @@ def test_registry_lists_every_implemented_diagram_with_mermaid_metadata() -> Non
         ("sequenceDiagram", "sequence", "SequenceDiagramConfig"),
         ("stateDiagram-v2", "state", "StateDiagramConfig"),
         ("swimlane-beta", "swimlane", "SwimlaneDiagramConfig"),
+        ("timeline", "timeline", "TimelineDiagramConfig"),
         ("treeView-beta", "treeView", "TreeViewDiagramConfig"),
     ]
     assert all(item.diagram_type.syntax == item.id for item in diagrams)

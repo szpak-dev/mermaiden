@@ -80,6 +80,7 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             '"Cats" : 85',
             '"Rats" : 15',
         ),
+        "timeline": ("timeline", "title Modwire history", "section Foundation", "2024 : Prototype : First release"),
         "state": (
             "stateDiagram-v2 TD",
             'state "Still" as s_v_still',

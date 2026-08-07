@@ -21,6 +21,7 @@ from ..diagrams.sequence.relations import ControlKind, MessageKind
 from ..diagrams.state.annotations import NotePosition as StateNotePosition
 from ..diagrams.state.diagram import StateDiagram
 from ..diagrams.swimlane.diagram import SwimlaneDiagram
+from ..diagrams.timeline.diagram import Timeline
 from ..diagrams.treeview.diagram import TreeView
 from .service import MermaidRenderer
 
@@ -268,6 +269,14 @@ class DiagramFixtures:
         pie.add_slice("cats", "Cats", 85)
         pie.add_slice("rats", "Rats", 15)
 
+        timeline = self.registry.get("timeline").diagram
+        assert isinstance(timeline, Timeline)
+        timeline.set_title("Modwire history")
+        timeline.add_section("foundation", "Foundation")
+        timeline.add_period("2024", "2024", "foundation")
+        timeline.add_event("prototype", "Prototype", "2024")
+        timeline.add_event("release", "First release", "2024")
+
         return {
             "flowchart": self.renderer.render(flowchart),
             "treeview": self.renderer.render(treeview),
@@ -277,6 +286,7 @@ class DiagramFixtures:
             "requirement": self.renderer.render(requirements),
             "mindmap": self.renderer.render(mindmap),
             "pie": self.renderer.render(pie),
+            "timeline": self.renderer.render(timeline),
             "state": self.renderer.render(state),
             "swimlane": self.renderer.render(swimlane),
         }

@@ -17,6 +17,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         ("sequenceDiagram", "sequence", "SequenceDiagramConfig"),
         ("stateDiagram-v2", "state", "StateDiagramConfig"),
         ("swimlane-beta", "swimlane", "SwimlaneDiagramConfig"),
+        ("timeline", "timeline", "TimelineDiagramConfig"),
         ("treeView-beta", "treeView", "TreeViewDiagramConfig"),
     ]
     configurations = {item.diagram_id: item.configuration.values for item in report.diagrams}
