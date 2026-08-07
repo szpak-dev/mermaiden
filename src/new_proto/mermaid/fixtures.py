@@ -10,6 +10,7 @@ from ..diagrams.classdiagram.elements import ClassAttribute, ClassMethod
 from ..diagrams.classdiagram.relations import ClassRelationKind
 from ..diagrams.er.diagram import EntityRelationshipDiagram
 from ..diagrams.flowchart.diagram import Flowchart
+from ..diagrams.gantt.diagram import Gantt
 from ..diagrams.journey.diagram import Journey
 from ..diagrams.mindmap.diagram import Mindmap
 from ..diagrams.packet.diagram import Packet
@@ -345,6 +346,12 @@ class DiagramFixtures:
         er.add_attribute("order_id", "id", "int", "ORDER", ("PK",))
         er.add_relationship("places", "CUSTOMER", "ORDER", "places", "||--o{")
 
+        gantt = self.registry.get("gantt").diagram
+        assert isinstance(gantt, Gantt)
+        gantt.set_title("Release plan")
+        gantt.add_section("delivery", "Delivery")
+        gantt.add_task("design", "Design", ("done", "design", "2026-08-01", "2d"), "delivery")
+
 
         return {
             "flowchart": self.renderer.render(flowchart),
@@ -363,6 +370,7 @@ class DiagramFixtures:
             "block": self.renderer.render(block),
             "packet": self.renderer.render(packet),
             "er": self.renderer.render(er),
+            "gantt": self.renderer.render(gantt),
             "state": self.renderer.render(state),
             "swimlane": self.renderer.render(swimlane),
         }

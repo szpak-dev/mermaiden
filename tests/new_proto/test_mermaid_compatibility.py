@@ -13,6 +13,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         ("classDiagram", "class", "ClassDiagramConfig"),
         ("erDiagram", "er", "ErDiagramConfig"),
         ("flowchart", "flowchart", "FlowchartDiagramConfig"),
+        ("gantt", "gantt", "GanttDiagramConfig"),
         ("journey", "journey", "JourneyDiagramConfig"),
         ("mindmap", "mindmap", "MindmapDiagramConfig"),
         ("packet", "packet", "PacketDiagramConfig"),
@@ -35,6 +36,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         not in {
             "block",
             "erDiagram",
+            "gantt",
             "mindmap",
             "packet",
             "pie",
@@ -68,6 +70,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
     assert configurations["pie"]["pie"]["donutHole"] == 0
     assert configurations["block"]["block"]["padding"] == 8
     assert configurations["erDiagram"]["er"]["useMaxWidth"] is True
+    assert configurations["gantt"]["gantt"]["weekday"] == "sunday"
     assert configurations["packet"]["packet"]["bitsPerRow"] == 32
     assert configurations["radar-beta"]["radar"]["curveTension"] == 0.17
     assert configurations["venn-beta"]["venn"] == {

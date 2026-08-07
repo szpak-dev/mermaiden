@@ -12,6 +12,7 @@ def test_registry_lists_every_implemented_diagram_with_mermaid_metadata() -> Non
         ("classDiagram", "class", "ClassDiagramConfig"),
         ("erDiagram", "er", "ErDiagramConfig"),
         ("flowchart", "flowchart", "FlowchartDiagramConfig"),
+        ("gantt", "gantt", "GanttDiagramConfig"),
         ("journey", "journey", "JourneyDiagramConfig"),
         ("mindmap", "mindmap", "MindmapDiagramConfig"),
         ("packet", "packet", "PacketDiagramConfig"),
