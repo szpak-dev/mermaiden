@@ -15,6 +15,7 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             "yes",
             "Process work",
         ),
+        "block": ("block", "columns 3", 'frontend["Frontend"]', "space", "block:backend", "columns 2", 'api["API"]'),
         "treeview": (
             "treeView-beta",
             "root/",
@@ -152,6 +153,8 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
                 "---\nconfig:\n  wrap: true\n"
                 '  venn: {"width": 800, "height": 450, "padding": 8, "useDebugLayout": false}\n---\n'
             )
+        elif name == "block":
+            assert source.startswith("---\nconfig:\n  wrap: true\n  block: {\"padding\": 8}\n---\n")
         elif name == "radar":
             assert source.startswith("---\nconfig:\n  wrap: true\n  radar: {")
         else:

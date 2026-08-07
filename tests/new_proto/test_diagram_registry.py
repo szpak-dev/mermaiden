@@ -8,6 +8,7 @@ def test_registry_lists_every_implemented_diagram_with_mermaid_metadata() -> Non
 
     assert [(item.id, item.config_key, item.schema_definition) for item in diagrams] == [
         ("architecture-beta", "architecture", "ArchitectureDiagramConfig"),
+        ("block", "block", "BlockDiagramConfig"),
         ("classDiagram", "class", "ClassDiagramConfig"),
         ("flowchart", "flowchart", "FlowchartDiagramConfig"),
         ("journey", "journey", "JourneyDiagramConfig"),

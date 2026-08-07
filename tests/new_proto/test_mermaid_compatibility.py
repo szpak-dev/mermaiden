@@ -9,6 +9,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
     assert any(item.config_key == "gantt" for item in report.missing_diagrams)
     assert [(item.diagram_id, item.config_key, item.schema_definition) for item in report.diagrams] == [
         ("architecture-beta", "architecture", "ArchitectureDiagramConfig"),
+        ("block", "block", "BlockDiagramConfig"),
         ("classDiagram", "class", "ClassDiagramConfig"),
         ("flowchart", "flowchart", "FlowchartDiagramConfig"),
         ("journey", "journey", "JourneyDiagramConfig"),
@@ -30,6 +31,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         for diagram_id, values in configurations.items()
         if diagram_id
         not in {
+            "block",
             "mindmap",
             "pie",
             "radar-beta",
@@ -60,6 +62,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         "layoutAlgorithm": "cose-bilkent",
     }
     assert configurations["pie"]["pie"]["donutHole"] == 0
+    assert configurations["block"]["block"]["padding"] == 8
     assert configurations["radar-beta"]["radar"]["curveTension"] == 0.17
     assert configurations["venn-beta"]["venn"] == {
         "width": 800,

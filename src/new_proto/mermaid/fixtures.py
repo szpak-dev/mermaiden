@@ -4,6 +4,7 @@ from wireup import injectable
 
 from ..diagrams.architecture.diagram import Architecture
 from ..diagrams.architecture.relations import Port
+from ..diagrams.block.diagram import BlockDiagram
 from ..diagrams.classdiagram.diagram import ClassDiagram
 from ..diagrams.classdiagram.elements import ClassAttribute, ClassMethod
 from ..diagrams.classdiagram.relations import ClassRelationKind
@@ -317,6 +318,15 @@ class DiagramFixtures:
         radar.set_graticule("polygon")
         radar.set_ticks(5)
 
+        block = self.registry.get("block").diagram
+        assert isinstance(block, BlockDiagram)
+        block.set_columns(3)
+        block.add_block("frontend", "Frontend")
+        block.add_space("gap")
+        block.add_group("backend", "Backend", columns=2)
+        block.add_block("api", "API", parent_id="backend")
+        block.add_block("database", "Database", parent_id="backend")
+
         return {
             "flowchart": self.renderer.render(flowchart),
             "treeview": self.renderer.render(treeview),
@@ -331,6 +341,7 @@ class DiagramFixtures:
             "journey": self.renderer.render(journey),
             "venn": self.renderer.render(venn),
             "radar": self.renderer.render(radar),
+            "block": self.renderer.render(block),
             "state": self.renderer.render(state),
             "swimlane": self.renderer.render(swimlane),
         }

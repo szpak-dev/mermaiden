@@ -1,0 +1,8 @@
+{% macro render(items) -%}
+{% for item in items -%}
+{% if item.kind == "block_group" %}block:{{ item.id }}{% if item.span is not none %}:{{ item.span }}{% endif %}{{ "\n" -}}{% if item.columns is not none %}  columns {{ item.columns }}{{ "\n" -}}{% endif %}{{ render(item.elements) | indent(2, true) }}end{{ "\n" -}}
+{% elif item.kind == "block_node" %}{{ item.id }}[{{ item.label | mermaid_quote }}]{% if item.span is not none %}:{{ item.span }}{% endif %}{{ "\n" -}}
+{% elif item.kind == "block_space" %}space{% if item.span is not none %}:{{ item.span }}{% endif %}{{ "\n" -}}{% endif %}
+{% endfor -%}
+{%- endmacro %}
+block{{ "\n" -}}{% if diagram.columns is not none %}columns {{ diagram.columns }}{{ "\n" -}}{% endif %}{{ render(diagram.root_elements) }}
