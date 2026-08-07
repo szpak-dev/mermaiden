@@ -1,0 +1,6 @@
+group {{ element.id }}[{{ element.label }}]
+{% for child in element.elements %}
+{% if child.kind == "service" %}service {{ child.id }}[{{ child.label }}] in {{ element.id }}
+{% elif child.kind == "junction" %}junction {{ child.id }} in {{ element.id }}
+{% endif %}
+{% endfor %}

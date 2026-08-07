@@ -3,12 +3,10 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import ClassVar
 
-from jinja2 import PackageLoader
 from wireup import injectable
 
 from ....core.diagram import DiagramView
-from ....rendering.jinja import JinjaTextRenderer, create_jinja_environment
-from ...rendering import DiagramMmdRenderer
+from ...rendering import DiagramMmdRenderer, JinjaDiagramMmdRenderer
 from ..annotations import TreeAnnotation
 from ..diagram import TreeView
 from ..elements import TreeItem
@@ -23,15 +21,16 @@ class TreeViewRenderModel:
     annotations: Mapping[str, Sequence[TreeAnnotation]]
 
 
+@injectable(as_type=DiagramMmdRenderer, qualifier="treeview")
 @dataclass(frozen=True, slots=True)
-class TreeViewMmdRenderer(DiagramMmdRenderer):
-    template: JinjaTextRenderer[TreeViewRenderModel]
-
+class TreeViewMmdRenderer(JinjaDiagramMmdRenderer):
     diagram_type: ClassVar[type[DiagramView]] = TreeView
+    template_package: ClassVar[str] = "new_proto.diagrams.treeview.rendering"
+    template_filters: ClassVar = {"tree_label": tree_label}
 
-    def _render(self, diagram: DiagramView) -> str:
+    def model(self, diagram: DiagramView) -> TreeViewRenderModel:
         assert isinstance(diagram, TreeView)
-        return self.template.render(self._model(diagram))
+        return self._model(diagram)
 
     @staticmethod
     def _model(diagram: TreeView) -> TreeViewRenderModel:
@@ -54,15 +53,3 @@ class TreeViewMmdRenderer(DiagramMmdRenderer):
             children={item.id: tuple(children[item.id]) for item in elements},
             annotations={item.id: tuple(annotations[item.id]) for item in elements},
         )
-
-
-@injectable(as_type=DiagramMmdRenderer, qualifier="treeview")
-def create_treeview_mmd_renderer() -> TreeViewMmdRenderer:
-    environment = create_jinja_environment(
-        PackageLoader("new_proto.diagrams.treeview.rendering", "templates"),
-        filters={"tree_label": tree_label},
-    )
-    return TreeViewMmdRenderer(JinjaTextRenderer[TreeViewRenderModel](environment, "diagram.mmd.j2"))
-
-
-__all__ = ["TreeViewMmdRenderer"]

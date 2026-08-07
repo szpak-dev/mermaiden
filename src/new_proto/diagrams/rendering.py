@@ -1,12 +1,14 @@
 from abc import ABC, abstractmethod
-from collections.abc import Sequence
-from dataclasses import dataclass
+from collections.abc import Callable, Mapping, Sequence
+from dataclasses import dataclass, field
 from typing import ClassVar
 
+from jinja2 import PackageLoader
 from wireup import injectable
 
 from ..core.diagram import DiagramView
 from ..core.error import OperationError
+from ..rendering.jinja import JinjaTextRenderer, create_jinja_environment
 
 
 class DiagramMmdRenderer(ABC):
@@ -22,6 +24,26 @@ class DiagramMmdRenderer(ABC):
 
     @abstractmethod
     def _render(self, diagram: DiagramView) -> str: ...
+
+
+@dataclass(frozen=True, slots=True)
+class JinjaDiagramMmdRenderer(DiagramMmdRenderer):
+    template: JinjaTextRenderer[object] = field(init=False)
+    template_package: ClassVar[str]
+    template_filters: ClassVar[Mapping[str, Callable[..., object]]] = {}
+
+    def __post_init__(self) -> None:
+        environment = create_jinja_environment(
+            PackageLoader(self.template_package, "templates"),
+            filters=self.template_filters,
+        )
+        object.__setattr__(self, "template", JinjaTextRenderer[object](environment, "diagram.mmd.j2"))
+
+    def _render(self, diagram: DiagramView) -> str:
+        return self.template.render(self.model(diagram))
+
+    def model(self, diagram: DiagramView) -> object:
+        return diagram
 
 
 @injectable

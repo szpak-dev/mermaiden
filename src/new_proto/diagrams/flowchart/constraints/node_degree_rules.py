@@ -60,9 +60,7 @@ class NodeDegreeRules(FlowchartConstraint):
             )
         ]
 
-    def _expect(
-        self, node_id: str, actual: int, minimum: int, maximum: int | None, direction: str
-    ) -> list[Violation]:
+    def _expect(self, node_id: str, actual: int, minimum: int, maximum: int | None, direction: str) -> list[Violation]:
         if actual >= minimum and (maximum is None or actual <= maximum):
             return []
         if maximum is None:

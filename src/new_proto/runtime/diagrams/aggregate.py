@@ -1,12 +1,12 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass
 
 from wireup import injectable
 
-from ...core.annotation import Annotation, DataAnnotation, TargetKind, TargetRef
+from ...core.annotation import Annotation, TargetKind
 from ...core.constraint import ChangeReport, ValidationReport
 from ...core.diagram import Diagram
-from ...core.element import Container, Element, Entity
+from ...core.element import Element
 from ...core.error import OperationError
 from ...core.relation import Relation
 from .annotations import Annotations
@@ -47,33 +47,6 @@ class DiagramAggregate(Diagram):
 
     def _add_annotation(self, operation: str, annotation: Annotation) -> ChangeReport:
         return self.changes.apply(operation, self.annotations.add_annotation(annotation), self)
-
-    def add_container(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self._add_element(f"add container '{id}'", Container(id, label), parent_id)
-
-    def add_entity(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self._add_element(f"add entity '{id}'", Entity(id, label), parent_id)
-
-    def connect(
-        self,
-        id: str,
-        element_ids: Sequence[str],
-        label: str = "",
-    ) -> ChangeReport:
-        return self._add_relation(f"connect relation '{id}'", Relation(id, tuple(element_ids), label))
-
-    def annotate(
-        self,
-        id: str,
-        data: Mapping[str, object],
-        element_ids: Sequence[str] = (),
-        relation_ids: Sequence[str] = (),
-    ) -> ChangeReport:
-        targets = (
-            *(TargetRef(TargetKind.ELEMENT, item) for item in element_ids),
-            *(TargetRef(TargetKind.RELATION, item) for item in relation_ids),
-        )
-        return self._add_annotation(f"add annotation '{id}'", DataAnnotation(id, targets, dict(data)))
 
     def remove_element(self, id: str, *, cascade: bool = False) -> ChangeReport:
         operation = f"remove element '{id}'"

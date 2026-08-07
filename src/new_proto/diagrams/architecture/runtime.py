@@ -11,29 +11,29 @@ from ...runtime.diagrams.transaction import ChangeTransaction
 
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
-class ClassDiagramState(DiagramState):
+class ArchitectureState(DiagramState):
     pass
 
 
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
-class ClassDiagramElements(Elements):
-    state: ClassDiagramState
+class ArchitectureElements(Elements):
+    state: ArchitectureState
 
 
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
-class ClassDiagramRelations(Relations):
-    state: ClassDiagramState
+class ArchitectureRelations(Relations):
+    state: ArchitectureState
 
 
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
-class ClassDiagramAnnotations(Annotations):
-    state: ClassDiagramState
+class ArchitectureAnnotations(Annotations):
+    state: ArchitectureState
 
 
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
-class ClassDiagramTransaction(ChangeTransaction):
-    state: ClassDiagramState
+class ArchitectureTransaction(ChangeTransaction):
+    state: ArchitectureState

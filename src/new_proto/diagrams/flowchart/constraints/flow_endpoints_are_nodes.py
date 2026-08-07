@@ -30,8 +30,5 @@ class FlowEndpointsAreNodes(FlowchartConstraint):
             if len(flow.element_ids) == 2
             if flow.source_id in elements
             and flow.target_id in elements
-            and not (
-                isinstance(elements[flow.source_id], FlowNode)
-                and isinstance(elements[flow.target_id], FlowNode)
-            )
+            and not (isinstance(elements[flow.source_id], FlowNode) and isinstance(elements[flow.target_id], FlowNode))
         )
