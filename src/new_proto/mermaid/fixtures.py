@@ -11,6 +11,7 @@ from ..diagrams.flowchart.diagram import Flowchart
 from ..diagrams.journey.diagram import Journey
 from ..diagrams.mindmap.diagram import Mindmap
 from ..diagrams.pie.diagram import PieDiagram
+from ..diagrams.radar.diagram import Radar
 from ..diagrams.registry import DiagramRegistry
 from ..diagrams.requirement.diagram import RequirementDiagram
 from ..diagrams.requirement.elements import RequirementType, Risk, VerificationMethod
@@ -304,6 +305,18 @@ class DiagramFixtures:
         venn.add_union("shared", "Shared", ("frontend", "backend"), 3)
         venn.add_text("openapi", "OpenAPI", "shared")
 
+        radar = self.registry.get("radar-beta").diagram
+        assert isinstance(radar, Radar)
+        radar.set_title("Restaurant comparison")
+        radar.add_axis("food", "Food quality")
+        radar.add_axis("service", "Service")
+        radar.add_axis("price", "Price")
+        radar.add_curve("restaurant_a", "Restaurant A", (4, 3, 2))
+        radar.add_curve("restaurant_b", "Restaurant B", (3, 4, 3))
+        radar.set_range(0, 5)
+        radar.set_graticule("polygon")
+        radar.set_ticks(5)
+
         return {
             "flowchart": self.renderer.render(flowchart),
             "treeview": self.renderer.render(treeview),
@@ -317,6 +330,7 @@ class DiagramFixtures:
             "sankey": self.renderer.render(sankey),
             "journey": self.renderer.render(journey),
             "venn": self.renderer.render(venn),
+            "radar": self.renderer.render(radar),
             "state": self.renderer.render(state),
             "swimlane": self.renderer.render(swimlane),
         }

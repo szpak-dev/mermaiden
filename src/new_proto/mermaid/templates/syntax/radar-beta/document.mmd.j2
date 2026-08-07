@@ -1,0 +1,6 @@
+radar-beta{{ "\n" -}}
+{% if diagram.title %}title {{ diagram.title }}{{ "\n" -}}{% endif %}
+{% for axis in diagram.root_elements if axis.kind == "radar_axis" %}axis {{ axis.id }}[{{ axis.label | mermaid_quote }}]{{ ", " if not loop.last else "\n" }}{% endfor %}
+{% for curve in diagram.root_elements if curve.kind == "radar_curve" %}curve {{ curve.id }}[{{ curve.label | mermaid_quote }}]{ {{ curve.values | join(", ") }} }{{ "\n" -}}{% endfor %}
+showLegend {{ "true" if diagram.show_legend else "false" }}{{ "\n" -}}
+{% if diagram.maximum is not none %}max {{ diagram.maximum }}{{ "\n" -}}{% endif %}{% if diagram.minimum is not none %}min {{ diagram.minimum }}{{ "\n" -}}{% endif %}graticule {{ diagram.graticule }}{{ "\n" -}}{% if diagram.ticks is not none %}ticks {{ diagram.ticks }}{{ "\n" -}}{% endif %}

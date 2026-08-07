@@ -14,6 +14,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         ("journey", "journey", "JourneyDiagramConfig"),
         ("mindmap", "mindmap", "MindmapDiagramConfig"),
         ("pie", "pie", "PieDiagramConfig"),
+        ("radar-beta", "radar", "RadarDiagramConfig"),
         ("requirementDiagram", "requirement", "RequirementDiagramConfig"),
         ("sankey", "sankey", "SankeyDiagramConfig"),
         ("sequenceDiagram", "sequence", "SequenceDiagramConfig"),
@@ -27,7 +28,16 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
     assert all(
         values == {"wrap": True}
         for diagram_id, values in configurations.items()
-        if diagram_id not in {"mindmap", "pie", "requirementDiagram", "stateDiagram-v2", "swimlane-beta", "venn-beta"}
+        if diagram_id
+        not in {
+            "mindmap",
+            "pie",
+            "radar-beta",
+            "requirementDiagram",
+            "stateDiagram-v2",
+            "swimlane-beta",
+            "venn-beta",
+        }
     )
     assert configurations["swimlane-beta"] == {
         "wrap": True,
@@ -50,6 +60,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         "layoutAlgorithm": "cose-bilkent",
     }
     assert configurations["pie"]["pie"]["donutHole"] == 0
+    assert configurations["radar-beta"]["radar"]["curveTension"] == 0.17
     assert configurations["venn-beta"]["venn"] == {
         "width": 800,
         "height": 450,

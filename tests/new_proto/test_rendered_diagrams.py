@@ -90,6 +90,17 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             'union frontend,backend["Shared"]:3',
             'text openapi["OpenAPI"]',
         ),
+        "radar": (
+            "radar-beta",
+            "title Restaurant comparison",
+            'axis food["Food quality"], axis service["Service"], axis price["Price"]',
+            'curve restaurant_a["Restaurant A"]{ 4, 3, 2 }',
+            "showLegend true",
+            "max 5",
+            "min 0",
+            "graticule polygon",
+            "ticks 5",
+        ),
         "state": (
             "stateDiagram-v2 TD",
             'state "Still" as s_v_still',
@@ -141,6 +152,8 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
                 "---\nconfig:\n  wrap: true\n"
                 '  venn: {"width": 800, "height": 450, "padding": 8, "useDebugLayout": false}\n---\n'
             )
+        elif name == "radar":
+            assert source.startswith("---\nconfig:\n  wrap: true\n  radar: {")
         else:
             assert source.startswith("---\nconfig:\n  wrap: true\n---\n")
         for fragment in fragments:
