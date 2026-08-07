@@ -1,3 +1,3 @@
 venn-beta{{ "\n" -}}
 {% for item in diagram.root_elements %}{% if item.kind == "venn_set" %}set {{ item.id }}[{{ item.label | mermaid_quote }}]{% if item.size is not none %}:{{ item.size }}{% endif %}{{ "\n" -}}
-{% elif item.kind == "venn_union" %}union {{ item.set_ids | join(",") }}[{{ item.label | mermaid_quote }}]{% if item.size is not none %}:{{ item.size }}{% endif %}{{ "\n" -}}{% endif %}{% for text in item.elements %}  text {{ text.id }}[{{ text.label | mermaid_quote }}]{{ "\n" -}}{% endfor %}{% endfor %}
+{% elif item.kind == "venn_union" %}union {{ item.set_ids | join(",") }}[{{ item.label | mermaid_quote }}]{% if item.size is not none %}:{{ item.size }}{% endif %}{{ "\n" }}{% endif %}{% for text in item.elements %}  text {{ text.id }}[{{ text.label | mermaid_quote }}]{{ "\n" }}{% endfor %}{% endfor %}

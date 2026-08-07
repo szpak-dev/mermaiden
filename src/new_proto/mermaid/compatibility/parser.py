@@ -19,32 +19,63 @@ class MermaidSyntaxValidator:
     version: str = field(default="11.16.0", init=False)
 
     def validate(self, sources: Mapping[str, str]) -> tuple[MermaidSyntaxViolation, ...]:
+        incomplete = tuple(
+            MermaidSyntaxViolation(diagram_id, "compatibility fixture has no diagram content")
+            for diagram_id, source in sources.items()
+            if not self._has_content(source)
+        )
+        if incomplete:
+            return incomplete
         with tempfile.TemporaryDirectory(prefix="modwire-mermaid-") as temporary:
             root = Path(temporary)
-            violations: list[MermaidSyntaxViolation] = []
-            for diagram_id, source in sources.items():
-                source_path = root / f"{diagram_id}.mmd"
-                output_path = root / f"{diagram_id}.svg"
-                source_path.write_text(source, encoding="utf-8")
-                process = subprocess.run(
-                    (
-                        "npx",
-                        "--yes",
-                        f"--package=@mermaid-js/mermaid-cli@{self.version}",
-                        "mmdc",
-                        "-i",
-                        str(source_path),
-                        "-o",
-                        str(output_path),
-                    ),
-                    capture_output=True,
-                    check=False,
-                    text=True,
-                )
-                if process.returncode:
-                    output = process.stderr.strip() or process.stdout.strip()
-                    violations.append(MermaidSyntaxViolation(diagram_id, self._message(output)))
-            return tuple(violations)
+            input_path = root / "diagrams.md"
+            output_path = root / "diagrams.rendered.md"
+            input_path.write_text(self._markdown(sources), encoding="utf-8")
+            process = subprocess.run(
+                (
+                    "npx",
+                    "--yes",
+                    f"--package=@mermaid-js/mermaid-cli@{self.version}",
+                    "mmdc",
+                    "-i",
+                    str(input_path),
+                    "-o",
+                    str(output_path),
+                ),
+                capture_output=True,
+                check=False,
+                text=True,
+            )
+            if not process.returncode:
+                return self._rendering_violations(root, sources)
+            output = process.stderr.strip() or process.stdout.strip()
+            return (MermaidSyntaxViolation("all", self._message(output)),)
+
+    @staticmethod
+    def _has_content(source: str) -> bool:
+        body = source.split("---\n", 2)[-1]
+        return len(tuple(line for line in body.splitlines() if line.strip())) > 1
+
+    @staticmethod
+    def _markdown(sources: Mapping[str, str]) -> str:
+        return "\n".join(
+            f"## {diagram_id}\n```mermaid\n{source}```" for diagram_id, source in sources.items()
+        )
+
+    @staticmethod
+    def _rendering_violations(
+        root: Path,
+        sources: Mapping[str, str],
+    ) -> tuple[MermaidSyntaxViolation, ...]:
+        return tuple(
+            MermaidSyntaxViolation(diagram_id, "Mermaid rendered a syntax-error diagram.")
+            for index, diagram_id in enumerate(sources, start=1)
+            if MermaidSyntaxValidator._has_error_svg(root / f"diagrams.rendered-{index}.svg")
+        )
+
+    @staticmethod
+    def _has_error_svg(path: Path) -> bool:
+        return path.exists() and "Syntax error in text" in path.read_text(encoding="utf-8")
 
     @staticmethod
     def _message(output: str) -> str:

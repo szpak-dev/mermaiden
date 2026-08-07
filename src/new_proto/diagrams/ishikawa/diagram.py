@@ -4,9 +4,11 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.constraint import ChangeReport
 from ..base import DiagramModel
 from .configuration import IshikawaDiagramConfiguration
 from .constraints.constraint import IshikawaDiagramConstraint
+from .elements import Category, Cause, Effect
 
 
 @injectable(as_type=DiagramModel, qualifier="ishikawa", lifetime="scoped")
@@ -22,3 +24,12 @@ class IshikawaDiagram(DiagramModel):
     @property
     def mermaid_configuration(self) -> Mapping[str, object]:
         return {self.config_key: self.configuration.to_mermaid()}
+
+    def add_effect(self, id: str, label: str) -> ChangeReport:
+        return self._add_element(f"add effect '{id}'", Effect(id, label))
+
+    def add_category(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
+        return self._add_element(f"add category '{id}'", Category(id, label), parent_id)
+
+    def add_cause(self, id: str, label: str, parent_id: str) -> ChangeReport:
+        return self._add_element(f"add cause '{id}'", Cause(id, label), parent_id)

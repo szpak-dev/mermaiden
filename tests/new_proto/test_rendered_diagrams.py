@@ -16,6 +16,8 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             "Process work",
         ),
         "block": ("block", "columns 3", 'frontend["Frontend"]', "space", "block:backend", "columns 2", 'api["API"]'),
+        "eventmodeling": ("eventmodeling", "tf 01 ui cart_ui", "tf 02 cmd add_item", "tf 03 evt item_added"),
+        "ishikawa": ("ishikawa-beta", "Blurry photo", "Process", "Out of focus", "Damaged lens"),
         "er": ("erDiagram", "CUSTOMER ||--o{ ORDER : places", "int id PK"),
         "gantt": ("gantt", "title Release plan", "section Delivery", "Design : done, design, 2026-08-01, 2d"),
         "gitgraph": (
@@ -137,7 +139,7 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
         "radar": (
             "radar-beta",
             "title Restaurant comparison",
-            'axis food["Food quality"], axis service["Service"], axis price["Price"]',
+            'axis food["Food quality"], service["Service"], price["Price"]',
             'curve restaurant_a["Restaurant A"]{ 4, 3, 2 }',
             "showLegend true",
             "max 5",
@@ -208,6 +210,10 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             assert source.startswith("---\nconfig:\n  wrap: true\n  c4: {}\n---\n")
         elif name == "cynefin":
             assert source.startswith("---\nconfig:\n  wrap: true\n  cynefin: {")
+        elif name == "eventmodeling":
+            assert source.startswith("---\nconfig:\n  wrap: true\n  eventmodeling: {}\n---\n")
+        elif name == "ishikawa":
+            assert source.startswith("---\nconfig:\n  wrap: true\n  ishikawa: {}\n---\n")
         elif name == "kanban":
             assert source.startswith("---\nconfig:\n  wrap: true\n  kanban: {")
         elif name == "railroad":
@@ -222,3 +228,8 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             assert source.startswith("---\nconfig:\n  wrap: true\n---\n")
         for fragment in fragments:
             assert fragment in source
+        assert all(line == line.rstrip() for line in source.splitlines())
+
+    assert diagrams["treeview"].endswith(
+        "treeView-beta\nroot/\n  src/ icon(folder)\n  tests/ icon(test)\n  README.md :::highlight ## Documentation\n"
+    )

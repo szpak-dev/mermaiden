@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import ClassVar
 
 from wireup import injectable
 
@@ -12,9 +13,11 @@ from ..diagrams.classdiagram.relations import ClassRelationKind
 from ..diagrams.cynefin.diagram import CynefinDiagram
 from ..diagrams.cynefin.elements import DomainKind
 from ..diagrams.er.diagram import EntityRelationshipDiagram
+from ..diagrams.eventmodeling.diagram import EventModelingDiagram
 from ..diagrams.flowchart.diagram import Flowchart
 from ..diagrams.gantt.diagram import Gantt
 from ..diagrams.gitgraph.diagram import GitGraphDiagram
+from ..diagrams.ishikawa.diagram import IshikawaDiagram
 from ..diagrams.journey.diagram import Journey
 from ..diagrams.kanban.diagram import KanbanDiagram
 from ..diagrams.mindmap.diagram import Mindmap
@@ -46,6 +49,40 @@ from .service import MermaidRenderer
 class DiagramFixtures:
     renderer: MermaidRenderer
     registry: DiagramRegistry
+
+    compatibility_names: ClassVar[dict[str, str]] = {
+        "architecture": "architecture-beta",
+        "block": "block",
+        "c4": "C4Context",
+        "classdiagram": "classDiagram",
+        "cynefin": "cynefin-beta",
+        "er": "erDiagram",
+        "eventmodeling": "eventmodeling",
+        "flowchart": "flowchart",
+        "gantt": "gantt",
+        "gitgraph": "gitGraph",
+        "journey": "journey",
+        "ishikawa": "ishikawa-beta",
+        "kanban": "kanban",
+        "mindmap": "mindmap",
+        "packet": "packet",
+        "pie": "pie",
+        "radar": "radar-beta",
+        "railroad": "railroad-ebnf-beta",
+        "requirement": "requirementDiagram",
+        "sankey": "sankey",
+        "sequence": "sequenceDiagram",
+        "state": "stateDiagram-v2",
+        "swimlane": "swimlane-beta",
+        "timeline": "timeline",
+        "treeview": "treeView-beta",
+        "venn": "venn-beta",
+        "wardley": "wardley-beta",
+    }
+
+    def render_compatibility_sources(self) -> dict[str, str]:
+        fixtures = self.render()
+        return {diagram_id: fixtures[name] for name, diagram_id in self.compatibility_names.items()}
 
     def render(self) -> dict[str, str]:
         flowchart = self.registry.get("flowchart").diagram
@@ -376,6 +413,27 @@ class DiagramFixtures:
         c4.add_relationship("uses", "customer", "banking", "Uses")
         c4.add_relationship("reads", "banking", "accounts", "Reads account data")
 
+        eventmodeling = self.registry.get("eventmodeling").diagram
+        assert isinstance(eventmodeling, EventModelingDiagram)
+        eventmodeling.add_swimlane("checkout", "Checkout")
+        eventmodeling.add_actor("cart_ui", "Cart UI", "checkout")
+        eventmodeling.add_command("add_item", "Add item", "checkout")
+        eventmodeling.add_event("item_added", "Item added", "checkout")
+        eventmodeling.add_view("cart_items", "Cart items", "checkout")
+        eventmodeling.add_flow("submit", "cart_ui", "add_item")
+        eventmodeling.add_flow("record", "add_item", "item_added")
+        eventmodeling.add_flow("project", "item_added", "cart_items")
+
+        ishikawa = self.registry.get("ishikawa-beta").diagram
+        assert isinstance(ishikawa, IshikawaDiagram)
+        ishikawa.add_effect("blurry_photo", "Blurry photo")
+        ishikawa.add_category("process", "Process")
+        ishikawa.add_cause("focus", "Out of focus", "process")
+        ishikawa.add_cause("shutter", "Shutter speed too slow", "process")
+        ishikawa.add_category("equipment", "Equipment")
+        ishikawa.add_category("lens", "Lens", "equipment")
+        ishikawa.add_cause("damaged_lens", "Damaged lens", "lens")
+
         cynefin = self.registry.get("cynefin-beta").diagram
         assert isinstance(cynefin, CynefinDiagram)
         cynefin.add_item("investigate", "Investigate root cause", DomainKind.COMPLEX)
@@ -418,11 +476,13 @@ class DiagramFixtures:
             "timeline": self.renderer.render(timeline),
             "sankey": self.renderer.render(sankey),
             "journey": self.renderer.render(journey),
+            "ishikawa": self.renderer.render(ishikawa),
             "venn": self.renderer.render(venn),
             "radar": self.renderer.render(radar),
             "block": self.renderer.render(block),
             "packet": self.renderer.render(packet),
             "er": self.renderer.render(er),
+            "eventmodeling": self.renderer.render(eventmodeling),
             "gantt": self.renderer.render(gantt),
             "gitgraph": self.renderer.render(gitgraph),
             "c4": self.renderer.render(c4),

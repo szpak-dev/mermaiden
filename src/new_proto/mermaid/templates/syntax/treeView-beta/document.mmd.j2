@@ -1,0 +1,2 @@
+treeView-beta{{ "\n" -}}
+{% for item in diagram.root_elements %}{% with element=item, depth=0 %}{% include "templates/syntax/treeView-beta/elements/tree_item.mmd.j2" %}{% endwith %}{% endfor %}

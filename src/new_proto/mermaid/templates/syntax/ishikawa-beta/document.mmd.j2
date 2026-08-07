@@ -1,1 +1,6 @@
-ishikawa-beta
+ishikawa-beta{{ "\n" -}}
+{% for effect in diagram.root_elements if effect.kind == "effect" %}{{ effect.label }}{{ "\n" -}}{% endfor %}
+{% macro causes(items, depth=0) -%}
+{% for item in items %}{{ "  " * depth }}{{ item.label }}{{ "\n" -}}{% if item.elements is defined %}{{ causes(item.elements, depth + 1) }}{% endif %}{% endfor %}
+{%- endmacro %}
+{% for category in diagram.root_elements if category.kind == "category" %}{{ category.label }}{{ "\n" -}}{{ causes(category.elements, 1) }}{% endfor %}

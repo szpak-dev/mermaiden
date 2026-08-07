@@ -49,8 +49,7 @@ class MermaidRenderer:
         return f"templates/syntax/{diagram.kind}"
 
     def _document_template(self, diagram: DiagramView) -> str:
-        template = f"{self._template_prefix(diagram)}/document.mmd.j2"
-        return template if template in self.environment.list_templates() else "templates/document.mmd.j2"
+        return f"{self._template_prefix(diagram)}/document.mmd.j2"
 
     @staticmethod
     def _identifier(value: object, namespace: str) -> str:

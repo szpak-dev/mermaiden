@@ -1,4 +1,3 @@
 {% import "templates/macros/document.mmd.j2" as mmd with context %}
-requirementDiagram{{ "\n" -}}
+mindmap{{ "\n" -}}
 {{ mmd.elements(diagram.root_elements, 0) }}
-{{ mmd.relations(diagram.find_relations(), 0) }}

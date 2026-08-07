@@ -14,7 +14,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         ("classDiagram", "class", "ClassDiagramConfig"),
         ("cynefin-beta", "cynefin", "CynefinDiagramConfig"),
         ("erDiagram", "er", "ErDiagramConfig"),
-        ("eventModeling", "eventmodeling", "EventModelingDiagramConfig"),
+        ("eventmodeling", "eventmodeling", "EventModelingDiagramConfig"),
         ("flowchart", "flowchart", "FlowchartDiagramConfig"),
         ("gantt", "gantt", "GanttDiagramConfig"),
         ("gitGraph", "gitGraph", "GitGraphDiagramConfig"),
@@ -46,7 +46,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
                 "C4Context",
                 "cynefin-beta",
                 "erDiagram",
-                "eventModeling",
+                "eventmodeling",
             "gantt",
                 "gitGraph",
                 "ishikawa-beta",
@@ -101,6 +101,13 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         item.configuration.schema_definition == upstream[item.configuration.config_key].schema_definition
         for item in report.diagrams
     )
+
+
+def test_application_validates_populated_compatibility_fixtures_with_one_parser_run() -> None:
+    report = Application.create().verify_compatibility()
+
+    assert report.valid
+    assert not report.syntax_violations
 
 
 def test_application_lists_diagram_configs_from_mermaid_schema() -> None:

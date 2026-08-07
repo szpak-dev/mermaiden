@@ -1,6 +1,7 @@
 import pytest
 
 from new_proto.application import Application
+from new_proto.mermaid.service import MermaidRenderer
 
 
 def test_registry_lists_every_implemented_diagram_with_mermaid_metadata() -> None:
@@ -13,7 +14,7 @@ def test_registry_lists_every_implemented_diagram_with_mermaid_metadata() -> Non
         ("classDiagram", "class", "ClassDiagramConfig"),
         ("cynefin-beta", "cynefin", "CynefinDiagramConfig"),
         ("erDiagram", "er", "ErDiagramConfig"),
-        ("eventModeling", "eventmodeling", "EventModelingDiagramConfig"),
+        ("eventmodeling", "eventmodeling", "EventModelingDiagramConfig"),
         ("flowchart", "flowchart", "FlowchartDiagramConfig"),
         ("gantt", "gantt", "GanttDiagramConfig"),
         ("gitGraph", "gitGraph", "GitGraphDiagramConfig"),
@@ -44,6 +45,20 @@ def test_registry_returns_detailed_information_by_mermaid_syntax_id() -> None:
     assert diagram.name == "Sequence diagram"
     assert diagram.syntax_id == "sequenceDiagram"
     assert diagram.config_key == "sequence"
+
+
+def test_every_registered_diagram_has_an_explicit_document_template() -> None:
+    renderer = MermaidRenderer()
+    templates = set(renderer.environment.list_templates())
+
+    assert {
+        renderer._document_template(item.diagram)
+        for item in Application.create().available_diagrams()
+    } == {
+        template
+        for template in templates
+        if template.startswith("templates/syntax/") and template.endswith("/document.mmd.j2")
+    }
 
 
 def test_registry_returns_detailed_information_by_mermaid_config_key() -> None:

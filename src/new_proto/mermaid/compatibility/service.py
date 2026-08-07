@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from wireup import injectable
 
 from ...diagrams.registry import DiagramRegistry
+from ..fixtures import DiagramFixtures
 from ..service import MermaidRenderer
 from .configuration import ConfigurationViolation, DiagramConfigurationContract, MermaidConfiguration
 from .parser import MermaidSyntaxValidator, MermaidSyntaxViolation
@@ -57,6 +58,7 @@ class CompatibilityReport:
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class MermaidCompatibility:
+    fixtures: DiagramFixtures
     syntax: MermaidSyntaxValidator
     registry: DiagramRegistry
     renderer: MermaidRenderer
@@ -73,6 +75,7 @@ class MermaidCompatibility:
         configuration = MermaidConfiguration(self.schemas.load())
         diagrams: list[DiagramCompatibility] = []
         missing: list[MissingDiagramCompatibility] = []
+        fixture_sources = self.fixtures.render_compatibility_sources() if verify_syntax else {}
         sources: dict[str, str] = {}
         for upstream in self.schemas.diagram_configs():
             try:
@@ -82,7 +85,7 @@ class MermaidCompatibility:
                 continue
             source = self.renderer.render(info.diagram)
             local = configuration.local_contract(info.config_key, info.schema_definition, source)
-            sources[info.id] = source
+            sources[info.id] = fixture_sources[info.id] if verify_syntax and info.id in fixture_sources else source
             diagrams.append(
                 DiagramCompatibility(
                     info.id,
