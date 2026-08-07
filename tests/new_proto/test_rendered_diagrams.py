@@ -73,6 +73,13 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             'm_v_cloud)"Cloud"(',
             'm_v_quality{{"Quality"}}',
         ),
+        "pie": (
+            "pie showData",
+            'title "Adopted pets"',
+            '"Dogs" : 386',
+            '"Cats" : 85',
+            '"Rats" : 15',
+        ),
         "state": (
             "stateDiagram-v2 TD",
             'state "Still" as s_v_still',
@@ -98,7 +105,9 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
     assert diagrams.keys() == expected.keys()
     for name, fragments in expected.items():
         source = diagrams[name]
-        if name == "mindmap":
+        if name == "pie":
+            assert source.startswith("---\nconfig:\n  wrap: true\n  pie: {")
+        elif name == "mindmap":
             assert source.startswith(
                 "---\nconfig:\n  wrap: true\n"
                 '  mindmap: {"useMaxWidth": true, "padding": 10, '

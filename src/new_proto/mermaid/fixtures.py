@@ -9,6 +9,7 @@ from ..diagrams.classdiagram.elements import ClassAttribute, ClassMethod
 from ..diagrams.classdiagram.relations import ClassRelationKind
 from ..diagrams.flowchart.diagram import Flowchart
 from ..diagrams.mindmap.diagram import Mindmap
+from ..diagrams.pie.diagram import PieDiagram
 from ..diagrams.registry import DiagramRegistry
 from ..diagrams.requirement.diagram import RequirementDiagram
 from ..diagrams.requirement.elements import RequirementType, Risk, VerificationMethod
@@ -259,6 +260,14 @@ class DiagramFixtures:
         mindmap.add_cloud("cloud", "Cloud", "runtime")
         mindmap.add_hexagon("quality", "Quality", "root")
 
+        pie = self.registry.get("pie").diagram
+        assert isinstance(pie, PieDiagram)
+        pie.set_title("Adopted pets")
+        pie.show_values()
+        pie.add_slice("dogs", "Dogs", 386)
+        pie.add_slice("cats", "Cats", 85)
+        pie.add_slice("rats", "Rats", 15)
+
         return {
             "flowchart": self.renderer.render(flowchart),
             "treeview": self.renderer.render(treeview),
@@ -267,6 +276,7 @@ class DiagramFixtures:
             "sequence": self.renderer.render(sequence),
             "requirement": self.renderer.render(requirements),
             "mindmap": self.renderer.render(mindmap),
+            "pie": self.renderer.render(pie),
             "state": self.renderer.render(state),
             "swimlane": self.renderer.render(swimlane),
         }

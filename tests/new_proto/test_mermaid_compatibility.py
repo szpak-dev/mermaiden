@@ -12,6 +12,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         ("classDiagram", "class", "ClassDiagramConfig"),
         ("flowchart", "flowchart", "FlowchartDiagramConfig"),
         ("mindmap", "mindmap", "MindmapDiagramConfig"),
+        ("pie", "pie", "PieDiagramConfig"),
         ("requirementDiagram", "requirement", "RequirementDiagramConfig"),
         ("sequenceDiagram", "sequence", "SequenceDiagramConfig"),
         ("stateDiagram-v2", "state", "StateDiagramConfig"),
@@ -22,7 +23,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
     assert all(
         values == {"wrap": True}
         for diagram_id, values in configurations.items()
-        if diagram_id not in {"mindmap", "requirementDiagram", "stateDiagram-v2", "swimlane-beta"}
+        if diagram_id not in {"mindmap", "pie", "requirementDiagram", "stateDiagram-v2", "swimlane-beta"}
     )
     assert configurations["swimlane-beta"] == {
         "wrap": True,
@@ -44,6 +45,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         "maxNodeWidth": 200,
         "layoutAlgorithm": "cose-bilkent",
     }
+    assert configurations["pie"]["pie"]["donutHole"] == 0
     upstream = {item.config_key: item for item in Application.create().mermaid_diagram_configs()}
     assert all(
         item.configuration.schema_definition == upstream[item.configuration.config_key].schema_definition
