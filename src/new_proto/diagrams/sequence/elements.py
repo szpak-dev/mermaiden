@@ -20,6 +20,7 @@ class ParticipantKind(StrEnum):
 class Participant(Entity):
     kind: ClassVar[str] = "participant"
     participant_kind: ParticipantKind = ParticipantKind.PARTICIPANT
+    created: bool = False
 
 
 @dataclass(frozen=True, slots=True)

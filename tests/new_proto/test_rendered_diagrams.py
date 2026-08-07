@@ -42,9 +42,10 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
         "sequence": (
             "sequenceDiagram",
             "actor user as User",
-            "boundary web as Web",
-            "control api as API",
-            "database database as Database",
+            'participant web@{ "type": "boundary" } as Web',
+            'participant api@{ "type": "control" } as API',
+            'participant database@{ "type": "database" } as Database',
+            'create participant worker@{ "type": "entity" } as Worker',
             "loop retry",
             "par effects",
             "Note left of user: Caller",

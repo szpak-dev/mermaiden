@@ -1,0 +1,3 @@
+{% macro declaration(participant, prefix="") -%}
+{{ prefix }}{% if participant.participant_kind.value == "actor" %}actor {{ participant.id }} as {{ participant.label }}{% else %}participant {{ participant.id }}@{ "type": "{{ participant.participant_kind.value }}" } as {{ participant.label }}{% endif %}
+{%- endmacro %}

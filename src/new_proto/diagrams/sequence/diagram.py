@@ -22,9 +22,14 @@ class SequenceDiagram(DiagramModel):
         return self._add_element(f"add box '{id}'", ParticipantBox(id, label, (), color))
 
     def add_participant(
-        self, id: str, label: str = "", kind: ParticipantKind = ParticipantKind.PARTICIPANT, box_id: str = ""
+        self,
+        id: str,
+        label: str = "",
+        kind: ParticipantKind = ParticipantKind.PARTICIPANT,
+        box_id: str = "",
+        created: bool = False,
     ) -> ChangeReport:
-        return self._add_element(f"add participant '{id}'", Participant(id, label or id, kind), box_id)
+        return self._add_element(f"add participant '{id}'", Participant(id, label or id, kind, created), box_id)
 
     def add_message(
         self,

@@ -1,1 +1,2 @@
-{{ element.participant_kind.value }} {{ element.id }} as {{ element.label }}{{ "\n" -}}
+{% import "templates/syntax/sequenceDiagram/macros/participant.mmd.j2" as sequence %}
+{% if not element.created %}{{ sequence.declaration(element) }}{{ "\n" -}}{% endif %}
