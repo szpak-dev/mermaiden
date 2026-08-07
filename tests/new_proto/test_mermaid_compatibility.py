@@ -6,7 +6,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
 
     assert report.lock.mermaid_version == "11.16.0"
     assert not report.valid
-    assert any(item.config_key == "gitGraph" for item in report.missing_diagrams)
+    assert all(item.config_key != "gitGraph" for item in report.missing_diagrams)
     assert [(item.diagram_id, item.config_key, item.schema_definition) for item in report.diagrams] == [
         ("architecture-beta", "architecture", "ArchitectureDiagramConfig"),
         ("block", "block", "BlockDiagramConfig"),
@@ -14,6 +14,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         ("erDiagram", "er", "ErDiagramConfig"),
         ("flowchart", "flowchart", "FlowchartDiagramConfig"),
         ("gantt", "gantt", "GanttDiagramConfig"),
+        ("gitGraph", "gitGraph", "GitGraphDiagramConfig"),
         ("journey", "journey", "JourneyDiagramConfig"),
         ("mindmap", "mindmap", "MindmapDiagramConfig"),
         ("packet", "packet", "PacketDiagramConfig"),
@@ -37,6 +38,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
             "block",
             "erDiagram",
             "gantt",
+            "gitGraph",
             "mindmap",
             "packet",
             "pie",
@@ -71,6 +73,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
     assert configurations["block"]["block"]["padding"] == 8
     assert configurations["erDiagram"]["er"]["useMaxWidth"] is True
     assert configurations["gantt"]["gantt"]["weekday"] == "sunday"
+    assert configurations["gitGraph"]["gitGraph"]["mainBranchName"] == "main"
     assert configurations["packet"]["packet"]["bitsPerRow"] == 32
     assert configurations["radar-beta"]["radar"]["curveTension"] == 0.17
     assert configurations["venn-beta"]["venn"] == {

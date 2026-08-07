@@ -18,6 +18,14 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
         "block": ("block", "columns 3", 'frontend["Frontend"]', "space", "block:backend", "columns 2", 'api["API"]'),
         "er": ("erDiagram", "CUSTOMER ||--o{ ORDER : places", "int id PK"),
         "gantt": ("gantt", "title Release plan", "section Delivery", "Design : done, design, 2026-08-01, 2d"),
+        "gitgraph": (
+            "gitGraph",
+            'commit id: "ZERO" tag: "v1.0.0"',
+            "branch develop order: 1",
+            "checkout develop",
+            'commit id: "FEATURE" type: HIGHLIGHT',
+            "checkout main",
+        ),
         "treeview": (
             "treeView-beta",
             "root/",
@@ -162,6 +170,8 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             assert source.startswith("---\nconfig:\n  wrap: true\n  er: {")
         elif name == "gantt":
             assert source.startswith("---\nconfig:\n  wrap: true\n  gantt: {")
+        elif name == "gitgraph":
+            assert source.startswith("---\nconfig:\n  wrap: true\n  gitGraph: {")
         elif name == "packet":
             assert source.startswith("---\nconfig:\n  wrap: true\n  packet: {")
         elif name == "radar":

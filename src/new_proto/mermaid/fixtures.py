@@ -11,6 +11,7 @@ from ..diagrams.classdiagram.relations import ClassRelationKind
 from ..diagrams.er.diagram import EntityRelationshipDiagram
 from ..diagrams.flowchart.diagram import Flowchart
 from ..diagrams.gantt.diagram import Gantt
+from ..diagrams.gitgraph.diagram import GitGraphDiagram
 from ..diagrams.journey.diagram import Journey
 from ..diagrams.mindmap.diagram import Mindmap
 from ..diagrams.packet.diagram import Packet
@@ -352,6 +353,14 @@ class DiagramFixtures:
         gantt.add_section("delivery", "Delivery")
         gantt.add_task("design", "Design", ("done", "design", "2026-08-01", "2d"), "delivery")
 
+        gitgraph = self.registry.get("gitGraph").diagram
+        assert isinstance(gitgraph, GitGraphDiagram)
+        gitgraph.add_commit("initial", "ZERO", tag="v1.0.0")
+        gitgraph.add_branch("develop", "develop", 1)
+        gitgraph.checkout("checkout_develop", "develop")
+        gitgraph.add_commit("feature", "FEATURE", "HIGHLIGHT")
+        gitgraph.checkout("checkout_main", "main")
+        gitgraph.add_commit("release", "RELEASE", tag="v1.1.0")
 
         return {
             "flowchart": self.renderer.render(flowchart),
@@ -371,6 +380,7 @@ class DiagramFixtures:
             "packet": self.renderer.render(packet),
             "er": self.renderer.render(er),
             "gantt": self.renderer.render(gantt),
+            "gitgraph": self.renderer.render(gitgraph),
             "state": self.renderer.render(state),
             "swimlane": self.renderer.render(swimlane),
         }

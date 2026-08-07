@@ -1,0 +1,5 @@
+gitGraph{{ "\n" -}}
+{% for item in diagram.root_elements %}{% if item.kind == "commit" %}commit id: {{ item.label | mermaid_quote }}{% if item.commit_type %} type: {{ item.commit_type }}{% endif %}{% if item.tag %} tag: {{ item.tag | mermaid_quote }}{% endif %}{{ "\n" -}}
+{% elif item.kind == "branch" %}branch {{ item.label }}{% if item.order is not none %} order: {{ item.order }}{% endif %}{{ "\n" -}}
+{% elif item.kind == "checkout" %}checkout {{ item.label }}{{ "\n" -}}
+{% endif %}{% endfor %}
