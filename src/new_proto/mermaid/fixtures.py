@@ -8,6 +8,7 @@ from ..diagrams.classdiagram.diagram import ClassDiagram
 from ..diagrams.classdiagram.elements import ClassAttribute, ClassMethod
 from ..diagrams.classdiagram.relations import ClassRelationKind
 from ..diagrams.flowchart.diagram import Flowchart
+from ..diagrams.mindmap.diagram import Mindmap
 from ..diagrams.registry import DiagramRegistry
 from ..diagrams.requirement.diagram import RequirementDiagram
 from ..diagrams.requirement.elements import RequirementType, Risk, VerificationMethod
@@ -247,6 +248,17 @@ class DiagramFixtures:
         requirements.add_relation("policy_refines_system", "policy", "system", RequirementRelationKind.REFINES)
         requirements.add_relation("device_traces_policy", "device", "policy", RequirementRelationKind.TRACES)
 
+        mindmap = self.registry.get("mindmap").diagram
+        assert isinstance(mindmap, Mindmap)
+        mindmap.add_root("root", "Modwire")
+        mindmap.add_node("domain", "Domain model", "root")
+        mindmap.add_square("contracts", "Contracts", "domain")
+        mindmap.add_rounded_square("services", "Services", "domain")
+        mindmap.add_circle("runtime", "Runtime", "root")
+        mindmap.add_bang("warning", "Important", "runtime")
+        mindmap.add_cloud("cloud", "Cloud", "runtime")
+        mindmap.add_hexagon("quality", "Quality", "root")
+
         return {
             "flowchart": self.renderer.render(flowchart),
             "treeview": self.renderer.render(treeview),
@@ -254,6 +266,7 @@ class DiagramFixtures:
             "architecture": self.renderer.render(architecture),
             "sequence": self.renderer.render(sequence),
             "requirement": self.renderer.render(requirements),
+            "mindmap": self.renderer.render(mindmap),
             "state": self.renderer.render(state),
             "swimlane": self.renderer.render(swimlane),
         }

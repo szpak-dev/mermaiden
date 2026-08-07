@@ -6,11 +6,12 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
 
     assert report.lock.mermaid_version == "11.16.0"
     assert not report.valid
-    assert any(item.config_key == "mindmap" for item in report.missing_diagrams)
+    assert any(item.config_key == "gantt" for item in report.missing_diagrams)
     assert [(item.diagram_id, item.config_key, item.schema_definition) for item in report.diagrams] == [
         ("architecture-beta", "architecture", "ArchitectureDiagramConfig"),
         ("classDiagram", "class", "ClassDiagramConfig"),
         ("flowchart", "flowchart", "FlowchartDiagramConfig"),
+        ("mindmap", "mindmap", "MindmapDiagramConfig"),
         ("requirementDiagram", "requirement", "RequirementDiagramConfig"),
         ("sequenceDiagram", "sequence", "SequenceDiagramConfig"),
         ("stateDiagram-v2", "state", "StateDiagramConfig"),
@@ -21,7 +22,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
     assert all(
         values == {"wrap": True}
         for diagram_id, values in configurations.items()
-        if diagram_id not in {"requirementDiagram", "stateDiagram-v2", "swimlane-beta"}
+        if diagram_id not in {"mindmap", "requirementDiagram", "stateDiagram-v2", "swimlane-beta"}
     )
     assert configurations["swimlane-beta"] == {
         "wrap": True,
@@ -37,6 +38,12 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         "state": {"titleTopMargin": 25, "useMaxWidth": True, "defaultRenderer": "dagre-wrapper"},
     }
     assert configurations["requirementDiagram"]["requirement"]["useMaxWidth"] is True
+    assert configurations["mindmap"]["mindmap"] == {
+        "useMaxWidth": True,
+        "padding": 10,
+        "maxNodeWidth": 200,
+        "layoutAlgorithm": "cose-bilkent",
+    }
     upstream = {item.config_key: item for item in Application.create().mermaid_diagram_configs()}
     assert all(
         item.configuration.schema_definition == upstream[item.configuration.config_key].schema_definition

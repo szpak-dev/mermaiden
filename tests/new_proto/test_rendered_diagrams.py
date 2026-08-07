@@ -63,6 +63,16 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             "r_v_service - satisfies -> r_v_system",
             "r_v_test_suite - verifies -> r_v_login",
         ),
+        "mindmap": (
+            "mindmap",
+            '"Modwire"',
+            'm_v_contracts["Contracts"]',
+            'm_v_services("Services")',
+            'm_v_runtime(("Runtime"))',
+            'm_v_warning))"Important"((',
+            'm_v_cloud)"Cloud"(',
+            'm_v_quality{{"Quality"}}',
+        ),
         "state": (
             "stateDiagram-v2 TD",
             'state "Still" as s_v_still',
@@ -88,7 +98,13 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
     assert diagrams.keys() == expected.keys()
     for name, fragments in expected.items():
         source = diagrams[name]
-        if name == "requirement":
+        if name == "mindmap":
+            assert source.startswith(
+                "---\nconfig:\n  wrap: true\n"
+                '  mindmap: {"useMaxWidth": true, "padding": 10, '
+                '"maxNodeWidth": 200, "layoutAlgorithm": "cose-bilkent"}\n---\n'
+            )
+        elif name == "requirement":
             assert source.startswith("---\nconfig:\n  wrap: true\n  requirement: {")
         elif name == "state":
             assert source.startswith(

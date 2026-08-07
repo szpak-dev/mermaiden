@@ -1,0 +1,3 @@
+{% import "templates/macros/document.mmd.j2" as mmd with context %}
+{{ element.id | mermaid_id("m") }}){{ ")" }}{{ element.label | mermaid_quote }}(({{ "\n" -}}
+{{ mmd.elements(element.elements, 1, element.id) }}
