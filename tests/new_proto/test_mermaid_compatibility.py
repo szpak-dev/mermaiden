@@ -6,11 +6,12 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
 
     assert report.lock.mermaid_version == "11.16.0"
     assert not report.valid
-    assert any(item.config_key == "gantt" for item in report.missing_diagrams)
+    assert any(item.config_key == "gitGraph" for item in report.missing_diagrams)
     assert [(item.diagram_id, item.config_key, item.schema_definition) for item in report.diagrams] == [
         ("architecture-beta", "architecture", "ArchitectureDiagramConfig"),
         ("block", "block", "BlockDiagramConfig"),
         ("classDiagram", "class", "ClassDiagramConfig"),
+        ("erDiagram", "er", "ErDiagramConfig"),
         ("flowchart", "flowchart", "FlowchartDiagramConfig"),
         ("journey", "journey", "JourneyDiagramConfig"),
         ("mindmap", "mindmap", "MindmapDiagramConfig"),
@@ -33,6 +34,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         if diagram_id
         not in {
             "block",
+            "erDiagram",
             "mindmap",
             "packet",
             "pie",
@@ -65,6 +67,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
     }
     assert configurations["pie"]["pie"]["donutHole"] == 0
     assert configurations["block"]["block"]["padding"] == 8
+    assert configurations["erDiagram"]["er"]["useMaxWidth"] is True
     assert configurations["packet"]["packet"]["bitsPerRow"] == 32
     assert configurations["radar-beta"]["radar"]["curveTension"] == 0.17
     assert configurations["venn-beta"]["venn"] == {

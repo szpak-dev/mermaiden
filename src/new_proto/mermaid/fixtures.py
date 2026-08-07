@@ -8,6 +8,7 @@ from ..diagrams.block.diagram import BlockDiagram
 from ..diagrams.classdiagram.diagram import ClassDiagram
 from ..diagrams.classdiagram.elements import ClassAttribute, ClassMethod
 from ..diagrams.classdiagram.relations import ClassRelationKind
+from ..diagrams.er.diagram import EntityRelationshipDiagram
 from ..diagrams.flowchart.diagram import Flowchart
 from ..diagrams.journey.diagram import Journey
 from ..diagrams.mindmap.diagram import Mindmap
@@ -336,6 +337,15 @@ class DiagramFixtures:
         packet.add_field("length", "Length", 32, 47)
         packet.add_field("checksum", "Checksum", 48, 63)
 
+        er = self.registry.get("erDiagram").diagram
+        assert isinstance(er, EntityRelationshipDiagram)
+        er.add_entity("CUSTOMER", "Customer")
+        er.add_attribute("customer_id", "id", "int", "CUSTOMER", ("PK",))
+        er.add_entity("ORDER", "Order")
+        er.add_attribute("order_id", "id", "int", "ORDER", ("PK",))
+        er.add_relationship("places", "CUSTOMER", "ORDER", "places", "||--o{")
+
+
         return {
             "flowchart": self.renderer.render(flowchart),
             "treeview": self.renderer.render(treeview),
@@ -352,6 +362,7 @@ class DiagramFixtures:
             "radar": self.renderer.render(radar),
             "block": self.renderer.render(block),
             "packet": self.renderer.render(packet),
+            "er": self.renderer.render(er),
             "state": self.renderer.render(state),
             "swimlane": self.renderer.render(swimlane),
         }

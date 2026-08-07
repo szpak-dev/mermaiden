@@ -16,6 +16,7 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             "Process work",
         ),
         "block": ("block", "columns 3", 'frontend["Frontend"]', "space", "block:backend", "columns 2", 'api["API"]'),
+        "er": ("erDiagram", "CUSTOMER ||--o{ ORDER : places", "int id PK"),
         "treeview": (
             "treeView-beta",
             "root/",
@@ -156,6 +157,8 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             )
         elif name == "block":
             assert source.startswith("---\nconfig:\n  wrap: true\n  block: {\"padding\": 8}\n---\n")
+        elif name == "er":
+            assert source.startswith("---\nconfig:\n  wrap: true\n  er: {")
         elif name == "packet":
             assert source.startswith("---\nconfig:\n  wrap: true\n  packet: {")
         elif name == "radar":
