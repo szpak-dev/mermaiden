@@ -1,0 +1,4 @@
+{% macro render(depth) -%}
+{% set source -%}{{ caller() }}{%- endset %}
+{{ source | indent(depth * 2, true) }}
+{%- endmacro %}

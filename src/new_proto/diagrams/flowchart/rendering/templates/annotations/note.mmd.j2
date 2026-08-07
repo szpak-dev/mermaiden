@@ -1,4 +1,4 @@
-  {{ annotation.id | mmd_id("a") }}@{ shape: comment, label: {{ annotation.text | mmd_quote }} }
+{{ annotation.id | mmd_id("a") }}@{ shape: comment, label: {{ annotation.text | mmd_quote }} }{{ "\n" -}}
 {% for target in annotation.targets %}
-  {{ target.id | mmd_id("e") }} -.-> {{ annotation.id | mmd_id("a") }}
+{{ target.id | mmd_id("e") }} -.-> {{ annotation.id | mmd_id("a") }}{{ "\n" -}}
 {% endfor %}

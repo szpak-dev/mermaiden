@@ -1,1 +1,1 @@
-service {{ element.id }}[{{ element.label }}]
+service {{ element.id }}[{{ element.label }}]{% if parent_id %} in {{ parent_id }}{% endif %}{{ "\n" -}}

@@ -1,0 +1,1 @@
+Note {{ annotation.position.value }} {% for target in annotation.targets %}{{ target.id }}{% if not loop.last %},{% endif %}{% endfor %}: {{ annotation.text }}{{ "\n" -}}

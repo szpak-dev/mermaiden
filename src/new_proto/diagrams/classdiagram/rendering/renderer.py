@@ -13,3 +13,4 @@ from ..diagram import ClassDiagram
 class ClassDiagramMmdRenderer(JinjaDiagramMmdRenderer):
     diagram_type: ClassVar[type[DiagramView]] = ClassDiagram
     template_package: ClassVar[str] = "new_proto.diagrams.classdiagram.rendering"
+    template_namespace: ClassVar[str] = "classdiagram"

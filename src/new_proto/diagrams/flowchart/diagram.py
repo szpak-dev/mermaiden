@@ -24,11 +24,16 @@ from .elements import (
 )
 from .observer import FlowchartObserver
 from .relations import ConditionalFlow, Flow
+from .runtime import FlowchartAnnotations, FlowchartElements, FlowchartRelations, FlowchartState
 
 
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Flowchart(DefinedDiagram):
+    state: FlowchartState
+    elements: FlowchartElements
+    relations: FlowchartRelations
+    annotations: FlowchartAnnotations
     changes: FlowchartChanges
     observer: FlowchartObserver
     direction: Direction = Direction.TOP_DOWN
@@ -44,6 +49,10 @@ class Flowchart(DefinedDiagram):
         relation=Flow,
         annotation=Notes(),
     )
+
+    @property
+    def mmd_header(self) -> str:
+        return f"{self.kind} {self.direction.value}"
 
     def add_group(
         self,

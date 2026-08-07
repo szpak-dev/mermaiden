@@ -1,14 +1,15 @@
-.PHONY: docs docs-check verify
+.PHONY: docs docs-check test verify
 
 docs:
 	uv run python scripts/generate_docs.py
-	uv run python scripts/generate_schemas.py
-	uv run python scripts/generate_compatibility.py
 
 docs-check:
 	uv run python scripts/generate_docs.py --check
-	uv run python scripts/generate_schemas.py --check
-	uv run python scripts/generate_compatibility.py --check
+
+test:
+	PYTHONPATH=src .venv/bin/python -m new_proto.fixtures
+	PYTHONPATH=src .venv/bin/python -m new_proto.preview .preview/*.mmd --output .preview/index.html
+	open .preview/index.html
 
 verify: docs-check
 	uv run ruff check .

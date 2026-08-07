@@ -8,7 +8,7 @@ from ...core.constraint import ChangeReport
 from ..base import DefinedDiagram, DiagramDefinition
 from .annotations import ClassNotes
 from .changes import ClassDiagramChanges
-from .elements import Class, ClassNamespace
+from .elements import Class, ClassAttribute, ClassMethod, ClassNamespace
 from .observer import ClassDiagramObserver
 from .relations import ClassRelation, ClassRelationKind
 from .runtime import (
@@ -46,8 +46,8 @@ class ClassDiagram(DefinedDiagram):
         id: str,
         label: str = "",
         *,
-        attributes: Sequence[str] = (),
-        methods: Sequence[str] = (),
+        attributes: Sequence[str | ClassAttribute] = (),
+        methods: Sequence[str | ClassMethod] = (),
         annotations: Sequence[str] = (),
         comment: str = "",
         parent_id: str = "",

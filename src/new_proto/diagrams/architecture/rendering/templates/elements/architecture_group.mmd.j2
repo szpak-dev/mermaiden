@@ -1,6 +1,4 @@
-group {{ element.id }}[{{ element.label }}]
+group {{ element.id }}[{{ element.label }}]{{ "\n" -}}
 {% for child in element.elements %}
-{% if child.kind == "service" %}service {{ child.id }}[{{ child.label }}] in {{ element.id }}
-{% elif child.kind == "junction" %}junction {{ child.id }} in {{ element.id }}
-{% endif %}
+{% with element=child, parent_id=element.id %}{% call mmd.render(1) %}{% include template_prefix ~ "/elements/" ~ element.kind ~ ".mmd.j2" %}{% endcall %}{% endwith %}
 {% endfor %}

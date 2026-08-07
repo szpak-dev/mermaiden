@@ -15,4 +15,5 @@ class FlowchartMmdRenderer(JinjaDiagramMmdRenderer):
     diagram_type: ClassVar[type[DiagramView]] = Flowchart
 
     template_package: ClassVar[str] = "new_proto.diagrams.flowchart.rendering"
+    template_namespace: ClassVar[str] = "flowchart"
     template_filters: ClassVar = {"mmd_id": mermaid_identifier, "mmd_quote": mermaid_quote}

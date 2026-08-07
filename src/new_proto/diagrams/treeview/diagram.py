@@ -4,13 +4,13 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
+from ...core.relation import Relation
 from ..base import DefinedDiagram, DiagramDefinition
 from .annotations import TreeAnnotations
 from .changes import TreeViewChanges
 from .elements import TreeItem
 from .observer import TreeViewObserver
 from .relations import TreeBranch
-from .runtime import TreeViewAnnotations, TreeViewElements, TreeViewRelations, TreeViewState
 
 
 @injectable(lifetime="scoped")

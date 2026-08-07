@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import ClassVar, cast
 
-from jinja2 import PackageLoader
+from jinja2 import ChoiceLoader, PackageLoader, PrefixLoader
 from wireup import injectable
 
 from ..core.diagram import DiagramView
@@ -30,13 +30,20 @@ class DiagramMmdRenderer(ABC):
 class JinjaDiagramMmdRenderer(DiagramMmdRenderer):
     template: JinjaTextRenderer[object] = field(init=False)
     template_package: ClassVar[str]
+    template_namespace: ClassVar[str]
     template_filters: ClassVar[Mapping[str, Callable[..., object]]] = {}
 
     def __post_init__(self) -> None:
         environment = create_jinja_environment(
-            PackageLoader(self.template_package, "templates"),
+            ChoiceLoader(
+                [
+                    PackageLoader("new_proto.rendering", "templates"),
+                    PrefixLoader({self.template_namespace: PackageLoader(self.template_package, "templates")}),
+                ]
+            ),
             filters=self.template_filters,
         )
+        cast(dict[str, object], environment.globals)["template_prefix"] = self.template_namespace
         object.__setattr__(self, "template", JinjaTextRenderer[object](environment, "diagram.mmd.j2"))
 
     def _render(self, diagram: DiagramView) -> str:

@@ -1,0 +1,2 @@
+box{% if element.color %} {{ element.color }}{% endif %} {{ element.label }}{{ "\n" -}}
+{% for child in element.elements %}{% with element=child %}{% call mmd.render(1) %}{% include template_prefix ~ "/elements/" ~ element.kind ~ ".mmd.j2" %}{% endcall %}{% endwith %}{% endfor %}end{{ "\n" -}}

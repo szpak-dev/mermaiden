@@ -1,0 +1,11 @@
+{% import "format.mmd.j2" as mmd with context %}
+{{ diagram.mmd_header }}{{ "\n" -}}
+{% for element in diagram.mmd_elements %}
+{% with parent_id="", depth=1 %}{% call mmd.render(depth) %}{% include template_prefix ~ "/elements/" ~ element.kind ~ ".mmd.j2" %}{% endcall %}{% endwith %}
+{% endfor %}
+{% for relation in diagram.mmd_relations %}
+{% with depth=1 %}{% call mmd.render(depth) %}{% include template_prefix ~ "/relations/" ~ relation.kind ~ ".mmd.j2" %}{% endcall %}{% endwith %}
+{% endfor %}
+{% for annotation in diagram.mmd_annotations %}
+{% with depth=1 %}{% call mmd.render(depth) %}{% include template_prefix ~ "/annotations/" ~ annotation.kind ~ ".mmd.j2" %}{% endcall %}{% endwith %}
+{% endfor %}

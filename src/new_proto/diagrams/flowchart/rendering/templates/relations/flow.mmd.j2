@@ -1,1 +1,1 @@
-  {{ relation.source_id | mmd_id("e") }} {{ relation.id | mmd_id("r") }}@-->{% if relation.label %}|{{ relation.label | mmd_quote }}|{% endif %} {{ relation.target_id | mmd_id("e") }}
+{{ relation.source_id | mmd_id("e") }} {{ relation.id | mmd_id("r") }}@-->{% if relation.label %}|{{ relation.label | mmd_quote }}|{% endif %} {{ relation.target_id | mmd_id("e") }}{{ "\n" -}}

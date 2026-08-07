@@ -1,6 +1,6 @@
 {% if element.comment %}%% {{ element.comment }}{{ "\n" -}}{% endif %}
 namespace {{ element.id }} {
 {% for child in element.elements %}
-{% set element = child %}{% include "elements/" ~ element.kind ~ ".mmd.j2" %}
+{% with element=child %}{% call mmd.render(1) %}{% include template_prefix ~ "/elements/" ~ element.kind ~ ".mmd.j2" %}{% endcall %}{% endwith %}
 {% endfor %}
-}{{ "\n" -}}
+{{ "}" }}{{ "\n" -}}

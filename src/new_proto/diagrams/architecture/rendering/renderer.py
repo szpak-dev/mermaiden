@@ -13,3 +13,4 @@ from ..diagram import Architecture
 class ArchitectureMmdRenderer(JinjaDiagramMmdRenderer):
     diagram_type: ClassVar[type[DiagramView]] = Architecture
     template_package: ClassVar[str] = "new_proto.diagrams.architecture.rendering"
+    template_namespace: ClassVar[str] = "architecture"
