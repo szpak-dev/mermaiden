@@ -16,6 +16,7 @@ from ..diagrams.flowchart.diagram import Flowchart
 from ..diagrams.gantt.diagram import Gantt
 from ..diagrams.gitgraph.diagram import GitGraphDiagram
 from ..diagrams.journey.diagram import Journey
+from ..diagrams.kanban.diagram import KanbanDiagram
 from ..diagrams.mindmap.diagram import Mindmap
 from ..diagrams.packet.diagram import Packet
 from ..diagrams.pie.diagram import PieDiagram
@@ -380,6 +381,13 @@ class DiagramFixtures:
         cynefin.add_item("restart", "Restart service", DomainKind.CLEAR)
         cynefin.add_transition("pattern", "investigate", "analyze", "Pattern identified")
 
+        kanban = self.registry.get("kanban").diagram
+        assert isinstance(kanban, KanbanDiagram)
+        kanban.add_column("todo", "Todo")
+        kanban.add_column("doing", "In progress")
+        kanban.add_task("docs", "Create documentation", "todo", ticket="MC-2037", priority="High")
+        kanban.add_task("render", "Create renderer", "doing", assigned="knsv")
+
         return {
             "flowchart": self.renderer.render(flowchart),
             "treeview": self.renderer.render(treeview),
@@ -401,6 +409,7 @@ class DiagramFixtures:
             "gitgraph": self.renderer.render(gitgraph),
             "c4": self.renderer.render(c4),
             "cynefin": self.renderer.render(cynefin),
+            "kanban": self.renderer.render(kanban),
             "state": self.renderer.render(state),
             "swimlane": self.renderer.render(swimlane),
         }
