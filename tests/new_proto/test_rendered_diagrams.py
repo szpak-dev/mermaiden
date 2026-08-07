@@ -33,6 +33,14 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             'SystemDb(accounts, "Accounts Database", "Stores account balances", "PostgreSQL")',
             'Rel(customer, banking, "Uses")',
         ),
+        "cynefin": (
+            "cynefin-beta",
+            "complex",
+            '"Investigate root cause"',
+            "complicated",
+            '"Analyze performance data"',
+            'complex --> complicated : "Pattern identified"',
+        ),
         "treeview": (
             "treeView-beta",
             "root/",
@@ -181,6 +189,8 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             assert source.startswith("---\nconfig:\n  wrap: true\n  gitGraph: {")
         elif name == "c4":
             assert source.startswith("---\nconfig:\n  wrap: true\n  c4: {}\n---\n")
+        elif name == "cynefin":
+            assert source.startswith("---\nconfig:\n  wrap: true\n  cynefin: {")
         elif name == "packet":
             assert source.startswith("---\nconfig:\n  wrap: true\n  packet: {")
         elif name == "radar":

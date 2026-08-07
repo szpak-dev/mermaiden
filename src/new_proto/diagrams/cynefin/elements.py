@@ -1,7 +1,6 @@
 from dataclasses import dataclass
-from typing import ClassVar
-
 from enum import StrEnum
+from typing import ClassVar
 
 from ...core.element import Entity
 

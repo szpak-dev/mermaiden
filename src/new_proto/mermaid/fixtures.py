@@ -6,11 +6,11 @@ from ..diagrams.architecture.diagram import Architecture
 from ..diagrams.architecture.relations import Port
 from ..diagrams.block.diagram import BlockDiagram
 from ..diagrams.c4.diagram import C4ContextDiagram
-from ..diagrams.cynefin.diagram import CynefinDiagram
-from ..diagrams.cynefin.elements import DomainKind
 from ..diagrams.classdiagram.diagram import ClassDiagram
 from ..diagrams.classdiagram.elements import ClassAttribute, ClassMethod
 from ..diagrams.classdiagram.relations import ClassRelationKind
+from ..diagrams.cynefin.diagram import CynefinDiagram
+from ..diagrams.cynefin.elements import DomainKind
 from ..diagrams.er.diagram import EntityRelationshipDiagram
 from ..diagrams.flowchart.diagram import Flowchart
 from ..diagrams.gantt.diagram import Gantt
