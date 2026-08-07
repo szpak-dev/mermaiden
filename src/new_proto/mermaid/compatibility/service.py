@@ -4,7 +4,7 @@ from wireup import injectable
 
 from ...diagrams.registry import DiagramRegistry
 from ..service import MermaidRenderer
-from .configuration import ConfigurationViolation, MermaidConfiguration
+from .configuration import ConfigurationViolation, DiagramConfigurationContract, MermaidConfiguration
 from .parser import MermaidSyntaxValidator, MermaidSyntaxViolation
 from .schema import MermaidSchemaLock, MermaidSchemaStore
 
@@ -12,10 +12,17 @@ from .schema import MermaidSchemaLock, MermaidSchemaStore
 @dataclass(frozen=True, slots=True)
 class DiagramCompatibility:
     diagram_id: str
-    config_key: str
-    schema_definition: str
+    configuration: DiagramConfigurationContract
     violations: tuple[ConfigurationViolation, ...]
     schema_supported: bool
+
+    @property
+    def config_key(self) -> str:
+        return self.configuration.config_key
+
+    @property
+    def schema_definition(self) -> str:
+        return self.configuration.schema_definition
 
     @property
     def valid(self) -> bool:
@@ -43,6 +50,9 @@ class CompatibilityReport:
             and not self.syntax_violations
         )
 
+    def diagram_valid(self, diagram: DiagramCompatibility) -> bool:
+        return diagram.valid and all(violation.diagram_id != diagram.diagram_id for violation in self.syntax_violations)
+
 
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
@@ -53,29 +63,33 @@ class MermaidCompatibility:
     schemas: MermaidSchemaStore
 
     def inspect(self) -> CompatibilityReport:
-        return self._inspect(())
+        return self._inspect(False)
 
     def verify(self) -> CompatibilityReport:
-        return self._inspect(())
+        return self._inspect(True)
 
-    def _inspect(self, syntax_violations: tuple[MermaidSyntaxViolation, ...]) -> CompatibilityReport:
+    def _inspect(self, verify_syntax: bool) -> CompatibilityReport:
         lock = self.schemas.lock()
         configuration = MermaidConfiguration(self.schemas.load())
         diagrams: list[DiagramCompatibility] = []
         missing: list[MissingDiagramCompatibility] = []
+        sources: dict[str, str] = {}
         for upstream in self.schemas.diagram_configs():
             try:
                 info = self.registry.get_by_config_key(upstream.config_key)
             except KeyError:
                 missing.append(MissingDiagramCompatibility(upstream.config_key, upstream.schema_definition))
                 continue
+            source = self.renderer.render(info.diagram)
+            local = configuration.local_contract(info.config_key, info.schema_definition, source)
+            sources[info.id] = source
             diagrams.append(
                 DiagramCompatibility(
                     info.id,
-                    info.config_key,
-                    info.schema_definition,
-                    configuration.validate(self.renderer.render(info.diagram)),
-                    configuration.supports(info.config_key, info.schema_definition),
+                    local,
+                    configuration.validate(local),
+                    configuration.supports(local, upstream),
                 )
             )
+        syntax_violations = self.syntax.validate(sources) if verify_syntax else ()
         return CompatibilityReport(lock, tuple(diagrams), tuple(missing), syntax_violations)

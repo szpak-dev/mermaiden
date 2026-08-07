@@ -14,6 +14,12 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         ("sequenceDiagram", "sequence", "SequenceDiagramConfig"),
         ("treeView-beta", "treeView", "TreeViewDiagramConfig"),
     ]
+    assert all(item.configuration.values == {"wrap": True} for item in report.diagrams)
+    upstream = {item.config_key: item for item in Application.create().mermaid_diagram_configs()}
+    assert all(
+        item.configuration.schema_definition == upstream[item.configuration.config_key].schema_definition
+        for item in report.diagrams
+    )
 
 
 def test_application_lists_diagram_configs_from_mermaid_schema() -> None:
