@@ -23,11 +23,15 @@ def rendered_diagrams() -> dict[str, str]:
         flowchart.add_group("entry", "Entry")
         flowchart.add_group("process", "Process")
         flowchart.add_start("start", "Start", "entry")
+        flowchart.add_decision("ready", "Ready?", "entry")
         flowchart.add_action("work", "Work", "process")
         flowchart.add_end("end", "End", "process")
-        flowchart.add_flow("start_work", "start", "work")
+        flowchart.add_flow("start_ready", "start", "ready")
+        flowchart.add_conditional_flow("ready_work", "ready", "work", "yes")
         flowchart.add_flow("work_end", "work", "end")
+        flowchart.add_note("start_note", "Start process", ("start",))
         flowchart.add_note("work_note", "Process work", ("work",))
+        flowchart.add_note("end_note", "Finish process", ("end",))
 
         treeview = scope.get(TreeView)
         for id, label in (("root", "root/"), ("source", "src/"), ("tests", "tests/"), ("readme", "README.md")):
@@ -39,6 +43,7 @@ def rendered_diagrams() -> dict[str, str]:
         ):
             treeview.add_branch(id, parent, child)
         treeview.add_annotation("source_note", "source", icon="folder")
+        treeview.add_annotation("tests_note", "tests", icon="test")
         treeview.add_annotation("readme_note", "readme", highlight=True, description="Documentation")
 
         classes = scope.get(ClassDiagram)
@@ -54,7 +59,10 @@ def rendered_diagrams() -> dict[str, str]:
         classes.add_class("Pond", parent_id="domain")
         classes.add_relation("inherits", "Animal", "Duck", ClassRelationKind.INHERITANCE, "extends")
         classes.add_relation("hosts", "Pond", "Duck", ClassRelationKind.AGGREGATION, "hosts", "1", "*")
+        classes.add_relation("depends", "Duck", "Pond", ClassRelationKind.DEPENDENCY, "visits")
         classes.add_note("animal_note", "Animal", "Base type")
+        classes.add_note("duck_note", "Duck", "Concrete type")
+        classes.add_note("pond_note", "Pond", "Aggregate")
 
         architecture = scope.get(Architecture)
         for id, label in (("clients", "Clients"), ("platform", "Platform"), ("data", "Data")):
@@ -66,7 +74,9 @@ def rendered_diagrams() -> dict[str, str]:
         architecture.add_edge("web_api", "web", "api", Port.RIGHT, Port.LEFT)
         architecture.add_edge("api_events", "api", "events", Port.BOTTOM, Port.TOP)
         architecture.add_edge("api_database", "api", "database", Port.RIGHT, Port.LEFT)
+        architecture.add_note("web_note", "web", "Client gateway")
         architecture.add_note("api_note", "api", "Public API")
+        architecture.add_note("database_note", "database", "Persistent storage")
 
         sequence = scope.get(SequenceDiagram)
         sequence.add_box("clients", "Clients", "#E3F2FD")
@@ -88,6 +98,8 @@ def rendered_diagrams() -> dict[str, str]:
         sequence.control("end_loop", ControlKind.END)
         sequence.deactivate("deactivate_api", "api")
         sequence.destroy("destroy_api", "api")
+        sequence.add_note("user_note", "Caller", "user", position=NotePosition.LEFT)
+        sequence.add_note("web_note", "Gateway", "web", position=NotePosition.RIGHT)
         sequence.add_note("sequence_note", "Asynchronous", "api", "events", position=NotePosition.OVER)
 
         return {

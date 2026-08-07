@@ -1,4 +1,3 @@
+{% import "rendering/templates/format.mmd.j2" as mmd with context %}
 group {{ element.id }}[{{ element.label }}]{{ "\n" -}}
-{% for child in element.elements %}
-{% with element=child, parent_id=element.id %}{% call mmd.render(1) %}{% include template_prefix ~ "/elements/" ~ element.kind ~ ".mmd.j2" %}{% endcall %}{% endwith %}
-{% endfor %}
+{{ mmd.elements(element.elements, 1, element.id) }}

@@ -8,7 +8,7 @@ docs-check:
 
 test:
 	PYTHONPATH=src .venv/bin/python -m new_proto.fixtures
-	PYTHONPATH=src .venv/bin/python -m new_proto.preview .dev/.preview/*.mmd --output .preview/index.html
+	PYTHONPATH=src .venv/bin/python -m new_proto.preview .preview/*.mmd --output .preview/index.html
 	open .preview/index.html
 
 verify: docs-check

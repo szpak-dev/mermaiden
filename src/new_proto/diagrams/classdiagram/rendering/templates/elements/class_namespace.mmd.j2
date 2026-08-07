@@ -1,6 +1,5 @@
+{% import "rendering/templates/format.mmd.j2" as mmd with context %}
 {% if element.comment %}%% {{ element.comment }}{{ "\n" -}}{% endif %}
 namespace {{ element.id }} {
-{% for child in element.elements %}
-{% with element=child %}{% call mmd.render(1) %}{% include template_prefix ~ "/elements/" ~ element.kind ~ ".mmd.j2" %}{% endcall %}{% endwith %}
-{% endfor %}
+{{ mmd.elements(element.elements, 1, element.id) }}
 {{ "}" }}{{ "\n" -}}
