@@ -14,6 +14,7 @@ from ..diagrams.registry import DiagramRegistry
 from ..diagrams.requirement.diagram import RequirementDiagram
 from ..diagrams.requirement.elements import RequirementType, Risk, VerificationMethod
 from ..diagrams.requirement.relations import RequirementRelationKind
+from ..diagrams.sankey.diagram import Sankey
 from ..diagrams.sequence.annotations import NotePosition
 from ..diagrams.sequence.diagram import SequenceDiagram
 from ..diagrams.sequence.elements import ParticipantKind
@@ -277,6 +278,14 @@ class DiagramFixtures:
         timeline.add_event("prototype", "Prototype", "2024")
         timeline.add_event("release", "First release", "2024")
 
+        sankey = self.registry.get("sankey").diagram
+        assert isinstance(sankey, Sankey)
+        sankey.add_node("grid", "Electricity grid")
+        sankey.add_node("industry", "Industry")
+        sankey.add_node("homes", "Homes")
+        sankey.add_flow("grid_industry", "grid", "industry", 342.165)
+        sankey.add_flow("grid_homes", "grid", "homes", 113.726)
+
         return {
             "flowchart": self.renderer.render(flowchart),
             "treeview": self.renderer.render(treeview),
@@ -287,6 +296,7 @@ class DiagramFixtures:
             "mindmap": self.renderer.render(mindmap),
             "pie": self.renderer.render(pie),
             "timeline": self.renderer.render(timeline),
+            "sankey": self.renderer.render(sankey),
             "state": self.renderer.render(state),
             "swimlane": self.renderer.render(swimlane),
         }

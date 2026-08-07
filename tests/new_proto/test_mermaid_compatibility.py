@@ -14,6 +14,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         ("mindmap", "mindmap", "MindmapDiagramConfig"),
         ("pie", "pie", "PieDiagramConfig"),
         ("requirementDiagram", "requirement", "RequirementDiagramConfig"),
+        ("sankey", "sankey", "SankeyDiagramConfig"),
         ("sequenceDiagram", "sequence", "SequenceDiagramConfig"),
         ("stateDiagram-v2", "state", "StateDiagramConfig"),
         ("swimlane-beta", "swimlane", "SwimlaneDiagramConfig"),
