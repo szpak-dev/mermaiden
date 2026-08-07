@@ -7,3 +7,4 @@ dist/
 .compatibility-artifacts/
 .preview/
 compatibility/toolchains/*/node_modules/
+.dev/
