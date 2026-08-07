@@ -2,10 +2,15 @@ from dataclasses import dataclass
 from typing import ClassVar
 
 from ...core.relation import Relation
+from ..domain import DiagramRelationMember
+
+
+class SwimlaneRelationMember(DiagramRelationMember):
+    description: ClassVar[str] = "a swimlane flow"
 
 
 @dataclass(frozen=True, slots=True)
-class Flow(Relation):
+class Flow(Relation, SwimlaneRelationMember):
     kind: ClassVar[str] = "flow"
 
     @property

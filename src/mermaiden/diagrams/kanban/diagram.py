@@ -1,29 +1,34 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
 from .configuration import KanbanDiagramConfiguration
-from .constraints import KanbanDiagramConstraint
-from .elements import Column, Task
+from .constraints import KanbanAnnotationMember, KanbanDiagramConstraint, KanbanRelationMember
+from .elements import Column, KanbanElementMember, Task
 
 
 @injectable(as_type=DiagramModel, qualifier="kanban", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class KanbanDiagram(DiagramModel):
     constraints: Sequence[KanbanDiagramConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "kanban.member_type",
+        KanbanElementMember,
+        KanbanRelationMember,
+        KanbanAnnotationMember,
+    )
     configuration: KanbanDiagramConfiguration = field(default_factory=KanbanDiagramConfiguration, init=False)
-    syntax: ClassVar[str] = "kanban"
-    name: ClassVar[str] = "Kanban diagram"
-    config_key: ClassVar[str] = "kanban"
-    schema_definition: ClassVar[str] = "KanbanDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "kanban",
+        "Kanban diagram",
+        "kanban",
+        "KanbanDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_column(self, id: str, label: str) -> ChangeReport:
         return self._add_element(f"add column '{id}'", Column(id, label))

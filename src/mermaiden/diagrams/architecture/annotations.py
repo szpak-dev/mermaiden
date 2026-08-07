@@ -4,10 +4,15 @@ from typing import ClassVar
 
 from ...core.annotation import Annotation, TargetKind, TargetRef
 from ...core.error import OperationError
+from ..domain import DiagramAnnotationMember
+
+
+class ArchitectureAnnotationMember(DiagramAnnotationMember):
+    description: ClassVar[str] = "an architecture note"
 
 
 @dataclass(frozen=True, slots=True)
-class ArchitectureNote(Annotation):
+class ArchitectureNote(Annotation, ArchitectureAnnotationMember):
     kind: ClassVar[str] = "architecture_note"
     text: str
 

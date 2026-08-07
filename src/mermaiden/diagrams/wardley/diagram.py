@@ -1,30 +1,35 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
 from .configuration import WardleyDiagramConfiguration
-from .constraints import WardleyDiagramConstraint
-from .elements import Component, Evolution
-from .relations import Dependency
+from .constraints import WardleyAnnotationMember, WardleyDiagramConstraint
+from .elements import Component, Evolution, WardleyElementMember
+from .relations import Dependency, WardleyRelationMember
 
 
 @injectable(as_type=DiagramModel, qualifier="wardley", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class WardleyDiagram(DiagramModel):
     constraints: Sequence[WardleyDiagramConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "wardley.member_type",
+        WardleyElementMember,
+        WardleyRelationMember,
+        WardleyAnnotationMember,
+    )
     configuration: WardleyDiagramConfiguration = field(default_factory=WardleyDiagramConfiguration, init=False)
-    syntax: ClassVar[str] = "wardley-beta"
-    name: ClassVar[str] = "Wardley map"
-    config_key: ClassVar[str] = "wardley-beta"
-    schema_definition: ClassVar[str] = "WardleyDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "wardley-beta",
+        "Wardley map",
+        "wardley-beta",
+        "WardleyDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_component(
         self, id: str, label: str, visibility: float, evolution: float, decorator: str = ""

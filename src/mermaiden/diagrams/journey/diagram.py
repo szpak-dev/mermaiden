@@ -1,30 +1,35 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
 from .configuration import JourneyDiagramConfiguration
-from .constraints import JourneyConstraint
-from .elements import JourneySection, JourneyTask
+from .constraints import JourneyAnnotationMember, JourneyConstraint, JourneyRelationMember
+from .elements import JourneyElementMember, JourneySection, JourneyTask
 
 
 @injectable(as_type=DiagramModel, qualifier="journey", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Journey(DiagramModel):
     constraints: Sequence[JourneyConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "journey.member_type",
+        JourneyElementMember,
+        JourneyRelationMember,
+        JourneyAnnotationMember,
+    )
     configuration: JourneyDiagramConfiguration = field(default_factory=JourneyDiagramConfiguration, init=False)
     title: str = field(default="", init=False)
-    syntax: ClassVar[str] = "journey"
-    name: ClassVar[str] = "User journey"
-    config_key: ClassVar[str] = "journey"
-    schema_definition: ClassVar[str] = "JourneyDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "journey",
+        "User journey",
+        "journey",
+        "JourneyDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def set_title(self, title: str) -> None:
         object.__setattr__(self, "title", title)

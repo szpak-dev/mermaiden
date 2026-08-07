@@ -1,14 +1,14 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
 from .configuration import RailroadDiagramConfiguration
-from .constraints import RailroadDiagramConstraint
-from .elements import Alternative, Group, NonTerminal, Optional, Repetition, Special, Terminal
+from .constraints import RailroadAnnotationMember, RailroadDiagramConstraint, RailroadRelationMember
+from .elements import Alternative, Group, NonTerminal, Optional, RailroadElementMember, Repetition, Special, Terminal
 from .elements import Sequence as RailroadSequence
 
 
@@ -16,15 +16,20 @@ from .elements import Sequence as RailroadSequence
 @dataclass(frozen=True, slots=True)
 class RailroadDiagram(DiagramModel):
     constraints: Sequence[RailroadDiagramConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "railroad.member_type",
+        RailroadElementMember,
+        RailroadRelationMember,
+        RailroadAnnotationMember,
+    )
     configuration: RailroadDiagramConfiguration = field(default_factory=RailroadDiagramConfiguration, init=False)
-    syntax: ClassVar[str] = "railroad-ebnf-beta"
-    name: ClassVar[str] = "Railroad diagram"
-    config_key: ClassVar[str] = "railroad"
-    schema_definition: ClassVar[str] = "RailroadDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "railroad-ebnf-beta",
+        "Railroad diagram",
+        "railroad",
+        "RailroadDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_rule(self, id: str, label: str) -> ChangeReport:
         return self._add_element(f"add rule '{id}'", RailroadSequence(id, label))

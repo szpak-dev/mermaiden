@@ -2,15 +2,20 @@ from dataclasses import dataclass
 from typing import ClassVar
 
 from ...core.element import Container, Entity
+from ..domain import DiagramElementMember
+
+
+class SwimlaneElementMember(DiagramElementMember):
+    description: ClassVar[str] = "valid in a swimlane diagram"
 
 
 @dataclass(frozen=True, slots=True)
-class Swimlane(Container):
+class Swimlane(Container, SwimlaneElementMember):
     kind: ClassVar[str] = "swimlane"
 
 
 @dataclass(frozen=True, slots=True)
-class SwimlaneNode(Entity):
+class SwimlaneNode(Entity, SwimlaneElementMember):
     kind: ClassVar[str] = "swimlane_node"
 
 

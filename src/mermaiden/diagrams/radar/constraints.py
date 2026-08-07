@@ -4,25 +4,23 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
-from ..domain import DiagramMembersConstraint
+from ..domain import (
+    DiagramAnnotationMember,
+    DiagramRelationMember,
+)
 from .elements import RadarAxis, RadarCurve
 
 
 class RadarConstraint(Constraint, ABC):
     pass
 
-@injectable(as_type=RadarConstraint, qualifier="radar_members")
-class RadarMembers(DiagramMembersConstraint, RadarConstraint):
-    element_types: ClassVar = (RadarAxis, RadarCurve)
-    relation_types: ClassVar = ()
-    annotation_types: ClassVar = ()
-    element_description: ClassVar[str] = "valid in a radar chart"
-    relation_description: ClassVar[str] = "valid in a radar chart"
-    annotation_description: ClassVar[str] = "valid in a radar chart"
+class RadarRelationMember(DiagramRelationMember):
+    description: ClassVar[str] = "valid in a radar chart"
 
-    @property
-    def code(self) -> str:
-        return "radar.member_type"
+
+class RadarAnnotationMember(DiagramAnnotationMember):
+    description: ClassVar[str] = "valid in a radar chart"
+
 
 @injectable(as_type=RadarConstraint, qualifier="radar_structure")
 class RadarStructure(RadarConstraint):

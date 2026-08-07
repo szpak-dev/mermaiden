@@ -3,6 +3,11 @@ from enum import StrEnum
 from typing import ClassVar
 
 from ...core.relation import Relation
+from ..domain import DiagramRelationMember
+
+
+class ArchitectureRelationMember(DiagramRelationMember):
+    description: ClassVar[str] = "an architecture edge"
 
 
 class Port(StrEnum):
@@ -13,7 +18,7 @@ class Port(StrEnum):
 
 
 @dataclass(frozen=True, slots=True)
-class Edge(Relation):
+class Edge(Relation, ArchitectureRelationMember):
     kind: ClassVar[str] = "edge"
     source_port: Port = Port.RIGHT
     target_port: Port = Port.LEFT

@@ -4,7 +4,9 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
-from ..domain import DiagramMembersConstraint
+from ..domain import (
+    DiagramAnnotationMember,
+)
 from .elements import Domain
 from .relations import Transition
 
@@ -12,18 +14,9 @@ from .relations import Transition
 class CynefinDiagramConstraint(Constraint, ABC):
     pass
 
-@injectable(as_type=CynefinDiagramConstraint, qualifier="cynefin_members")
-class CynefinDiagramMembers(DiagramMembersConstraint, CynefinDiagramConstraint):
-    element_types: ClassVar = (Domain,)
-    relation_types: ClassVar = (Transition,)
-    annotation_types: ClassVar = ()
-    element_description: ClassVar[str] = "valid in Cynefin diagram"
-    relation_description: ClassVar[str] = "valid in Cynefin diagram"
-    annotation_description: ClassVar[str] = "valid in Cynefin diagram"
+class CynefinAnnotationMember(DiagramAnnotationMember):
+    description: ClassVar[str] = "valid in Cynefin diagram"
 
-    @property
-    def code(self) -> str:
-        return "cynefin.member_type"
 
 @injectable(as_type=CynefinDiagramConstraint, qualifier="cynefin_structure")
 class CynefinDiagramStructure(CynefinDiagramConstraint):

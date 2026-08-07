@@ -1,33 +1,38 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
 from ..flowchart.elements import Direction
-from .annotations import NotePosition, StateNote, StateNotes
+from .annotations import NotePosition, StateAnnotationMember, StateNote, StateNotes
 from .configuration import StateDiagramConfiguration
 from .constraints import StateDiagramConstraint
-from .elements import Choice, CompositeState, Final, Fork, Initial, Join, State, StateNode
-from .relations import StateTransition
+from .elements import Choice, CompositeState, Final, Fork, Initial, Join, State, StateElementMember, StateNode
+from .relations import StateRelationMember, StateTransition
 
 
 @injectable(as_type=DiagramModel, qualifier="state", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class StateDiagram(DiagramModel):
     constraints: Sequence[StateDiagramConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "state.member_type",
+        StateElementMember,
+        StateRelationMember,
+        StateAnnotationMember,
+    )
     configuration: StateDiagramConfiguration = field(default_factory=StateDiagramConfiguration, init=False)
     direction: Direction = field(default=Direction.TOP_DOWN, init=False)
-    syntax: ClassVar[str] = "stateDiagram-v2"
-    name: ClassVar[str] = "State diagram"
-    config_key: ClassVar[str] = "state"
-    schema_definition: ClassVar[str] = "StateDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "stateDiagram-v2",
+        "State diagram",
+        "state",
+        "StateDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_state(self, id: str, label: str = "", composite_id: str = "") -> ChangeReport:
         return self._add_node(State(id, label), composite_id, "state")

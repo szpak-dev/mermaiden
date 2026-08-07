@@ -1,13 +1,11 @@
 from collections import defaultdict, deque
-from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.annotation import TargetKind
 from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
-from ..domain import DiagramMembersConstraint
 from .annotations import Note
-from .elements import Decision, End, FlowGroup, FlowNode, Junction, Start
+from .elements import Decision, End, FlowNode, Junction, Start
 from .relations import ConditionalFlow, Flow
 
 
@@ -125,19 +123,6 @@ class FlowEndpointsAreNodes(FlowchartConstraint):
             and flow.target_id in elements
             and not (isinstance(elements[flow.source_id], FlowNode) and isinstance(elements[flow.target_id], FlowNode))
         )
-
-@injectable(as_type=FlowchartConstraint, qualifier="flowchart_members")
-class FlowchartContainsOnlyFlowchartMembers(DiagramMembersConstraint, FlowchartConstraint):
-    element_types: ClassVar = (FlowNode, FlowGroup)
-    relation_types: ClassVar = (Flow,)
-    annotation_types: ClassVar = (Note,)
-    element_description: ClassVar[str] = "a flowchart element"
-    relation_description: ClassVar[str] = "a flow"
-    annotation_description: ClassVar[str] = "a flowchart note"
-
-    @property
-    def code(self) -> str:
-        return "flowchart.member_type"
 
 @injectable(as_type=FlowchartConstraint, qualifier="flows_are_binary")
 class FlowsAreBinary(FlowchartConstraint):

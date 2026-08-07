@@ -4,25 +4,23 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
-from ..domain import DiagramMembersConstraint
+from ..domain import (
+    DiagramAnnotationMember,
+    DiagramRelationMember,
+)
 from .elements import PieSlice
 
 
 class PieConstraint(Constraint, ABC):
     pass
 
-@injectable(as_type=PieConstraint, qualifier="pie_members")
-class PieContainsOnlyPieMembers(DiagramMembersConstraint, PieConstraint):
-    element_types: ClassVar = (PieSlice,)
-    relation_types: ClassVar = ()
-    annotation_types: ClassVar = ()
-    element_description: ClassVar[str] = "a pie slice"
-    relation_description: ClassVar[str] = "valid in a pie chart"
-    annotation_description: ClassVar[str] = "valid in a pie chart"
+class PieRelationMember(DiagramRelationMember):
+    description: ClassVar[str] = "valid in a pie chart"
 
-    @property
-    def code(self) -> str:
-        return "pie.member_type"
+
+class PieAnnotationMember(DiagramAnnotationMember):
+    description: ClassVar[str] = "valid in a pie chart"
+
 
 @injectable(as_type=PieConstraint, qualifier="pie_slice_values")
 class SlicesArePositive(PieConstraint):

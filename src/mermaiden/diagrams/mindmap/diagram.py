@@ -1,29 +1,34 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
 from .configuration import MindmapDiagramConfiguration
-from .constraints import MindmapConstraint
-from .elements import Bang, Circle, Cloud, Hexagon, MindmapNode, RoundedSquare, Square
+from .constraints import MindmapAnnotationMember, MindmapConstraint, MindmapRelationMember
+from .elements import Bang, Circle, Cloud, Hexagon, MindmapElementMember, MindmapNode, RoundedSquare, Square
 
 
 @injectable(as_type=DiagramModel, qualifier="mindmap", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Mindmap(DiagramModel):
     constraints: Sequence[MindmapConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "mindmap.member_type",
+        MindmapElementMember,
+        MindmapRelationMember,
+        MindmapAnnotationMember,
+    )
     configuration: MindmapDiagramConfiguration = field(default_factory=MindmapDiagramConfiguration, init=False)
-    syntax: ClassVar[str] = "mindmap"
-    name: ClassVar[str] = "Mindmap"
-    config_key: ClassVar[str] = "mindmap"
-    schema_definition: ClassVar[str] = "MindmapDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "mindmap",
+        "Mindmap",
+        "mindmap",
+        "MindmapDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_root(self, id: str, label: str) -> ChangeReport:
         return self._add_node(MindmapNode(id, label), "", "root")

@@ -38,7 +38,7 @@ def test_registry_lists_every_implemented_diagram_with_mermaid_metadata() -> Non
         ("venn-beta", "venn", "VennDiagramConfig"),
         ("wardley-beta", "wardley-beta", "WardleyDiagramConfig"),
     ]
-    assert all(item.diagram_type.syntax == item.id for item in diagrams)
+    assert all(item.diagram_type.definition.syntax == item.id for item in diagrams)
 
 
 def test_registry_returns_detailed_information_by_mermaid_syntax_id() -> None:

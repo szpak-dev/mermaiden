@@ -4,25 +4,23 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
-from ..domain import DiagramMembersConstraint
-from .elements import VennSet, VennText, VennUnion
+from ..domain import (
+    DiagramAnnotationMember,
+    DiagramRelationMember,
+)
+from .elements import VennSet, VennUnion
 
 
 class VennConstraint(Constraint, ABC):
     pass
 
-@injectable(as_type=VennConstraint, qualifier="venn_members")
-class VennMembers(DiagramMembersConstraint, VennConstraint):
-    element_types: ClassVar = (VennSet, VennText, VennUnion)
-    relation_types: ClassVar = ()
-    annotation_types: ClassVar = ()
-    element_description: ClassVar[str] = "valid in a Venn diagram"
-    relation_description: ClassVar[str] = "valid in a Venn diagram"
-    annotation_description: ClassVar[str] = "valid in a Venn diagram"
+class VennRelationMember(DiagramRelationMember):
+    description: ClassVar[str] = "valid in a Venn diagram"
 
-    @property
-    def code(self) -> str:
-        return "venn.member_type"
+
+class VennAnnotationMember(DiagramAnnotationMember):
+    description: ClassVar[str] = "valid in a Venn diagram"
+
 
 @injectable(as_type=VennConstraint, qualifier="venn_structure")
 class VennStructure(VennConstraint):

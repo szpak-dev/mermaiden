@@ -1,12 +1,12 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
-from .annotations import Notes
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from .annotations import FlowchartAnnotationMember, Notes
 from .configuration import FlowchartDiagramConfiguration
 from .constraints import FlowchartConstraint
 from .elements import (
@@ -16,6 +16,7 @@ from .elements import (
     Direction,
     Document,
     End,
+    FlowchartElementMember,
     FlowGroup,
     FlowNode,
     InputOutput,
@@ -23,23 +24,28 @@ from .elements import (
     Start,
     Subprocess,
 )
-from .relations import ConditionalFlow, Flow
+from .relations import ConditionalFlow, Flow, FlowchartRelationMember
 
 
 @injectable(as_type=DiagramModel, qualifier="flowchart", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Flowchart(DiagramModel):
     constraints: Sequence[FlowchartConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "flowchart.member_type",
+        FlowchartElementMember,
+        FlowchartRelationMember,
+        FlowchartAnnotationMember,
+    )
     configuration: FlowchartDiagramConfiguration = field(default_factory=FlowchartDiagramConfiguration, init=False)
     direction: Direction = field(default=Direction.TOP_DOWN, init=False)
-    syntax: ClassVar[str] = "flowchart"
-    name: ClassVar[str] = "Flowchart"
-    config_key: ClassVar[str] = "flowchart"
-    schema_definition: ClassVar[str] = "FlowchartDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "flowchart",
+        "Flowchart",
+        "flowchart",
+        "FlowchartDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_group(
         self,

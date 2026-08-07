@@ -1,14 +1,12 @@
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import ClassVar
 
-from ..core.annotation import Annotation
 from ..core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, ValidationReport, Violation
 from ..core.diagram import Diagram
-from ..core.element import Element
-from ..core.relation import Relation
 from ..runtime.diagrams.aggregate import DiagramAggregate
 from ..runtime.domain import ConstraintInspection
+from .configuration import MermaidDiagramConfiguration
 
 
 @dataclass(frozen=True, slots=True)
@@ -22,13 +20,32 @@ class DiagramObserver[ConstraintT: Constraint](ConstraintInspection):
         return ValidationReport((*structural.violations, *domain))
 
 
+class DiagramMember:
+    description: ClassVar[str]
+
+
+class DiagramElementMember(DiagramMember):
+    pass
+
+
+class DiagramRelationMember(DiagramMember):
+    pass
+
+
+class DiagramAnnotationMember(DiagramMember):
+    pass
+
+
+@dataclass(frozen=True, slots=True)
 class DiagramMembersConstraint(Constraint):
-    element_types: ClassVar[tuple[type[Element], ...]]
-    relation_types: ClassVar[tuple[type[Relation], ...]]
-    annotation_types: ClassVar[tuple[type[Annotation], ...]]
-    element_description: ClassVar[str]
-    relation_description: ClassVar[str]
-    annotation_description: ClassVar[str]
+    member_code: str
+    element_member_type: type[DiagramElementMember]
+    relation_member_type: type[DiagramRelationMember]
+    annotation_member_type: type[DiagramAnnotationMember]
+
+    @property
+    def code(self) -> str:
+        return self.member_code
 
     @property
     def level(self) -> ConstraintLevel:
@@ -36,39 +53,73 @@ class DiagramMembersConstraint(Constraint):
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues = [
-            self.violation(f"Element '{item.id}' is not {self.element_description}.", path=f"elements.{item.id}")
+            self.violation(
+                f"Element '{item.id}' is not {self.element_member_type.description}.",
+                path=f"elements.{item.id}",
+            )
             for item in diagram.walk_elements()
-            if not isinstance(item, self.element_types)
+            if not isinstance(item, self.element_member_type)
         ]
         issues.extend(
-            self.violation(f"Relation '{item.id}' is not {self.relation_description}.", path=f"relations.{item.id}")
+            self.violation(
+                f"Relation '{item.id}' is not {self.relation_member_type.description}.",
+                path=f"relations.{item.id}",
+            )
             for item in diagram.find_relations()
-            if not isinstance(item, self.relation_types)
+            if not isinstance(item, self.relation_member_type)
         )
         issues.extend(
             self.violation(
-                f"Annotation '{item.id}' is not {self.annotation_description}.",
+                f"Annotation '{item.id}' is not {self.annotation_member_type.description}.",
                 path=f"annotations.{item.id}",
             )
             for item in diagram.find_annotations()
-            if not isinstance(item, self.annotation_types)
+            if not isinstance(item, self.annotation_member_type)
         )
         return tuple(issues)
 
 
 @dataclass(frozen=True, slots=True)
+class DiagramMembers:
+    code: str
+    element_member_type: type[DiagramElementMember]
+    relation_member_type: type[DiagramRelationMember]
+    annotation_member_type: type[DiagramAnnotationMember]
+
+    @property
+    def constraint(self) -> DiagramMembersConstraint:
+        return DiagramMembersConstraint(
+            self.code,
+            self.element_member_type,
+            self.relation_member_type,
+            self.annotation_member_type,
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class DiagramDefinition:
+    syntax: str
+    name: str
+    config_key: str
+    schema_definition: str
+
+
+@dataclass(frozen=True, slots=True)
 class DiagramModel(DiagramAggregate):
-    syntax: ClassVar[str]
-    name: ClassVar[str]
-    config_key: ClassVar[str]
-    schema_definition: ClassVar[str]
+    definition: ClassVar[DiagramDefinition]
+    members: ClassVar[DiagramMembers]
     structure: ConstraintInspection
     constraints: Sequence[Constraint]
+    configuration: MermaidDiagramConfiguration
 
     @property
     def kind(self) -> str:
-        return self.syntax
+        return self.definition.syntax
+
+    @property
+    def mermaid_configuration(self) -> Mapping[str, object]:
+        return self.configuration.document(self.definition.config_key).to_mermaid()
 
     @property
     def observer(self) -> DiagramObserver[Constraint]:
-        return DiagramObserver(self.structure, self.constraints)
+        return DiagramObserver(self.structure, (self.members.constraint, *self.constraints))

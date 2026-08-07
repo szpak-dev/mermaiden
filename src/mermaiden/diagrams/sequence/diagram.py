@@ -1,31 +1,45 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
-from .annotations import NotePosition, SequenceNotes
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from .annotations import NotePosition, SequenceAnnotationMember, SequenceNotes
 from .configuration import SequenceDiagramConfiguration
 from .constraints import SequenceConstraint
-from .elements import Participant, ParticipantBox, ParticipantKind
-from .relations import Control, ControlKind, Directive, DirectiveKind, Message, MessageKind, ParticipantEvent
+from .elements import Participant, ParticipantBox, ParticipantKind, SequenceElementMember
+from .relations import (
+    Control,
+    ControlKind,
+    Directive,
+    DirectiveKind,
+    Message,
+    MessageKind,
+    ParticipantEvent,
+    SequenceRelationMember,
+)
 
 
 @injectable(as_type=DiagramModel, qualifier="sequence", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class SequenceDiagram(DiagramModel):
     constraints: Sequence[SequenceConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "sequence.members",
+        SequenceElementMember,
+        SequenceRelationMember,
+        SequenceAnnotationMember,
+    )
     configuration: SequenceDiagramConfiguration = field(default_factory=SequenceDiagramConfiguration, init=False)
-    syntax: ClassVar[str] = "sequenceDiagram"
-    name: ClassVar[str] = "Sequence diagram"
-    config_key: ClassVar[str] = "sequence"
-    schema_definition: ClassVar[str] = "SequenceDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "sequenceDiagram",
+        "Sequence diagram",
+        "sequence",
+        "SequenceDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_box(self, id: str, label: str, color: str = "") -> ChangeReport:
         return self._add_element(f"add box '{id}'", ParticipantBox(id, label, (), color))

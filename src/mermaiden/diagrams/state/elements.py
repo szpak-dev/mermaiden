@@ -2,10 +2,15 @@ from dataclasses import dataclass
 from typing import ClassVar
 
 from ...core.element import Container, Entity
+from ..domain import DiagramElementMember
+
+
+class StateElementMember(DiagramElementMember):
+    description: ClassVar[str] = "valid in a state diagram"
 
 
 @dataclass(frozen=True, slots=True)
-class StateNode(Entity):
+class StateNode(Entity, StateElementMember):
     kind: ClassVar[str] = "state_node"
 
 
@@ -40,6 +45,6 @@ class Join(StateNode):
 
 
 @dataclass(frozen=True, slots=True)
-class CompositeState(Container):
+class CompositeState(Container, StateElementMember):
     kind: ClassVar[str] = "composite_state"
 

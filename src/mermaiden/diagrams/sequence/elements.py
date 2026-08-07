@@ -3,6 +3,11 @@ from enum import StrEnum
 from typing import ClassVar
 
 from ...core.element import Container, Entity
+from ..domain import DiagramElementMember
+
+
+class SequenceElementMember(DiagramElementMember):
+    description: ClassVar[str] = "a sequence member"
 
 
 class ParticipantKind(StrEnum):
@@ -17,13 +22,13 @@ class ParticipantKind(StrEnum):
 
 
 @dataclass(frozen=True, slots=True)
-class Participant(Entity):
+class Participant(Entity, SequenceElementMember):
     kind: ClassVar[str] = "participant"
     participant_kind: ParticipantKind = ParticipantKind.PARTICIPANT
     created: bool = False
 
 
 @dataclass(frozen=True, slots=True)
-class ParticipantBox(Container):
+class ParticipantBox(Container, SequenceElementMember):
     kind: ClassVar[str] = "participant_box"
     color: str = ""

@@ -2,10 +2,15 @@ from dataclasses import dataclass
 from typing import ClassVar
 
 from ...core.relation import Relation
+from ..domain import DiagramRelationMember
+
+
+class TreeViewRelationMember(DiagramRelationMember):
+    description: ClassVar[str] = "a tree branch"
 
 
 @dataclass(frozen=True, slots=True)
-class TreeBranch(Relation):
+class TreeBranch(Relation, TreeViewRelationMember):
     kind: ClassVar[str] = "tree_branch"
 
     @property

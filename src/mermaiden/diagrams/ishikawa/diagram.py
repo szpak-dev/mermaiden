@@ -1,29 +1,35 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
 from .configuration import IshikawaDiagramConfiguration
-from .constraints import IshikawaDiagramConstraint
-from .elements import Category, Cause, Effect
+from .constraints import IshikawaAnnotationMember, IshikawaDiagramConstraint
+from .elements import Category, Cause, Effect, IshikawaElementMember
+from .relations import IshikawaRelationMember
 
 
 @injectable(as_type=DiagramModel, qualifier="ishikawa", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class IshikawaDiagram(DiagramModel):
     constraints: Sequence[IshikawaDiagramConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "ishikawa.member_type",
+        IshikawaElementMember,
+        IshikawaRelationMember,
+        IshikawaAnnotationMember,
+    )
     configuration: IshikawaDiagramConfiguration = field(default_factory=IshikawaDiagramConfiguration, init=False)
-    syntax: ClassVar[str] = "ishikawa-beta"
-    name: ClassVar[str] = "Ishikawa diagram"
-    config_key: ClassVar[str] = "ishikawa"
-    schema_definition: ClassVar[str] = "IshikawaDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "ishikawa-beta",
+        "Ishikawa diagram",
+        "ishikawa",
+        "IshikawaDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_effect(self, id: str, label: str) -> ChangeReport:
         return self._add_element(f"add effect '{id}'", Effect(id, label))

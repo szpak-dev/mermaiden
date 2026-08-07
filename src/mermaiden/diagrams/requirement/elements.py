@@ -3,6 +3,11 @@ from enum import StrEnum
 from typing import ClassVar
 
 from ...core.element import Entity
+from ..domain import DiagramElementMember
+
+
+class RequirementElementMember(DiagramElementMember):
+    description: ClassVar[str] = "valid in a requirement diagram"
 
 
 class RequirementType(StrEnum):
@@ -28,7 +33,7 @@ class VerificationMethod(StrEnum):
 
 
 @dataclass(frozen=True, slots=True)
-class Requirement(Entity):
+class Requirement(Entity, RequirementElementMember):
     kind: ClassVar[str] = "requirement"
     requirement_id: str = ""
     text: str = ""
@@ -38,7 +43,7 @@ class Requirement(Entity):
 
 
 @dataclass(frozen=True, slots=True)
-class RequirementElement(Entity):
+class RequirementElement(Entity, RequirementElementMember):
     kind: ClassVar[str] = "requirement_element"
     element_type: str = ""
     document_reference: str = ""

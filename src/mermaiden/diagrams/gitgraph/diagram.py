@@ -1,29 +1,35 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
 from .configuration import GitGraphDiagramConfiguration
-from .constraints import GitGraphDiagramConstraint
-from .elements import Branch, Checkout, Commit
+from .constraints import GitGraphAnnotationMember, GitGraphDiagramConstraint
+from .elements import Branch, Checkout, Commit, GitGraphElementMember
+from .relations import GitGraphRelationMember
 
 
 @injectable(as_type=DiagramModel, qualifier="gitgraph", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class GitGraphDiagram(DiagramModel):
     constraints: Sequence[GitGraphDiagramConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "gitgraph.member_type",
+        GitGraphElementMember,
+        GitGraphRelationMember,
+        GitGraphAnnotationMember,
+    )
     configuration: GitGraphDiagramConfiguration = field(default_factory=GitGraphDiagramConfiguration, init=False)
-    syntax: ClassVar[str] = "gitGraph"
-    name: ClassVar[str] = "Git Graph"
-    config_key: ClassVar[str] = "gitGraph"
-    schema_definition: ClassVar[str] = "GitGraphDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "gitGraph",
+        "Git Graph",
+        "gitGraph",
+        "GitGraphDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_commit(self, id: str, label: str, commit_type: str = "", tag: str = "") -> ChangeReport:
         return self._add_element(f"add commit '{id}'", Commit(id, label, commit_type, tag))

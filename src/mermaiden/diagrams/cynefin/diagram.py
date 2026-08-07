@@ -1,30 +1,35 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
 from .configuration import CynefinDiagramConfiguration
-from .constraints import CynefinDiagramConstraint
-from .elements import Domain, DomainKind
-from .relations import Transition
+from .constraints import CynefinAnnotationMember, CynefinDiagramConstraint
+from .elements import CynefinElementMember, Domain, DomainKind
+from .relations import CynefinRelationMember, Transition
 
 
 @injectable(as_type=DiagramModel, qualifier="cynefin", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class CynefinDiagram(DiagramModel):
     constraints: Sequence[CynefinDiagramConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "cynefin.member_type",
+        CynefinElementMember,
+        CynefinRelationMember,
+        CynefinAnnotationMember,
+    )
     configuration: CynefinDiagramConfiguration = field(default_factory=CynefinDiagramConfiguration, init=False)
-    syntax: ClassVar[str] = "cynefin-beta"
-    name: ClassVar[str] = "Cynefin diagram"
-    config_key: ClassVar[str] = "cynefin"
-    schema_definition: ClassVar[str] = "CynefinDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "cynefin-beta",
+        "Cynefin diagram",
+        "cynefin",
+        "CynefinDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_item(self, id: str, label: str, domain: DomainKind) -> ChangeReport:
         return self._add_element(f"add {domain.value} item '{id}'", Domain(id, label, domain))

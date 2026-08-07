@@ -1,34 +1,39 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
 from .configuration import EntityRelationshipDiagramConfiguration
-from .constraints import EntityRelationshipDiagramConstraint
-from .elements import Entity, EntityAttribute
-from .relations import EntityRelationship
+from .constraints import EntityRelationshipAnnotationMember, EntityRelationshipDiagramConstraint
+from .elements import Entity, EntityAttribute, EntityRelationshipElementMember
+from .relations import EntityRelationship, EntityRelationshipRelationMember
 
 
 @injectable(as_type=DiagramModel, qualifier="er", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class EntityRelationshipDiagram(DiagramModel):
     constraints: Sequence[EntityRelationshipDiagramConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "er.member_type",
+        EntityRelationshipElementMember,
+        EntityRelationshipRelationMember,
+        EntityRelationshipAnnotationMember,
+    )
     configuration: EntityRelationshipDiagramConfiguration = field(
         default_factory=EntityRelationshipDiagramConfiguration,
         init=False,
     )
     direction: str = field(default="TB", init=False)
-    syntax: ClassVar[str] = "erDiagram"
-    name: ClassVar[str] = "Entity relationship diagram"
-    config_key: ClassVar[str] = "er"
-    schema_definition: ClassVar[str] = "ErDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "erDiagram",
+        "Entity relationship diagram",
+        "er",
+        "ErDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def set_direction(self, direction: str) -> None:
         object.__setattr__(self, "direction", direction)

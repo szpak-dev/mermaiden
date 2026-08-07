@@ -4,10 +4,15 @@ from typing import ClassVar
 
 from ...core.annotation import Annotation, TargetKind, TargetRef
 from ...core.error import OperationError
+from ..domain import DiagramAnnotationMember
+
+
+class FlowchartAnnotationMember(DiagramAnnotationMember):
+    description: ClassVar[str] = "a flowchart note"
 
 
 @dataclass(frozen=True, slots=True)
-class Note(Annotation):
+class Note(Annotation, FlowchartAnnotationMember):
     kind: ClassVar[str] = "note"
     text: str
 

@@ -1,30 +1,35 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
 from .configuration import TimelineDiagramConfiguration
-from .constraints import TimelineConstraint
-from .elements import TimelineEvent, TimelinePeriod, TimelineSection
+from .constraints import TimelineAnnotationMember, TimelineConstraint, TimelineRelationMember
+from .elements import TimelineElementMember, TimelineEvent, TimelinePeriod, TimelineSection
 
 
 @injectable(as_type=DiagramModel, qualifier="timeline", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Timeline(DiagramModel):
     constraints: Sequence[TimelineConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "timeline.member_type",
+        TimelineElementMember,
+        TimelineRelationMember,
+        TimelineAnnotationMember,
+    )
     configuration: TimelineDiagramConfiguration = field(default_factory=TimelineDiagramConfiguration, init=False)
     title: str = field(default="", init=False)
-    syntax: ClassVar[str] = "timeline"
-    name: ClassVar[str] = "Timeline"
-    config_key: ClassVar[str] = "timeline"
-    schema_definition: ClassVar[str] = "TimelineDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "timeline",
+        "Timeline",
+        "timeline",
+        "TimelineDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def set_title(self, title: str) -> None:
         object.__setattr__(self, "title", title)

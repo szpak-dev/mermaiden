@@ -5,6 +5,11 @@ from typing import ClassVar
 
 from ...core.annotation import Annotation, TargetKind, TargetRef
 from ...core.error import OperationError
+from ..domain import DiagramAnnotationMember
+
+
+class SequenceAnnotationMember(DiagramAnnotationMember):
+    description: ClassVar[str] = "a sequence note"
 
 
 class NotePosition(StrEnum):
@@ -14,7 +19,7 @@ class NotePosition(StrEnum):
 
 
 @dataclass(frozen=True, slots=True)
-class SequenceNote(Annotation):
+class SequenceNote(Annotation, SequenceAnnotationMember):
     kind: ClassVar[str] = "sequence_note"
     text: str
     position: NotePosition = NotePosition.OVER

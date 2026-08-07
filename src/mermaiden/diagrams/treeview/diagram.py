@@ -1,31 +1,36 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
-from .annotations import TreeAnnotations
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from .annotations import TreeAnnotations, TreeViewAnnotationMember
 from .configuration import TreeViewDiagramConfiguration
 from .constraints import TreeViewConstraint
-from .elements import TreeItem
-from .relations import TreeBranch
+from .elements import TreeItem, TreeViewElementMember
+from .relations import TreeBranch, TreeViewRelationMember
 
 
 @injectable(as_type=DiagramModel, qualifier="treeview", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class TreeView(DiagramModel):
     constraints: Sequence[TreeViewConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "treeview.members",
+        TreeViewElementMember,
+        TreeViewRelationMember,
+        TreeViewAnnotationMember,
+    )
     configuration: TreeViewDiagramConfiguration = field(default_factory=TreeViewDiagramConfiguration, init=False)
-    syntax: ClassVar[str] = "treeView-beta"
-    name: ClassVar[str] = "Tree view"
-    config_key: ClassVar[str] = "treeView"
-    schema_definition: ClassVar[str] = "TreeViewDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "treeView-beta",
+        "Tree view",
+        "treeView",
+        "TreeViewDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     @property
     def root_elements(self) -> tuple[TreeItem, ...]:

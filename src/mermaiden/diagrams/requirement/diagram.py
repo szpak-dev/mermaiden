@@ -1,30 +1,42 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
 from .configuration import RequirementDiagramConfiguration
-from .constraints import RequirementDiagramConstraint
-from .elements import Requirement, RequirementElement, RequirementType, Risk, VerificationMethod
-from .relations import RequirementRelation, RequirementRelationKind
+from .constraints import RequirementAnnotationMember, RequirementDiagramConstraint
+from .elements import (
+    Requirement,
+    RequirementElement,
+    RequirementElementMember,
+    RequirementType,
+    Risk,
+    VerificationMethod,
+)
+from .relations import RequirementRelation, RequirementRelationKind, RequirementRelationMember
 
 
 @injectable(as_type=DiagramModel, qualifier="requirement", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class RequirementDiagram(DiagramModel):
     constraints: Sequence[RequirementDiagramConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "requirement.member_type",
+        RequirementElementMember,
+        RequirementRelationMember,
+        RequirementAnnotationMember,
+    )
     configuration: RequirementDiagramConfiguration = field(default_factory=RequirementDiagramConfiguration, init=False)
-    syntax: ClassVar[str] = "requirementDiagram"
-    name: ClassVar[str] = "Requirement diagram"
-    config_key: ClassVar[str] = "requirement"
-    schema_definition: ClassVar[str] = "RequirementDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "requirementDiagram",
+        "Requirement diagram",
+        "requirement",
+        "RequirementDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_requirement(
         self,

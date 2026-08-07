@@ -1,32 +1,37 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
 from ..flowchart.elements import Direction
 from .configuration import SwimlaneConfiguration
-from .constraints import SwimlaneConstraint
-from .elements import Activity, Connector, Decision, End, Start, Swimlane, SwimlaneNode
-from .relations import ConditionalFlow, Flow
+from .constraints import SwimlaneAnnotationMember, SwimlaneConstraint
+from .elements import Activity, Connector, Decision, End, Start, Swimlane, SwimlaneElementMember, SwimlaneNode
+from .relations import ConditionalFlow, Flow, SwimlaneRelationMember
 
 
 @injectable(as_type=DiagramModel, qualifier="swimlane", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class SwimlaneDiagram(DiagramModel):
     constraints: Sequence[SwimlaneConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "swimlane.member_type",
+        SwimlaneElementMember,
+        SwimlaneRelationMember,
+        SwimlaneAnnotationMember,
+    )
     configuration: SwimlaneConfiguration = field(default_factory=SwimlaneConfiguration, init=False)
     direction: Direction = field(default=Direction.TOP_DOWN, init=False)
-    syntax: ClassVar[str] = "swimlane-beta"
-    name: ClassVar[str] = "Swimlane diagram"
-    config_key: ClassVar[str] = "swimlane"
-    schema_definition: ClassVar[str] = "SwimlaneDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "swimlane-beta",
+        "Swimlane diagram",
+        "swimlane",
+        "SwimlaneDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_lane(self, id: str, label: str) -> ChangeReport:
         return self._add_element(f"add lane '{id}'", Swimlane(id, label))

@@ -17,11 +17,11 @@ class DiagramInfo:
     @classmethod
     def from_diagram(cls, diagram: DiagramModel) -> "DiagramInfo":
         return cls(
-            id=diagram.syntax,
-            name=diagram.name,
+            id=diagram.definition.syntax,
+            name=diagram.definition.name,
             diagram_type=type(diagram),
-            config_key=diagram.config_key,
-            schema_definition=diagram.schema_definition,
+            config_key=diagram.definition.config_key,
+            schema_definition=diagram.definition.schema_definition,
         )
 
     @property
@@ -46,14 +46,14 @@ class DiagramsApplication:
 
     def get_by_config_key(self, config_key: str) -> DiagramInfo:
         for diagram in self.available():
-            if diagram.config_key == config_key:
+            if diagram.definition.config_key == config_key:
                 return diagram
         available = ", ".join(diagram.config_key for diagram in self.available())
         raise KeyError(f"Unknown Mermaid config key '{config_key}'. Available config keys: {available}.")
 
     def get_diagram(self, diagram_id: str) -> DiagramModel:
         for diagram in self.diagrams:
-            if diagram.syntax == diagram_id:
+            if diagram.definition.syntax == diagram_id:
                 return diagram
         self.get(diagram_id)
         raise AssertionError("Unreachable.")

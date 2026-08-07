@@ -1,30 +1,35 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
 from .configuration import C4ContextDiagramConfiguration
-from .constraints import C4ContextDiagramConstraint
-from .elements import Person, System, SystemDb, SystemQueue
-from .relations import Relationship
+from .constraints import C4AnnotationMember, C4ContextDiagramConstraint
+from .elements import C4ElementMember, Person, System, SystemDb, SystemQueue
+from .relations import C4RelationMember, Relationship
 
 
 @injectable(as_type=DiagramModel, qualifier="c4", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class C4ContextDiagram(DiagramModel):
     constraints: Sequence[C4ContextDiagramConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "c4.member_type",
+        C4ElementMember,
+        C4RelationMember,
+        C4AnnotationMember,
+    )
     configuration: C4ContextDiagramConfiguration = field(default_factory=C4ContextDiagramConfiguration, init=False)
-    syntax: ClassVar[str] = "C4Context"
-    name: ClassVar[str] = "C4 Context diagram"
-    config_key: ClassVar[str] = "c4"
-    schema_definition: ClassVar[str] = "C4DiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "C4Context",
+        "C4 Context diagram",
+        "c4",
+        "C4DiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_person(self, id: str, label: str, description: str = "") -> ChangeReport:
         return self._add_element(f"add person '{id}'", Person(id, label, description))

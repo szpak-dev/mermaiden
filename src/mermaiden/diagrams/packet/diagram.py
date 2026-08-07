@@ -1,30 +1,35 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
 from .configuration import PacketConfiguration
-from .constraints import PacketConstraint
-from .elements import PacketField
+from .constraints import PacketAnnotationMember, PacketConstraint, PacketRelationMember
+from .elements import PacketElementMember, PacketField
 
 
 @injectable(as_type=DiagramModel, qualifier="packet", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Packet(DiagramModel):
     constraints: Sequence[PacketConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "packet.member_type",
+        PacketElementMember,
+        PacketRelationMember,
+        PacketAnnotationMember,
+    )
     configuration: PacketConfiguration = field(default_factory=PacketConfiguration, init=False)
     title: str = field(default="", init=False)
-    syntax: ClassVar[str] = "packet"
-    name: ClassVar[str] = "Packet diagram"
-    config_key: ClassVar[str] = "packet"
-    schema_definition: ClassVar[str] = "PacketDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "packet",
+        "Packet diagram",
+        "packet",
+        "PacketDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def set_title(self, title: str) -> None:
         object.__setattr__(self, "title", title)

@@ -1,31 +1,36 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
 from .configuration import PieDiagramConfiguration
-from .constraints import PieConstraint
-from .elements import PieSlice
+from .constraints import PieAnnotationMember, PieConstraint, PieRelationMember
+from .elements import PieElementMember, PieSlice
 
 
 @injectable(as_type=DiagramModel, qualifier="pie", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class PieDiagram(DiagramModel):
     constraints: Sequence[PieConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "pie.member_type",
+        PieElementMember,
+        PieRelationMember,
+        PieAnnotationMember,
+    )
     configuration: PieDiagramConfiguration = field(default_factory=PieDiagramConfiguration, init=False)
     title: str = field(default="", init=False)
     show_data: bool = field(default=False, init=False)
-    syntax: ClassVar[str] = "pie"
-    name: ClassVar[str] = "Pie chart"
-    config_key: ClassVar[str] = "pie"
-    schema_definition: ClassVar[str] = "PieDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "pie",
+        "Pie chart",
+        "pie",
+        "PieDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def set_title(self, title: str) -> None:
         object.__setattr__(self, "title", title)

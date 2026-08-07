@@ -1,26 +1,19 @@
-from typing import ClassVar
+
 
 from wireup import injectable
 
-from ...core.constraint import Constraint
-from ..domain import DiagramMembersConstraint
-from .annotations import SequenceNote
-from .elements import Participant, ParticipantBox
-from .relations import Control, Directive, Message, ParticipantEvent
+from ...core.constraint import Constraint, ConstraintDiagram, Violation
 
 
 class SequenceConstraint(Constraint):
     pass
 
-@injectable(as_type=SequenceConstraint, qualifier="sequence_members")
-class SequenceMembers(DiagramMembersConstraint, SequenceConstraint):
-    element_types: ClassVar = (Participant, ParticipantBox)
-    relation_types: ClassVar = (Message, ParticipantEvent, Control, Directive)
-    annotation_types: ClassVar = (SequenceNote,)
-    element_description: ClassVar[str] = "a sequence member"
-    relation_description: ClassVar[str] = "a sequence event"
-    annotation_description: ClassVar[str] = "a sequence note"
 
+@injectable(as_type=SequenceConstraint, qualifier="sequence_structure")
+class SequenceStructure(SequenceConstraint):
     @property
     def code(self) -> str:
-        return "sequence.members"
+        return "sequence.structure"
+
+    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
+        return ()

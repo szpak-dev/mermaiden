@@ -1,20 +1,26 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
 from .configuration import RadarConfiguration
-from .constraints import RadarConstraint
-from .elements import RadarAxis, RadarCurve
+from .constraints import RadarAnnotationMember, RadarConstraint, RadarRelationMember
+from .elements import RadarAxis, RadarCurve, RadarElementMember
 
 
 @injectable(as_type=DiagramModel, qualifier="radar", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Radar(DiagramModel):
     constraints: Sequence[RadarConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "radar.member_type",
+        RadarElementMember,
+        RadarRelationMember,
+        RadarAnnotationMember,
+    )
     configuration: RadarConfiguration = field(default_factory=RadarConfiguration, init=False)
     title: str = field(default="", init=False)
     show_legend: bool = field(default=True, init=False)
@@ -22,14 +28,13 @@ class Radar(DiagramModel):
     maximum: float | None = field(default=None, init=False)
     graticule: str = field(default="circle", init=False)
     ticks: int | None = field(default=None, init=False)
-    syntax: ClassVar[str] = "radar-beta"
-    name: ClassVar[str] = "Radar chart"
-    config_key: ClassVar[str] = "radar"
-    schema_definition: ClassVar[str] = "RadarDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "radar-beta",
+        "Radar chart",
+        "radar",
+        "RadarDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def set_title(self, title: str) -> None:
         object.__setattr__(self, "title", title)

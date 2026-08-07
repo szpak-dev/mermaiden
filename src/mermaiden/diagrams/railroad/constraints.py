@@ -4,25 +4,23 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import Constraint, ConstraintDiagram, Violation
-from ..domain import DiagramMembersConstraint
-from .elements import Alternative, Group, NonTerminal, Optional, Repetition, Sequence, Special, Terminal
+from ..domain import (
+    DiagramAnnotationMember,
+    DiagramRelationMember,
+)
+from .elements import Alternative, Group, Optional, Repetition, Sequence
 
 
 class RailroadDiagramConstraint(Constraint, ABC):
     pass
 
-@injectable(as_type=RailroadDiagramConstraint, qualifier="railroad_members")
-class RailroadDiagramMembers(DiagramMembersConstraint, RailroadDiagramConstraint):
-    element_types: ClassVar = (Terminal, NonTerminal, Special, Sequence, Alternative, Optional, Repetition, Group)
-    relation_types: ClassVar = ()
-    annotation_types: ClassVar = ()
-    element_description: ClassVar[str] = "valid in Railroad diagram"
-    relation_description: ClassVar[str] = "valid in Railroad diagram"
-    annotation_description: ClassVar[str] = "valid in Railroad diagram"
+class RailroadRelationMember(DiagramRelationMember):
+    description: ClassVar[str] = "valid in Railroad diagram"
 
-    @property
-    def code(self) -> str:
-        return "railroad.member_type"
+
+class RailroadAnnotationMember(DiagramAnnotationMember):
+    description: ClassVar[str] = "valid in Railroad diagram"
+
 
 @injectable(as_type=RailroadDiagramConstraint, qualifier="railroad_structure")
 class RailroadDiagramStructure(RailroadDiagramConstraint):

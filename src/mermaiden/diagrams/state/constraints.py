@@ -1,11 +1,9 @@
 from abc import ABC
-from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.annotation import TargetKind
 from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
-from ..domain import DiagramMembersConstraint
 from .annotations import StateNote
 from .elements import CompositeState, StateNode
 from .relations import StateTransition
@@ -36,19 +34,6 @@ class NotesAreValid(StateDiagramConstraint):
             or note.targets[0].kind is not TargetKind.ELEMENT
             or not isinstance(elements.get(note.targets[0].id), StateNode)
         )
-
-@injectable(as_type=StateDiagramConstraint, qualifier="state_members")
-class StateContainsOnlyStateMembers(DiagramMembersConstraint, StateDiagramConstraint):
-    element_types: ClassVar = (StateNode, CompositeState)
-    relation_types: ClassVar = (StateTransition,)
-    annotation_types: ClassVar = (StateNote,)
-    element_description: ClassVar[str] = "valid in a state diagram"
-    relation_description: ClassVar[str] = "a state transition"
-    annotation_description: ClassVar[str] = "a state note"
-
-    @property
-    def code(self) -> str:
-        return "state.member_type"
 
 @injectable(as_type=StateDiagramConstraint, qualifier="state_transitions")
 class TransitionsAreValid(StateDiagramConstraint):

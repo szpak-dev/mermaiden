@@ -4,10 +4,15 @@ from typing import ClassVar
 
 from ...core.annotation import Annotation, TargetKind, TargetRef
 from ...core.error import OperationError
+from ..domain import DiagramAnnotationMember
+
+
+class TreeViewAnnotationMember(DiagramAnnotationMember):
+    description: ClassVar[str] = "valid in a Tree View"
 
 
 @dataclass(frozen=True, slots=True)
-class TreeAnnotation(Annotation):
+class TreeAnnotation(Annotation, TreeViewAnnotationMember):
     kind: ClassVar[str] = "tree_annotation"
     highlight: bool = False
     icon: str = ""

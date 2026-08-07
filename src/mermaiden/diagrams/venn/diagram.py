@@ -1,29 +1,34 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
 from .configuration import VennConfiguration
-from .constraints import VennConstraint
-from .elements import VennSet, VennText, VennUnion
+from .constraints import VennAnnotationMember, VennConstraint, VennRelationMember
+from .elements import VennElementMember, VennSet, VennText, VennUnion
 
 
 @injectable(as_type=DiagramModel, qualifier="venn", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Venn(DiagramModel):
     constraints: Sequence[VennConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "venn.member_type",
+        VennElementMember,
+        VennRelationMember,
+        VennAnnotationMember,
+    )
     configuration: VennConfiguration = field(default_factory=VennConfiguration, init=False)
-    syntax: ClassVar[str] = "venn-beta"
-    name: ClassVar[str] = "Venn diagram"
-    config_key: ClassVar[str] = "venn"
-    schema_definition: ClassVar[str] = "VennDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "venn-beta",
+        "Venn diagram",
+        "venn",
+        "VennDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_set(self, id: str, label: str, size: float | None = None) -> ChangeReport:
         return self._add_element(f"add set '{id}'", VennSet(id, label, (), size))

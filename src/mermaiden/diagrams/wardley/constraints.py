@@ -4,26 +4,18 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
-from ..domain import DiagramMembersConstraint
-from .elements import Component, Evolution, Pipeline
-from .relations import Dependency
+from ..domain import (
+    DiagramAnnotationMember,
+)
+from .elements import Component, Evolution
 
 
 class WardleyDiagramConstraint(Constraint, ABC):
     pass
 
-@injectable(as_type=WardleyDiagramConstraint, qualifier="wardley_members")
-class WardleyDiagramMembers(DiagramMembersConstraint, WardleyDiagramConstraint):
-    element_types: ClassVar = (Component, Evolution, Pipeline,)
-    relation_types: ClassVar = (Dependency,)
-    annotation_types: ClassVar = ()
-    element_description: ClassVar[str] = "valid in Wardley map"
-    relation_description: ClassVar[str] = "valid in Wardley map"
-    annotation_description: ClassVar[str] = "valid in Wardley map"
+class WardleyAnnotationMember(DiagramAnnotationMember):
+    description: ClassVar[str] = "valid in Wardley map"
 
-    @property
-    def code(self) -> str:
-        return "wardley.member_type"
 
 @injectable(as_type=WardleyDiagramConstraint, qualifier="wardley_structure")
 class WardleyDiagramStructure(WardleyDiagramConstraint):

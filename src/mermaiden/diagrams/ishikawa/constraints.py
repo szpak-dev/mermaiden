@@ -4,26 +4,18 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import Constraint, ConstraintDiagram, Violation
-from ..domain import DiagramMembersConstraint
+from ..domain import (
+    DiagramAnnotationMember,
+)
 from .elements import Category, Cause, Effect
-from .relations import CauseRelation
 
 
 class IshikawaDiagramConstraint(Constraint, ABC):
     pass
 
-@injectable(as_type=IshikawaDiagramConstraint, qualifier="ishikawa_members")
-class IshikawaDiagramMembers(DiagramMembersConstraint, IshikawaDiagramConstraint):
-    element_types: ClassVar = (Effect, Cause, Category,)
-    relation_types: ClassVar = (CauseRelation,)
-    annotation_types: ClassVar = ()
-    element_description: ClassVar[str] = "valid in Ishikawa diagram"
-    relation_description: ClassVar[str] = "valid in Ishikawa diagram"
-    annotation_description: ClassVar[str] = "valid in Ishikawa diagram"
+class IshikawaAnnotationMember(DiagramAnnotationMember):
+    description: ClassVar[str] = "valid in Ishikawa diagram"
 
-    @property
-    def code(self) -> str:
-        return "ishikawa.member_type"
 
 @injectable(as_type=IshikawaDiagramConstraint, qualifier="ishikawa_structure")
 class IshikawaDiagramStructure(IshikawaDiagramConstraint):

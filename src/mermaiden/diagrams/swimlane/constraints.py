@@ -4,7 +4,9 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
-from ..domain import DiagramMembersConstraint
+from ..domain import (
+    DiagramAnnotationMember,
+)
 from .elements import Swimlane, SwimlaneNode
 from .relations import Flow
 
@@ -13,6 +15,10 @@ class SwimlaneConstraint(Constraint, ABC):
     @staticmethod
     def flows(diagram: ConstraintDiagram) -> tuple[Flow, ...]:
         return tuple(item for item in diagram.find_relations() if isinstance(item, Flow))
+
+class SwimlaneAnnotationMember(DiagramAnnotationMember):
+    description: ClassVar[str] = "valid in a swimlane diagram"
+
 
 @injectable(as_type=SwimlaneConstraint, qualifier="flow_endpoints_are_nodes")
 class FlowEndpointsAreNodes(SwimlaneConstraint):
@@ -95,16 +101,3 @@ class NodesBelongToLanes(SwimlaneConstraint):
             for node in diagram.root_elements
             if isinstance(node, SwimlaneNode)
         )
-
-@injectable(as_type=SwimlaneConstraint, qualifier="swimlane_members")
-class SwimlaneContainsOnlySwimlaneMembers(DiagramMembersConstraint, SwimlaneConstraint):
-    element_types: ClassVar = (Swimlane, SwimlaneNode)
-    relation_types: ClassVar = (Flow,)
-    annotation_types: ClassVar = ()
-    element_description: ClassVar[str] = "valid in a swimlane diagram"
-    relation_description: ClassVar[str] = "a swimlane flow"
-    annotation_description: ClassVar[str] = "valid in a swimlane diagram"
-
-    @property
-    def code(self) -> str:
-        return "swimlane.member_type"

@@ -1,11 +1,9 @@
 from abc import ABC
-from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.annotation import TargetKind
 from ...core.constraint import Constraint, ConstraintDiagram, ConstraintLevel, Violation
-from ..domain import DiagramMembersConstraint
 from .annotations import TreeAnnotation
 from .elements import TreeItem
 from .relations import TreeBranch
@@ -122,16 +120,3 @@ class BranchesAreValid(TreeViewConstraint):
                 )
             parents.add(child_id)
         return tuple(issues)
-
-@injectable(as_type=TreeViewConstraint, qualifier="treeview_members")
-class TreeViewContainsOnlyTreeViewMembers(DiagramMembersConstraint, TreeViewConstraint):
-    element_types: ClassVar = (TreeItem,)
-    relation_types: ClassVar = (TreeBranch,)
-    annotation_types: ClassVar = (TreeAnnotation,)
-    element_description: ClassVar[str] = "valid in a Tree View"
-    relation_description: ClassVar[str] = "a tree branch"
-    annotation_description: ClassVar[str] = "valid in a Tree View"
-
-    @property
-    def code(self) -> str:
-        return "treeview.members"

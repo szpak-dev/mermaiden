@@ -1,30 +1,35 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
 from .configuration import BlockDiagramConfiguration
-from .constraints import BlockDiagramConstraint
-from .elements import BlockGroup, BlockNode, BlockSpace
+from .constraints import BlockAnnotationMember, BlockDiagramConstraint, BlockRelationMember
+from .elements import BlockElementMember, BlockGroup, BlockNode, BlockSpace
 
 
 @injectable(as_type=DiagramModel, qualifier="block", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class BlockDiagram(DiagramModel):
     constraints: Sequence[BlockDiagramConstraint]
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "block.member_type",
+        BlockElementMember,
+        BlockRelationMember,
+        BlockAnnotationMember,
+    )
     configuration: BlockDiagramConfiguration = field(default_factory=BlockDiagramConfiguration, init=False)
     columns: int | None = field(default=None, init=False)
-    syntax: ClassVar[str] = "block"
-    name: ClassVar[str] = "Block diagram"
-    config_key: ClassVar[str] = "block"
-    schema_definition: ClassVar[str] = "BlockDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "block",
+        "Block diagram",
+        "block",
+        "BlockDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def set_columns(self, columns: int) -> None:
         object.__setattr__(self, "columns", columns)

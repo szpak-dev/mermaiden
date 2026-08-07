@@ -1,31 +1,39 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..domain import DiagramModel
-from .annotations import ArchitectureNotes
+from ..domain import DiagramDefinition, DiagramMembers, DiagramModel
+from .annotations import ArchitectureAnnotationMember, ArchitectureNotes
 from .configuration import ArchitectureDiagramConfiguration
 from .constraints import ArchitectureConstraint
-from .elements import ArchitectureGroup, Junction, Service
-from .relations import Edge, Port
+from .elements import ArchitectureElementMember, ArchitectureGroup, Junction, Service
+from .relations import ArchitectureRelationMember, Edge, Port
 
 
 @injectable(as_type=DiagramModel, qualifier="architecture", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Architecture(DiagramModel):
     constraints: Sequence[ArchitectureConstraint]
-    configuration: ArchitectureDiagramConfiguration = field(default_factory=ArchitectureDiagramConfiguration, init=False)
-    syntax: ClassVar[str] = "architecture-beta"
-    name: ClassVar[str] = "Architecture diagram"
-    config_key: ClassVar[str] = "architecture"
-    schema_definition: ClassVar[str] = "ArchitectureDiagramConfig"
+    members: ClassVar[DiagramMembers] = DiagramMembers(
+        "architecture.members",
+        ArchitectureElementMember,
+        ArchitectureRelationMember,
+        ArchitectureAnnotationMember,
+    )
+    configuration: ArchitectureDiagramConfiguration = field(
+        default_factory=ArchitectureDiagramConfiguration,
+        init=False,
+    )
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "architecture-beta",
+        "Architecture diagram",
+        "architecture",
+        "ArchitectureDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_group(self, id: str, label: str, parent_id: str = "", columns: int = 1) -> ChangeReport:
         return self._add_element(f"add group '{id}'", ArchitectureGroup(id, label, (), columns), parent_id)
