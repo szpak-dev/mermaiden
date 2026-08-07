@@ -1,0 +1,1 @@
+{% if relation.kind == "participant_event" %}{{ relation.action }} {{ relation.element_ids[0] }}{% elif relation.kind == "directive" %}{{ relation.directive_kind.value }}{% else %}{{ relation.control_kind.value }}{% if relation.label %} {{ relation.label }}{% endif %}{% endif %}{{ "\n" -}}

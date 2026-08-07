@@ -1,0 +1,2 @@
+{% set shapes = {"flow_node": "rect", "action": "rect", "data_store": "cyl", "decision": "diam", "document": "doc", "end": "dbl-circ", "input_output": "lean-r", "junction": "f-circ", "start": "circle", "subprocess": "fr-rect"} %}
+{{ element.id | mermaid_id("e") }}@{ shape: {{ shapes[element.kind] }}, label: {{ element.label | mermaid_quote }} }{{ "\n" -}}

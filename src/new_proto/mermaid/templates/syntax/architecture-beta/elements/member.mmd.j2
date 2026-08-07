@@ -1,0 +1,1 @@
+{% if element.kind == "service" %}service {{ element.id }}[{{ element.label }}]{% else %}junction {{ element.id }}{% endif %}{% if parent_id %} in {{ parent_id }}{% endif %}{{ "\n" -}}
