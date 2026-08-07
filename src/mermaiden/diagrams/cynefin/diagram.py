@@ -7,7 +7,7 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .configuration import CynefinDiagramConfiguration
-from .constraints.constraint import CynefinDiagramConstraint
+from .constraints import CynefinDiagramConstraint
 from .elements import Domain, DomainKind
 from .relations import Transition
 

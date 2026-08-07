@@ -12,7 +12,6 @@ from .relations import ClassRelation
 class ClassDiagramConstraint(Constraint):
     pass
 
-
 @injectable(as_type=ClassDiagramConstraint, qualifier="classdiagram_members")
 class ClassDiagramMembers(DiagramMembersConstraint, ClassDiagramConstraint):
     element_types: ClassVar = (Class, ClassNamespace)
@@ -25,7 +24,6 @@ class ClassDiagramMembers(DiagramMembersConstraint, ClassDiagramConstraint):
     @property
     def code(self) -> str:
         return "classdiagram.members"
-
 
 @injectable(as_type=ClassDiagramConstraint, qualifier="classdiagram_relations")
 class ClassRelationsAreBinary(ClassDiagramConstraint):

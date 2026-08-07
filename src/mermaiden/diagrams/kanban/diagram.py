@@ -7,7 +7,7 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .configuration import KanbanDiagramConfiguration
-from .constraints.constraint import KanbanDiagramConstraint
+from .constraints import KanbanDiagramConstraint
 from .elements import Column, Task
 
 

@@ -25,7 +25,7 @@ from ..diagrams.packet.diagram import Packet
 from ..diagrams.pie.diagram import PieDiagram
 from ..diagrams.radar.diagram import Radar
 from ..diagrams.railroad.diagram import RailroadDiagram
-from ..diagrams.application import DiagramApplication
+from ..diagrams.application import DiagramsApplication
 from ..diagrams.requirement.diagram import RequirementDiagram
 from ..diagrams.requirement.elements import RequirementType, Risk, VerificationMethod
 from ..diagrams.requirement.relations import RequirementRelationKind
@@ -48,7 +48,7 @@ from .application import MermaidApplication
 @dataclass(frozen=True, slots=True)
 class DiagramFixtures:
     renderer: MermaidApplication
-    registry: DiagramApplication
+    registry: DiagramsApplication
 
     compatibility_names: ClassVar[dict[str, str]] = {
         "architecture": "architecture-beta",

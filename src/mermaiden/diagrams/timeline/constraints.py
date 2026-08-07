@@ -11,7 +11,6 @@ from .elements import TimelineEvent, TimelinePeriod, TimelineSection
 class TimelineConstraint(Constraint, ABC):
     pass
 
-
 @injectable(as_type=TimelineConstraint, qualifier="timeline_structure")
 class TimelineStructure(TimelineConstraint):
     @property
@@ -20,7 +19,6 @@ class TimelineStructure(TimelineConstraint):
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         return ()
-
 
 @injectable(as_type=TimelineConstraint, qualifier="timeline_members")
 class TimelineMembers(DiagramMembersConstraint, TimelineConstraint):

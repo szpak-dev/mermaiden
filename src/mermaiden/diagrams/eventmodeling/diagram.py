@@ -7,7 +7,7 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .configuration import EventModelingDiagramConfiguration
-from .constraints.constraint import EventModelingDiagramConstraint
+from .constraints import EventModelingDiagramConstraint
 from .elements import Actor, Command, Event, Swimlane, View
 from .relations import Flow
 

@@ -7,7 +7,7 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .configuration import EntityRelationshipDiagramConfiguration
-from .constraints.constraint import EntityRelationshipDiagramConstraint
+from .constraints import EntityRelationshipDiagramConstraint
 from .elements import Entity, EntityAttribute
 from .relations import EntityRelationship
 

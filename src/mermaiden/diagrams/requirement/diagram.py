@@ -7,7 +7,7 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .configuration import RequirementDiagramConfiguration
-from .constraints.constraint import RequirementDiagramConstraint
+from .constraints import RequirementDiagramConstraint
 from .elements import Requirement, RequirementElement, RequirementType, Risk, VerificationMethod
 from .relations import RequirementRelation, RequirementRelationKind
 

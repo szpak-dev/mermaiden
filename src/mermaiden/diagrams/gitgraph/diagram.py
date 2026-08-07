@@ -7,7 +7,7 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .configuration import GitGraphDiagramConfiguration
-from .constraints.constraint import GitGraphDiagramConstraint
+from .constraints import GitGraphDiagramConstraint
 from .elements import Branch, Checkout, Commit
 
 

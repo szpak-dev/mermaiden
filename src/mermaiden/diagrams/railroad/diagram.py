@@ -7,7 +7,7 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .configuration import RailroadDiagramConfiguration
-from .constraints.constraint import RailroadDiagramConstraint
+from .constraints import RailroadDiagramConstraint
 from .elements import Alternative, Group, NonTerminal, Optional, Repetition, Special, Terminal
 from .elements import Sequence as RailroadSequence
 

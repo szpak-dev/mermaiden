@@ -11,7 +11,6 @@ from .elements import JourneySection, JourneyTask
 class JourneyConstraint(Constraint, ABC):
     pass
 
-
 @injectable(as_type=JourneyConstraint, qualifier="journey_structure")
 class JourneyStructure(JourneyConstraint):
     @property
@@ -20,7 +19,6 @@ class JourneyStructure(JourneyConstraint):
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         return ()
-
 
 @injectable(as_type=JourneyConstraint, qualifier="journey_members")
 class JourneyMembers(DiagramMembersConstraint, JourneyConstraint):

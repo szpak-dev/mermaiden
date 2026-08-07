@@ -14,32 +14,6 @@ from .domain import ConstraintInspection
 
 
 @dataclass(frozen=True, slots=True)
-class DiagramRuntime:
-    state: DiagramState = field(default_factory=DiagramState)
-    elements: Elements = field(init=False)
-    relations: Relations = field(init=False)
-    annotations: Annotations = field(init=False)
-    transaction: ChangeTransaction = field(init=False)
-
-    def __post_init__(self) -> None:
-        object.__setattr__(self, "elements", Elements(self.state))
-        object.__setattr__(self, "relations", Relations(self.state))
-        object.__setattr__(self, "annotations", Annotations(self.state))
-        object.__setattr__(self, "transaction", ChangeTransaction(self.state))
-
-
-@injectable(as_type=ConstraintInspection)
-@dataclass(frozen=True, slots=True)
-class ConstraintObserver(ConstraintInspection):
-    constraints: Sequence[Constraint]
-
-    def inspect(self, diagram: Diagram) -> ValidationReport:
-        return ValidationReport(
-            tuple(violation for constraint in self.constraints for violation in diagram.accept(constraint))
-        )
-
-
-@dataclass(frozen=True, slots=True)
 class ChangeTransaction:
     state: DiagramState
 
@@ -76,3 +50,29 @@ class ChangeTransaction:
             )
         )
         raise ChangeRejected(operation, current)
+
+
+@dataclass(frozen=True, slots=True)
+class DiagramRuntime:
+    state: DiagramState = field(default_factory=DiagramState)
+    elements: Elements = field(init=False)
+    relations: Relations = field(init=False)
+    annotations: Annotations = field(init=False)
+    transaction: ChangeTransaction = field(init=False)
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "elements", Elements(self.state))
+        object.__setattr__(self, "relations", Relations(self.state))
+        object.__setattr__(self, "annotations", Annotations(self.state))
+        object.__setattr__(self, "transaction", ChangeTransaction(self.state))
+
+
+@injectable(as_type=ConstraintInspection)
+@dataclass(frozen=True, slots=True)
+class ConstraintObserver(ConstraintInspection):
+    constraints: Sequence[Constraint]
+
+    def inspect(self, diagram: Diagram) -> ValidationReport:
+        return ValidationReport(
+            tuple(violation for constraint in self.constraints for violation in diagram.accept(constraint))
+        )

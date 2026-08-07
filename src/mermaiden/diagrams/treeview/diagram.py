@@ -8,7 +8,7 @@ from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .annotations import TreeAnnotations
 from .configuration import TreeViewDiagramConfiguration
-from .constraints.constraint import TreeViewConstraint
+from .constraints import TreeViewConstraint
 from .elements import TreeItem
 from .relations import TreeBranch
 

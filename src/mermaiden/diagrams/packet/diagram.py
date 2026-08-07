@@ -7,7 +7,7 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .configuration import PacketConfiguration
-from .constraints.constraint import PacketConstraint
+from .constraints import PacketConstraint
 from .elements import PacketField
 
 

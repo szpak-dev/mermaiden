@@ -7,7 +7,7 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .configuration import C4ContextDiagramConfiguration
-from .constraints.constraint import C4ContextDiagramConstraint
+from .constraints import C4ContextDiagramConstraint
 from .elements import Person, System, SystemDb, SystemQueue
 from .relations import Relationship
 

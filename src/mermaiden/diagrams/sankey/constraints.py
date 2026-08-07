@@ -16,11 +16,9 @@ class SankeyConstraint(Constraint):
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         return ()
 
-
 @injectable(as_type=SankeyConstraint, qualifier="sankey_structure")
 class SankeyStructure(SankeyConstraint):
     pass
-
 
 @injectable(as_type=SankeyConstraint, qualifier="sankey_members")
 class SankeyMembers(DiagramMembersConstraint, SankeyConstraint):

@@ -12,7 +12,6 @@ from .relations import Edge
 class ArchitectureConstraint(Constraint):
     pass
 
-
 @injectable(as_type=ArchitectureConstraint, qualifier="architecture_members")
 class ArchitectureMembers(DiagramMembersConstraint, ArchitectureConstraint):
     element_types: ClassVar = (ArchitectureGroup, Service, Junction)

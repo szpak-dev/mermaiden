@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from mermaiden.application import Application
@@ -59,6 +61,13 @@ def test_every_registered_diagram_has_an_explicit_document_template() -> None:
         for template in templates
         if template.startswith("templates/syntax/") and template.endswith("/document.mmd.j2")
     }
+
+
+def test_every_diagram_uses_a_single_constraints_module() -> None:
+    diagrams = Path(__file__).parents[2] / "src" / "mermaiden" / "diagrams"
+
+    assert all(path.with_name("constraints.py").is_file() for path in diagrams.glob("*/diagram.py"))
+    assert not tuple(diagrams.glob("*/constraints"))
 
 
 def test_registry_explains_unknown_diagram_ids() -> None:

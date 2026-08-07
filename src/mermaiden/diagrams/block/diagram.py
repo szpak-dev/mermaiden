@@ -7,7 +7,7 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .configuration import BlockDiagramConfiguration
-from .constraints.constraint import BlockDiagramConstraint
+from .constraints import BlockDiagramConstraint
 from .elements import BlockGroup, BlockNode, BlockSpace
 
 

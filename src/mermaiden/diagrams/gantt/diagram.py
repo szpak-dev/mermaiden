@@ -7,7 +7,7 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .configuration import GanttConfiguration
-from .constraints.constraint import GanttConstraint
+from .constraints import GanttConstraint
 from .elements import Marker, Milestone, Section, Task
 
 

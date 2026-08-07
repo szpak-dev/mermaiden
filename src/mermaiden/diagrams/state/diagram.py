@@ -9,7 +9,7 @@ from ..domain import DiagramModel
 from ..flowchart.elements import Direction
 from .annotations import NotePosition, StateNote, StateNotes
 from .configuration import StateDiagramConfiguration
-from .constraints.constraint import StateDiagramConstraint
+from .constraints import StateDiagramConstraint
 from .elements import Choice, CompositeState, Final, Fork, Initial, Join, State, StateNode
 from .relations import StateTransition
 

@@ -8,7 +8,7 @@ from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .annotations import Notes
 from .configuration import FlowchartDiagramConfiguration
-from .constraints.constraint import FlowchartConstraint
+from .constraints import FlowchartConstraint
 from .elements import (
     Action,
     DataStore,

@@ -8,7 +8,7 @@ from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from ..flowchart.elements import Direction
 from .configuration import SwimlaneConfiguration
-from .constraints.constraint import SwimlaneConstraint
+from .constraints import SwimlaneConstraint
 from .elements import Activity, Connector, Decision, End, Start, Swimlane, SwimlaneNode
 from .relations import ConditionalFlow, Flow
 

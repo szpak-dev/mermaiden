@@ -12,7 +12,6 @@ from .relations import Control, Directive, Message, ParticipantEvent
 class SequenceConstraint(Constraint):
     pass
 
-
 @injectable(as_type=SequenceConstraint, qualifier="sequence_members")
 class SequenceMembers(DiagramMembersConstraint, SequenceConstraint):
     element_types: ClassVar = (Participant, ParticipantBox)

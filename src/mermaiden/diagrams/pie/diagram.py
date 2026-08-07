@@ -7,7 +7,7 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .configuration import PieDiagramConfiguration
-from .constraints.constraint import PieConstraint
+from .constraints import PieConstraint
 from .elements import PieSlice
 
 

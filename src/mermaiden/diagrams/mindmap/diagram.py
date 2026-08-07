@@ -7,7 +7,7 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .configuration import MindmapDiagramConfiguration
-from .constraints.constraint import MindmapConstraint
+from .constraints import MindmapConstraint
 from .elements import Bang, Circle, Cloud, Hexagon, MindmapNode, RoundedSquare, Square
 
 

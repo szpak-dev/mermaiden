@@ -7,7 +7,7 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .configuration import IshikawaDiagramConfiguration
-from .constraints.constraint import IshikawaDiagramConstraint
+from .constraints import IshikawaDiagramConstraint
 from .elements import Category, Cause, Effect
 
 

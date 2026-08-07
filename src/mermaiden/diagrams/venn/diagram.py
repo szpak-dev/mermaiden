@@ -7,7 +7,7 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .configuration import VennConfiguration
-from .constraints.constraint import VennConstraint
+from .constraints import VennConstraint
 from .elements import VennSet, VennText, VennUnion
 
 
