@@ -1,4 +1,4 @@
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
@@ -7,6 +7,7 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .annotations import Notes
+from .configuration import FlowchartDiagramConfiguration
 from .constraints.constraint import FlowchartConstraint
 from .elements import (
     Action,
@@ -29,11 +30,16 @@ from .relations import ConditionalFlow, Flow
 @dataclass(frozen=True, slots=True)
 class Flowchart(DiagramModel):
     constraints: Sequence[FlowchartConstraint]
+    configuration: FlowchartDiagramConfiguration = field(default_factory=FlowchartDiagramConfiguration, init=False)
     direction: Direction = field(default=Direction.TOP_DOWN, init=False)
     syntax: ClassVar[str] = "flowchart"
     name: ClassVar[str] = "Flowchart"
     config_key: ClassVar[str] = "flowchart"
     schema_definition: ClassVar[str] = "FlowchartDiagramConfig"
+
+    @property
+    def mermaid_configuration(self) -> Mapping[str, object]:
+        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_group(
         self,

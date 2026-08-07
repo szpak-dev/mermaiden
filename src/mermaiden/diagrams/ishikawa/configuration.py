@@ -1,7 +1,6 @@
-from dataclasses import dataclass
+from ..configuration import MermaidDiagramConfiguration
 
 
-@dataclass(frozen=True, slots=True)
-class IshikawaDiagramConfiguration:
+class IshikawaDiagramConfiguration(MermaidDiagramConfiguration):
     def to_mermaid(self) -> dict[str, object]:
         return {}

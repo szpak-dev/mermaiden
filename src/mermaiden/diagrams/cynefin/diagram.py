@@ -24,7 +24,7 @@ class CynefinDiagram(DiagramModel):
 
     @property
     def mermaid_configuration(self) -> Mapping[str, object]:
-        return {self.config_key: self.configuration.to_mermaid()}
+        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_item(self, id: str, label: str, domain: DomainKind) -> ChangeReport:
         return self._add_element(f"add {domain.value} item '{id}'", Domain(id, label, domain))

@@ -24,7 +24,7 @@ class BlockDiagram(DiagramModel):
 
     @property
     def mermaid_configuration(self) -> Mapping[str, object]:
-        return {self.config_key: self.configuration.to_mermaid()}
+        return self.configuration.document(self.config_key).to_mermaid()
 
     def set_columns(self, columns: int) -> None:
         object.__setattr__(self, "columns", columns)

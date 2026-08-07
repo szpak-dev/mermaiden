@@ -1,8 +1,7 @@
-from dataclasses import dataclass
+from ..configuration import MermaidDiagramConfiguration
 
 
-@dataclass(frozen=True, slots=True)
-class BlockDiagramConfiguration:
+class BlockDiagramConfiguration(MermaidDiagramConfiguration):
     padding: float = 8
 
     def to_mermaid(self) -> dict[str, object]:

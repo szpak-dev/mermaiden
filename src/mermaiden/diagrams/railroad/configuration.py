@@ -1,8 +1,7 @@
-from dataclasses import dataclass
+from ..configuration import MermaidDiagramConfiguration
 
 
-@dataclass(frozen=True, slots=True)
-class RailroadDiagramConfiguration:
+class RailroadDiagramConfiguration(MermaidDiagramConfiguration):
     compact_mode: bool = False
     padding: float = 10
     vertical_separation: float = 8

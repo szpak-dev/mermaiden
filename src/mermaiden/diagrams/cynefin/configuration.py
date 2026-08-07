@@ -1,8 +1,7 @@
-from dataclasses import dataclass
+from ..configuration import MermaidDiagramConfiguration
 
 
-@dataclass(frozen=True, slots=True)
-class CynefinDiagramConfiguration:
+class CynefinDiagramConfiguration(MermaidDiagramConfiguration):
     width: float = 800
     height: float = 600
     padding: float = 40

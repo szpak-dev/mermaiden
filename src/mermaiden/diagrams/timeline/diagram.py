@@ -1,47 +1,21 @@
-from abc import ABC
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import ChangeReport, Constraint, ConstraintDiagram, Violation
-from ..domain import DiagramMembersConstraint, DiagramModel
+from ...core.constraint import ChangeReport
+from ..domain import DiagramModel
+from .configuration import TimelineDiagramConfiguration
+from .constraints import TimelineConstraint
 from .elements import TimelineEvent, TimelinePeriod, TimelineSection
-
-
-class TimelineConstraint(Constraint, ABC):
-    pass
-
-
-@injectable(as_type=TimelineConstraint, qualifier="timeline_structure")
-class TimelineStructure(TimelineConstraint):
-    @property
-    def code(self) -> str:
-        return "timeline.structure"
-
-    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
-        return ()
-
-
-@injectable(as_type=TimelineConstraint, qualifier="timeline_members")
-class TimelineMembers(DiagramMembersConstraint, TimelineConstraint):
-    element_types: ClassVar = (TimelineSection, TimelinePeriod, TimelineEvent)
-    relation_types: ClassVar = ()
-    annotation_types: ClassVar = ()
-    element_description: ClassVar[str] = "valid in a timeline"
-    relation_description: ClassVar[str] = "valid in a timeline"
-    annotation_description: ClassVar[str] = "valid in a timeline"
-
-    @property
-    def code(self) -> str:
-        return "timeline.member_type"
 
 
 @injectable(as_type=DiagramModel, qualifier="timeline", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Timeline(DiagramModel):
     constraints: Sequence[TimelineConstraint]
+    configuration: TimelineDiagramConfiguration = field(default_factory=TimelineDiagramConfiguration, init=False)
     title: str = field(default="", init=False)
     syntax: ClassVar[str] = "timeline"
     name: ClassVar[str] = "Timeline"
@@ -50,7 +24,7 @@ class Timeline(DiagramModel):
 
     @property
     def mermaid_configuration(self) -> Mapping[str, object]:
-        return {}
+        return self.configuration.document(self.config_key).to_mermaid()
 
     def set_title(self, title: str) -> None:
         object.__setattr__(self, "title", title)

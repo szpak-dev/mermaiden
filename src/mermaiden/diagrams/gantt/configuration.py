@@ -1,8 +1,7 @@
-from dataclasses import dataclass
+from ..configuration import MermaidDiagramConfiguration
 
 
-@dataclass(frozen=True, slots=True)
-class GanttConfiguration:
+class GanttConfiguration(MermaidDiagramConfiguration):
     title_top_margin: int = 25
     bar_height: int = 20
     top_padding: int = 50

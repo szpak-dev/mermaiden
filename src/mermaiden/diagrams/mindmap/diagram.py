@@ -23,7 +23,7 @@ class Mindmap(DiagramModel):
 
     @property
     def mermaid_configuration(self) -> Mapping[str, object]:
-        return {self.config_key: self.configuration.to_mermaid()}
+        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_root(self, id: str, label: str) -> ChangeReport:
         return self._add_node(MindmapNode(id, label), "", "root")

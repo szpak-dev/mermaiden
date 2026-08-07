@@ -1,47 +1,21 @@
-from abc import ABC
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import ChangeReport, Constraint, ConstraintDiagram, Violation
-from ..domain import DiagramMembersConstraint, DiagramModel
+from ...core.constraint import ChangeReport
+from ..domain import DiagramModel
+from .configuration import JourneyDiagramConfiguration
+from .constraints import JourneyConstraint
 from .elements import JourneySection, JourneyTask
-
-
-class JourneyConstraint(Constraint, ABC):
-    pass
-
-
-@injectable(as_type=JourneyConstraint, qualifier="journey_structure")
-class JourneyStructure(JourneyConstraint):
-    @property
-    def code(self) -> str:
-        return "journey.structure"
-
-    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
-        return ()
-
-
-@injectable(as_type=JourneyConstraint, qualifier="journey_members")
-class JourneyMembers(DiagramMembersConstraint, JourneyConstraint):
-    element_types: ClassVar = (JourneySection, JourneyTask)
-    relation_types: ClassVar = ()
-    annotation_types: ClassVar = ()
-    element_description: ClassVar[str] = "valid in a user journey"
-    relation_description: ClassVar[str] = "valid in a user journey"
-    annotation_description: ClassVar[str] = "valid in a user journey"
-
-    @property
-    def code(self) -> str:
-        return "journey.member_type"
 
 
 @injectable(as_type=DiagramModel, qualifier="journey", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Journey(DiagramModel):
     constraints: Sequence[JourneyConstraint]
+    configuration: JourneyDiagramConfiguration = field(default_factory=JourneyDiagramConfiguration, init=False)
     title: str = field(default="", init=False)
     syntax: ClassVar[str] = "journey"
     name: ClassVar[str] = "User journey"
@@ -50,7 +24,7 @@ class Journey(DiagramModel):
 
     @property
     def mermaid_configuration(self) -> Mapping[str, object]:
-        return {}
+        return self.configuration.document(self.config_key).to_mermaid()
 
     def set_title(self, title: str) -> None:
         object.__setattr__(self, "title", title)

@@ -1,5 +1,5 @@
-from collections.abc import Sequence
-from dataclasses import dataclass
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
@@ -7,6 +7,7 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .annotations import ClassNotes
+from .configuration import ClassDiagramConfiguration
 from .constraints import ClassDiagramConstraint
 from .elements import Class, ClassAttribute, ClassMethod, ClassNamespace
 from .relations import ClassRelation, ClassRelationKind
@@ -16,10 +17,15 @@ from .relations import ClassRelation, ClassRelationKind
 @dataclass(frozen=True, slots=True)
 class ClassDiagram(DiagramModel):
     constraints: Sequence[ClassDiagramConstraint]
+    configuration: ClassDiagramConfiguration = field(default_factory=ClassDiagramConfiguration, init=False)
     syntax: ClassVar[str] = "classDiagram"
     name: ClassVar[str] = "Class diagram"
     config_key: ClassVar[str] = "class"
     schema_definition: ClassVar[str] = "ClassDiagramConfig"
+
+    @property
+    def mermaid_configuration(self) -> Mapping[str, object]:
+        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_class(
         self,

@@ -27,7 +27,7 @@ class EventModelingDiagram(DiagramModel):
 
     @property
     def mermaid_configuration(self) -> Mapping[str, object]:
-        return {self.config_key: self.configuration.to_mermaid()}
+        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_swimlane(self, id: str, label: str) -> ChangeReport:
         return self._add_element(f"add swimlane '{id}'", Swimlane(id, label))

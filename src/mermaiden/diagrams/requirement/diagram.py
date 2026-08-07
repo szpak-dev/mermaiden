@@ -24,7 +24,7 @@ class RequirementDiagram(DiagramModel):
 
     @property
     def mermaid_configuration(self) -> Mapping[str, object]:
-        return {self.config_key: self.configuration.to_mermaid()}
+        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_requirement(
         self,

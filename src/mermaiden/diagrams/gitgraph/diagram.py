@@ -23,7 +23,7 @@ class GitGraphDiagram(DiagramModel):
 
     @property
     def mermaid_configuration(self) -> Mapping[str, object]:
-        return {self.config_key: self.configuration.to_mermaid()}
+        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_commit(self, id: str, label: str, commit_type: str = "", tag: str = "") -> ChangeReport:
         return self._add_element(f"add commit '{id}'", Commit(id, label, commit_type, tag))

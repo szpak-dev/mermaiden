@@ -224,6 +224,27 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             assert source.startswith("---\nconfig:\n  wrap: true\n  packet: {")
         elif name == "radar":
             assert source.startswith("---\nconfig:\n  wrap: true\n  radar: {")
+        elif name in {
+            "architecture",
+            "classdiagram",
+            "flowchart",
+            "journey",
+            "sankey",
+            "sequence",
+            "timeline",
+            "treeview",
+        }:
+            config_key = {
+                "architecture": "architecture",
+                "classdiagram": "class",
+                "flowchart": "flowchart",
+                "journey": "journey",
+                "sankey": "sankey",
+                "sequence": "sequence",
+                "timeline": "timeline",
+                "treeview": "treeView",
+            }[name]
+            assert source.startswith(f"---\nconfig:\n  wrap: true\n  {config_key}: {{}}\n---\n")
         else:
             assert source.startswith("---\nconfig:\n  wrap: true\n---\n")
         for fragment in fragments:

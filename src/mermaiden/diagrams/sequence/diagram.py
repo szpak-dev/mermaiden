@@ -1,5 +1,5 @@
-from collections.abc import Sequence
-from dataclasses import dataclass
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
@@ -7,6 +7,7 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .annotations import NotePosition, SequenceNotes
+from .configuration import SequenceDiagramConfiguration
 from .constraints import SequenceConstraint
 from .elements import Participant, ParticipantBox, ParticipantKind
 from .relations import Control, ControlKind, Directive, DirectiveKind, Message, MessageKind, ParticipantEvent
@@ -16,10 +17,15 @@ from .relations import Control, ControlKind, Directive, DirectiveKind, Message, 
 @dataclass(frozen=True, slots=True)
 class SequenceDiagram(DiagramModel):
     constraints: Sequence[SequenceConstraint]
+    configuration: SequenceDiagramConfiguration = field(default_factory=SequenceDiagramConfiguration, init=False)
     syntax: ClassVar[str] = "sequenceDiagram"
     name: ClassVar[str] = "Sequence diagram"
     config_key: ClassVar[str] = "sequence"
     schema_definition: ClassVar[str] = "SequenceDiagramConfig"
+
+    @property
+    def mermaid_configuration(self) -> Mapping[str, object]:
+        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_box(self, id: str, label: str, color: str = "") -> ChangeReport:
         return self._add_element(f"add box '{id}'", ParticipantBox(id, label, (), color))

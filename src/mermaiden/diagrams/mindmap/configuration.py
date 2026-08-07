@@ -1,8 +1,7 @@
-from dataclasses import dataclass
+from ..configuration import MermaidDiagramConfiguration
 
 
-@dataclass(frozen=True, slots=True)
-class MindmapDiagramConfiguration:
+class MindmapDiagramConfiguration(MermaidDiagramConfiguration):
     use_max_width: bool = True
     padding: int = 10
     max_node_width: int = 200

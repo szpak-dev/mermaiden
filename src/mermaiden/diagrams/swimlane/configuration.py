@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from ..configuration import MermaidDiagramConfiguration
 from enum import StrEnum
 
 
@@ -7,8 +7,7 @@ class LineHops(StrEnum):
     GAP = "gap"
 
 
-@dataclass(frozen=True, slots=True)
-class SwimlaneConfiguration:
+class SwimlaneConfiguration(MermaidDiagramConfiguration):
     line_hops: LineHops | bool = LineHops.ARC
     ignore_cross_lane_edges: bool = True
     optimize_ranks_by_crossings: bool = True

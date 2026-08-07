@@ -28,7 +28,7 @@ class EntityRelationshipDiagram(DiagramModel):
 
     @property
     def mermaid_configuration(self) -> Mapping[str, object]:
-        return {self.config_key: self.configuration.to_mermaid()}
+        return self.configuration.document(self.config_key).to_mermaid()
 
     def set_direction(self, direction: str) -> None:
         object.__setattr__(self, "direction", direction)

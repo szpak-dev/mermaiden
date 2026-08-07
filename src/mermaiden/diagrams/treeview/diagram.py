@@ -1,5 +1,5 @@
-from collections.abc import Sequence
-from dataclasses import dataclass
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
@@ -7,6 +7,7 @@ from wireup import injectable
 from ...core.constraint import ChangeReport
 from ..domain import DiagramModel
 from .annotations import TreeAnnotations
+from .configuration import TreeViewDiagramConfiguration
 from .constraints.constraint import TreeViewConstraint
 from .elements import TreeItem
 from .relations import TreeBranch
@@ -16,10 +17,15 @@ from .relations import TreeBranch
 @dataclass(frozen=True, slots=True)
 class TreeView(DiagramModel):
     constraints: Sequence[TreeViewConstraint]
+    configuration: TreeViewDiagramConfiguration = field(default_factory=TreeViewDiagramConfiguration, init=False)
     syntax: ClassVar[str] = "treeView-beta"
     name: ClassVar[str] = "Tree view"
     config_key: ClassVar[str] = "treeView"
     schema_definition: ClassVar[str] = "TreeViewDiagramConfig"
+
+    @property
+    def mermaid_configuration(self) -> Mapping[str, object]:
+        return self.configuration.document(self.config_key).to_mermaid()
 
     @property
     def root_elements(self) -> tuple[TreeItem, ...]:

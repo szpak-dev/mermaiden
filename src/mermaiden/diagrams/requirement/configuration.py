@@ -1,8 +1,7 @@
-from dataclasses import dataclass
+from ..configuration import MermaidDiagramConfiguration
 
 
-@dataclass(frozen=True, slots=True)
-class RequirementDiagramConfiguration:
+class RequirementDiagramConfiguration(MermaidDiagramConfiguration):
     use_max_width: bool = True
     rect_fill: str = "#f9f9f9"
     text_color: str = "#333"

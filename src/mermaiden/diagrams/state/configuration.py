@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from ..configuration import MermaidDiagramConfiguration
 from enum import StrEnum
 
 
@@ -8,8 +8,7 @@ class StateRenderer(StrEnum):
     ELK = "elk"
 
 
-@dataclass(frozen=True, slots=True)
-class StateDiagramConfiguration:
+class StateDiagramConfiguration(MermaidDiagramConfiguration):
     title_top_margin: int = 25
     use_max_width: bool = True
     default_renderer: StateRenderer = StateRenderer.DAGRE_WRAPPER

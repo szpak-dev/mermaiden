@@ -1,8 +1,7 @@
-from dataclasses import dataclass
+from ..configuration import MermaidDiagramConfiguration
 
 
-@dataclass(frozen=True, slots=True)
-class VennConfiguration:
+class VennConfiguration(MermaidDiagramConfiguration):
     width: float = 800
     height: float = 450
     padding: float = 8

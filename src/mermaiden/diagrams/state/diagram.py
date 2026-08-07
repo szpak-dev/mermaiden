@@ -27,7 +27,7 @@ class StateDiagram(DiagramModel):
 
     @property
     def mermaid_configuration(self) -> Mapping[str, object]:
-        return {self.config_key: self.configuration.to_mermaid()}
+        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_state(self, id: str, label: str = "", composite_id: str = "") -> ChangeReport:
         return self._add_node(State(id, label), composite_id, "state")

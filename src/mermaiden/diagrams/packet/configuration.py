@@ -1,8 +1,7 @@
-from dataclasses import dataclass
+from ..configuration import MermaidDiagramConfiguration
 
 
-@dataclass(frozen=True, slots=True)
-class PacketConfiguration:
+class PacketConfiguration(MermaidDiagramConfiguration):
     row_height: float = 32
     bit_width: float = 32
     bits_per_row: float = 32

@@ -1,8 +1,7 @@
-from dataclasses import dataclass
+from ..configuration import MermaidDiagramConfiguration
 
 
-@dataclass(frozen=True, slots=True)
-class EntityRelationshipDiagramConfiguration:
+class EntityRelationshipDiagramConfiguration(MermaidDiagramConfiguration):
     title_top_margin: int = 25
     diagram_padding: int = 20
     layout_direction: str = "TB"

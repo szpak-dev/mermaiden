@@ -1,8 +1,11 @@
-from dataclasses import dataclass
+from pydantic import BaseModel, ConfigDict
+
+from ..configuration import MermaidDiagramConfiguration
 
 
-@dataclass(frozen=True, slots=True)
-class GitGraphNodeLabel:
+class GitGraphNodeLabel(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
     width: float = 75
     height: float = 100
     x: float = -25
@@ -12,8 +15,7 @@ class GitGraphNodeLabel:
         return {"width": self.width, "height": self.height, "x": self.x, "y": self.y}
 
 
-@dataclass(frozen=True, slots=True)
-class GitGraphDiagramConfiguration:
+class GitGraphDiagramConfiguration(MermaidDiagramConfiguration):
     title_top_margin: int = 25
     diagram_padding: float = 8
     node_label: GitGraphNodeLabel = GitGraphNodeLabel()

@@ -1,8 +1,7 @@
-from dataclasses import dataclass
+from ..configuration import MermaidDiagramConfiguration
 
 
-@dataclass(frozen=True, slots=True)
-class RadarConfiguration:
+class RadarConfiguration(MermaidDiagramConfiguration):
     width: float = 600
     height: float = 600
     margin_top: float = 50

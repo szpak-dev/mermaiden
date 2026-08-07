@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from ..configuration import MermaidDiagramConfiguration
 from enum import StrEnum
 
 
@@ -10,8 +10,7 @@ class LegendPosition(StrEnum):
     CENTER = "center"
 
 
-@dataclass(frozen=True, slots=True)
-class PieDiagramConfiguration:
+class PieDiagramConfiguration(MermaidDiagramConfiguration):
     text_position: float = 0.75
     donut_hole: float = 0
     legend_position: LegendPosition = LegendPosition.RIGHT

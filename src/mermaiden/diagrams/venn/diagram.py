@@ -23,7 +23,7 @@ class Venn(DiagramModel):
 
     @property
     def mermaid_configuration(self) -> Mapping[str, object]:
-        return {self.config_key: self.configuration.to_mermaid()}
+        return self.configuration.document(self.config_key).to_mermaid()
 
     def add_set(self, id: str, label: str, size: float | None = None) -> ChangeReport:
         return self._add_element(f"add set '{id}'", VennSet(id, label, (), size))
