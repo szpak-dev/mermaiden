@@ -83,6 +83,13 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
         "timeline": ("timeline", "title Modwire history", "section Foundation", "2024 : Prototype : First release"),
         "sankey": ("sankey", '"Electricity grid","Industry",342.165', '"Electricity grid","Homes",113.726'),
         "journey": ("journey", "title Working day", "section Go to work", "Make tea: 5: Me", "Do work: 1: Me, Cat"),
+        "venn": (
+            "venn-beta",
+            'set frontend["Frontend"]:20',
+            'text react["React"]',
+            'union frontend,backend["Shared"]:3',
+            'text openapi["OpenAPI"]',
+        ),
         "state": (
             "stateDiagram-v2 TD",
             'state "Still" as s_v_still',
@@ -128,6 +135,11 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
                 "---\nconfig:\n  wrap: true\n"
                 '  swimlane: {"lineHops": "arc", "ignoreCrossLaneEdges": true, '
                 '"optimizeRanksByCrossings": true, "automaticLaneOrdering": false}\n---\n'
+            )
+        elif name == "venn":
+            assert source.startswith(
+                "---\nconfig:\n  wrap: true\n"
+                '  venn: {"width": 800, "height": 450, "padding": 8, "useDebugLayout": false}\n---\n'
             )
         else:
             assert source.startswith("---\nconfig:\n  wrap: true\n---\n")

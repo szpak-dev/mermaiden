@@ -25,6 +25,7 @@ from ..diagrams.state.diagram import StateDiagram
 from ..diagrams.swimlane.diagram import SwimlaneDiagram
 from ..diagrams.timeline.diagram import Timeline
 from ..diagrams.treeview.diagram import TreeView
+from ..diagrams.venn.diagram import Venn
 from .service import MermaidRenderer
 
 
@@ -294,6 +295,15 @@ class DiagramFixtures:
         journey.add_task("tea", "Make tea", 5, ("Me",), "work")
         journey.add_task("work_task", "Do work", 1, ("Me", "Cat"), "work")
 
+        venn = self.registry.get("venn-beta").diagram
+        assert isinstance(venn, Venn)
+        venn.add_set("frontend", "Frontend", 20)
+        venn.add_text("react", "React", "frontend")
+        venn.add_set("backend", "Backend", 12)
+        venn.add_text("api", "API", "backend")
+        venn.add_union("shared", "Shared", ("frontend", "backend"), 3)
+        venn.add_text("openapi", "OpenAPI", "shared")
+
         return {
             "flowchart": self.renderer.render(flowchart),
             "treeview": self.renderer.render(treeview),
@@ -306,6 +316,7 @@ class DiagramFixtures:
             "timeline": self.renderer.render(timeline),
             "sankey": self.renderer.render(sankey),
             "journey": self.renderer.render(journey),
+            "venn": self.renderer.render(venn),
             "state": self.renderer.render(state),
             "swimlane": self.renderer.render(swimlane),
         }
