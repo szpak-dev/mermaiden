@@ -2,22 +2,20 @@
 from wireup import injectable
 
 from ...core.annotation import TargetKind
-from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
+from ...core.constraint import ConstraintDiagram, Violation
+from ..domain import DiagramConstraint
 from .annotations import TreeAnnotation
 from .elements import TreeItem
 from .relations import TreeBranch
 
 
-class TreeViewConstraint(BlockingConstraint):
+class TreeViewConstraint(DiagramConstraint):
     @staticmethod
     def branches(diagram: ConstraintDiagram) -> tuple[TreeBranch, ...]:
         return tuple(item for item in diagram.find_relations() if isinstance(item, TreeBranch))
 
 @injectable(as_type=TreeViewConstraint, qualifier="treeview_annotations")
 class AnnotationsAreValid(TreeViewConstraint):
-    @property
-    def code(self) -> str:
-        return "treeview.annotations"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
@@ -43,9 +41,6 @@ class AnnotationsAreValid(TreeViewConstraint):
 
 @injectable(as_type=TreeViewConstraint, qualifier="treeview_acyclic")
 class BranchesAreAcyclic(TreeViewConstraint):
-    @property
-    def code(self) -> str:
-        return "treeview.acyclic"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
@@ -77,9 +72,6 @@ class BranchesAreAcyclic(TreeViewConstraint):
 
 @injectable(as_type=TreeViewConstraint, qualifier="treeview_branches")
 class BranchesAreValid(TreeViewConstraint):
-    @property
-    def code(self) -> str:
-        return "treeview.branches"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:

@@ -1,19 +1,17 @@
 
 from wireup import injectable
 
-from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
-from .elements import Branch, Checkout, Commit
+from ...core.constraint import ConstraintDiagram, Violation
+from ..domain import DiagramConstraint
+from .elements import Branch, Checkout, Commit, CommitType
 
 
-class GitGraphDiagramConstraint(BlockingConstraint):
+class GitGraphDiagramConstraint(DiagramConstraint):
     pass
 
 
 @injectable(as_type=GitGraphDiagramConstraint, qualifier="gitgraph_structure")
 class GitGraphDiagramStructure(GitGraphDiagramConstraint):
-    @property
-    def code(self) -> str:
-        return "gitgraph.structure"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
@@ -44,6 +42,6 @@ class GitGraphDiagramStructure(GitGraphDiagramConstraint):
             )
             for item in diagram.root_elements
             if isinstance(item, Commit)
-            if item.commit_type and item.commit_type not in {"NORMAL", "REVERSE", "HIGHLIGHT"}
+            if item.commit_type and item.commit_type not in CommitType
         )
         return tuple(issues)

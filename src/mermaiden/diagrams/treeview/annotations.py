@@ -1,20 +1,15 @@
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
-from typing import ClassVar
 
 from ...core.annotation import Annotation, TargetKind, TargetRef
 from ...core.error import OperationError
 
 
-@dataclass(frozen=True, slots=True)
 class TreeAnnotation(Annotation):
-    kind: ClassVar[str] = "tree_annotation"
     highlight: bool = False
     icon: str = ""
     description: str = ""
 
 
-@dataclass(frozen=True, slots=True)
 class TreeAnnotations:
     def create(
         self,

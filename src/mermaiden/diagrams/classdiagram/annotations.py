@@ -1,18 +1,13 @@
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
-from typing import ClassVar
 
 from ...core.annotation import Annotation, TargetKind, TargetRef
 from ...core.error import OperationError
 
 
-@dataclass(frozen=True, slots=True)
 class ClassNote(Annotation):
-    kind: ClassVar[str] = "class_note"
     text: str
 
 
-@dataclass(frozen=True, slots=True)
 class ClassNotes:
     def create(
         self,

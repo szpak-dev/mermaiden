@@ -25,7 +25,6 @@ class ClassDiagram(DiagramModel):
         "ClassDiagramConfig",
     )
 
-
     def add_class(
         self,
         id: str,

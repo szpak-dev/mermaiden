@@ -1,20 +1,18 @@
 
 from wireup import injectable
 
-from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
-from .elements import Actor, Command, Event, Swimlane, View
+from ...core.constraint import ConstraintDiagram, Violation
+from ..domain import DiagramConstraint
+from .elements import Swimlane, SwimlaneMember
 from .relations import Flow
 
 
-class EventModelingDiagramConstraint(BlockingConstraint):
+class EventModelingDiagramConstraint(DiagramConstraint):
     pass
 
 
 @injectable(as_type=EventModelingDiagramConstraint, qualifier="eventmodeling_structure")
 class EventModelingDiagramStructure(EventModelingDiagramConstraint):
-    @property
-    def code(self) -> str:
-        return "eventmodeling.structure"
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues = [
@@ -22,7 +20,7 @@ class EventModelingDiagramStructure(EventModelingDiagramConstraint):
                 f"Event Modeling element '{item.id}' should belong to a swimlane.", path=f"elements.{item.id}"
             )
             for item in diagram.root_elements
-            if isinstance(item, (Actor, Command, Event, View))
+            if isinstance(item, SwimlaneMember)
         ]
         issues.extend(
             self.violation(f"Event Modeling flow '{item.id}' cannot be self-referential.", path=f"relations.{item.id}")

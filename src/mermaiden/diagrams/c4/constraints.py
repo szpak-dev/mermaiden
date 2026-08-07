@@ -1,20 +1,18 @@
 
 from wireup import injectable
 
-from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
+from ...core.constraint import ConstraintDiagram, Violation
+from ..domain import DiagramConstraint
 from .elements import C4Element
 from .relations import Relationship
 
 
-class C4ContextDiagramConstraint(BlockingConstraint):
+class C4ContextDiagramConstraint(DiagramConstraint):
     pass
 
 
 @injectable(as_type=C4ContextDiagramConstraint, qualifier="c4_structure")
 class C4ContextDiagramStructure(C4ContextDiagramConstraint):
-    @property
-    def code(self) -> str:
-        return "c4.structure"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:

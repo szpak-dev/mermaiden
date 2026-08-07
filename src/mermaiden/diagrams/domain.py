@@ -1,3 +1,4 @@
+import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import ClassVar
@@ -10,6 +11,7 @@ from ..core.constraint import (
     Violation,
 )
 from ..core.diagram import Diagram
+from ..core.element import RequiresChildren
 from ..runtime.diagrams.aggregate import DiagramAggregate
 from ..runtime.domain import ConstraintInspection
 from .configuration import MermaidDiagramConfiguration
@@ -27,12 +29,20 @@ class DiagramObserver[ConstraintT: Constraint](ConstraintInspection):
 
 
 @dataclass(frozen=True, slots=True)
-class DiagramMembers(BlockingConstraint):
-    package: str
+class DiagramConstraint(BlockingConstraint):
+    @staticmethod
+    def _snake_case(value: str) -> str:
+        return re.sub(r"(?<!^)(?=[A-Z])", "_", value).lower()
 
     @property
     def code(self) -> str:
-        return f"{self.package.rsplit('.', maxsplit=1)[-1]}.member_type"
+        package = getattr(self, "package", type(self).__module__)
+        return f"{package.rsplit('.', maxsplit=1)[-1]}.{self._snake_case(type(self).__name__)}"
+
+
+@dataclass(frozen=True, slots=True)
+class Members(DiagramConstraint):
+    package: str
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
@@ -59,6 +69,14 @@ class DiagramMembers(BlockingConstraint):
             )
             for item in diagram.find_annotations()
             if item.__class__.__module__ != f"{self.package}.annotations"
+        )
+        issues.extend(
+            self.violation(
+                f"Element '{item.id}' must contain at least one child.",
+                path=f"elements.{item.id}",
+            )
+            for item in diagram.walk_elements()
+            if isinstance(item, RequiresChildren) and not item.elements
         )
         return tuple(issues)
 
@@ -88,5 +106,5 @@ class DiagramModel(DiagramAggregate):
 
     @property
     def observer(self) -> DiagramObserver[Constraint]:
-        members = DiagramMembers(type(self).__module__.removesuffix(".diagram"))
+        members = Members(type(self).__module__.removesuffix(".diagram"))
         return DiagramObserver(self.structure, (members, *self.constraints))

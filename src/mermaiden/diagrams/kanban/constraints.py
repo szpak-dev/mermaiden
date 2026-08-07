@@ -1,24 +1,21 @@
 
 from wireup import injectable
 
-from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
-from .elements import Column, Task
+from ...core.constraint import ConstraintDiagram, Violation
+from ..domain import DiagramConstraint
+from .elements import Column, KanbanPriority, Task
 
 
-class KanbanDiagramConstraint(BlockingConstraint):
+class KanbanDiagramConstraint(DiagramConstraint):
     pass
 
 
 
 @injectable(as_type=KanbanDiagramConstraint, qualifier="kanban_structure")
 class KanbanDiagramStructure(KanbanDiagramConstraint):
-    @property
-    def code(self) -> str:
-        return "kanban.structure"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
-        priorities = {"Very High", "High", "Low", "Very Low"}
         issues = [
             self.violation(f"Kanban column '{item.id}' must have a label.", path=f"elements.{item.id}")
             for item in diagram.root_elements
@@ -35,6 +32,6 @@ class KanbanDiagramStructure(KanbanDiagramConstraint):
                 path=f"elements.{item.id}",
             )
             for item in diagram.walk_elements()
-            if isinstance(item, Task) and item.priority and item.priority not in priorities
+            if isinstance(item, Task) and item.priority and item.priority not in KanbanPriority
         )
         return tuple(issues)

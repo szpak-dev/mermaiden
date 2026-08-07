@@ -1,7 +1,5 @@
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
 from enum import StrEnum
-from typing import ClassVar
 
 from ...core.annotation import Annotation, TargetKind, TargetRef
 from ...core.error import OperationError
@@ -12,15 +10,12 @@ class NotePosition(StrEnum):
     RIGHT = "right"
 
 
-@dataclass(frozen=True, slots=True)
 class StateNote(Annotation):
-    kind: ClassVar[str] = "state_note"
     text: str
     position: NotePosition
     scope_id: str = ""
 
 
-@dataclass(frozen=True, slots=True)
 class StateNotes:
     def create(
         self,

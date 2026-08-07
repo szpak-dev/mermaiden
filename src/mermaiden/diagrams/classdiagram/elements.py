@@ -1,8 +1,7 @@
-from dataclasses import dataclass
 from enum import StrEnum
-from typing import ClassVar
 
 from ...core.element import Container, Entity
+from ...core.model import ValueModel
 
 
 class Visibility(StrEnum):
@@ -12,8 +11,8 @@ class Visibility(StrEnum):
     PACKAGE = "~"
 
 
-@dataclass(frozen=True, slots=True)
-class ClassAttribute:
+class ClassAttribute(ValueModel):
+
     name: str
     type: str = ""
     visibility: Visibility = Visibility.PUBLIC
@@ -22,8 +21,8 @@ class ClassAttribute:
         return f"{self.visibility}{self.type} {self.name}".strip()
 
 
-@dataclass(frozen=True, slots=True)
-class ClassMethod:
+class ClassMethod(ValueModel):
+
     name: str
     parameters: tuple[str, ...] = ()
     return_type: str = ""
@@ -34,16 +33,12 @@ class ClassMethod:
         return f"{result} {self.return_type}" if self.return_type else result
 
 
-@dataclass(frozen=True, slots=True)
 class Class(Entity):
-    kind: ClassVar[str] = "class"
     attributes: tuple[str | ClassAttribute, ...] = ()
     methods: tuple[str | ClassMethod, ...] = ()
     annotations: tuple[str, ...] = ()
     comment: str = ""
 
 
-@dataclass(frozen=True, slots=True)
 class ClassNamespace(Container):
-    kind: ClassVar[str] = "class_namespace"
     comment: str = ""

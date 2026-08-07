@@ -27,7 +27,6 @@ class EventModelingDiagram(DiagramModel):
         "EventModelingDiagramConfig",
     )
 
-
     def add_swimlane(self, id: str, label: str) -> ChangeReport:
         return self._add_element(f"add swimlane '{id}'", Swimlane(id, label))
 

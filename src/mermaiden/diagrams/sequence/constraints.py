@@ -2,18 +2,9 @@
 
 from wireup import injectable
 
-from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
+from ..domain import DiagramConstraint
 
 
-class SequenceConstraint(BlockingConstraint):
+@injectable(qualifier="sequence_structure")
+class SequenceConstraint(DiagramConstraint):
     pass
-
-
-@injectable(as_type=SequenceConstraint, qualifier="sequence_structure")
-class SequenceStructure(SequenceConstraint):
-    @property
-    def code(self) -> str:
-        return "sequence.structure"
-
-    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
-        return ()

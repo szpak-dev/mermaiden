@@ -45,7 +45,7 @@ def test_registry_returns_detailed_information_by_mermaid_syntax_id() -> None:
     diagram = Application.create().diagram_info("sequenceDiagram")
 
     assert diagram.name == "Sequence diagram"
-    assert diagram.syntax_id == "sequenceDiagram"
+    assert diagram.id == "sequenceDiagram"
     assert diagram.config_key == "sequence"
 
 

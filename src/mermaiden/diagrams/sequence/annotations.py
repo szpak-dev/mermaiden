@@ -1,7 +1,5 @@
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
 from enum import StrEnum
-from typing import ClassVar
 
 from ...core.annotation import Annotation, TargetKind, TargetRef
 from ...core.error import OperationError
@@ -13,14 +11,11 @@ class NotePosition(StrEnum):
     OVER = "over"
 
 
-@dataclass(frozen=True, slots=True)
 class SequenceNote(Annotation):
-    kind: ClassVar[str] = "sequence_note"
     text: str
     position: NotePosition = NotePosition.OVER
 
 
-@dataclass(frozen=True, slots=True)
 class SequenceNotes:
     def create(
         self, id: str, data: Mapping[str, object], element_ids: Sequence[str], relation_ids: Sequence[str]

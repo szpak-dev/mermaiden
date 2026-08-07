@@ -1,6 +1,4 @@
-from dataclasses import dataclass
 from enum import StrEnum
-from typing import ClassVar
 
 from ...core.element import Container, Entity
 
@@ -12,57 +10,45 @@ class Direction(StrEnum):
     BOTTOM_UP = "BT"
 
 
-@dataclass(frozen=True, slots=True)
 class FlowNode(Entity):
-    kind: ClassVar[str] = "flow_node"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Start(FlowNode):
-    kind: ClassVar[str] = "start"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class End(FlowNode):
-    kind: ClassVar[str] = "end"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Action(FlowNode):
-    kind: ClassVar[str] = "action"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Decision(FlowNode):
-    kind: ClassVar[str] = "decision"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class InputOutput(FlowNode):
-    kind: ClassVar[str] = "input_output"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class DataStore(FlowNode):
-    kind: ClassVar[str] = "data_store"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Document(FlowNode):
-    kind: ClassVar[str] = "document"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Subprocess(FlowNode):
-    kind: ClassVar[str] = "subprocess"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Junction(FlowNode):
-    kind: ClassVar[str] = "junction"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class FlowGroup(Container):
-    kind: ClassVar[str] = "flow_group"
     direction: Direction | None = None

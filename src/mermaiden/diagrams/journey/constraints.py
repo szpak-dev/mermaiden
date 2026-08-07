@@ -1,19 +1,9 @@
 
 from wireup import injectable
 
-from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
+from ..domain import DiagramConstraint
 
 
-class JourneyConstraint(BlockingConstraint):
+@injectable(qualifier="journey_structure")
+class JourneyConstraint(DiagramConstraint):
     pass
-
-
-
-@injectable(as_type=JourneyConstraint, qualifier="journey_structure")
-class JourneyStructure(JourneyConstraint):
-    @property
-    def code(self) -> str:
-        return "journey.structure"
-
-    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
-        return ()

@@ -1,6 +1,4 @@
-from dataclasses import dataclass
 from enum import StrEnum
-from typing import ClassVar
 
 from ...core.element import Entity
 
@@ -27,9 +25,11 @@ class VerificationMethod(StrEnum):
     DEMONSTRATION = "demonstration"
 
 
-@dataclass(frozen=True, slots=True)
-class Requirement(Entity):
-    kind: ClassVar[str] = "requirement"
+class RequirementEndpoint:
+    pass
+
+
+class Requirement(Entity, RequirementEndpoint):
     requirement_id: str = ""
     text: str = ""
     requirement_type: RequirementType = RequirementType.REQUIREMENT
@@ -37,8 +37,6 @@ class Requirement(Entity):
     verification_method: VerificationMethod = VerificationMethod.ANALYSIS
 
 
-@dataclass(frozen=True, slots=True)
-class RequirementElement(Entity):
-    kind: ClassVar[str] = "requirement_element"
+class RequirementElement(Entity, RequirementEndpoint):
     element_type: str = ""
     document_reference: str = ""

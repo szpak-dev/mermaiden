@@ -1,12 +1,13 @@
 
 from wireup import injectable
 
-from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
-from .elements import Requirement, RequirementElement
+from ...core.constraint import ConstraintDiagram, Violation
+from ..domain import DiagramConstraint
+from .elements import RequirementEndpoint
 from .relations import RequirementRelation
 
 
-class RequirementDiagramConstraint(BlockingConstraint):
+class RequirementDiagramConstraint(DiagramConstraint):
     @staticmethod
     def relations(diagram: ConstraintDiagram) -> tuple[RequirementRelation, ...]:
         return tuple(item for item in diagram.find_relations() if isinstance(item, RequirementRelation))
@@ -14,9 +15,6 @@ class RequirementDiagramConstraint(BlockingConstraint):
 
 @injectable(as_type=RequirementDiagramConstraint, qualifier="requirement_relations")
 class RelationsAreValid(RequirementDiagramConstraint):
-    @property
-    def code(self) -> str:
-        return "requirement.relation"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
@@ -32,7 +30,7 @@ class RelationsAreValid(RequirementDiagramConstraint):
                 )
                 continue
             for endpoint in (relation.source_id, relation.target_id):
-                if not isinstance(elements.get(endpoint), (Requirement, RequirementElement)):
+                if not isinstance(elements.get(endpoint), RequirementEndpoint):
                     issues.append(
                         self.violation(
                             f"Relation '{relation.id}' endpoint '{endpoint}' must be a requirement or element.",

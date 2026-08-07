@@ -24,11 +24,6 @@ class DiagramInfo:
             schema_definition=diagram.definition.schema_definition,
         )
 
-    @property
-    def syntax_id(self) -> str:
-        return self.id
-
-
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class DiagramsApplication:

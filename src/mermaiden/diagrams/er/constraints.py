@@ -1,18 +1,9 @@
 
 from wireup import injectable
 
-from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
+from ..domain import DiagramConstraint
 
 
-class EntityRelationshipDiagramConstraint(BlockingConstraint):
+@injectable(qualifier="er_structure")
+class EntityRelationshipDiagramConstraint(DiagramConstraint):
     pass
-
-
-@injectable(as_type=EntityRelationshipDiagramConstraint, qualifier="er_structure")
-class EntityRelationshipDiagramStructure(EntityRelationshipDiagramConstraint):
-    @property
-    def code(self) -> str:
-        return "er.structure"
-
-    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
-        return ()

@@ -1,20 +1,18 @@
 
 from wireup import injectable
 
-from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
+from ...core.constraint import ConstraintDiagram, Violation
+from ..domain import DiagramConstraint
 from .elements import RadarAxis, RadarCurve
 
 
-class RadarConstraint(BlockingConstraint):
+class RadarConstraint(DiagramConstraint):
     pass
 
 
 
 @injectable(as_type=RadarConstraint, qualifier="radar_structure")
 class RadarStructure(RadarConstraint):
-    @property
-    def code(self) -> str:
-        return "radar.structure"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:

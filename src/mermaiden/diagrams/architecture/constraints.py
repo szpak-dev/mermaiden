@@ -2,18 +2,9 @@
 
 from wireup import injectable
 
-from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
+from ..domain import DiagramConstraint
 
 
-class ArchitectureConstraint(BlockingConstraint):
+@injectable(qualifier="architecture_structure")
+class ArchitectureConstraint(DiagramConstraint):
     pass
-
-
-@injectable(as_type=ArchitectureConstraint, qualifier="architecture_structure")
-class ArchitectureStructure(ArchitectureConstraint):
-    @property
-    def code(self) -> str:
-        return "architecture.structure"
-
-    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
-        return ()

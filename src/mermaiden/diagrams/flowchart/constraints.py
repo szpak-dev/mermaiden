@@ -3,22 +3,20 @@ from collections import defaultdict, deque
 from wireup import injectable
 
 from ...core.annotation import TargetKind
-from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
+from ...core.constraint import ConstraintDiagram, Violation
+from ..domain import DiagramConstraint
 from .annotations import Note
 from .elements import Decision, End, FlowNode, Junction, Start
 from .relations import ConditionalFlow, Flow
 
 
-class FlowchartConstraint(BlockingConstraint):
+class FlowchartConstraint(DiagramConstraint):
     @staticmethod
     def flows(diagram: ConstraintDiagram) -> tuple[Flow, ...]:
         return tuple(item for item in diagram.find_relations() if isinstance(item, Flow))
 
 @injectable(as_type=FlowchartConstraint, qualifier="conditional_flows_have_conditions")
 class ConditionalFlowsHaveConditions(FlowchartConstraint):
-    @property
-    def code(self) -> str:
-        return "flowchart.conditional_flow_condition"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
@@ -33,9 +31,6 @@ class ConditionalFlowsHaveConditions(FlowchartConstraint):
 
 @injectable(as_type=FlowchartConstraint, qualifier="decision_branches_are_conditioned")
 class DecisionBranchesAreConditioned(FlowchartConstraint):
-    @property
-    def code(self) -> str:
-        return "flowchart.decision_conditions"
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues: list[Violation] = []
@@ -61,9 +56,6 @@ class DecisionBranchesAreConditioned(FlowchartConstraint):
 
 @injectable(as_type=FlowchartConstraint, qualifier="every_node_is_reachable")
 class EveryNodeIsReachable(FlowchartConstraint):
-    @property
-    def code(self) -> str:
-        return "flowchart.reachable"
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         starts = [item for item in diagram.walk_elements() if isinstance(item, Start)]
@@ -87,9 +79,6 @@ class EveryNodeIsReachable(FlowchartConstraint):
 
 @injectable(as_type=FlowchartConstraint, qualifier="exactly_one_start")
 class ExactlyOneStart(FlowchartConstraint):
-    @property
-    def code(self) -> str:
-        return "flowchart.one_start"
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         count = sum(isinstance(item, Start) for item in diagram.walk_elements())
@@ -99,9 +88,6 @@ class ExactlyOneStart(FlowchartConstraint):
 
 @injectable(as_type=FlowchartConstraint, qualifier="flow_endpoints_are_nodes")
 class FlowEndpointsAreNodes(FlowchartConstraint):
-    @property
-    def code(self) -> str:
-        return "flowchart.flow_endpoint"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
@@ -120,9 +106,6 @@ class FlowEndpointsAreNodes(FlowchartConstraint):
 
 @injectable(as_type=FlowchartConstraint, qualifier="flows_are_binary")
 class FlowsAreBinary(FlowchartConstraint):
-    @property
-    def code(self) -> str:
-        return "flowchart.binary_flow"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
@@ -137,9 +120,6 @@ class FlowsAreBinary(FlowchartConstraint):
 
 @injectable(as_type=FlowchartConstraint, qualifier="node_degree_rules")
 class NodeDegreeRules(FlowchartConstraint):
-    @property
-    def code(self) -> str:
-        return "flowchart.node_degree"
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         incoming: defaultdict[str, list[Flow]] = defaultdict(list)
@@ -202,9 +182,6 @@ class NodeDegreeRules(FlowchartConstraint):
 
 @injectable(as_type=FlowchartConstraint, qualifier="notes_are_valid")
 class NotesAreValid(FlowchartConstraint):
-    @property
-    def code(self) -> str:
-        return "flowchart.note"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:

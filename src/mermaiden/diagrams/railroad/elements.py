@@ -1,44 +1,38 @@
-from dataclasses import dataclass
-from typing import ClassVar
 
-from ...core.element import Container, Entity
+from ...core.element import Container, Entity, RequiresChildren
 
 
-@dataclass(frozen=True, slots=True)
 class Terminal(Entity):
-    kind: ClassVar[str] = "terminal"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class NonTerminal(Entity):
-    kind: ClassVar[str] = "nonterminal"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Special(Entity):
-    kind: ClassVar[str] = "special"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
-class Sequence(Container):
-    kind: ClassVar[str] = "sequence"
+class CompositeExpression(Container, RequiresChildren):
+    pass
 
 
-@dataclass(frozen=True, slots=True)
-class Alternative(Container):
-    kind: ClassVar[str] = "alternative"
+class SequenceExpression(CompositeExpression):
+    pass
 
 
-@dataclass(frozen=True, slots=True)
-class Optional(Container):
-    kind: ClassVar[str] = "optional"
+class AlternativeExpression(CompositeExpression):
+    pass
 
 
-@dataclass(frozen=True, slots=True)
-class Repetition(Container):
-    kind: ClassVar[str] = "repetition"
+class OptionalExpression(CompositeExpression):
+    pass
 
 
-@dataclass(frozen=True, slots=True)
-class Group(Container):
-    kind: ClassVar[str] = "group"
+class RepetitionExpression(CompositeExpression):
+    pass
+
+
+class GroupExpression(CompositeExpression):
+    pass

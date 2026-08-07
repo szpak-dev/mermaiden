@@ -8,7 +8,7 @@ from ...core.constraint import ChangeReport
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import GitGraphDiagramConfiguration
 from .constraints import GitGraphDiagramConstraint
-from .elements import Branch, Checkout, Commit
+from .elements import Branch, Checkout, Commit, CommitType
 
 
 @injectable(as_type=DiagramModel, qualifier="gitgraph", lifetime="scoped")
@@ -24,7 +24,7 @@ class GitGraphDiagram(DiagramModel):
     )
 
 
-    def add_commit(self, id: str, label: str, commit_type: str = "", tag: str = "") -> ChangeReport:
+    def add_commit(self, id: str, label: str, commit_type: CommitType | str = "", tag: str = "") -> ChangeReport:
         return self._add_element(f"add commit '{id}'", Commit(id, label, commit_type, tag))
 
     def add_branch(self, id: str, label: str, order: float | None = None) -> ChangeReport:

@@ -1,22 +1,22 @@
-from dataclasses import dataclass
-from typing import ClassVar
+from enum import StrEnum
 
 from ...core.element import Entity
 
 
-@dataclass(frozen=True, slots=True)
+class CommitType(StrEnum):
+    NORMAL = "NORMAL"
+    REVERSE = "REVERSE"
+    HIGHLIGHT = "HIGHLIGHT"
+
+
 class Commit(Entity):
-    kind: ClassVar[str] = "commit"
-    commit_type: str = ""
+    commit_type: CommitType | str = ""
     tag: str = ""
 
 
-@dataclass(frozen=True, slots=True)
 class Branch(Entity):
-    kind: ClassVar[str] = "branch"
     order: float | None = None
 
 
-@dataclass(frozen=True, slots=True)
 class Checkout(Entity):
-    kind: ClassVar[str] = "checkout"
+    pass

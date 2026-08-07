@@ -2,14 +2,12 @@ from collections import Counter
 
 from wireup import injectable
 
-from ...core.constraint import BlockingConstraint, Constraint, ConstraintDiagram, Violation
+from ...core.constraint import Constraint, ConstraintDiagram, Violation
+from ..domain import StructureConstraint
 
 
 @injectable(as_type=Constraint, qualifier="identities_are_valid")
-class IdentitiesAreValid(BlockingConstraint):
-    @property
-    def code(self) -> str:
-        return "structure.identities"
+class IdentitiesAreValid(StructureConstraint):
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         groups = (

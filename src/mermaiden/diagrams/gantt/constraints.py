@@ -1,19 +1,9 @@
 
 from wireup import injectable
 
-from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
+from ..domain import DiagramConstraint
 
 
-class GanttConstraint(BlockingConstraint):
+@injectable(qualifier="gantt_structure")
+class GanttConstraint(DiagramConstraint):
     pass
-
-
-
-@injectable(as_type=GanttConstraint, qualifier="gantt_structure")
-class GanttStructure(GanttConstraint):
-    @property
-    def code(self) -> str:
-        return "gantt.structure"
-
-    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
-        return ()

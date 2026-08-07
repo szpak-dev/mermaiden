@@ -1,12 +1,13 @@
 
 from wireup import injectable
 
-from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
+from ...core.constraint import ConstraintDiagram, Violation
+from ..domain import DiagramConstraint
 from .elements import Swimlane, SwimlaneNode
 from .relations import Flow
 
 
-class SwimlaneConstraint(BlockingConstraint):
+class SwimlaneConstraint(DiagramConstraint):
     @staticmethod
     def flows(diagram: ConstraintDiagram) -> tuple[Flow, ...]:
         return tuple(item for item in diagram.find_relations() if isinstance(item, Flow))
@@ -14,9 +15,6 @@ class SwimlaneConstraint(BlockingConstraint):
 
 @injectable(as_type=SwimlaneConstraint, qualifier="flow_endpoints_are_nodes")
 class FlowEndpointsAreNodes(SwimlaneConstraint):
-    @property
-    def code(self) -> str:
-        return "swimlane.flow_endpoint"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
@@ -38,9 +36,6 @@ class FlowEndpointsAreNodes(SwimlaneConstraint):
 
 @injectable(as_type=SwimlaneConstraint, qualifier="flows_are_binary")
 class FlowsAreBinary(SwimlaneConstraint):
-    @property
-    def code(self) -> str:
-        return "swimlane.binary_flow"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
@@ -55,9 +50,6 @@ class FlowsAreBinary(SwimlaneConstraint):
 
 @injectable(as_type=SwimlaneConstraint, qualifier="lanes_are_top_level")
 class LanesAreTopLevel(SwimlaneConstraint):
-    @property
-    def code(self) -> str:
-        return "swimlane.top_level_lanes"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
@@ -70,9 +62,6 @@ class LanesAreTopLevel(SwimlaneConstraint):
 
 @injectable(as_type=SwimlaneConstraint, qualifier="nodes_belong_to_lanes")
 class NodesBelongToLanes(SwimlaneConstraint):
-    @property
-    def code(self) -> str:
-        return "swimlane.node_lane"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:

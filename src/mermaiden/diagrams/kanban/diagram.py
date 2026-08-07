@@ -8,7 +8,7 @@ from ...core.constraint import ChangeReport
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import KanbanDiagramConfiguration
 from .constraints import KanbanDiagramConstraint
-from .elements import Column, Task
+from .elements import Column, KanbanPriority, Task
 
 
 @injectable(as_type=DiagramModel, qualifier="kanban", lifetime="scoped")
@@ -34,7 +34,7 @@ class KanbanDiagram(DiagramModel):
         column_id: str,
         assigned: str = "",
         ticket: str = "",
-        priority: str = "",
+        priority: KanbanPriority | str = "",
     ) -> ChangeReport:
         return self._add_element(
             f"add task '{id}'",

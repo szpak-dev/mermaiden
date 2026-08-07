@@ -1,8 +1,8 @@
 from dataclasses import dataclass
-from typing import ClassVar
 
 from wireup import injectable
 
+from ..diagrams.application import DiagramsApplication
 from ..diagrams.architecture.diagram import Architecture
 from ..diagrams.architecture.relations import Port
 from ..diagrams.block.diagram import BlockDiagram
@@ -25,7 +25,6 @@ from ..diagrams.packet.diagram import Packet
 from ..diagrams.pie.diagram import PieDiagram
 from ..diagrams.radar.diagram import Radar
 from ..diagrams.railroad.diagram import RailroadDiagram
-from ..diagrams.application import DiagramsApplication
 from ..diagrams.requirement.diagram import RequirementDiagram
 from ..diagrams.requirement.elements import RequirementType, Risk, VerificationMethod
 from ..diagrams.requirement.relations import RequirementRelationKind
@@ -50,39 +49,9 @@ class DiagramFixtures:
     renderer: MermaidApplication
     registry: DiagramsApplication
 
-    compatibility_names: ClassVar[dict[str, str]] = {
-        "architecture": "architecture-beta",
-        "block": "block",
-        "c4": "C4Context",
-        "classdiagram": "classDiagram",
-        "cynefin": "cynefin-beta",
-        "er": "erDiagram",
-        "eventmodeling": "eventmodeling",
-        "flowchart": "flowchart",
-        "gantt": "gantt",
-        "gitgraph": "gitGraph",
-        "journey": "journey",
-        "ishikawa": "ishikawa-beta",
-        "kanban": "kanban",
-        "mindmap": "mindmap",
-        "packet": "packet",
-        "pie": "pie",
-        "radar": "radar-beta",
-        "railroad": "railroad-ebnf-beta",
-        "requirement": "requirementDiagram",
-        "sankey": "sankey",
-        "sequence": "sequenceDiagram",
-        "state": "stateDiagram-v2",
-        "swimlane": "swimlane-beta",
-        "timeline": "timeline",
-        "treeview": "treeView-beta",
-        "venn": "venn-beta",
-        "wardley": "wardley-beta",
-    }
-
     def render_compatibility_sources(self) -> dict[str, str]:
         fixtures = self.render()
-        return {diagram_id: fixtures[name] for name, diagram_id in self.compatibility_names.items()}
+        return {self.registry.get_by_config_key(name).id: source for name, source in fixtures.items()}
 
     def render(self) -> dict[str, str]:
         flowchart = self.registry.get_diagram("flowchart")

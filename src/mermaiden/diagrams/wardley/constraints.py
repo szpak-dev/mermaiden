@@ -1,19 +1,17 @@
 
 from wireup import injectable
 
-from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
+from ...core.constraint import ConstraintDiagram, Violation
+from ..domain import DiagramConstraint
 from .elements import Component, Evolution
 
 
-class WardleyDiagramConstraint(BlockingConstraint):
+class WardleyDiagramConstraint(DiagramConstraint):
     pass
 
 
 @injectable(as_type=WardleyDiagramConstraint, qualifier="wardley_structure")
 class WardleyDiagramStructure(WardleyDiagramConstraint):
-    @property
-    def code(self) -> str:
-        return "wardley.structure"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:

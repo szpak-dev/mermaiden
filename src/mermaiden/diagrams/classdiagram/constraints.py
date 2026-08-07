@@ -1,19 +1,17 @@
 
 from wireup import injectable
 
-from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
+from ...core.constraint import ConstraintDiagram, Violation
+from ..domain import DiagramConstraint
 from .elements import Class
 from .relations import ClassRelation
 
 
-class ClassDiagramConstraint(BlockingConstraint):
+class ClassDiagramConstraint(DiagramConstraint):
     pass
 
 @injectable(as_type=ClassDiagramConstraint, qualifier="classdiagram_relations")
 class ClassRelationsAreBinary(ClassDiagramConstraint):
-    @property
-    def code(self) -> str:
-        return "classdiagram.relations"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:

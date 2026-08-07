@@ -2,22 +2,20 @@
 from wireup import injectable
 
 from ...core.annotation import TargetKind
-from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
+from ...core.constraint import ConstraintDiagram, Violation
+from ..domain import DiagramConstraint
 from .annotations import StateNote
-from .elements import CompositeState, StateNode
+from .elements import StateEndpoint, StateNode
 from .relations import StateTransition
 
 
-class StateDiagramConstraint(BlockingConstraint):
+class StateDiagramConstraint(DiagramConstraint):
     @staticmethod
     def transitions(diagram: ConstraintDiagram) -> tuple[StateTransition, ...]:
         return tuple(item for item in diagram.find_relations() if isinstance(item, StateTransition))
 
 @injectable(as_type=StateDiagramConstraint, qualifier="state_notes")
 class NotesAreValid(StateDiagramConstraint):
-    @property
-    def code(self) -> str:
-        return "state.note"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
@@ -33,9 +31,6 @@ class NotesAreValid(StateDiagramConstraint):
 
 @injectable(as_type=StateDiagramConstraint, qualifier="state_transitions")
 class TransitionsAreValid(StateDiagramConstraint):
-    @property
-    def code(self) -> str:
-        return "state.transition"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
@@ -51,7 +46,7 @@ class TransitionsAreValid(StateDiagramConstraint):
                 )
                 continue
             for endpoint in (transition.source_id, transition.target_id):
-                if not isinstance(elements.get(endpoint), (StateNode, CompositeState)):
+                if not isinstance(elements.get(endpoint), StateEndpoint):
                     issues.append(
                         self.violation(
                             f"Transition '{transition.id}' endpoint '{endpoint}' must be a state node.",

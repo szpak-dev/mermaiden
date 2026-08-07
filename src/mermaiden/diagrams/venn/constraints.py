@@ -1,20 +1,18 @@
 
 from wireup import injectable
 
-from ...core.constraint import BlockingConstraint, ConstraintDiagram, Violation
+from ...core.constraint import ConstraintDiagram, Violation
+from ..domain import DiagramConstraint
 from .elements import VennSet, VennUnion
 
 
-class VennConstraint(BlockingConstraint):
+class VennConstraint(DiagramConstraint):
     pass
 
 
 
 @injectable(as_type=VennConstraint, qualifier="venn_structure")
 class VennStructure(VennConstraint):
-    @property
-    def code(self) -> str:
-        return "venn.structure"
 
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
