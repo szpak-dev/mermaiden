@@ -27,7 +27,7 @@ class GitGraphDiagram(DiagramModel):
     def add_commit(self, id: str, label: str, commit_type: CommitType | str = "", tag: str = "") -> ChangeReport:
         return self._add_element(f"add commit '{id}'", Commit(id=id, label=label, commit_type=commit_type, tag=tag))
 
-    def add_branch(self, id: str, label: str, order: float | None = None) -> ChangeReport:
+    def add_branch(self, id: str, label: str, order: int | None = None) -> ChangeReport:
         return self._add_element(f"add branch '{id}'", Branch(id=id, label=label, order=order))
 
     def checkout(self, id: str, branch: str) -> ChangeReport:

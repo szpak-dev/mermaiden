@@ -15,7 +15,7 @@ class Commit(Entity):
 
 
 class Branch(Entity):
-    order: float | None = None
+    order: int | None = None
 
 
 class Checkout(Entity):
