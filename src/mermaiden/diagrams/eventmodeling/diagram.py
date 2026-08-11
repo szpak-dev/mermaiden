@@ -28,19 +28,19 @@ class EventModelingDiagram(DiagramModel):
     )
 
     def add_swimlane(self, id: str, label: str) -> ChangeReport:
-        return self._add_element(f"add swimlane '{id}'", Swimlane(id, label))
+        return self._add_element(f"add swimlane '{id}'", Swimlane(id=id, label=label))
 
     def add_actor(self, id: str, label: str, swimlane_id: str) -> ChangeReport:
-        return self._add_element(f"add actor '{id}'", Actor(id, label), swimlane_id)
+        return self._add_element(f"add actor '{id}'", Actor(id=id, label=label), swimlane_id)
 
     def add_command(self, id: str, label: str, swimlane_id: str) -> ChangeReport:
-        return self._add_element(f"add command '{id}'", Command(id, label), swimlane_id)
+        return self._add_element(f"add command '{id}'", Command(id=id, label=label), swimlane_id)
 
     def add_view(self, id: str, label: str, swimlane_id: str) -> ChangeReport:
-        return self._add_element(f"add view '{id}'", View(id, label), swimlane_id)
+        return self._add_element(f"add view '{id}'", View(id=id, label=label), swimlane_id)
 
     def add_event(self, id: str, label: str, swimlane_id: str) -> ChangeReport:
-        return self._add_element(f"add event '{id}'", Event(id, label), swimlane_id)
+        return self._add_element(f"add event '{id}'", Event(id=id, label=label), swimlane_id)
 
     def add_flow(self, id: str, source_id: str, target_id: str) -> ChangeReport:
-        return self._add_relation(f"add flow '{id}'", Flow(id, (source_id, target_id)))
+        return self._add_relation(f"add flow '{id}'", Flow(id=id, element_ids=(source_id, target_id)))

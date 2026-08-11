@@ -25,28 +25,28 @@ class Mindmap(DiagramModel):
 
 
     def add_root(self, id: str, label: str) -> ChangeReport:
-        return self._add_node(MindmapNode(id, label), "", "root")
+        return self._add_node(MindmapNode(id=id, label=label), "", "root")
 
     def add_node(self, id: str, label: str, parent_id: str) -> ChangeReport:
-        return self._add_node(MindmapNode(id, label), parent_id, "node")
+        return self._add_node(MindmapNode(id=id, label=label), parent_id, "node")
 
     def add_square(self, id: str, label: str, parent_id: str) -> ChangeReport:
-        return self._add_node(Square(id, label), parent_id, "square")
+        return self._add_node(Square(id=id, label=label), parent_id, "square")
 
     def add_rounded_square(self, id: str, label: str, parent_id: str) -> ChangeReport:
-        return self._add_node(RoundedSquare(id, label), parent_id, "rounded square")
+        return self._add_node(RoundedSquare(id=id, label=label), parent_id, "rounded square")
 
     def add_circle(self, id: str, label: str, parent_id: str) -> ChangeReport:
-        return self._add_node(Circle(id, label), parent_id, "circle")
+        return self._add_node(Circle(id=id, label=label), parent_id, "circle")
 
     def add_bang(self, id: str, label: str, parent_id: str) -> ChangeReport:
-        return self._add_node(Bang(id, label), parent_id, "bang")
+        return self._add_node(Bang(id=id, label=label), parent_id, "bang")
 
     def add_cloud(self, id: str, label: str, parent_id: str) -> ChangeReport:
-        return self._add_node(Cloud(id, label), parent_id, "cloud")
+        return self._add_node(Cloud(id=id, label=label), parent_id, "cloud")
 
     def add_hexagon(self, id: str, label: str, parent_id: str) -> ChangeReport:
-        return self._add_node(Hexagon(id, label), parent_id, "hexagon")
+        return self._add_node(Hexagon(id=id, label=label), parent_id, "hexagon")
 
     def _add_node(self, node: MindmapNode, parent_id: str, kind: str) -> ChangeReport:
         return self._add_element(f"add {kind} '{node.id}'", node, parent_id)

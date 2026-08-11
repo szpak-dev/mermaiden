@@ -22,4 +22,4 @@ class ClassNotes:
             raise OperationError("Class notes require exactly one string 'text' value.")
         text = data["text"]
         assert isinstance(text, str)
-        return ClassNote(id, (TargetRef(TargetKind.ELEMENT, element_ids[0]),), text)
+        return ClassNote(id=id, targets=(TargetRef(kind=TargetKind.ELEMENT, id=element_ids[0]),), text=text)

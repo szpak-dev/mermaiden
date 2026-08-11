@@ -38,12 +38,21 @@ class ClassDiagram(DiagramModel):
     ) -> ChangeReport:
         return self._add_element(
             f"add class '{id}'",
-            Class(id, label or id, tuple(attributes), tuple(methods), tuple(annotations), comment),
+            Class(
+                id=id,
+                label=label or id,
+                attributes=tuple(attributes),
+                methods=tuple(methods),
+                annotations=tuple(annotations),
+                comment=comment,
+            ),
             parent_id,
         )
 
     def add_namespace(self, id: str, label: str = "", *, comment: str = "") -> ChangeReport:
-        return self._add_element(f"add namespace '{id}'", ClassNamespace(id, label or id, (), comment))
+        return self._add_element(
+            f"add namespace '{id}'", ClassNamespace(id=id, label=label or id, elements=(), comment=comment)
+        )
 
     def add_relation(
         self,
@@ -57,7 +66,14 @@ class ClassDiagram(DiagramModel):
     ) -> ChangeReport:
         return self._add_relation(
             f"add class relation '{id}'",
-            ClassRelation(id, (source_id, target_id), label, relation_kind, source_label, target_label),
+            ClassRelation(
+                id=id,
+                element_ids=(source_id, target_id),
+                label=label,
+                relation_kind=relation_kind,
+                source_label=source_label,
+                target_label=target_label,
+            ),
         )
 
     def add_note(self, id: str, class_id: str, text: str) -> ChangeReport:

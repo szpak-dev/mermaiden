@@ -25,7 +25,6 @@ class Gantt(DiagramModel):
         "GanttDiagramConfig",
     )
 
-
     def set_title(self, title: str) -> None:
         object.__setattr__(self, "title", title)
 
@@ -33,13 +32,15 @@ class Gantt(DiagramModel):
         object.__setattr__(self, "date_format", date_format)
 
     def add_section(self, id: str, label: str) -> ChangeReport:
-        return self._add_element(f"add section '{id}'", Section(id, label))
+        return self._add_element(f"add section '{id}'", Section(id=id, label=label))
 
     def add_task(self, id: str, label: str, metadata: tuple[str, ...], section_id: str) -> ChangeReport:
-        return self._add_element(f"add task '{id}'", Task(id, label, metadata), section_id)
+        return self._add_element(f"add task '{id}'", Task(id=id, label=label, metadata=metadata), section_id)
 
     def add_milestone(self, id: str, label: str, metadata: tuple[str, ...], section_id: str) -> ChangeReport:
-        return self._add_element(f"add milestone '{id}'", Milestone(id, label, ("milestone", *metadata)), section_id)
+        return self._add_element(
+            f"add milestone '{id}'", Milestone(id=id, label=label, metadata=("milestone", *metadata)), section_id
+        )
 
     def add_marker(self, id: str, label: str, date: str) -> ChangeReport:
-        return self._add_element(f"add marker '{id}'", Marker(id, label, date))
+        return self._add_element(f"add marker '{id}'", Marker(id=id, label=label, date=date))

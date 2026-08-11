@@ -29,25 +29,25 @@ class StateDiagram(DiagramModel):
 
 
     def add_state(self, id: str, label: str = "", composite_id: str = "") -> ChangeReport:
-        return self._add_node(State(id, label), composite_id, "state")
+        return self._add_node(State(id=id, label=label), composite_id, "state")
 
     def add_initial(self, id: str, composite_id: str = "") -> ChangeReport:
-        return self._add_node(Initial(id, "initial"), composite_id, "initial state")
+        return self._add_node(Initial(id=id, label="initial"), composite_id, "initial state")
 
     def add_final(self, id: str, composite_id: str = "") -> ChangeReport:
-        return self._add_node(Final(id, "final"), composite_id, "final state")
+        return self._add_node(Final(id=id, label="final"), composite_id, "final state")
 
     def add_composite(self, id: str, label: str = "", composite_id: str = "") -> ChangeReport:
-        return self._add_node(CompositeState(id, label), composite_id, "composite state")
+        return self._add_node(CompositeState(id=id, label=label), composite_id, "composite state")
 
     def add_choice(self, id: str, label: str = "", composite_id: str = "") -> ChangeReport:
-        return self._add_node(Choice(id, label), composite_id, "choice")
+        return self._add_node(Choice(id=id, label=label), composite_id, "choice")
 
     def add_fork(self, id: str, label: str = "", composite_id: str = "") -> ChangeReport:
-        return self._add_node(Fork(id, label), composite_id, "fork")
+        return self._add_node(Fork(id=id, label=label), composite_id, "fork")
 
     def add_join(self, id: str, label: str = "", composite_id: str = "") -> ChangeReport:
-        return self._add_node(Join(id, label), composite_id, "join")
+        return self._add_node(Join(id=id, label=label), composite_id, "join")
 
     def add_transition(
         self,
@@ -60,12 +60,12 @@ class StateDiagram(DiagramModel):
         return self._add_relation(
             f"add transition '{id}'",
             StateTransition(
-                id,
-                (source_id, target_id),
-                label,
-                composite_id,
-                isinstance(self.find_element(source_id), Initial),
-                isinstance(self.find_element(target_id), Final),
+                id=id,
+                element_ids=(source_id, target_id),
+                label=label,
+                scope_id=composite_id,
+                source_terminal=isinstance(self.find_element(source_id), Initial),
+                target_terminal=isinstance(self.find_element(target_id), Final),
             ),
         )
 

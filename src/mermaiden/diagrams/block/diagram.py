@@ -24,15 +24,16 @@ class BlockDiagram(DiagramModel):
         "BlockDiagramConfig",
     )
 
-
     def set_columns(self, columns: int) -> None:
         object.__setattr__(self, "columns", columns)
 
     def add_group(self, id: str, label: str, columns: int | None = None, span: int | None = None) -> ChangeReport:
-        return self._add_element(f"add group '{id}'", BlockGroup(id, label, (), columns, span))
+        return self._add_element(
+            f"add group '{id}'", BlockGroup(id=id, label=label, elements=(), columns=columns, span=span)
+        )
 
     def add_block(self, id: str, label: str, span: int | None = None, parent_id: str = "") -> ChangeReport:
-        return self._add_element(f"add block '{id}'", BlockNode(id, label, span), parent_id)
+        return self._add_element(f"add block '{id}'", BlockNode(id=id, label=label, span=span), parent_id)
 
     def add_space(self, id: str, span: int | None = None, parent_id: str = "") -> ChangeReport:
-        return self._add_element(f"add space '{id}'", BlockSpace(id, "space", span), parent_id)
+        return self._add_element(f"add space '{id}'", BlockSpace(id=id, label="space", span=span), parent_id)

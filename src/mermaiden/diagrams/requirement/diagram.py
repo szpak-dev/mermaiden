@@ -30,7 +30,6 @@ class RequirementDiagram(DiagramModel):
         "RequirementDiagramConfig",
     )
 
-
     def add_requirement(
         self,
         id: str,
@@ -42,13 +41,21 @@ class RequirementDiagram(DiagramModel):
     ) -> ChangeReport:
         return self._add_element(
             f"add requirement '{id}'",
-            Requirement(id, id, requirement_id, text, requirement_type, risk, verification_method),
+            Requirement(
+                id=id,
+                label=id,
+                requirement_id=requirement_id,
+                text=text,
+                requirement_type=requirement_type,
+                risk=risk,
+                verification_method=verification_method,
+            ),
         )
 
     def add_element(self, id: str, element_type: str, document_reference: str) -> ChangeReport:
         return self._add_element(
             f"add element '{id}'",
-            RequirementElement(id, id, element_type, document_reference),
+            RequirementElement(id=id, label=id, element_type=element_type, document_reference=document_reference),
         )
 
     def add_relation(
@@ -60,7 +67,7 @@ class RequirementDiagram(DiagramModel):
     ) -> ChangeReport:
         return self._add_relation(
             f"add {relation_kind.value} relation '{id}'",
-            RequirementRelation(id, (source_id, target_id), "", relation_kind),
+            RequirementRelation(id=id, element_ids=(source_id, target_id), label="", relation_kind=relation_kind),
         )
 
     def remove_relation(self, id: str) -> ChangeReport:

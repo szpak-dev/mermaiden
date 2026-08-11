@@ -33,9 +33,8 @@ class SequenceDiagram(DiagramModel):
         "SequenceDiagramConfig",
     )
 
-
     def add_box(self, id: str, label: str, color: str = "") -> ChangeReport:
-        return self._add_element(f"add box '{id}'", ParticipantBox(id, label, (), color))
+        return self._add_element(f"add box '{id}'", ParticipantBox(id=id, label=label, elements=(), color=color))
 
     def add_participant(
         self,
@@ -45,7 +44,11 @@ class SequenceDiagram(DiagramModel):
         box_id: str = "",
         created: bool = False,
     ) -> ChangeReport:
-        return self._add_element(f"add participant '{id}'", Participant(id, label or id, kind, created), box_id)
+        return self._add_element(
+            f"add participant '{id}'",
+            Participant(id=id, label=label or id, participant_kind=kind, created=created),
+            box_id,
+        )
 
     def add_message(
         self,
@@ -58,7 +61,15 @@ class SequenceDiagram(DiagramModel):
         deactivate: bool = False,
     ) -> ChangeReport:
         return self._add_relation(
-            f"add message '{id}'", Message(id, (source_id, target_id), label, kind, activate, deactivate)
+            f"add message '{id}'",
+            Message(
+                id=id,
+                element_ids=(source_id, target_id),
+                label=label,
+                message_kind=kind,
+                activate=activate,
+                deactivate=deactivate,
+            ),
         )
 
     def activate(self, id: str, participant_id: str) -> ChangeReport:
@@ -76,13 +87,18 @@ class SequenceDiagram(DiagramModel):
     def control(self, id: str, kind: ControlKind, label: str = "") -> ChangeReport:
         return self._add_relation(
             f"add {kind.value} '{id}'",
-            Control(id, self._anchors(f"add {kind.value} '{id}'"), label, kind),
+            Control(id=id, element_ids=self._anchors(f"add {kind.value} '{id}'"), label=label, control_kind=kind),
         )
 
     def autonumber(self, id: str) -> ChangeReport:
         return self._add_relation(
             f"add autonumber '{id}'",
-            Directive(id, self._anchors(f"add autonumber '{id}'"), "", DirectiveKind.AUTONUMBER),
+            Directive(
+                id=id,
+                element_ids=self._anchors(f"add autonumber '{id}'"),
+                label="",
+                directive_kind=DirectiveKind.AUTONUMBER,
+            ),
         )
 
     def add_note(
@@ -99,7 +115,7 @@ class SequenceDiagram(DiagramModel):
     def _event(self, id: str, participant_id: str, action: str) -> ChangeReport:
         return self._add_relation(
             f"{action} '{participant_id}'",
-            ParticipantEvent(id, (participant_id, participant_id), "", action),
+            ParticipantEvent(id=id, element_ids=(participant_id, participant_id), label="", action=action),
         )
 
     def _anchors(self, operation: str) -> tuple[str, str]:

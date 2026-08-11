@@ -1,3 +1,5 @@
+from typing import Any, cast
+
 from mermaiden.application import Application
 
 
@@ -11,7 +13,7 @@ class TestDiagramCatalog:
         assert set(description.elements) == {"participant", "participant_box"}
         assert {"message", "participant_event", "control", "directive"} == set(description.relations)
         assert "add_participant" in description.commands
-        assert payload.model_validate({"id": "api", "kind": "actor"}).kind.value == "actor"
+        assert cast(Any, payload.model_validate({"id": "api", "kind": "actor"})).kind.value == "actor"
 
     def test_discovers_variadic_command_arguments_as_json_arrays(self) -> None:
         schema = Application.create().command_payload("sequenceDiagram", "add_note").model_json_schema()

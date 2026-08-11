@@ -24,9 +24,10 @@ class Sankey(DiagramModel):
         "SankeyDiagramConfig",
     )
 
-
     def add_node(self, id: str, label: str) -> ChangeReport:
-        return self._add_element(f"add node '{id}'", SankeyNode(id, label))
+        return self._add_element(f"add node '{id}'", SankeyNode(id=id, label=label))
 
     def add_flow(self, id: str, source_id: str, target_id: str, value: float) -> ChangeReport:
-        return self._add_relation(f"add flow '{id}'", SankeyLink(id, (source_id, target_id), "", value))
+        return self._add_relation(
+            f"add flow '{id}'", SankeyLink(id=id, element_ids=(source_id, target_id), label="", value=value)
+        )

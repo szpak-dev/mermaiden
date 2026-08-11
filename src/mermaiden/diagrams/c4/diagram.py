@@ -24,18 +24,25 @@ class C4ContextDiagram(DiagramModel):
         "C4DiagramConfig",
     )
 
-
     def add_person(self, id: str, label: str, description: str = "") -> ChangeReport:
-        return self._add_element(f"add person '{id}'", Person(id, label, description))
+        return self._add_element(f"add person '{id}'", Person(id=id, label=label, description=description))
 
     def add_system(self, id: str, label: str, description: str = "", technology: str = "") -> ChangeReport:
-        return self._add_element(f"add system '{id}'", System(id, label, description, technology))
+        return self._add_element(
+            f"add system '{id}'", System(id=id, label=label, description=description, technology=technology)
+        )
 
     def add_database(self, id: str, label: str, description: str = "", technology: str = "") -> ChangeReport:
-        return self._add_element(f"add database '{id}'", SystemDb(id, label, description, technology))
+        return self._add_element(
+            f"add database '{id}'", SystemDb(id=id, label=label, description=description, technology=technology)
+        )
 
     def add_queue(self, id: str, label: str, description: str = "", technology: str = "") -> ChangeReport:
-        return self._add_element(f"add queue '{id}'", SystemQueue(id, label, description, technology))
+        return self._add_element(
+            f"add queue '{id}'", SystemQueue(id=id, label=label, description=description, technology=technology)
+        )
 
     def add_relationship(self, id: str, source_id: str, target_id: str, label: str) -> ChangeReport:
-        return self._add_relation(f"add relationship '{id}'", Relationship(id, (source_id, target_id), label))
+        return self._add_relation(
+            f"add relationship '{id}'", Relationship(id=id, element_ids=(source_id, target_id), label=label)
+        )

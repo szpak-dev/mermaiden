@@ -36,10 +36,10 @@ class TreeView(DiagramModel):
         return tuple(item for item in super().root_elements if isinstance(item, TreeItem) and item.id not in child_ids)
 
     def add_item(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self._add_element(f"add tree item '{id}'", TreeItem(id, label), parent_id)
+        return self._add_element(f"add tree item '{id}'", TreeItem(id=id, label=label), parent_id)
 
     def add_branch(self, id: str, parent_id: str, child_id: str) -> ChangeReport:
-        return self._add_relation(f"add tree branch '{id}'", TreeBranch(id, (parent_id, child_id)))
+        return self._add_relation(f"add tree branch '{id}'", TreeBranch(id=id, element_ids=(parent_id, child_id)))
 
     def add_annotation(
         self,

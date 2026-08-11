@@ -33,4 +33,4 @@ class PieDiagram(DiagramModel):
         object.__setattr__(self, "show_data", True)
 
     def add_slice(self, id: str, label: str, value: float) -> ChangeReport:
-        return self._add_element(f"add pie slice '{id}'", PieSlice(id, label, value))
+        return self._add_element(f"add pie slice '{id}'", PieSlice(id=id, label=label, value=value))

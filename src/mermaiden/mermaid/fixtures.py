@@ -101,8 +101,8 @@ class DiagramFixtures:
         classes.add_namespace("domain", "Domain", comment="Domain types")
         classes.add_class(
             "Animal",
-            attributes=(ClassAttribute("name", "String"),),
-            methods=(ClassMethod("sound", return_type="void"),),
+            attributes=(ClassAttribute(name="name", type="String"),),
+            methods=(ClassMethod(name="sound", return_type="void"),),
             annotations=("abstract",),
             parent_id="domain",
         )

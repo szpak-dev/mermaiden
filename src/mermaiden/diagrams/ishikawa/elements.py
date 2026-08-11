@@ -12,4 +12,3 @@ class Cause(Entity):
 
 class Category(Container):
     pass
-

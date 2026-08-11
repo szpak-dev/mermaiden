@@ -28,30 +28,30 @@ class SwimlaneDiagram(DiagramModel):
 
 
     def add_lane(self, id: str, label: str) -> ChangeReport:
-        return self._add_element(f"add lane '{id}'", Swimlane(id, label))
+        return self._add_element(f"add lane '{id}'", Swimlane(id=id, label=label))
 
     def add_activity(self, id: str, label: str, lane_id: str) -> ChangeReport:
-        return self._add_node(Activity(id, label), lane_id, "activity")
+        return self._add_node(Activity(id=id, label=label), lane_id, "activity")
 
     def add_start(self, id: str, label: str, lane_id: str) -> ChangeReport:
-        return self._add_node(Start(id, label), lane_id, "start")
+        return self._add_node(Start(id=id, label=label), lane_id, "start")
 
     def add_end(self, id: str, label: str, lane_id: str) -> ChangeReport:
-        return self._add_node(End(id, label), lane_id, "end")
+        return self._add_node(End(id=id, label=label), lane_id, "end")
 
     def add_decision(self, id: str, label: str, lane_id: str) -> ChangeReport:
-        return self._add_node(Decision(id, label), lane_id, "decision")
+        return self._add_node(Decision(id=id, label=label), lane_id, "decision")
 
     def add_connector(self, id: str, label: str, lane_id: str) -> ChangeReport:
-        return self._add_node(Connector(id, label), lane_id, "connector")
+        return self._add_node(Connector(id=id, label=label), lane_id, "connector")
 
     def add_flow(self, id: str, source_id: str, target_id: str, label: str = "") -> ChangeReport:
-        return self._add_relation(f"add flow '{id}'", Flow(id, (source_id, target_id), label))
+        return self._add_relation(f"add flow '{id}'", Flow(id=id, element_ids=(source_id, target_id), label=label))
 
     def add_conditional_flow(self, id: str, source_id: str, target_id: str, condition: str) -> ChangeReport:
         return self._add_relation(
             f"add conditional flow '{id}'",
-            ConditionalFlow(id, (source_id, target_id), condition),
+            ConditionalFlow(id=id, element_ids=(source_id, target_id), label=condition),
         )
 
     def remove_flow(self, id: str) -> ChangeReport:

@@ -29,10 +29,10 @@ class Timeline(DiagramModel):
         object.__setattr__(self, "title", title)
 
     def add_section(self, id: str, label: str) -> ChangeReport:
-        return self._add_element(f"add section '{id}'", TimelineSection(id, label))
+        return self._add_element(f"add section '{id}'", TimelineSection(id=id, label=label))
 
     def add_period(self, id: str, label: str, section_id: str = "") -> ChangeReport:
-        return self._add_element(f"add period '{id}'", TimelinePeriod(id, label), section_id)
+        return self._add_element(f"add period '{id}'", TimelinePeriod(id=id, label=label), section_id)
 
     def add_event(self, id: str, label: str, period_id: str) -> ChangeReport:
-        return self._add_element(f"add event '{id}'", TimelineEvent(id, label), period_id)
+        return self._add_element(f"add event '{id}'", TimelineEvent(id=id, label=label), period_id)

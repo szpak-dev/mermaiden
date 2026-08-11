@@ -33,7 +33,7 @@ class EntityRelationshipDiagram(DiagramModel):
         object.__setattr__(self, "direction", direction)
 
     def add_entity(self, id: str, label: str) -> ChangeReport:
-        return self._add_element(f"add entity '{id}'", Entity(id, label))
+        return self._add_element(f"add entity '{id}'", Entity(id=id, label=label))
 
     def add_attribute(
         self,
@@ -46,7 +46,7 @@ class EntityRelationshipDiagram(DiagramModel):
     ) -> ChangeReport:
         return self._add_element(
             f"add attribute '{id}'",
-            EntityAttribute(id, label, data_type, keys, comment),
+            EntityAttribute(id=id, label=label, data_type=data_type, keys=keys, comment=comment),
             entity_id,
         )
 
@@ -60,5 +60,5 @@ class EntityRelationshipDiagram(DiagramModel):
     ) -> ChangeReport:
         return self._add_relation(
             f"add relationship '{id}",
-            EntityRelationship(id, (source_id, target_id), label, notation),
+            EntityRelationship(id=id, element_ids=(source_id, target_id), label=label, notation=notation),
         )

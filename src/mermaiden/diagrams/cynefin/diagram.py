@@ -24,9 +24,10 @@ class CynefinDiagram(DiagramModel):
         "CynefinDiagramConfig",
     )
 
-
     def add_item(self, id: str, label: str, domain: DomainKind) -> ChangeReport:
-        return self._add_element(f"add {domain.value} item '{id}'", Domain(id, label, domain))
+        return self._add_element(f"add {domain.value} item '{id}'", Domain(id=id, label=label, domain=domain))
 
     def add_transition(self, id: str, source_id: str, target_id: str, label: str = "") -> ChangeReport:
-        return self._add_relation(f"add transition '{id}'", Transition(id, (source_id, target_id), label))
+        return self._add_relation(
+            f"add transition '{id}'", Transition(id=id, element_ids=(source_id, target_id), label=label)
+        )

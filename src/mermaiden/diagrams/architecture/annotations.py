@@ -16,4 +16,4 @@ class ArchitectureNotes:
             raise OperationError("Architecture notes require one element and one string 'text' value.")
         text = data["text"]
         assert isinstance(text, str)
-        return ArchitectureNote(id, (TargetRef(TargetKind.ELEMENT, element_ids[0]),), text)
+        return ArchitectureNote(id=id, targets=(TargetRef(kind=TargetKind.ELEMENT, id=element_ids[0]),), text=text)

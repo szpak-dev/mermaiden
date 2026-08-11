@@ -28,15 +28,16 @@ class Architecture(DiagramModel):
         "ArchitectureDiagramConfig",
     )
 
-
     def add_group(self, id: str, label: str, parent_id: str = "", columns: int = 1) -> ChangeReport:
-        return self._add_element(f"add group '{id}'", ArchitectureGroup(id, label, (), columns), parent_id)
+        return self._add_element(
+            f"add group '{id}'", ArchitectureGroup(id=id, label=label, elements=(), columns=columns), parent_id
+        )
 
     def add_service(self, id: str, label: str, group_id: str = "") -> ChangeReport:
-        return self._add_element(f"add service '{id}'", Service(id, label), group_id)
+        return self._add_element(f"add service '{id}'", Service(id=id, label=label), group_id)
 
     def add_junction(self, id: str, label: str = "", group_id: str = "") -> ChangeReport:
-        return self._add_element(f"add junction '{id}'", Junction(id, label or id), group_id)
+        return self._add_element(f"add junction '{id}'", Junction(id=id, label=label or id), group_id)
 
     def add_edge(
         self,
@@ -47,7 +48,12 @@ class Architecture(DiagramModel):
         target_port: Port = Port.LEFT,
         label: str = "",
     ) -> ChangeReport:
-        return self._add_relation(f"add edge '{id}'", Edge(id, (source_id, target_id), label, source_port, target_port))
+        return self._add_relation(
+            f"add edge '{id}'",
+            Edge(
+                id=id, element_ids=(source_id, target_id), label=label, source_port=source_port, target_port=target_port
+            ),
+        )
 
     def add_note(self, id: str, element_id: str, text: str) -> ChangeReport:
         return self._annotate(f"add note '{id}'", ArchitectureNotes(), id, {"text": text}, (element_id,))

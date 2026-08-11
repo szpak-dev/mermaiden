@@ -25,10 +25,10 @@ class IshikawaDiagram(DiagramModel):
 
 
     def add_effect(self, id: str, label: str) -> ChangeReport:
-        return self._add_element(f"add effect '{id}'", Effect(id, label))
+        return self._add_element(f"add effect '{id}'", Effect(id=id, label=label))
 
     def add_category(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self._add_element(f"add category '{id}'", Category(id, label), parent_id)
+        return self._add_element(f"add category '{id}'", Category(id=id, label=label), parent_id)
 
     def add_cause(self, id: str, label: str, parent_id: str) -> ChangeReport:
-        return self._add_element(f"add cause '{id}'", Cause(id, label), parent_id)
+        return self._add_element(f"add cause '{id}'", Cause(id=id, label=label), parent_id)

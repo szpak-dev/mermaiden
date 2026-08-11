@@ -25,7 +25,7 @@ class KanbanDiagram(DiagramModel):
 
 
     def add_column(self, id: str, label: str) -> ChangeReport:
-        return self._add_element(f"add column '{id}'", Column(id, label))
+        return self._add_element(f"add column '{id}'", Column(id=id, label=label))
 
     def add_task(
         self,
@@ -38,6 +38,6 @@ class KanbanDiagram(DiagramModel):
     ) -> ChangeReport:
         return self._add_element(
             f"add task '{id}'",
-            Task(id, label, assigned, ticket, priority),
+            Task(id=id, label=label, assigned=assigned, ticket=ticket, priority=priority),
             column_id,
         )

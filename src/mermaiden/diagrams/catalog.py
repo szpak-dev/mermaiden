@@ -1,7 +1,8 @@
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from importlib import import_module
 from inspect import Parameter, getmembers, isclass, signature
+from types import ModuleType
 from typing import Any, get_type_hints
 
 from pydantic import ValidationError, create_model
@@ -64,7 +65,7 @@ class DiagramCatalog:
         method = getattr(info.diagram_type, command_name, None)
         if command_name not in self.command_names(info) or not callable(method):
             raise KeyError(f"Unknown command '{command_name}' for diagram '{diagram_id}'.")
-        fields = self._payload_fields(method)
+        fields: dict[str, Any] = self._payload_fields(method)
         return create_model(
             f"{info.diagram_type.__name__}{self._pascal_case(command_name)}Payload",
             __base__=CommandPayload,
@@ -100,7 +101,7 @@ class DiagramCatalog:
         }
 
     @staticmethod
-    def _module(info: DiagramInfo, name: str) -> object | None:
+    def _module(info: DiagramInfo, name: str) -> ModuleType | None:
         package = info.diagram_type.__module__.removesuffix(".diagram")
         try:
             return import_module(f"{package}.{name}")
@@ -108,12 +109,12 @@ class DiagramCatalog:
             return None
 
     @staticmethod
-    def _is_command(method: object) -> bool:
+    def _is_command(method: Callable[..., object]) -> bool:
         return_type = get_type_hints(method).get("return")
         return return_type in {ChangeReport, type(None)}
 
     @staticmethod
-    def _payload_fields(method: object) -> dict[str, tuple[object, object]]:
+    def _payload_fields(method: Callable[..., object]) -> dict[str, tuple[object, object]]:
         hints = get_type_hints(method)
         return {
             parameter.name: DiagramCatalog._payload_field(parameter, hints)

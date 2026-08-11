@@ -41,7 +41,7 @@ class DiagramsApplication:
 
     def get_by_config_key(self, config_key: str) -> DiagramInfo:
         for diagram in self.available():
-            if diagram.definition.config_key == config_key:
+            if diagram.config_key == config_key:
                 return diagram
         available = ", ".join(diagram.config_key for diagram in self.available())
         raise KeyError(f"Unknown Mermaid config key '{config_key}'. Available config keys: {available}.")

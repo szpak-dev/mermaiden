@@ -22,5 +22,5 @@ class Notes:
             raise OperationError("Flowchart notes require exactly one string 'text' value.")
         text = data["text"]
         assert isinstance(text, str)
-        targets = tuple(TargetRef(TargetKind.ELEMENT, item) for item in element_ids)
-        return Note(id, targets, text)
+        targets = tuple(TargetRef(kind=TargetKind.ELEMENT, id=item) for item in element_ids)
+        return Note(id=id, targets=targets, text=text)

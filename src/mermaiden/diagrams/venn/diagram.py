@@ -23,9 +23,8 @@ class Venn(DiagramModel):
         "VennDiagramConfig",
     )
 
-
     def add_set(self, id: str, label: str, size: float | None = None) -> ChangeReport:
-        return self._add_element(f"add set '{id}'", VennSet(id, label, (), size))
+        return self._add_element(f"add set '{id}'", VennSet(id=id, label=label, elements=(), size=size))
 
     def add_union(
         self,
@@ -34,7 +33,9 @@ class Venn(DiagramModel):
         set_ids: tuple[str, ...],
         size: float | None = None,
     ) -> ChangeReport:
-        return self._add_element(f"add union '{id}'", VennUnion(id, label, (), set_ids, size))
+        return self._add_element(
+            f"add union '{id}'", VennUnion(id=id, label=label, elements=(), set_ids=set_ids, size=size)
+        )
 
     def add_text(self, id: str, label: str, parent_id: str) -> ChangeReport:
-        return self._add_element(f"add text '{id}'", VennText(id, label), parent_id)
+        return self._add_element(f"add text '{id}'", VennText(id=id, label=label), parent_id)

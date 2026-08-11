@@ -32,4 +32,9 @@ class SequenceNotes:
             raise OperationError("Sequence note position is invalid.") from error
         if len(element_ids) == 2 and note_position is not NotePosition.OVER:
             raise OperationError("Notes over two participants require position 'over'.")
-        return SequenceNote(id, tuple(TargetRef(TargetKind.ELEMENT, item) for item in element_ids), text, note_position)
+        return SequenceNote(
+            id=id,
+            targets=tuple(TargetRef(kind=TargetKind.ELEMENT, id=item) for item in element_ids),
+            text=text,
+            position=note_position,
+        )

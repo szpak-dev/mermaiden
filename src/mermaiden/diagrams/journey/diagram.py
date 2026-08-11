@@ -24,12 +24,13 @@ class Journey(DiagramModel):
         "JourneyDiagramConfig",
     )
 
-
     def set_title(self, title: str) -> None:
         object.__setattr__(self, "title", title)
 
     def add_section(self, id: str, label: str) -> ChangeReport:
-        return self._add_element(f"add section '{id}'", JourneySection(id, label))
+        return self._add_element(f"add section '{id}'", JourneySection(id=id, label=label))
 
     def add_task(self, id: str, label: str, score: int, actors: tuple[str, ...], section_id: str) -> ChangeReport:
-        return self._add_element(f"add task '{id}'", JourneyTask(id, label, score, actors), section_id)
+        return self._add_element(
+            f"add task '{id}'", JourneyTask(id=id, label=label, score=score, actors=actors), section_id
+        )

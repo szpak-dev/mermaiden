@@ -13,7 +13,7 @@ class Entity(Element):
 
 
 class RequiresChildren:
-    pass
+    elements: tuple[Element, ...]
 
 
 class Container(Element):

@@ -25,10 +25,10 @@ class GitGraphDiagram(DiagramModel):
 
 
     def add_commit(self, id: str, label: str, commit_type: CommitType | str = "", tag: str = "") -> ChangeReport:
-        return self._add_element(f"add commit '{id}'", Commit(id, label, commit_type, tag))
+        return self._add_element(f"add commit '{id}'", Commit(id=id, label=label, commit_type=commit_type, tag=tag))
 
     def add_branch(self, id: str, label: str, order: float | None = None) -> ChangeReport:
-        return self._add_element(f"add branch '{id}'", Branch(id, label, order))
+        return self._add_element(f"add branch '{id}'", Branch(id=id, label=label, order=order))
 
     def checkout(self, id: str, branch: str) -> ChangeReport:
-        return self._add_element(f"checkout branch '{branch}'", Checkout(id, branch))
+        return self._add_element(f"checkout branch '{branch}'", Checkout(id=id, label=branch))

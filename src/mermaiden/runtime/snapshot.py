@@ -1,9 +1,9 @@
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass, fields, is_dataclass
 from enum import Enum
 from importlib import import_module
 from types import UnionType
-from typing import get_args, get_origin, get_type_hints
+from typing import Any, cast, get_args, get_origin, get_type_hints
 
 from pydantic import BaseModel
 
@@ -45,12 +45,12 @@ class DiagramSnapshotCodec:
         return DiagramSnapshot(
             self.version,
             diagram.kind,
-            tuple(self._encode(item) for item in diagram.root_elements),
-            tuple(self._encode(item) for item in diagram.find_relations()),
-            tuple(self._encode(item) for item in diagram.find_annotations()),
+            tuple(cast(Mapping[str, object], self._encode(item)) for item in diagram.root_elements),
+            tuple(cast(Mapping[str, object], self._encode(item)) for item in diagram.find_relations()),
+            tuple(cast(Mapping[str, object], self._encode(item)) for item in diagram.find_annotations()),
             {
                 field.name: self._encode(getattr(diagram, field.name))
-                for field in fields(diagram)
+                for field in fields(cast(Any, diagram))
                 if field.name not in {"runtime", "structure", "constraints", "configuration"}
             },
         )
@@ -58,7 +58,7 @@ class DiagramSnapshotCodec:
     def restore(self, payload: Mapping[str, object]) -> DiagramSnapshot:
         try:
             snapshot = DiagramSnapshot(
-                int(payload["version"]),
+                int(cast(Any, payload["version"])),
                 self._string(payload["kind"], "kind"),
                 self._objects(payload["elements"], "elements"),
                 self._objects(payload["relations"], "relations"),
@@ -76,20 +76,22 @@ class DiagramSnapshotCodec:
         relations = tuple(self.decode_value(item, Relation) for item in snapshot.relations)
         annotations = tuple(self.decode_value(item, Annotation) for item in snapshot.annotations)
         for name, value in snapshot.properties.items():
-            field = next((item for item in fields(diagram) if item.name == name), None)
+            field = next((item for item in fields(cast(Any, diagram)) if item.name == name), None)
             if field is None or name in {"runtime", "structure", "constraints", "configuration"}:
                 raise SnapshotError(f"Snapshot property '{name}' is not supported.")
             object.__setattr__(diagram, name, self.decode_value(value, field.type))
         return DiagramData(elements, relations, annotations)
 
-    def decode_value(self, value: object, expected: object = object) -> object:
+    def decode_value(self, value: object, expected: Any = object) -> Any:
         if isinstance(value, Mapping) and "$enum" in value:
-            enum = self._resolve(self._string(value["$enum"], "$enum"), Enum)
-            return enum(value["value"])
+            enum_value = cast(Mapping[str, Any], value)
+            enum = self._resolve(self._string(enum_value["$enum"], "$enum"), Enum)
+            return cast(Callable[[object], Enum], enum)(enum_value["value"])
         if isinstance(value, Mapping) and "$type" in value:
-            item_type = self._resolve(self._string(value["$type"], "$type"), expected)
-            values = self._mapping(value.get("fields"), "fields")
-            hints = get_type_hints(item_type)
+            typed_value = cast(Mapping[str, Any], value)
+            item_type = self._resolve(self._string(typed_value["$type"], "$type"), expected)
+            values: dict[str, Any] = dict(self._mapping(typed_value.get("fields"), "fields"))
+            hints: dict[str, Any] = get_type_hints(item_type)
             parameters = {name: self.decode_value(item, hints.get(name, object)) for name, item in values.items()}
             return item_type(**parameters)
         origin = get_origin(expected)
@@ -98,27 +100,28 @@ class DiagramSnapshotCodec:
             if not isinstance(value, list):
                 raise SnapshotError("Snapshot collection is malformed.")
             item_type = arguments[0] if arguments else object
-            items = [self.decode_value(item, item_type) for item in value]
+            items = [self.decode_value(item, item_type) for item in cast(list[Any], value)]
             return tuple(items) if origin is tuple else items
         if origin is not None and issubclass(origin, Mapping):
             if not isinstance(value, Mapping):
                 raise SnapshotError("Snapshot mapping is malformed.")
             value_type = arguments[1] if len(arguments) > 1 else object
-            return {str(key): self.decode_value(item, value_type) for key, item in value.items()}
+            mapping = cast(Mapping[Any, Any], value)
+            return {str(key): self.decode_value(item, value_type) for key, item in mapping.items()}
         if origin is UnionType:
             for item_type in arguments:
                 if item_type is type(None) and value is None:
                     return None
                 try:
-                    return self.decode_value(value, item_type)
+                    return self.decode_value(cast(Any, value), item_type)
                 except (TypeError, ValueError, SnapshotError):
                     continue
             raise SnapshotError("Snapshot value does not match its declared type.")
         if isinstance(expected, type) and issubclass(expected, Enum):
             return expected(value)
-        return value
+        return cast(Any, value)
 
-    def _encode(self, value: object) -> object:
+    def _encode(self, value: object) -> Any:
         if isinstance(value, Enum):
             return {"$enum": self._reference(type(value)), "value": value.value}
         if isinstance(value, BaseModel):
@@ -134,16 +137,18 @@ class DiagramSnapshotCodec:
                 "fields": {field.name: self._encode(getattr(value, field.name)) for field in fields(value)},
             }
         if isinstance(value, Mapping):
-            return {str(key): self._encode(item) for key, item in value.items()}
+            mapping = cast(Mapping[Any, Any], value)
+            return {str(key): self._encode(item) for key, item in mapping.items()}
         if isinstance(value, tuple | list):
-            return [self._encode(item) for item in value]
+            items = cast(list[Any] | tuple[Any, ...], value)
+            return [self._encode(item) for item in items]
         return value
 
     @staticmethod
     def _reference(item_type: type[object]) -> str:
         return f"{item_type.__module__}:{item_type.__qualname__}"
 
-    def _resolve(self, reference: str, expected: object) -> type[object]:
+    def _resolve(self, reference: str, expected: Any) -> type[Any]:
         module_name, separator, qualified_name = reference.partition(":")
         if not separator or not module_name.startswith("mermaiden."):
             raise SnapshotError(f"Snapshot type '{reference}' is not supported.")
@@ -155,18 +160,19 @@ class DiagramSnapshotCodec:
             raise SnapshotError(f"Snapshot type '{reference}' is not available.") from error
         if not isinstance(item, type) or (expected is not object and not issubclass(item, expected)):
             raise SnapshotError(f"Snapshot type '{reference}' is not valid here.")
-        return item
+        return cast(type[Any], item)
 
     @staticmethod
     def _mapping(value: object, name: str) -> Mapping[str, object]:
         if not isinstance(value, Mapping):
             raise SnapshotError(f"Snapshot '{name}' must be an object.")
-        return value
+        return cast(Mapping[str, object], value)
 
     def _objects(self, value: object, name: str) -> tuple[Mapping[str, object], ...]:
-        if not isinstance(value, list) or not all(isinstance(item, Mapping) for item in value):
+        items = cast(list[Any], value)
+        if not isinstance(value, list) or not all(isinstance(item, Mapping) for item in items):
             raise SnapshotError(f"Snapshot '{name}' must be an array of objects.")
-        return tuple(value)
+        return tuple(cast(Mapping[str, object], item) for item in items)
 
     @staticmethod
     def _string(value: object, name: str) -> str:

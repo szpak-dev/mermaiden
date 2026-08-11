@@ -47,7 +47,7 @@ class Radar(DiagramModel):
         object.__setattr__(self, "ticks", ticks)
 
     def add_axis(self, id: str, label: str) -> ChangeReport:
-        return self._add_element(f"add axis '{id}'", RadarAxis(id, label))
+        return self._add_element(f"add axis '{id}'", RadarAxis(id=id, label=label))
 
     def add_curve(self, id: str, label: str, values: tuple[float, ...]) -> ChangeReport:
-        return self._add_element(f"add curve '{id}'", RadarCurve(id, label, values))
+        return self._add_element(f"add curve '{id}'", RadarCurve(id=id, label=label, values=values))

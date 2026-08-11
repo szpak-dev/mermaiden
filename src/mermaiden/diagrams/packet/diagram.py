@@ -29,7 +29,7 @@ class Packet(DiagramModel):
         object.__setattr__(self, "title", title)
 
     def add_field(self, id: str, label: str, start: int, end: int | None = None) -> ChangeReport:
-        return self._add_element(f"add field '{id}'", PacketField(id, label, start, end))
+        return self._add_element(f"add field '{id}'", PacketField(id=id, label=label, start=start, end=end))
 
     def add_bits(self, id: str, label: str, bits: int) -> ChangeReport:
-        return self._add_element(f"add field '{id}'", PacketField(id, label, None, None, bits))
+        return self._add_element(f"add field '{id}'", PacketField(id=id, label=label, start=None, end=None, bits=bits))

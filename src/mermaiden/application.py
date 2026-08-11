@@ -1,4 +1,4 @@
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from inspect import signature
 
@@ -85,7 +85,7 @@ class Application:
             return scope.get(MermaidApplication).render(diagram)
 
     @staticmethod
-    def _invoke(operation: object, payload: object) -> ChangeReport | None:
+    def _invoke(operation: Callable[..., object], payload: CommandPayload) -> ChangeReport | None:
         parameters = tuple(signature(operation).parameters.values())
         values = payload.model_dump()
         variadic = next((item for item in parameters if item.kind is item.VAR_POSITIONAL), None)

@@ -33,4 +33,10 @@ class StateNotes:
         scope_id = data["scope_id"]
         if not isinstance(text, str) or not isinstance(position, NotePosition) or not isinstance(scope_id, str):
             raise OperationError("State note data is invalid.")
-        return StateNote(id, (TargetRef(TargetKind.ELEMENT, element_ids[0]),), text, position, scope_id)
+        return StateNote(
+            id=id,
+            targets=(TargetRef(kind=TargetKind.ELEMENT, id=element_ids[0]),),
+            text=text,
+            position=position,
+            scope_id=scope_id,
+        )

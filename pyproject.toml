@@ -52,9 +52,11 @@ include = ["compatibility", "docs", "examples", "scripts", "src", "tests", ".nod
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = ["-ra", "--strict-config", "--strict-markers"]
+cache_dir = ".dev/.pytest_cache"
 filterwarnings = ["error"]
 
 [tool.ruff]
+cache-dir = ".dev/.ruff_cache"
 line-length = 120
 extend-exclude = ["**/_version.py"]
 target-version = "py312"

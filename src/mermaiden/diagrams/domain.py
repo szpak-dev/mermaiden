@@ -1,7 +1,7 @@
 import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import ClassVar
+from typing import ClassVar, cast
 
 from ..core.constraint import (
     BlockingConstraint,
@@ -11,7 +11,7 @@ from ..core.constraint import (
     Violation,
 )
 from ..core.diagram import Diagram
-from ..core.element import RequiresChildren
+from ..core.element import Container, RequiresChildren
 from ..runtime.diagrams.aggregate import DiagramAggregate
 from ..runtime.domain import ConstraintInspection
 from .configuration import MermaidDiagramConfiguration
@@ -76,7 +76,7 @@ class Members(DiagramConstraint):
                 path=f"elements.{item.id}",
             )
             for item in diagram.walk_elements()
-            if isinstance(item, RequiresChildren) and not item.elements
+            if isinstance(item, RequiresChildren) and not cast(Container, item).elements
         )
         return tuple(issues)
 

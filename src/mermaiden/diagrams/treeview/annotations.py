@@ -30,4 +30,10 @@ class TreeAnnotations:
             raise OperationError("Tree View annotation values must be bool or strings.")
         if "\n" in description or "\r" in description:
             raise OperationError("Tree View descriptions must be one line.")
-        return TreeAnnotation(id, (TargetRef(TargetKind.ELEMENT, element_ids[0]),), highlight, icon, description)
+        return TreeAnnotation(
+            id=id,
+            targets=(TargetRef(kind=TargetKind.ELEMENT, id=element_ids[0]),),
+            highlight=highlight,
+            icon=icon,
+            description=description,
+        )
