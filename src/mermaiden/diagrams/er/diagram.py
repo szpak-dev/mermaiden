@@ -1,13 +1,13 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import EntityRelationshipDiagramConfiguration
-from .constraints.constraint import EntityRelationshipDiagramConstraint
+from .constraints import EntityRelationshipDiagramConstraint
 from .elements import Entity, EntityAttribute
 from .relations import EntityRelationship
 
@@ -21,20 +21,19 @@ class EntityRelationshipDiagram(DiagramModel):
         init=False,
     )
     direction: str = field(default="TB", init=False)
-    syntax: ClassVar[str] = "erDiagram"
-    name: ClassVar[str] = "Entity relationship diagram"
-    config_key: ClassVar[str] = "er"
-    schema_definition: ClassVar[str] = "ErDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "erDiagram",
+        "Entity relationship diagram",
+        "er",
+        "ErDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return {self.config_key: self.configuration.to_mermaid()}
 
     def set_direction(self, direction: str) -> None:
         object.__setattr__(self, "direction", direction)
 
     def add_entity(self, id: str, label: str) -> ChangeReport:
-        return self._add_element(f"add entity '{id}'", Entity(id, label))
+        return self._add_element(f"add entity '{id}'", Entity(id=id, label=label))
 
     def add_attribute(
         self,
@@ -47,7 +46,7 @@ class EntityRelationshipDiagram(DiagramModel):
     ) -> ChangeReport:
         return self._add_element(
             f"add attribute '{id}'",
-            EntityAttribute(id, label, data_type, keys, comment),
+            EntityAttribute(id=id, label=label, data_type=data_type, keys=keys, comment=comment),
             entity_id,
         )
 
@@ -61,5 +60,5 @@ class EntityRelationshipDiagram(DiagramModel):
     ) -> ChangeReport:
         return self._add_relation(
             f"add relationship '{id}",
-            EntityRelationship(id, (source_id, target_id), label, notation),
+            EntityRelationship(id=id, element_ids=(source_id, target_id), label=label, notation=notation),
         )

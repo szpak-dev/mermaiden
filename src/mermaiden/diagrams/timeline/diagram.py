@@ -1,65 +1,38 @@
-from abc import ABC
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import ChangeReport, Constraint, ConstraintDiagram, Violation
-from ..base import DiagramMembersConstraint, DiagramModel
+from ...core.constraint import ChangeReport
+from ..domain import DiagramDefinition, DiagramModel
+from .configuration import TimelineDiagramConfiguration
+from .constraints import TimelineConstraint
 from .elements import TimelineEvent, TimelinePeriod, TimelineSection
-
-
-class TimelineConstraint(Constraint, ABC):
-    pass
-
-
-@injectable(as_type=TimelineConstraint, qualifier="timeline_structure")
-class TimelineStructure(TimelineConstraint):
-    @property
-    def code(self) -> str:
-        return "timeline.structure"
-
-    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
-        return ()
-
-
-@injectable(as_type=TimelineConstraint, qualifier="timeline_members")
-class TimelineMembers(DiagramMembersConstraint, TimelineConstraint):
-    element_types: ClassVar = (TimelineSection, TimelinePeriod, TimelineEvent)
-    relation_types: ClassVar = ()
-    annotation_types: ClassVar = ()
-    element_description: ClassVar[str] = "valid in a timeline"
-    relation_description: ClassVar[str] = "valid in a timeline"
-    annotation_description: ClassVar[str] = "valid in a timeline"
-
-    @property
-    def code(self) -> str:
-        return "timeline.member_type"
 
 
 @injectable(as_type=DiagramModel, qualifier="timeline", lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Timeline(DiagramModel):
     constraints: Sequence[TimelineConstraint]
+    configuration: TimelineDiagramConfiguration = field(default_factory=TimelineDiagramConfiguration, init=False)
     title: str = field(default="", init=False)
-    syntax: ClassVar[str] = "timeline"
-    name: ClassVar[str] = "Timeline"
-    config_key: ClassVar[str] = "timeline"
-    schema_definition: ClassVar[str] = "TimelineDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "timeline",
+        "Timeline",
+        "timeline",
+        "TimelineDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return {}
 
     def set_title(self, title: str) -> None:
         object.__setattr__(self, "title", title)
 
     def add_section(self, id: str, label: str) -> ChangeReport:
-        return self._add_element(f"add section '{id}'", TimelineSection(id, label))
+        return self._add_element(f"add section '{id}'", TimelineSection(id=id, label=label))
 
     def add_period(self, id: str, label: str, section_id: str = "") -> ChangeReport:
-        return self._add_element(f"add period '{id}'", TimelinePeriod(id, label), section_id)
+        return self._add_element(f"add period '{id}'", TimelinePeriod(id=id, label=label), section_id)
 
     def add_event(self, id: str, label: str, period_id: str) -> ChangeReport:
-        return self._add_element(f"add event '{id}'", TimelineEvent(id, label), period_id)
+        return self._add_element(f"add event '{id}'", TimelineEvent(id=id, label=label), period_id)

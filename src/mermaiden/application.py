@@ -1,98 +1,102 @@
-import argparse
-from dataclasses import dataclass
-from pathlib import Path
+from collections.abc import Callable, Mapping
+from dataclasses import dataclass, field
+from inspect import signature
 
 from wireup import SyncContainer, create_sync_container
 
 import mermaiden
 
-from .diagrams.registry import DiagramInfo, DiagramRegistry
-from .mermaid.compatibility import CompatibilityReport, MermaidCompatibility
-from .mermaid.compatibility.schema import MermaidDiagramConfig, MermaidSchemaStore
-from .mermaid.fixtures import DiagramFixtures
-from .mermaid.preview import MermaidPreview
+from .core.constraint import ChangeReport
+from .core.diagram import Diagram
+from .diagrams.application import DiagramInfo, DiagramsApplication
+from .diagrams.catalog import CommandPayload, DiagramCatalog, DiagramDescription
+from .diagrams.domain import DiagramModel
+from .mermaid.application import MermaidApplication
+from .runtime.snapshot import DiagramSnapshot, DiagramSnapshotCodec
+
+
+class ApplicationError(RuntimeError):
+    pass
+
+
+class UnknownCommand(ApplicationError):
+    pass
+
+
+@dataclass(frozen=True, slots=True)
+class DiagramCommand:
+    operation: str
+    arguments: Mapping[str, object]
 
 
 @dataclass(frozen=True, slots=True)
 class Application:
-    container: SyncContainer
+    _container: SyncContainer
+    _codec: DiagramSnapshotCodec = field(default_factory=DiagramSnapshotCodec)
 
     @classmethod
     def create(cls) -> "Application":
         return cls(create_sync_container(injectables=[mermaiden], config={}))
 
     def available_diagrams(self) -> tuple[DiagramInfo, ...]:
-        with self.container.enter_scope() as scope:
-            return scope.get(DiagramRegistry).available()
+        with self._container.enter_scope() as scope:
+            return scope.get(DiagramsApplication).available()
 
     def diagram_info(self, diagram_id: str) -> DiagramInfo:
-        with self.container.enter_scope() as scope:
-            return scope.get(DiagramRegistry).get(diagram_id)
+        with self._container.enter_scope() as scope:
+            return scope.get(DiagramsApplication).get(diagram_id)
 
-    def diagram_info_for_config(self, config_key: str) -> DiagramInfo:
-        with self.container.enter_scope() as scope:
-            return scope.get(DiagramRegistry).get_by_config_key(config_key)
+    def diagram_description(self, diagram_id: str) -> DiagramDescription:
+        with self._container.enter_scope() as scope:
+            return scope.get(DiagramCatalog).describe(diagram_id)
 
-    def mermaid_diagram_configs(self) -> tuple[MermaidDiagramConfig, ...]:
-        with self.container.enter_scope() as scope:
-            return scope.get(MermaidSchemaStore).diagram_configs()
+    def command_payload(self, diagram_id: str, command_name: str) -> type[CommandPayload]:
+        with self._container.enter_scope() as scope:
+            return scope.get(DiagramCatalog).command_payload(diagram_id, command_name)
 
-    def rendered_diagrams(self) -> dict[str, str]:
-        with self.container.enter_scope() as scope:
-            return scope.get(DiagramFixtures).render()
+    def create_diagram(self, diagram_id: str) -> DiagramModel:
+        with self._container.enter_scope() as scope:
+            return scope.get(DiagramsApplication).get_diagram(diagram_id)
 
-    def write_fixtures(self, output: Path) -> tuple[Path, ...]:
-        output.mkdir(parents=True, exist_ok=True)
-        return tuple(
-            self._write_source(output, name, source) for name, source in self.rendered_diagrams().items()
-        )
+    def apply(self, diagram: DiagramModel, command: DiagramCommand) -> ChangeReport | None:
+        operation = getattr(diagram, command.operation, None)
+        if command.operation.startswith("_") or not callable(operation):
+            raise UnknownCommand(f"Command '{command.operation}' is not supported for '{diagram.kind}'.")
+        try:
+            with self._container.enter_scope() as scope:
+                payload = scope.get(DiagramCatalog).validate_command(diagram, command.operation, command.arguments)
+        except (KeyError, ValueError) as error:
+            raise UnknownCommand(f"Command '{command.operation}' has invalid arguments.") from error
+        result = self._invoke(operation, payload)
+        return result
 
-    def write_preview(self, output: Path) -> Path:
-        with self.container.enter_scope() as scope:
-            preview = scope.get(MermaidPreview)
-            return preview.write_sources(self.rendered_diagrams(), output)
+    def snapshot(self, diagram: DiagramModel) -> DiagramSnapshot:
+        return self._codec.snapshot(diagram)
 
-    def compatibility_report(self) -> CompatibilityReport:
-        with self.container.enter_scope() as scope:
-            return scope.get(MermaidCompatibility).inspect()
+    def restore(self, payload: Mapping[str, object]) -> DiagramModel:
+        snapshot = self._codec.restore(payload)
+        diagram = self.create_diagram(snapshot.kind)
+        data = self._codec.hydrate(snapshot, diagram)
+        diagram.runtime.transaction.apply("restore snapshot", data, diagram, diagram.observer)
+        return diagram
 
-    def verify_compatibility(self) -> CompatibilityReport:
-        with self.container.enter_scope() as scope:
-            return scope.get(MermaidCompatibility).verify()
+    def render(self, diagram: Diagram) -> str:
+        with self._container.enter_scope() as scope:
+            return scope.get(MermaidApplication).render(diagram)
 
     @staticmethod
-    def _write_source(output: Path, name: str, source: str) -> Path:
-        path = output / f"{name}.mmd"
-        path.write_text(source, encoding="utf-8")
-        return path
-
-    @classmethod
-    def run(cls) -> None:
-        parser = argparse.ArgumentParser()
-        commands = parser.add_subparsers(dest="command", required=True)
-        fixtures = commands.add_parser("fixtures")
-        fixtures.add_argument("--output", "-o", type=Path, default=Path(".preview"))
-        preview = commands.add_parser("preview")
-        preview.add_argument("--output", "-o", type=Path, default=Path(".preview/index.html"))
-        commands.add_parser("compat")
-        arguments = parser.parse_args()
-        application = cls.create()
-        if arguments.command == "fixtures":
-            for path in application.write_fixtures(arguments.output):
-                print(path)
-        if arguments.command == "preview":
-            print(application.write_preview(arguments.output))
-        if arguments.command == "compat":
-            report = application.verify_compatibility()
-            for diagram in report.diagrams:
-                print(f"{diagram.diagram_id}: {'valid' if report.diagram_valid(diagram) else 'invalid'}")
-            for diagram in report.missing_diagrams:
-                print(f"{diagram.config_key}: not implemented ({diagram.schema_definition})")
-            for violation in report.syntax_violations:
-                print(f"{violation.diagram_id}: {violation.message}")
-            if not report.valid:
-                raise SystemExit(1)
-
-
-if __name__ == "__main__":
-    Application.run()
+    def _invoke(operation: Callable[..., object], payload: CommandPayload) -> ChangeReport | None:
+        parameters = tuple(signature(operation).parameters.values())
+        values = payload.model_dump()
+        variadic = next((item for item in parameters if item.kind is item.VAR_POSITIONAL), None)
+        positional = ()
+        if variadic is not None:
+            positional = tuple(
+                values.pop(item.name)
+                for item in parameters
+                if item.kind in {item.POSITIONAL_ONLY, item.POSITIONAL_OR_KEYWORD}
+            ) + tuple(values.pop(variadic.name))
+        result = operation(*positional, **values)
+        if result is not None and not isinstance(result, ChangeReport):
+            raise UnknownCommand("Command is not a mutation.")
+        return result

@@ -1,5 +1,6 @@
-from dataclasses import dataclass
 from enum import StrEnum
+
+from ..configuration import MermaidDiagramConfiguration
 
 
 class LegendPosition(StrEnum):
@@ -10,17 +11,8 @@ class LegendPosition(StrEnum):
     CENTER = "center"
 
 
-@dataclass(frozen=True, slots=True)
-class PieDiagramConfiguration:
+class PieDiagramConfiguration(MermaidDiagramConfiguration):
     text_position: float = 0.75
     donut_hole: float = 0
     legend_position: LegendPosition = LegendPosition.RIGHT
     highlight_slice: str = ""
-
-    def to_mermaid(self) -> dict[str, object]:
-        return {
-            "textPosition": self.text_position,
-            "donutHole": self.donut_hole,
-            "legendPosition": self.legend_position,
-            "highlightSlice": self.highlight_slice,
-        }

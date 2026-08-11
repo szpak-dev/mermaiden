@@ -1,13 +1,13 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import RadarConfiguration
-from .constraints.constraint import RadarConstraint
+from .constraints import RadarConstraint
 from .elements import RadarAxis, RadarCurve
 
 
@@ -22,14 +22,13 @@ class Radar(DiagramModel):
     maximum: float | None = field(default=None, init=False)
     graticule: str = field(default="circle", init=False)
     ticks: int | None = field(default=None, init=False)
-    syntax: ClassVar[str] = "radar-beta"
-    name: ClassVar[str] = "Radar chart"
-    config_key: ClassVar[str] = "radar"
-    schema_definition: ClassVar[str] = "RadarDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "radar-beta",
+        "Radar chart",
+        "radar",
+        "RadarDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return {self.config_key: self.configuration.to_mermaid()}
 
     def set_title(self, title: str) -> None:
         object.__setattr__(self, "title", title)
@@ -48,7 +47,7 @@ class Radar(DiagramModel):
         object.__setattr__(self, "ticks", ticks)
 
     def add_axis(self, id: str, label: str) -> ChangeReport:
-        return self._add_element(f"add axis '{id}'", RadarAxis(id, label))
+        return self._add_element(f"add axis '{id}'", RadarAxis(id=id, label=label))
 
     def add_curve(self, id: str, label: str, values: tuple[float, ...]) -> ChangeReport:
-        return self._add_element(f"add curve '{id}'", RadarCurve(id, label, values))
+        return self._add_element(f"add curve '{id}'", RadarCurve(id=id, label=label, values=values))

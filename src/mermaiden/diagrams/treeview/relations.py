@@ -1,12 +1,8 @@
-from dataclasses import dataclass
-from typing import ClassVar
 
 from ...core.relation import Relation
 
 
-@dataclass(frozen=True, slots=True)
 class TreeBranch(Relation):
-    kind: ClassVar[str] = "tree_branch"
 
     @property
     def parent_id(self) -> str:

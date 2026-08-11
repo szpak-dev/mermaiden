@@ -18,11 +18,37 @@ pip install mermaiden
 from mermaiden.application import Application
 
 application = Application.create()
-source = application.rendered_diagrams()["flowchart"]
-print(source)
+diagrams = application.available_diagrams()
+print(diagrams)
 ```
 
-`Application.available_diagrams()` returns the supported diagram catalog. `Application.diagram_info(diagram_id)` returns the typed diagram API for an individual syntax.
+`Application.available_diagrams()` returns the supported diagram catalog. `Application.diagram_info(diagram_id)` returns the typed diagram API for an individual syntax. CLI workflows are available through `python -m mermaiden.cli`.
+
+## Application API
+
+`Application` is the boundary for API and persistence adapters. Create a diagram by Mermaid syntax id, apply a named domain command, and persist the JSON-safe snapshot returned by the application.
+
+```python
+from mermaiden.application import Application, DiagramCommand
+
+application = Application.create()
+diagram = application.create_diagram("sequenceDiagram")
+application.apply(diagram, DiagramCommand("add_participant", {"id": "api", "label": "API"}))
+
+payload = application.snapshot(diagram).to_dict()
+restored = application.restore(payload)
+source = application.render(restored)
+```
+
+Snapshots have a versioned envelope and may be stored as JSON. `Application.restore()` validates restored state before returning it. Command argument values use the diagram operation names; JSON string values are accepted for enum arguments.
+
+The caller can discover the REST contract without maintaining a manifest. `diagram_description()` returns JSON Schema for the diagram's elements, relations, annotations, and commands. `command_payload()` returns the generated Pydantic request model for one command.
+
+```python
+description = application.diagram_description("sequenceDiagram")
+payload_type = application.command_payload("sequenceDiagram", "add_participant")
+payload = payload_type.model_validate({"id": "api", "kind": "control"})
+```
 
 ## Development
 

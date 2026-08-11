@@ -5,9 +5,10 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .annotations import Notes
-from .constraints.constraint import FlowchartConstraint
+from .configuration import FlowchartDiagramConfiguration
+from .constraints import FlowchartConstraint
 from .elements import (
     Action,
     DataStore,
@@ -29,11 +30,15 @@ from .relations import ConditionalFlow, Flow
 @dataclass(frozen=True, slots=True)
 class Flowchart(DiagramModel):
     constraints: Sequence[FlowchartConstraint]
+    configuration: FlowchartDiagramConfiguration = field(default_factory=FlowchartDiagramConfiguration, init=False)
     direction: Direction = field(default=Direction.TOP_DOWN, init=False)
-    syntax: ClassVar[str] = "flowchart"
-    name: ClassVar[str] = "Flowchart"
-    config_key: ClassVar[str] = "flowchart"
-    schema_definition: ClassVar[str] = "FlowchartDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "flowchart",
+        "Flowchart",
+        "flowchart",
+        "FlowchartDiagramConfig",
+    )
+
 
     def add_group(
         self,
@@ -44,39 +49,39 @@ class Flowchart(DiagramModel):
     ) -> ChangeReport:
         return self._add_element(
             f"add flow group '{id}'",
-            FlowGroup(id, label, (), direction),
+            FlowGroup(id=id, label=label, elements=(), direction=direction),
             parent_id,
         )
 
     def add_node(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self._add_node(FlowNode(id, label), parent_id, "node")
+        return self._add_node(FlowNode(id=id, label=label), parent_id, "node")
 
     def add_start(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self._add_node(Start(id, label), parent_id, "start")
+        return self._add_node(Start(id=id, label=label), parent_id, "start")
 
     def add_end(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self._add_node(End(id, label), parent_id, "end")
+        return self._add_node(End(id=id, label=label), parent_id, "end")
 
     def add_action(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self._add_node(Action(id, label), parent_id, "action")
+        return self._add_node(Action(id=id, label=label), parent_id, "action")
 
     def add_decision(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self._add_node(Decision(id, label), parent_id, "decision")
+        return self._add_node(Decision(id=id, label=label), parent_id, "decision")
 
     def add_input_output(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self._add_node(InputOutput(id, label), parent_id, "input/output")
+        return self._add_node(InputOutput(id=id, label=label), parent_id, "input/output")
 
     def add_data_store(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self._add_node(DataStore(id, label), parent_id, "data store")
+        return self._add_node(DataStore(id=id, label=label), parent_id, "data store")
 
     def add_document(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self._add_node(Document(id, label), parent_id, "document")
+        return self._add_node(Document(id=id, label=label), parent_id, "document")
 
     def add_subprocess(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self._add_node(Subprocess(id, label), parent_id, "subprocess")
+        return self._add_node(Subprocess(id=id, label=label), parent_id, "subprocess")
 
     def add_junction(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self._add_node(Junction(id, label), parent_id, "junction")
+        return self._add_node(Junction(id=id, label=label), parent_id, "junction")
 
     def add_flow(
         self,
@@ -85,7 +90,7 @@ class Flowchart(DiagramModel):
         target_id: str,
         label: str = "",
     ) -> ChangeReport:
-        return self._add_relation(f"add flow '{id}'", Flow(id, (source_id, target_id), label))
+        return self._add_relation(f"add flow '{id}'", Flow(id=id, element_ids=(source_id, target_id), label=label))
 
     def add_conditional_flow(
         self,
@@ -96,7 +101,7 @@ class Flowchart(DiagramModel):
     ) -> ChangeReport:
         return self._add_relation(
             f"add conditional flow '{id}'",
-            ConditionalFlow(id, (source_id, target_id), condition),
+            ConditionalFlow(id=id, element_ids=(source_id, target_id), label=condition),
         )
 
     def add_note(

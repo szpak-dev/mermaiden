@@ -1,8 +1,8 @@
-from mermaiden.application import Application
+from mermaiden.cli import MermaidenCli
 
 
 def test_application_renders_treeview_and_flowchart() -> None:
-    diagrams = Application.create().rendered_diagrams()
+    diagrams = MermaidenCli.create().rendered_diagrams()
 
     assert diagrams["treeview"] == (
         "---\nconfig:\n  wrap: true\n---\ntreeView-beta\n"

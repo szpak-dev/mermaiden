@@ -1,12 +1,13 @@
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .annotations import ArchitectureNotes
+from .configuration import ArchitectureDiagramConfiguration
 from .constraints import ArchitectureConstraint
 from .elements import ArchitectureGroup, Junction, Service
 from .relations import Edge, Port
@@ -16,19 +17,27 @@ from .relations import Edge, Port
 @dataclass(frozen=True, slots=True)
 class Architecture(DiagramModel):
     constraints: Sequence[ArchitectureConstraint]
-    syntax: ClassVar[str] = "architecture-beta"
-    name: ClassVar[str] = "Architecture diagram"
-    config_key: ClassVar[str] = "architecture"
-    schema_definition: ClassVar[str] = "ArchitectureDiagramConfig"
+    configuration: ArchitectureDiagramConfiguration = field(
+        default_factory=ArchitectureDiagramConfiguration,
+        init=False,
+    )
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "architecture-beta",
+        "Architecture diagram",
+        "architecture",
+        "ArchitectureDiagramConfig",
+    )
 
     def add_group(self, id: str, label: str, parent_id: str = "", columns: int = 1) -> ChangeReport:
-        return self._add_element(f"add group '{id}'", ArchitectureGroup(id, label, (), columns), parent_id)
+        return self._add_element(
+            f"add group '{id}'", ArchitectureGroup(id=id, label=label, elements=(), columns=columns), parent_id
+        )
 
     def add_service(self, id: str, label: str, group_id: str = "") -> ChangeReport:
-        return self._add_element(f"add service '{id}'", Service(id, label), group_id)
+        return self._add_element(f"add service '{id}'", Service(id=id, label=label), group_id)
 
     def add_junction(self, id: str, label: str = "", group_id: str = "") -> ChangeReport:
-        return self._add_element(f"add junction '{id}'", Junction(id, label or id), group_id)
+        return self._add_element(f"add junction '{id}'", Junction(id=id, label=label or id), group_id)
 
     def add_edge(
         self,
@@ -39,7 +48,12 @@ class Architecture(DiagramModel):
         target_port: Port = Port.LEFT,
         label: str = "",
     ) -> ChangeReport:
-        return self._add_relation(f"add edge '{id}'", Edge(id, (source_id, target_id), label, source_port, target_port))
+        return self._add_relation(
+            f"add edge '{id}'",
+            Edge(
+                id=id, element_ids=(source_id, target_id), label=label, source_port=source_port, target_port=target_port
+            ),
+        )
 
     def add_note(self, id: str, element_id: str, text: str) -> ChangeReport:
         return self._annotate(f"add note '{id}'", ArchitectureNotes(), id, {"text": text}, (element_id,))

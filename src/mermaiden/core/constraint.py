@@ -96,14 +96,14 @@ class Constraint(ABC):
     def level(self) -> ConstraintLevel:
         return ConstraintLevel.ADVISORY
 
-    @abstractmethod
-    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]: ...
+    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
+        return ()
 
     def violation(self, message: str, *, path: str = "") -> Violation:
         return Violation(code=self.code, message=message, path=path, level=self.level)
 
 
-class BlockingConstraint(Constraint):
+class BlockingConstraint(Constraint, ABC):
     @property
     def level(self) -> ConstraintLevel:
         return ConstraintLevel.BLOCKING

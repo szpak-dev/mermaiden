@@ -1,20 +1,15 @@
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
-from typing import ClassVar
 
 from ...core.annotation import Annotation, TargetKind, TargetRef
 from ...core.error import OperationError
 
 
-@dataclass(frozen=True, slots=True)
 class TreeAnnotation(Annotation):
-    kind: ClassVar[str] = "tree_annotation"
     highlight: bool = False
     icon: str = ""
     description: str = ""
 
 
-@dataclass(frozen=True, slots=True)
 class TreeAnnotations:
     def create(
         self,
@@ -35,4 +30,10 @@ class TreeAnnotations:
             raise OperationError("Tree View annotation values must be bool or strings.")
         if "\n" in description or "\r" in description:
             raise OperationError("Tree View descriptions must be one line.")
-        return TreeAnnotation(id, (TargetRef(TargetKind.ELEMENT, element_ids[0]),), highlight, icon, description)
+        return TreeAnnotation(
+            id=id,
+            targets=(TargetRef(kind=TargetKind.ELEMENT, id=element_ids[0]),),
+            highlight=highlight,
+            icon=icon,
+            description=description,
+        )

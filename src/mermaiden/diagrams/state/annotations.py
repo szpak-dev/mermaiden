@@ -1,7 +1,5 @@
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
 from enum import StrEnum
-from typing import ClassVar
 
 from ...core.annotation import Annotation, TargetKind, TargetRef
 from ...core.error import OperationError
@@ -12,15 +10,12 @@ class NotePosition(StrEnum):
     RIGHT = "right"
 
 
-@dataclass(frozen=True, slots=True)
 class StateNote(Annotation):
-    kind: ClassVar[str] = "state_note"
     text: str
     position: NotePosition
     scope_id: str = ""
 
 
-@dataclass(frozen=True, slots=True)
 class StateNotes:
     def create(
         self,
@@ -38,4 +33,10 @@ class StateNotes:
         scope_id = data["scope_id"]
         if not isinstance(text, str) or not isinstance(position, NotePosition) or not isinstance(scope_id, str):
             raise OperationError("State note data is invalid.")
-        return StateNote(id, (TargetRef(TargetKind.ELEMENT, element_ids[0]),), text, position, scope_id)
+        return StateNote(
+            id=id,
+            targets=(TargetRef(kind=TargetKind.ELEMENT, id=element_ids[0]),),
+            text=text,
+            position=position,
+            scope_id=scope_id,
+        )

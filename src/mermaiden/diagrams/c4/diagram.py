@@ -1,13 +1,13 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import C4ContextDiagramConfiguration
-from .constraints.constraint import C4ContextDiagramConstraint
+from .constraints import C4ContextDiagramConstraint
 from .elements import Person, System, SystemDb, SystemQueue
 from .relations import Relationship
 
@@ -17,26 +17,32 @@ from .relations import Relationship
 class C4ContextDiagram(DiagramModel):
     constraints: Sequence[C4ContextDiagramConstraint]
     configuration: C4ContextDiagramConfiguration = field(default_factory=C4ContextDiagramConfiguration, init=False)
-    syntax: ClassVar[str] = "C4Context"
-    name: ClassVar[str] = "C4 Context diagram"
-    config_key: ClassVar[str] = "c4"
-    schema_definition: ClassVar[str] = "C4DiagramConfig"
-
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return {self.config_key: self.configuration.to_mermaid()}
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "C4Context",
+        "C4 Context diagram",
+        "c4",
+        "C4DiagramConfig",
+    )
 
     def add_person(self, id: str, label: str, description: str = "") -> ChangeReport:
-        return self._add_element(f"add person '{id}'", Person(id, label, description))
+        return self._add_element(f"add person '{id}'", Person(id=id, label=label, description=description))
 
     def add_system(self, id: str, label: str, description: str = "", technology: str = "") -> ChangeReport:
-        return self._add_element(f"add system '{id}'", System(id, label, description, technology))
+        return self._add_element(
+            f"add system '{id}'", System(id=id, label=label, description=description, technology=technology)
+        )
 
     def add_database(self, id: str, label: str, description: str = "", technology: str = "") -> ChangeReport:
-        return self._add_element(f"add database '{id}'", SystemDb(id, label, description, technology))
+        return self._add_element(
+            f"add database '{id}'", SystemDb(id=id, label=label, description=description, technology=technology)
+        )
 
     def add_queue(self, id: str, label: str, description: str = "", technology: str = "") -> ChangeReport:
-        return self._add_element(f"add queue '{id}'", SystemQueue(id, label, description, technology))
+        return self._add_element(
+            f"add queue '{id}'", SystemQueue(id=id, label=label, description=description, technology=technology)
+        )
 
     def add_relationship(self, id: str, source_id: str, target_id: str, label: str) -> ChangeReport:
-        return self._add_relation(f"add relationship '{id}'", Relationship(id, (source_id, target_id), label))
+        return self._add_relation(
+            f"add relationship '{id}'", Relationship(id=id, element_ids=(source_id, target_id), label=label)
+        )

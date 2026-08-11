@@ -1,7 +1,5 @@
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
 from enum import StrEnum
-from typing import ClassVar
 
 from ...core.annotation import Annotation, TargetKind, TargetRef
 from ...core.error import OperationError
@@ -13,14 +11,11 @@ class NotePosition(StrEnum):
     OVER = "over"
 
 
-@dataclass(frozen=True, slots=True)
 class SequenceNote(Annotation):
-    kind: ClassVar[str] = "sequence_note"
     text: str
     position: NotePosition = NotePosition.OVER
 
 
-@dataclass(frozen=True, slots=True)
 class SequenceNotes:
     def create(
         self, id: str, data: Mapping[str, object], element_ids: Sequence[str], relation_ids: Sequence[str]
@@ -37,4 +32,9 @@ class SequenceNotes:
             raise OperationError("Sequence note position is invalid.") from error
         if len(element_ids) == 2 and note_position is not NotePosition.OVER:
             raise OperationError("Notes over two participants require position 'over'.")
-        return SequenceNote(id, tuple(TargetRef(TargetKind.ELEMENT, item) for item in element_ids), text, note_position)
+        return SequenceNote(
+            id=id,
+            targets=tuple(TargetRef(kind=TargetKind.ELEMENT, id=item) for item in element_ids),
+            text=text,
+            position=note_position,
+        )

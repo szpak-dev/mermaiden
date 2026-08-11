@@ -1,18 +1,13 @@
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
-from typing import ClassVar
 
 from ...core.annotation import Annotation, TargetKind, TargetRef
 from ...core.error import OperationError
 
 
-@dataclass(frozen=True, slots=True)
 class ClassNote(Annotation):
-    kind: ClassVar[str] = "class_note"
     text: str
 
 
-@dataclass(frozen=True, slots=True)
 class ClassNotes:
     def create(
         self,
@@ -27,4 +22,4 @@ class ClassNotes:
             raise OperationError("Class notes require exactly one string 'text' value.")
         text = data["text"]
         assert isinstance(text, str)
-        return ClassNote(id, (TargetRef(TargetKind.ELEMENT, element_ids[0]),), text)
+        return ClassNote(id=id, targets=(TargetRef(kind=TargetKind.ELEMENT, id=element_ids[0]),), text=text)

@@ -1,12 +1,13 @@
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .annotations import ClassNotes
+from .configuration import ClassDiagramConfiguration
 from .constraints import ClassDiagramConstraint
 from .elements import Class, ClassAttribute, ClassMethod, ClassNamespace
 from .relations import ClassRelation, ClassRelationKind
@@ -16,10 +17,13 @@ from .relations import ClassRelation, ClassRelationKind
 @dataclass(frozen=True, slots=True)
 class ClassDiagram(DiagramModel):
     constraints: Sequence[ClassDiagramConstraint]
-    syntax: ClassVar[str] = "classDiagram"
-    name: ClassVar[str] = "Class diagram"
-    config_key: ClassVar[str] = "class"
-    schema_definition: ClassVar[str] = "ClassDiagramConfig"
+    configuration: ClassDiagramConfiguration = field(default_factory=ClassDiagramConfiguration, init=False)
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "classDiagram",
+        "Class diagram",
+        "class",
+        "ClassDiagramConfig",
+    )
 
     def add_class(
         self,
@@ -34,12 +38,21 @@ class ClassDiagram(DiagramModel):
     ) -> ChangeReport:
         return self._add_element(
             f"add class '{id}'",
-            Class(id, label or id, tuple(attributes), tuple(methods), tuple(annotations), comment),
+            Class(
+                id=id,
+                label=label or id,
+                attributes=tuple(attributes),
+                methods=tuple(methods),
+                annotations=tuple(annotations),
+                comment=comment,
+            ),
             parent_id,
         )
 
     def add_namespace(self, id: str, label: str = "", *, comment: str = "") -> ChangeReport:
-        return self._add_element(f"add namespace '{id}'", ClassNamespace(id, label or id, (), comment))
+        return self._add_element(
+            f"add namespace '{id}'", ClassNamespace(id=id, label=label or id, elements=(), comment=comment)
+        )
 
     def add_relation(
         self,
@@ -53,7 +66,14 @@ class ClassDiagram(DiagramModel):
     ) -> ChangeReport:
         return self._add_relation(
             f"add class relation '{id}'",
-            ClassRelation(id, (source_id, target_id), label, relation_kind, source_label, target_label),
+            ClassRelation(
+                id=id,
+                element_ids=(source_id, target_id),
+                label=label,
+                relation_kind=relation_kind,
+                source_label=source_label,
+                target_label=target_label,
+            ),
         )
 
     def add_note(self, id: str, class_id: str, text: str) -> ChangeReport:

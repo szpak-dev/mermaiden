@@ -1,39 +1,30 @@
-from dataclasses import dataclass
-from typing import ClassVar
 
 from ...core.element import Container
 
 
-@dataclass(frozen=True, slots=True)
 class MindmapNode(Container):
-    kind: ClassVar[str] = "mindmap_node"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Square(MindmapNode):
-    kind: ClassVar[str] = "square"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class RoundedSquare(MindmapNode):
-    kind: ClassVar[str] = "rounded_square"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Circle(MindmapNode):
-    kind: ClassVar[str] = "circle"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Bang(MindmapNode):
-    kind: ClassVar[str] = "bang"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Cloud(MindmapNode):
-    kind: ClassVar[str] = "cloud"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Hexagon(MindmapNode):
-    kind: ClassVar[str] = "hexagon"
+    pass

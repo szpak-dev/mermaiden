@@ -1,45 +1,38 @@
-from dataclasses import dataclass
-from typing import ClassVar
 
 from ...core.element import Container, Entity
 
 
-@dataclass(frozen=True, slots=True)
-class StateNode(Entity):
-    kind: ClassVar[str] = "state_node"
+class StateEndpoint:
+    pass
 
 
-@dataclass(frozen=True, slots=True)
+class StateNode(Entity, StateEndpoint):
+    pass
+
+
 class State(StateNode):
-    kind: ClassVar[str] = "state"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Initial(StateNode):
-    kind: ClassVar[str] = "initial"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Final(StateNode):
-    kind: ClassVar[str] = "final"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Choice(StateNode):
-    kind: ClassVar[str] = "choice"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Fork(StateNode):
-    kind: ClassVar[str] = "fork"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Join(StateNode):
-    kind: ClassVar[str] = "join"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
-class CompositeState(Container):
-    kind: ClassVar[str] = "composite_state"
-
+class CompositeState(Container, StateEndpoint):
+    pass

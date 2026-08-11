@@ -1,7 +1,5 @@
-from dataclasses import dataclass
+from ..configuration import MermaidDiagramConfiguration
 
 
-@dataclass(frozen=True, slots=True)
-class EventModelingDiagramConfiguration:
-    def to_mermaid(self) -> dict[str, object]:
-        return {}
+class EventModelingDiagramConfiguration(MermaidDiagramConfiguration):
+    pass

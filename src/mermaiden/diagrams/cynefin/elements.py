@@ -1,6 +1,4 @@
-from dataclasses import dataclass
 from enum import StrEnum
-from typing import ClassVar
 
 from ...core.element import Entity
 
@@ -13,7 +11,5 @@ class DomainKind(StrEnum):
     CONFUSION = "confusion"
 
 
-@dataclass(frozen=True, slots=True)
 class Domain(Entity):
-    kind: ClassVar[str] = "domain"
     domain: DomainKind = DomainKind.COMPLEX

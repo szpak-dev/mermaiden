@@ -1,6 +1,7 @@
 from collections.abc import Mapping
-from dataclasses import dataclass
 from enum import StrEnum
+
+from .model import ClassifiedValueModel, ValueModel
 
 
 class TargetKind(StrEnum):
@@ -8,18 +9,17 @@ class TargetKind(StrEnum):
     RELATION = "relation"
 
 
-@dataclass(frozen=True, slots=True)
-class TargetRef:
+class TargetRef(ValueModel):
+
     kind: TargetKind
     id: str
 
 
-@dataclass(frozen=True, slots=True)
-class Annotation:
+class Annotation(ClassifiedValueModel):
+
     id: str
     targets: tuple[TargetRef, ...]
 
 
-@dataclass(frozen=True, slots=True)
 class DataAnnotation(Annotation):
     data: Mapping[str, object]

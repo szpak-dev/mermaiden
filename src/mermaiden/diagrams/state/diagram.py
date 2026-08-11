@@ -1,15 +1,15 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from ..flowchart.elements import Direction
 from .annotations import NotePosition, StateNote, StateNotes
 from .configuration import StateDiagramConfiguration
-from .constraints.constraint import StateDiagramConstraint
+from .constraints import StateDiagramConstraint
 from .elements import Choice, CompositeState, Final, Fork, Initial, Join, State, StateNode
 from .relations import StateTransition
 
@@ -20,35 +20,34 @@ class StateDiagram(DiagramModel):
     constraints: Sequence[StateDiagramConstraint]
     configuration: StateDiagramConfiguration = field(default_factory=StateDiagramConfiguration, init=False)
     direction: Direction = field(default=Direction.TOP_DOWN, init=False)
-    syntax: ClassVar[str] = "stateDiagram-v2"
-    name: ClassVar[str] = "State diagram"
-    config_key: ClassVar[str] = "state"
-    schema_definition: ClassVar[str] = "StateDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "stateDiagram-v2",
+        "State diagram",
+        "state",
+        "StateDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return {self.config_key: self.configuration.to_mermaid()}
 
     def add_state(self, id: str, label: str = "", composite_id: str = "") -> ChangeReport:
-        return self._add_node(State(id, label), composite_id, "state")
+        return self._add_node(State(id=id, label=label), composite_id, "state")
 
     def add_initial(self, id: str, composite_id: str = "") -> ChangeReport:
-        return self._add_node(Initial(id, "initial"), composite_id, "initial state")
+        return self._add_node(Initial(id=id, label="initial"), composite_id, "initial state")
 
     def add_final(self, id: str, composite_id: str = "") -> ChangeReport:
-        return self._add_node(Final(id, "final"), composite_id, "final state")
+        return self._add_node(Final(id=id, label="final"), composite_id, "final state")
 
     def add_composite(self, id: str, label: str = "", composite_id: str = "") -> ChangeReport:
-        return self._add_node(CompositeState(id, label), composite_id, "composite state")
+        return self._add_node(CompositeState(id=id, label=label), composite_id, "composite state")
 
     def add_choice(self, id: str, label: str = "", composite_id: str = "") -> ChangeReport:
-        return self._add_node(Choice(id, label), composite_id, "choice")
+        return self._add_node(Choice(id=id, label=label), composite_id, "choice")
 
     def add_fork(self, id: str, label: str = "", composite_id: str = "") -> ChangeReport:
-        return self._add_node(Fork(id, label), composite_id, "fork")
+        return self._add_node(Fork(id=id, label=label), composite_id, "fork")
 
     def add_join(self, id: str, label: str = "", composite_id: str = "") -> ChangeReport:
-        return self._add_node(Join(id, label), composite_id, "join")
+        return self._add_node(Join(id=id, label=label), composite_id, "join")
 
     def add_transition(
         self,
@@ -61,12 +60,12 @@ class StateDiagram(DiagramModel):
         return self._add_relation(
             f"add transition '{id}'",
             StateTransition(
-                id,
-                (source_id, target_id),
-                label,
-                composite_id,
-                isinstance(self.find_element(source_id), Initial),
-                isinstance(self.find_element(target_id), Final),
+                id=id,
+                element_ids=(source_id, target_id),
+                label=label,
+                scope_id=composite_id,
+                source_terminal=isinstance(self.find_element(source_id), Initial),
+                target_terminal=isinstance(self.find_element(target_id), Final),
             ),
         )
 

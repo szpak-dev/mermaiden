@@ -1,14 +1,14 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import GitGraphDiagramConfiguration
-from .constraints.constraint import GitGraphDiagramConstraint
-from .elements import Branch, Checkout, Commit
+from .constraints import GitGraphDiagramConstraint
+from .elements import Branch, Checkout, Commit, CommitType
 
 
 @injectable(as_type=DiagramModel, qualifier="gitgraph", lifetime="scoped")
@@ -16,20 +16,19 @@ from .elements import Branch, Checkout, Commit
 class GitGraphDiagram(DiagramModel):
     constraints: Sequence[GitGraphDiagramConstraint]
     configuration: GitGraphDiagramConfiguration = field(default_factory=GitGraphDiagramConfiguration, init=False)
-    syntax: ClassVar[str] = "gitGraph"
-    name: ClassVar[str] = "Git Graph"
-    config_key: ClassVar[str] = "gitGraph"
-    schema_definition: ClassVar[str] = "GitGraphDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "gitGraph",
+        "Git Graph",
+        "gitGraph",
+        "GitGraphDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return {self.config_key: self.configuration.to_mermaid()}
 
-    def add_commit(self, id: str, label: str, commit_type: str = "", tag: str = "") -> ChangeReport:
-        return self._add_element(f"add commit '{id}'", Commit(id, label, commit_type, tag))
+    def add_commit(self, id: str, label: str, commit_type: CommitType | str = "", tag: str = "") -> ChangeReport:
+        return self._add_element(f"add commit '{id}'", Commit(id=id, label=label, commit_type=commit_type, tag=tag))
 
-    def add_branch(self, id: str, label: str, order: float | None = None) -> ChangeReport:
-        return self._add_element(f"add branch '{id}'", Branch(id, label, order))
+    def add_branch(self, id: str, label: str, order: int | None = None) -> ChangeReport:
+        return self._add_element(f"add branch '{id}'", Branch(id=id, label=label, order=order))
 
     def checkout(self, id: str, branch: str) -> ChangeReport:
-        return self._add_element(f"checkout branch '{branch}'", Checkout(id, branch))
+        return self._add_element(f"checkout branch '{branch}'", Checkout(id=id, label=branch))

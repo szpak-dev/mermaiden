@@ -1258,27 +1258,27 @@
         "useMaxWidth"
       ],
       "properties": {
-        "rect_fill": {
+        "rectFill": {
           "type": "string",
           "default": "#f9f9f9"
         },
-        "text_color": {
+        "textColor": {
           "type": "string",
           "default": "#333"
         },
-        "rect_border_size": {
+        "rectBorderSize": {
           "type": "string",
           "default": "0.5px"
         },
-        "rect_border_color": {
+        "rectBorderColor": {
           "type": "string",
           "default": "#bbb"
         },
-        "rect_min_width": {
+        "rectMinWidth": {
           "type": "number",
           "default": 200
         },
-        "rect_min_height": {
+        "rectMinHeight": {
           "type": "number",
           "default": 200
         },
@@ -1286,11 +1286,11 @@
           "type": "number",
           "default": 14
         },
-        "rect_padding": {
+        "rectPadding": {
           "type": "number",
           "default": 10
         },
-        "line_height": {
+        "lineHeight": {
           "type": "number",
           "default": 20
         }

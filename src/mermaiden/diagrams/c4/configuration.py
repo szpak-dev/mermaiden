@@ -1,7 +1,5 @@
-from dataclasses import dataclass
+from ..configuration import MermaidDiagramConfiguration
 
 
-@dataclass(frozen=True, slots=True)
-class C4ContextDiagramConfiguration:
-    def to_mermaid(self) -> dict[str, object]:
-        return {}
+class C4ContextDiagramConfiguration(MermaidDiagramConfiguration):
+    pass

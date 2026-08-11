@@ -1,8 +1,8 @@
 from dataclasses import dataclass
-from typing import ClassVar
 
 from wireup import injectable
 
+from ..diagrams.application import DiagramsApplication
 from ..diagrams.architecture.diagram import Architecture
 from ..diagrams.architecture.relations import Port
 from ..diagrams.block.diagram import BlockDiagram
@@ -25,7 +25,6 @@ from ..diagrams.packet.diagram import Packet
 from ..diagrams.pie.diagram import PieDiagram
 from ..diagrams.radar.diagram import Radar
 from ..diagrams.railroad.diagram import RailroadDiagram
-from ..diagrams.registry import DiagramRegistry
 from ..diagrams.requirement.diagram import RequirementDiagram
 from ..diagrams.requirement.elements import RequirementType, Risk, VerificationMethod
 from ..diagrams.requirement.relations import RequirementRelationKind
@@ -41,51 +40,29 @@ from ..diagrams.timeline.diagram import Timeline
 from ..diagrams.treeview.diagram import TreeView
 from ..diagrams.venn.diagram import Venn
 from ..diagrams.wardley.diagram import WardleyDiagram
-from .service import MermaidRenderer
+from .application import MermaidApplication
 
 
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class DiagramFixtures:
-    renderer: MermaidRenderer
-    registry: DiagramRegistry
-
-    compatibility_names: ClassVar[dict[str, str]] = {
-        "architecture": "architecture-beta",
-        "block": "block",
-        "c4": "C4Context",
-        "classdiagram": "classDiagram",
-        "cynefin": "cynefin-beta",
-        "er": "erDiagram",
-        "eventmodeling": "eventmodeling",
-        "flowchart": "flowchart",
-        "gantt": "gantt",
-        "gitgraph": "gitGraph",
-        "journey": "journey",
-        "ishikawa": "ishikawa-beta",
-        "kanban": "kanban",
-        "mindmap": "mindmap",
-        "packet": "packet",
-        "pie": "pie",
-        "radar": "radar-beta",
-        "railroad": "railroad-ebnf-beta",
-        "requirement": "requirementDiagram",
-        "sankey": "sankey",
-        "sequence": "sequenceDiagram",
-        "state": "stateDiagram-v2",
-        "swimlane": "swimlane-beta",
-        "timeline": "timeline",
-        "treeview": "treeView-beta",
-        "venn": "venn-beta",
-        "wardley": "wardley-beta",
-    }
+    renderer: MermaidApplication
+    registry: DiagramsApplication
 
     def render_compatibility_sources(self) -> dict[str, str]:
         fixtures = self.render()
-        return {diagram_id: fixtures[name] for name, diagram_id in self.compatibility_names.items()}
+        aliases = {
+            "classdiagram": "class",
+            "gitgraph": "gitGraph",
+            "treeview": "treeView",
+            "wardley": "wardley-beta",
+        }
+        return {
+            self.registry.get_by_config_key(aliases.get(name, name)).id: source for name, source in fixtures.items()
+        }
 
     def render(self) -> dict[str, str]:
-        flowchart = self.registry.get("flowchart").diagram
+        flowchart = self.registry.get_diagram("flowchart")
         assert isinstance(flowchart, Flowchart)
         flowchart.add_group("entry", "Entry")
         flowchart.add_group("process", "Process")
@@ -112,7 +89,7 @@ class DiagramFixtures:
         flowchart.add_note("work_note", "Process work", ("work",))
         flowchart.add_note("end_note", "Finish process", ("end",))
 
-        treeview = self.registry.get("treeView-beta").diagram
+        treeview = self.registry.get_diagram("treeView-beta")
         assert isinstance(treeview, TreeView)
         for id, label in (("root", "root/"), ("source", "src/"), ("tests", "tests/"), ("readme", "README.md")):
             treeview.add_item(id, label)
@@ -124,28 +101,32 @@ class DiagramFixtures:
             treeview.add_branch(id, parent, child)
         treeview.add_annotation("source_note", "source", icon="folder")
         treeview.add_annotation("tests_note", "tests", icon="test")
-        treeview.add_annotation("readme_note", "readme", highlight=True, description="Documentation")
+        treeview.add_annotation("readme_note", "readme",
+                                highlight=True, description="Documentation")
 
-        classes = self.registry.get("classDiagram").diagram
+        classes = self.registry.get_diagram("classDiagram")
         assert isinstance(classes, ClassDiagram)
         classes.add_namespace("domain", "Domain", comment="Domain types")
         classes.add_class(
             "Animal",
-            attributes=(ClassAttribute("name", "String"),),
-            methods=(ClassMethod("sound", return_type="void"),),
+            attributes=(ClassAttribute(name="name", type="String"),),
+            methods=(ClassMethod(name="sound", return_type="void"),),
             annotations=("abstract",),
             parent_id="domain",
         )
         classes.add_class("Duck", parent_id="domain")
         classes.add_class("Pond", parent_id="domain")
-        classes.add_relation("inherits", "Animal", "Duck", ClassRelationKind.INHERITANCE, "extends")
-        classes.add_relation("hosts", "Pond", "Duck", ClassRelationKind.AGGREGATION, "hosts", "1", "*")
-        classes.add_relation("depends", "Duck", "Pond", ClassRelationKind.DEPENDENCY, "visits")
+        classes.add_relation("inherits", "Animal", "Duck",
+                             ClassRelationKind.INHERITANCE, "extends")
+        classes.add_relation("hosts", "Pond", "Duck",
+                             ClassRelationKind.AGGREGATION, "hosts", "1", "*")
+        classes.add_relation("depends", "Duck", "Pond",
+                             ClassRelationKind.DEPENDENCY, "visits")
         classes.add_note("animal_note", "Animal", "Base type")
         classes.add_note("duck_note", "Duck", "Concrete type")
         classes.add_note("pond_note", "Pond", "Aggregate")
 
-        architecture = self.registry.get("architecture-beta").diagram
+        architecture = self.registry.get_diagram("architecture-beta")
         assert isinstance(architecture, Architecture)
         for id, label in (("clients", "Clients"), ("platform", "Platform"), ("data", "Data")):
             architecture.add_group(id, label, columns=2)
@@ -154,41 +135,56 @@ class DiagramFixtures:
         architecture.add_junction("events", "Events", "platform")
         architecture.add_service("database", "Database", "data")
         architecture.add_edge("web_api", "web", "api", Port.RIGHT, Port.LEFT)
-        architecture.add_edge("api_events", "api", "events", Port.BOTTOM, Port.TOP)
-        architecture.add_edge("api_database", "api", "database", Port.RIGHT, Port.LEFT)
+        architecture.add_edge("api_events", "api",
+                              "events", Port.BOTTOM, Port.TOP)
+        architecture.add_edge("api_database", "api",
+                              "database", Port.RIGHT, Port.LEFT)
         architecture.add_note("web_note", "web", "Client gateway")
         architecture.add_note("api_note", "api", "Public API")
-        architecture.add_note("database_note", "database", "Persistent storage")
+        architecture.add_note("database_note", "database",
+                              "Persistent storage")
 
-        sequence = self.registry.get("sequenceDiagram").diagram
+        sequence = self.registry.get_diagram("sequenceDiagram")
         assert isinstance(sequence, SequenceDiagram)
         sequence.add_box("clients", "Clients", "#E3F2FD")
-        sequence.add_participant("user", "User", ParticipantKind.ACTOR, "clients")
-        sequence.add_participant("web", "Web", ParticipantKind.BOUNDARY, "clients")
+        sequence.add_participant(
+            "user", "User", ParticipantKind.ACTOR, "clients")
+        sequence.add_participant(
+            "web", "Web", ParticipantKind.BOUNDARY, "clients")
         sequence.add_box("backend", "Backend", "#F3E5F5")
-        sequence.add_participant("api", "API", ParticipantKind.CONTROL, "backend")
-        sequence.add_participant("database", "Database", ParticipantKind.DATABASE, "backend")
+        sequence.add_participant(
+            "api", "API", ParticipantKind.CONTROL, "backend")
+        sequence.add_participant(
+            "database", "Database", ParticipantKind.DATABASE, "backend")
         sequence.add_participant("events", "Events", ParticipantKind.QUEUE)
-        sequence.add_participant("worker", "Worker", ParticipantKind.ENTITY, created=True)
+        sequence.add_participant(
+            "worker", "Worker", ParticipantKind.ENTITY, created=True)
         sequence.autonumber("number")
-        sequence.add_message("request", "user", "web", "Open", MessageKind.SOLID, activate=True)
-        sequence.add_message("forward", "web", "api", "Forward", MessageKind.OPEN)
+        sequence.add_message("request", "user", "web",
+                             "Open", MessageKind.SOLID, activate=True)
+        sequence.add_message("forward", "web", "api",
+                             "Forward", MessageKind.OPEN)
         sequence.create("create_worker", "worker")
         sequence.add_message("start_worker", "api", "worker", "Start job")
         sequence.control("loop", ControlKind.LOOP, "retry")
-        sequence.add_message("query", "api", "database", "Query", MessageKind.DOTTED)
+        sequence.add_message("query", "api", "database",
+                             "Query", MessageKind.DOTTED)
         sequence.control("parallel", ControlKind.PAR, "effects")
-        sequence.add_message("publish", "api", "events", "Publish", MessageKind.DOTTED_OPEN)
+        sequence.add_message("publish", "api", "events",
+                             "Publish", MessageKind.DOTTED_OPEN)
         sequence.control("end_parallel", ControlKind.END)
         sequence.control("end_loop", ControlKind.END)
         sequence.deactivate("deactivate_web", "web")
         sequence.destroy("destroy_worker", "worker")
         sequence.add_message("stop_worker", "api", "worker", "Stop job")
-        sequence.add_note("user_note", "Caller", "user", position=NotePosition.LEFT)
-        sequence.add_note("web_note", "Gateway", "web", position=NotePosition.RIGHT)
-        sequence.add_note("sequence_note", "Asynchronous", "api", "events", position=NotePosition.OVER)
+        sequence.add_note("user_note", "Caller", "user",
+                          position=NotePosition.LEFT)
+        sequence.add_note("web_note", "Gateway", "web",
+                          position=NotePosition.RIGHT)
+        sequence.add_note("sequence_note", "Asynchronous",
+                          "api", "events", position=NotePosition.OVER)
 
-        swimlane = self.registry.get("swimlane-beta").diagram
+        swimlane = self.registry.get_diagram("swimlane-beta")
         assert isinstance(swimlane, SwimlaneDiagram)
         swimlane.add_lane("customer", "Customer")
         swimlane.add_lane("support", "Support")
@@ -197,18 +193,20 @@ class DiagramFixtures:
         swimlane.add_activity("triage", "Triage request", "support")
         swimlane.add_decision("known", "Known issue?", "support")
         swimlane.add_activity("answer", "Send answer", "support")
-        swimlane.add_activity("investigate", "Investigate issue", "engineering")
+        swimlane.add_activity(
+            "investigate", "Investigate issue", "engineering")
         swimlane.add_connector("handoff", "Handoff", "engineering")
         swimlane.add_end("receive", "Receive update", "customer")
         swimlane.add_flow("request_triage", "request", "triage")
         swimlane.add_flow("triage_known", "triage", "known")
         swimlane.add_conditional_flow("known_answer", "known", "answer", "Yes")
-        swimlane.add_conditional_flow("known_investigate", "known", "investigate", "No")
+        swimlane.add_conditional_flow(
+            "known_investigate", "known", "investigate", "No")
         swimlane.add_flow("investigate_handoff", "investigate", "handoff")
         swimlane.add_flow("handoff_answer", "handoff", "answer")
         swimlane.add_flow("answer_receive", "answer", "receive")
 
-        state = self.registry.get("stateDiagram-v2").diagram
+        state = self.registry.get_diagram("stateDiagram-v2")
         assert isinstance(state, StateDiagram)
         state.add_state("still", "Still")
         state.add_state("moving", "Moving")
@@ -227,7 +225,8 @@ class DiagramFixtures:
         state.add_transition("start_still", "initial", "still")
         state.add_transition("still_moving", "still", "moving", "accelerate")
         state.add_transition("moving_decision", "moving", "decision")
-        state.add_transition("decision_active", "decision", "active", "continue")
+        state.add_transition("decision_active", "decision",
+                             "active", "continue")
         state.add_transition("decision_crash", "decision", "crash", "fail")
         state.add_transition("active_fork", "active", "fork")
         state.add_transition("fork_still", "fork", "still")
@@ -235,14 +234,20 @@ class DiagramFixtures:
         state.add_transition("still_join", "still", "join")
         state.add_transition("crash_join", "crash", "join")
         state.add_transition("end_join", "join", "final")
-        state.add_transition("start_num_lock", "active_initial", "num_lock_off", composite_id="active")
-        state.add_transition("num_lock_toggle", "num_lock_off", "num_lock_on", "toggle", "active")
-        state.add_transition("end_num_lock", "num_lock_on", "active_final", composite_id="active")
-        state.add_transition("start_caps_lock", "active_initial", "caps_lock_off", composite_id="active")
-        state.add_transition("end_caps_lock", "caps_lock_off", "active_final", composite_id="active")
-        state.add_note("moving_note", "moving", "A moving system", StateNotePosition.RIGHT)
+        state.add_transition("start_num_lock", "active_initial",
+                             "num_lock_off", composite_id="active")
+        state.add_transition("num_lock_toggle", "num_lock_off",
+                             "num_lock_on", "toggle", "active")
+        state.add_transition("end_num_lock", "num_lock_on",
+                             "active_final", composite_id="active")
+        state.add_transition("start_caps_lock", "active_initial",
+                             "caps_lock_off", composite_id="active")
+        state.add_transition("end_caps_lock", "caps_lock_off",
+                             "active_final", composite_id="active")
+        state.add_note("moving_note", "moving",
+                       "A moving system", StateNotePosition.RIGHT)
 
-        requirements = self.registry.get("requirementDiagram").diagram
+        requirements = self.registry.get_diagram("requirementDiagram")
         assert isinstance(requirements, RequirementDiagram)
         requirements.add_requirement(
             "system",
@@ -294,15 +299,22 @@ class DiagramFixtures:
         )
         requirements.add_element("service", "software", "docs/service.md")
         requirements.add_element("test_suite", "test", "tests/requirements.py")
-        requirements.add_relation("system_contains_login", "system", "login", RequirementRelationKind.CONTAINS)
-        requirements.add_relation("login_copies_api", "login", "api", RequirementRelationKind.COPIES)
-        requirements.add_relation("api_derives_latency", "api", "latency", RequirementRelationKind.DERIVES)
-        requirements.add_relation("service_satisfies_system", "service", "system", RequirementRelationKind.SATISFIES)
-        requirements.add_relation("test_verifies_login", "test_suite", "login", RequirementRelationKind.VERIFIES)
-        requirements.add_relation("policy_refines_system", "policy", "system", RequirementRelationKind.REFINES)
-        requirements.add_relation("device_traces_policy", "device", "policy", RequirementRelationKind.TRACES)
+        requirements.add_relation(
+            "system_contains_login", "system", "login", RequirementRelationKind.CONTAINS)
+        requirements.add_relation(
+            "login_copies_api", "login", "api", RequirementRelationKind.COPIES)
+        requirements.add_relation(
+            "api_derives_latency", "api", "latency", RequirementRelationKind.DERIVES)
+        requirements.add_relation(
+            "service_satisfies_system", "service", "system", RequirementRelationKind.SATISFIES)
+        requirements.add_relation(
+            "test_verifies_login", "test_suite", "login", RequirementRelationKind.VERIFIES)
+        requirements.add_relation(
+            "policy_refines_system", "policy", "system", RequirementRelationKind.REFINES)
+        requirements.add_relation(
+            "device_traces_policy", "device", "policy", RequirementRelationKind.TRACES)
 
-        mindmap = self.registry.get("mindmap").diagram
+        mindmap = self.registry.get_diagram("mindmap")
         assert isinstance(mindmap, Mindmap)
         mindmap.add_root("root", "Mermaiden")
         mindmap.add_node("domain", "Domain model", "root")
@@ -313,7 +325,7 @@ class DiagramFixtures:
         mindmap.add_cloud("cloud", "Cloud", "runtime")
         mindmap.add_hexagon("quality", "Quality", "root")
 
-        pie = self.registry.get("pie").diagram
+        pie = self.registry.get_diagram("pie")
         assert isinstance(pie, PieDiagram)
         pie.set_title("Adopted pets")
         pie.show_values()
@@ -321,7 +333,7 @@ class DiagramFixtures:
         pie.add_slice("cats", "Cats", 85)
         pie.add_slice("rats", "Rats", 15)
 
-        timeline = self.registry.get("timeline").diagram
+        timeline = self.registry.get_diagram("timeline")
         assert isinstance(timeline, Timeline)
         timeline.set_title("Mermaiden history")
         timeline.add_section("foundation", "Foundation")
@@ -329,7 +341,7 @@ class DiagramFixtures:
         timeline.add_event("prototype", "Prototype", "2024")
         timeline.add_event("release", "First release", "2024")
 
-        sankey = self.registry.get("sankey").diagram
+        sankey = self.registry.get_diagram("sankey")
         assert isinstance(sankey, Sankey)
         sankey.add_node("grid", "Electricity grid")
         sankey.add_node("industry", "Industry")
@@ -337,14 +349,14 @@ class DiagramFixtures:
         sankey.add_flow("grid_industry", "grid", "industry", 342.165)
         sankey.add_flow("grid_homes", "grid", "homes", 113.726)
 
-        journey = self.registry.get("journey").diagram
+        journey = self.registry.get_diagram("journey")
         assert isinstance(journey, Journey)
         journey.set_title("Working day")
         journey.add_section("work", "Go to work")
         journey.add_task("tea", "Make tea", 5, ("Me",), "work")
         journey.add_task("work_task", "Do work", 1, ("Me", "Cat"), "work")
 
-        venn = self.registry.get("venn-beta").diagram
+        venn = self.registry.get_diagram("venn-beta")
         assert isinstance(venn, Venn)
         venn.add_set("frontend", "Frontend", 20)
         venn.add_text("react", "React", "frontend")
@@ -353,7 +365,7 @@ class DiagramFixtures:
         venn.add_union("shared", "Shared", ("frontend", "backend"), 3)
         venn.add_text("openapi", "OpenAPI", "shared")
 
-        radar = self.registry.get("radar-beta").diagram
+        radar = self.registry.get_diagram("radar-beta")
         assert isinstance(radar, Radar)
         radar.set_title("Restaurant comparison")
         radar.add_axis("food", "Food quality")
@@ -365,7 +377,7 @@ class DiagramFixtures:
         radar.set_graticule("polygon")
         radar.set_ticks(5)
 
-        block = self.registry.get("block").diagram
+        block = self.registry.get_diagram("block")
         assert isinstance(block, BlockDiagram)
         block.set_columns(3)
         block.add_block("frontend", "Frontend")
@@ -374,7 +386,7 @@ class DiagramFixtures:
         block.add_block("api", "API", parent_id="backend")
         block.add_block("database", "Database", parent_id="backend")
 
-        packet = self.registry.get("packet").diagram
+        packet = self.registry.get_diagram("packet")
         assert isinstance(packet, Packet)
         packet.set_title("UDP packet")
         packet.add_bits("source", "Source port", 16)
@@ -382,7 +394,7 @@ class DiagramFixtures:
         packet.add_field("length", "Length", 32, 47)
         packet.add_field("checksum", "Checksum", 48, 63)
 
-        er = self.registry.get("erDiagram").diagram
+        er = self.registry.get_diagram("erDiagram")
         assert isinstance(er, EntityRelationshipDiagram)
         er.add_entity("CUSTOMER", "Customer")
         er.add_attribute("customer_id", "id", "int", "CUSTOMER", ("PK",))
@@ -390,13 +402,14 @@ class DiagramFixtures:
         er.add_attribute("order_id", "id", "int", "ORDER", ("PK",))
         er.add_relationship("places", "CUSTOMER", "ORDER", "places", "||--o{")
 
-        gantt = self.registry.get("gantt").diagram
+        gantt = self.registry.get_diagram("gantt")
         assert isinstance(gantt, Gantt)
         gantt.set_title("Release plan")
         gantt.add_section("delivery", "Delivery")
-        gantt.add_task("design", "Design", ("done", "design", "2026-08-01", "2d"), "delivery")
+        gantt.add_task("design", "Design", ("done", "design",
+                       "2026-08-01", "2d"), "delivery")
 
-        gitgraph = self.registry.get("gitGraph").diagram
+        gitgraph = self.registry.get_diagram("gitGraph")
         assert isinstance(gitgraph, GitGraphDiagram)
         gitgraph.add_commit("initial", "ZERO", tag="v1.0.0")
         gitgraph.add_branch("develop", "develop", 1)
@@ -405,15 +418,18 @@ class DiagramFixtures:
         gitgraph.checkout("checkout_main", "main")
         gitgraph.add_commit("release", "RELEASE", tag="v1.1.0")
 
-        c4 = self.registry.get("C4Context").diagram
+        c4 = self.registry.get_diagram("C4Context")
         assert isinstance(c4, C4ContextDiagram)
         c4.add_person("customer", "Customer", "A personal banking customer")
-        c4.add_system("banking", "Internet Banking System", "Provides online banking", "Python")
-        c4.add_database("accounts", "Accounts Database", "Stores account balances", "PostgreSQL")
+        c4.add_system("banking", "Internet Banking System",
+                      "Provides online banking", "Python")
+        c4.add_database("accounts", "Accounts Database",
+                        "Stores account balances", "PostgreSQL")
         c4.add_relationship("uses", "customer", "banking", "Uses")
-        c4.add_relationship("reads", "banking", "accounts", "Reads account data")
+        c4.add_relationship("reads", "banking", "accounts",
+                            "Reads account data")
 
-        eventmodeling = self.registry.get("eventmodeling").diagram
+        eventmodeling = self.registry.get_diagram("eventmodeling")
         assert isinstance(eventmodeling, EventModelingDiagram)
         eventmodeling.add_swimlane("checkout", "Checkout")
         eventmodeling.add_actor("cart_ui", "Cart UI", "checkout")
@@ -424,7 +440,7 @@ class DiagramFixtures:
         eventmodeling.add_flow("record", "add_item", "item_added")
         eventmodeling.add_flow("project", "item_added", "cart_items")
 
-        ishikawa = self.registry.get("ishikawa-beta").diagram
+        ishikawa = self.registry.get_diagram("ishikawa-beta")
         assert isinstance(ishikawa, IshikawaDiagram)
         ishikawa.add_effect("blurry_photo", "Blurry photo")
         ishikawa.add_category("process", "Process")
@@ -434,28 +450,32 @@ class DiagramFixtures:
         ishikawa.add_category("lens", "Lens", "equipment")
         ishikawa.add_cause("damaged_lens", "Damaged lens", "lens")
 
-        cynefin = self.registry.get("cynefin-beta").diagram
+        cynefin = self.registry.get_diagram("cynefin-beta")
         assert isinstance(cynefin, CynefinDiagram)
-        cynefin.add_item("investigate", "Investigate root cause", DomainKind.COMPLEX)
-        cynefin.add_item("analyze", "Analyze performance data", DomainKind.COMPLICATED)
+        cynefin.add_item(
+            "investigate", "Investigate root cause", DomainKind.COMPLEX)
+        cynefin.add_item("analyze", "Analyze performance data",
+                         DomainKind.COMPLICATED)
         cynefin.add_item("restart", "Restart service", DomainKind.CLEAR)
-        cynefin.add_transition("pattern", "investigate", "analyze", "Pattern identified")
+        cynefin.add_transition("pattern", "investigate",
+                               "analyze", "Pattern identified")
 
-        kanban = self.registry.get("kanban").diagram
+        kanban = self.registry.get_diagram("kanban")
         assert isinstance(kanban, KanbanDiagram)
         kanban.add_column("todo", "Todo")
         kanban.add_column("doing", "In progress")
-        kanban.add_task("docs", "Create documentation", "todo", ticket="MC-2037", priority="High")
+        kanban.add_task("docs", "Create documentation", "todo",
+                        ticket="MC-2037", priority="High")
         kanban.add_task("render", "Create renderer", "doing", assigned="knsv")
 
-        railroad = self.registry.get("railroad-ebnf-beta").diagram
+        railroad = self.registry.get_diagram("railroad-ebnf-beta")
         assert isinstance(railroad, RailroadDiagram)
         railroad.add_rule("expression", "expression")
         railroad.add_non_terminal("term", "term", "expression")
         railroad.add_terminal("plus", "+", "expression")
         railroad.add_non_terminal("term_repeat", "term", "expression")
 
-        wardley = self.registry.get("wardley-beta").diagram
+        wardley = self.registry.get_diagram("wardley-beta")
         assert isinstance(wardley, WardleyDiagram)
         wardley.add_anchor("business", "Business", 0.95, 0.63)
         wardley.add_component("tea", "Cup of Tea", 0.79, 0.61, "build")

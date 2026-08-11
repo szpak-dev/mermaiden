@@ -22,3 +22,5 @@ jobs:
         with:
           node-version-file: .node-version
       - run: make ci
+        env:
+          PUPPETEER_EXECUTABLE_PATH: /usr/bin/google-chrome

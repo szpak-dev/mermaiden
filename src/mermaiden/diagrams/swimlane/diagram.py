@@ -1,14 +1,14 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from ..flowchart.elements import Direction
 from .configuration import SwimlaneConfiguration
-from .constraints.constraint import SwimlaneConstraint
+from .constraints import SwimlaneConstraint
 from .elements import Activity, Connector, Decision, End, Start, Swimlane, SwimlaneNode
 from .relations import ConditionalFlow, Flow
 
@@ -19,40 +19,39 @@ class SwimlaneDiagram(DiagramModel):
     constraints: Sequence[SwimlaneConstraint]
     configuration: SwimlaneConfiguration = field(default_factory=SwimlaneConfiguration, init=False)
     direction: Direction = field(default=Direction.TOP_DOWN, init=False)
-    syntax: ClassVar[str] = "swimlane-beta"
-    name: ClassVar[str] = "Swimlane diagram"
-    config_key: ClassVar[str] = "swimlane"
-    schema_definition: ClassVar[str] = "SwimlaneDiagramConfig"
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "swimlane-beta",
+        "Swimlane diagram",
+        "swimlane",
+        "SwimlaneDiagramConfig",
+    )
 
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return {self.config_key: self.configuration.to_mermaid()}
 
     def add_lane(self, id: str, label: str) -> ChangeReport:
-        return self._add_element(f"add lane '{id}'", Swimlane(id, label))
+        return self._add_element(f"add lane '{id}'", Swimlane(id=id, label=label))
 
     def add_activity(self, id: str, label: str, lane_id: str) -> ChangeReport:
-        return self._add_node(Activity(id, label), lane_id, "activity")
+        return self._add_node(Activity(id=id, label=label), lane_id, "activity")
 
     def add_start(self, id: str, label: str, lane_id: str) -> ChangeReport:
-        return self._add_node(Start(id, label), lane_id, "start")
+        return self._add_node(Start(id=id, label=label), lane_id, "start")
 
     def add_end(self, id: str, label: str, lane_id: str) -> ChangeReport:
-        return self._add_node(End(id, label), lane_id, "end")
+        return self._add_node(End(id=id, label=label), lane_id, "end")
 
     def add_decision(self, id: str, label: str, lane_id: str) -> ChangeReport:
-        return self._add_node(Decision(id, label), lane_id, "decision")
+        return self._add_node(Decision(id=id, label=label), lane_id, "decision")
 
     def add_connector(self, id: str, label: str, lane_id: str) -> ChangeReport:
-        return self._add_node(Connector(id, label), lane_id, "connector")
+        return self._add_node(Connector(id=id, label=label), lane_id, "connector")
 
     def add_flow(self, id: str, source_id: str, target_id: str, label: str = "") -> ChangeReport:
-        return self._add_relation(f"add flow '{id}'", Flow(id, (source_id, target_id), label))
+        return self._add_relation(f"add flow '{id}'", Flow(id=id, element_ids=(source_id, target_id), label=label))
 
     def add_conditional_flow(self, id: str, source_id: str, target_id: str, condition: str) -> ChangeReport:
         return self._add_relation(
             f"add conditional flow '{id}'",
-            ConditionalFlow(id, (source_id, target_id), condition),
+            ConditionalFlow(id=id, element_ids=(source_id, target_id), label=condition),
         )
 
     def remove_flow(self, id: str) -> ChangeReport:

@@ -1,13 +1,13 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import VennConfiguration
-from .constraints.constraint import VennConstraint
+from .constraints import VennConstraint
 from .elements import VennSet, VennText, VennUnion
 
 
@@ -16,17 +16,15 @@ from .elements import VennSet, VennText, VennUnion
 class Venn(DiagramModel):
     constraints: Sequence[VennConstraint]
     configuration: VennConfiguration = field(default_factory=VennConfiguration, init=False)
-    syntax: ClassVar[str] = "venn-beta"
-    name: ClassVar[str] = "Venn diagram"
-    config_key: ClassVar[str] = "venn"
-    schema_definition: ClassVar[str] = "VennDiagramConfig"
-
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return {self.config_key: self.configuration.to_mermaid()}
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "venn-beta",
+        "Venn diagram",
+        "venn",
+        "VennDiagramConfig",
+    )
 
     def add_set(self, id: str, label: str, size: float | None = None) -> ChangeReport:
-        return self._add_element(f"add set '{id}'", VennSet(id, label, (), size))
+        return self._add_element(f"add set '{id}'", VennSet(id=id, label=label, elements=(), size=size))
 
     def add_union(
         self,
@@ -35,7 +33,9 @@ class Venn(DiagramModel):
         set_ids: tuple[str, ...],
         size: float | None = None,
     ) -> ChangeReport:
-        return self._add_element(f"add union '{id}'", VennUnion(id, label, (), set_ids, size))
+        return self._add_element(
+            f"add union '{id}'", VennUnion(id=id, label=label, elements=(), set_ids=set_ids, size=size)
+        )
 
     def add_text(self, id: str, label: str, parent_id: str) -> ChangeReport:
-        return self._add_element(f"add text '{id}'", VennText(id, label), parent_id)
+        return self._add_element(f"add text '{id}'", VennText(id=id, label=label), parent_id)

@@ -1,18 +1,13 @@
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
-from typing import ClassVar
 
 from ...core.annotation import Annotation, TargetKind, TargetRef
 from ...core.error import OperationError
 
 
-@dataclass(frozen=True, slots=True)
 class Note(Annotation):
-    kind: ClassVar[str] = "note"
     text: str
 
 
-@dataclass(frozen=True, slots=True)
 class Notes:
     def create(
         self,
@@ -27,5 +22,5 @@ class Notes:
             raise OperationError("Flowchart notes require exactly one string 'text' value.")
         text = data["text"]
         assert isinstance(text, str)
-        targets = tuple(TargetRef(TargetKind.ELEMENT, item) for item in element_ids)
-        return Note(id, targets, text)
+        targets = tuple(TargetRef(kind=TargetKind.ELEMENT, id=item) for item in element_ids)
+        return Note(id=id, targets=targets, text=text)

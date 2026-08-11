@@ -1,14 +1,12 @@
 from wireup import injectable
 
 from ...core.annotation import TargetKind
-from ...core.constraint import BlockingConstraint, Constraint, ConstraintDiagram, Violation
+from ...core.constraint import Constraint, ConstraintDiagram, Violation
+from ..domain import StructureConstraint
 
 
 @injectable(as_type=Constraint, qualifier="references_exist")
-class ReferencesExist(BlockingConstraint):
-    @property
-    def code(self) -> str:
-        return "structure.references"
+class ReferencesExist(StructureConstraint):
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         element_ids = {item.id for item in diagram.walk_elements()}

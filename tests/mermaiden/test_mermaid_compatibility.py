@@ -1,8 +1,8 @@
-from mermaiden.application import Application
+from mermaiden.cli import MermaidenCli
 
 
 def test_application_validates_every_registered_diagram_against_pinned_mermaid_schema() -> None:
-    report = Application.create().compatibility_report()
+    report = MermaidenCli.create().compatibility_report()
 
     assert report.lock.mermaid_version == "11.16.0"
     assert report.valid
@@ -96,7 +96,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         "padding": 8,
         "useDebugLayout": False,
     }
-    upstream = {item.config_key: item for item in Application.create().mermaid_diagram_configs()}
+    upstream = {item.config_key: item for item in MermaidenCli.create().mermaid_diagram_configs()}
     assert all(
         item.configuration.schema_definition == upstream[item.configuration.config_key].schema_definition
         for item in report.diagrams
@@ -104,14 +104,14 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
 
 
 def test_application_validates_populated_compatibility_fixtures_with_one_parser_run() -> None:
-    report = Application.create().verify_compatibility()
+    report = MermaidenCli.create().verify_compatibility()
 
     assert report.valid
     assert not report.syntax_violations
 
 
 def test_application_lists_diagram_configs_from_mermaid_schema() -> None:
-    configs = Application.create().mermaid_diagram_configs()
+    configs = MermaidenCli.create().mermaid_diagram_configs()
 
     mindmap = next(item for item in configs if item.config_key == "mindmap")
     assert mindmap.schema_definition == "MindmapDiagramConfig"

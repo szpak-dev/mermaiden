@@ -1,17 +1,8 @@
-from dataclasses import dataclass
+from ..configuration import MermaidDiagramConfiguration
 
 
-@dataclass(frozen=True, slots=True)
-class VennConfiguration:
-    width: float = 800
-    height: float = 450
-    padding: float = 8
+class VennConfiguration(MermaidDiagramConfiguration):
+    width: int = 800
+    height: int = 450
+    padding: int = 8
     use_debug_layout: bool = False
-
-    def to_mermaid(self) -> dict[str, object]:
-        return {
-            "width": self.width,
-            "height": self.height,
-            "padding": self.padding,
-            "useDebugLayout": self.use_debug_layout,
-        }

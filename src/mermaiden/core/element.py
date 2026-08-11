@@ -1,18 +1,20 @@
 from abc import ABC
-from dataclasses import dataclass
+
+from .model import ClassifiedValueModel
 
 
-@dataclass(frozen=True, slots=True)
-class Element(ABC):
+class Element(ClassifiedValueModel, ABC):
     id: str
     label: str
 
 
-@dataclass(frozen=True, slots=True)
 class Entity(Element):
     pass
 
 
-@dataclass(frozen=True, slots=True)
+class RequiresChildren:
+    elements: tuple[Element, ...]
+
+
 class Container(Element):
     elements: tuple[Element, ...] = ()

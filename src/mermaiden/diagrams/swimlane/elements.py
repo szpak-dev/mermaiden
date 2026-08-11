@@ -1,39 +1,30 @@
-from dataclasses import dataclass
-from typing import ClassVar
 
 from ...core.element import Container, Entity
 
 
-@dataclass(frozen=True, slots=True)
 class Swimlane(Container):
-    kind: ClassVar[str] = "swimlane"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class SwimlaneNode(Entity):
-    kind: ClassVar[str] = "swimlane_node"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Activity(SwimlaneNode):
-    kind: ClassVar[str] = "activity"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Start(SwimlaneNode):
-    kind: ClassVar[str] = "start"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class End(SwimlaneNode):
-    kind: ClassVar[str] = "end"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Decision(SwimlaneNode):
-    kind: ClassVar[str] = "decision"
+    pass
 
 
-@dataclass(frozen=True, slots=True)
 class Connector(SwimlaneNode):
-    kind: ClassVar[str] = "connector"
+    pass

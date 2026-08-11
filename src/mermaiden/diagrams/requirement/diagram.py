@@ -1,14 +1,20 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ..base import DiagramModel
+from ..domain import DiagramDefinition, DiagramModel
 from .configuration import RequirementDiagramConfiguration
-from .constraints.constraint import RequirementDiagramConstraint
-from .elements import Requirement, RequirementElement, RequirementType, Risk, VerificationMethod
+from .constraints import RequirementDiagramConstraint
+from .elements import (
+    Requirement,
+    RequirementElement,
+    RequirementType,
+    Risk,
+    VerificationMethod,
+)
 from .relations import RequirementRelation, RequirementRelationKind
 
 
@@ -17,14 +23,12 @@ from .relations import RequirementRelation, RequirementRelationKind
 class RequirementDiagram(DiagramModel):
     constraints: Sequence[RequirementDiagramConstraint]
     configuration: RequirementDiagramConfiguration = field(default_factory=RequirementDiagramConfiguration, init=False)
-    syntax: ClassVar[str] = "requirementDiagram"
-    name: ClassVar[str] = "Requirement diagram"
-    config_key: ClassVar[str] = "requirement"
-    schema_definition: ClassVar[str] = "RequirementDiagramConfig"
-
-    @property
-    def mermaid_configuration(self) -> Mapping[str, object]:
-        return {self.config_key: self.configuration.to_mermaid()}
+    definition: ClassVar[DiagramDefinition] = DiagramDefinition(
+        "requirementDiagram",
+        "Requirement diagram",
+        "requirement",
+        "RequirementDiagramConfig",
+    )
 
     def add_requirement(
         self,
@@ -37,13 +41,21 @@ class RequirementDiagram(DiagramModel):
     ) -> ChangeReport:
         return self._add_element(
             f"add requirement '{id}'",
-            Requirement(id, id, requirement_id, text, requirement_type, risk, verification_method),
+            Requirement(
+                id=id,
+                label=id,
+                requirement_id=requirement_id,
+                text=text,
+                requirement_type=requirement_type,
+                risk=risk,
+                verification_method=verification_method,
+            ),
         )
 
     def add_element(self, id: str, element_type: str, document_reference: str) -> ChangeReport:
         return self._add_element(
             f"add element '{id}'",
-            RequirementElement(id, id, element_type, document_reference),
+            RequirementElement(id=id, label=id, element_type=element_type, document_reference=document_reference),
         )
 
     def add_relation(
@@ -55,7 +67,7 @@ class RequirementDiagram(DiagramModel):
     ) -> ChangeReport:
         return self._add_relation(
             f"add {relation_kind.value} relation '{id}'",
-            RequirementRelation(id, (source_id, target_id), "", relation_kind),
+            RequirementRelation(id=id, element_ids=(source_id, target_id), label="", relation_kind=relation_kind),
         )
 
     def remove_relation(self, id: str) -> ChangeReport:
