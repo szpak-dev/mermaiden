@@ -31,6 +31,7 @@ class MermaidApplication:
         environment.filters.update(
             {
                 "mermaid_id": self._identifier,
+                "mermaid_number": self._number,
                 "mermaid_quote": self._quote,
                 "tree_label": self._tree_label,
             }
@@ -67,6 +68,10 @@ class MermaidApplication:
     @staticmethod
     def _quote(value: object) -> str:
         return json.dumps(str(value), ensure_ascii=False)
+
+    @staticmethod
+    def _number(value: float | int) -> str:
+        return str(int(value)) if isinstance(value, float) and value.is_integer() else str(value)
 
     @staticmethod
     def _tree_label(value: object) -> str:

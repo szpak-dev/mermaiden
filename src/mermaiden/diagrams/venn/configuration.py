@@ -2,7 +2,7 @@ from ..configuration import MermaidDiagramConfiguration
 
 
 class VennConfiguration(MermaidDiagramConfiguration):
-    width: float = 800
-    height: float = 450
-    padding: float = 8
+    width: int = 800
+    height: int = 450
+    padding: int = 8
     use_debug_layout: bool = False
