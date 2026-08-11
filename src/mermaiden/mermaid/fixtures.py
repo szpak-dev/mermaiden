@@ -51,7 +51,15 @@ class DiagramFixtures:
 
     def render_compatibility_sources(self) -> dict[str, str]:
         fixtures = self.render()
-        return {self.registry.get_by_config_key(name).id: source for name, source in fixtures.items()}
+        aliases = {
+            "classdiagram": "class",
+            "gitgraph": "gitGraph",
+            "treeview": "treeView",
+            "wardley": "wardley-beta",
+        }
+        return {
+            self.registry.get_by_config_key(aliases.get(name, name)).id: source for name, source in fixtures.items()
+        }
 
     def render(self) -> dict[str, str]:
         flowchart = self.registry.get_diagram("flowchart")

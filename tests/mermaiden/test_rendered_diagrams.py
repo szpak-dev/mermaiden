@@ -206,45 +206,16 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             assert source.startswith("---\nconfig:\n  wrap: true\n  gantt: {")
         elif name == "gitgraph":
             assert source.startswith("---\nconfig:\n  wrap: true\n  gitGraph: {")
-        elif name == "c4":
-            assert source.startswith("---\nconfig:\n  wrap: true\n  c4: {}\n---\n")
         elif name == "cynefin":
             assert source.startswith("---\nconfig:\n  wrap: true\n  cynefin: {")
-        elif name == "eventmodeling":
-            assert source.startswith("---\nconfig:\n  wrap: true\n  eventmodeling: {}\n---\n")
-        elif name == "ishikawa":
-            assert source.startswith("---\nconfig:\n  wrap: true\n  ishikawa: {}\n---\n")
         elif name == "kanban":
             assert source.startswith("---\nconfig:\n  wrap: true\n  kanban: {")
         elif name == "railroad":
             assert source.startswith("---\nconfig:\n  wrap: true\n  railroad: {")
-        elif name == "wardley":
-            assert source.startswith("---\nconfig:\n  wrap: true\n  wardley-beta: {}\n---\n")
         elif name == "packet":
             assert source.startswith("---\nconfig:\n  wrap: true\n  packet: {")
         elif name == "radar":
             assert source.startswith("---\nconfig:\n  wrap: true\n  radar: {")
-        elif name in {
-            "architecture",
-            "classdiagram",
-            "flowchart",
-            "journey",
-            "sankey",
-            "sequence",
-            "timeline",
-            "treeview",
-        }:
-            config_key = {
-                "architecture": "architecture",
-                "classdiagram": "class",
-                "flowchart": "flowchart",
-                "journey": "journey",
-                "sankey": "sankey",
-                "sequence": "sequence",
-                "timeline": "timeline",
-                "treeview": "treeView",
-            }[name]
-            assert source.startswith(f"---\nconfig:\n  wrap: true\n  {config_key}: {{}}\n---\n")
         else:
             assert source.startswith("---\nconfig:\n  wrap: true\n---\n")
         for fragment in fragments:

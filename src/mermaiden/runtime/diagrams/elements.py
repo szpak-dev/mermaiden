@@ -57,16 +57,20 @@ class Elements:
         result: list[Element] = []
         for element in elements:
             if element.id == parent_id and isinstance(element, Container):
-                result.append(replace(element, elements=(*element.elements, child)))
+                result.append(element.model_copy(update={"elements": (*element.elements, child)}))
             elif isinstance(element, Container):
-                result.append(replace(element, elements=self._append_child(element.elements, parent_id, child)))
+                result.append(
+                    element.model_copy(update={"elements": self._append_child(element.elements, parent_id, child)})
+                )
             else:
                 result.append(element)
         return tuple(result)
 
     def _remove(self, elements: tuple[Element, ...], id: str) -> tuple[Element, ...]:
         return tuple(
-            replace(element, elements=self._remove(element.elements, id)) if isinstance(element, Container) else element
+            element.model_copy(update={"elements": self._remove(element.elements, id)})
+            if isinstance(element, Container)
+            else element
             for element in elements
             if element.id != id
         )

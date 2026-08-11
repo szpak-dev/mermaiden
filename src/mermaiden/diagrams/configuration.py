@@ -26,7 +26,7 @@ class MermaidConfiguration(MermaidConfigurationModel):
     def to_mermaid(self) -> dict[str, object]:
         document = self.model_dump(mode="json", by_alias=True)
         diagrams = document.pop("diagrams")
-        return {**document, **diagrams}
+        return {**document, **{key: value for key, value in diagrams.items() if value}}
 
 
 class MermaidDiagramConfiguration(MermaidConfigurationModel):

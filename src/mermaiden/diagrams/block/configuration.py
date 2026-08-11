@@ -2,4 +2,4 @@ from ..configuration import MermaidDiagramConfiguration
 
 
 class BlockDiagramConfiguration(MermaidDiagramConfiguration):
-    padding: float = 8
+    padding: int = 8

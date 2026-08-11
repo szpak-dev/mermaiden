@@ -84,7 +84,10 @@ class MermaidApplication:
     @staticmethod
     def _wrap(body: str, configuration: Mapping[str, object]) -> str:
         entries = "".join(
-            f"  {key}: {json.dumps(value, ensure_ascii=False)}\n" for key, value in configuration.items())
+            f"  {key}: {json.dumps(value, ensure_ascii=False)}\n"
+            for key, value in configuration.items()
+            if key != "wrap"
+        )
         return f"---\nconfig:\n  wrap: true\n{entries}---\n{body}"
 
 

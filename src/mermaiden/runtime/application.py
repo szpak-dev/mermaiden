@@ -32,7 +32,7 @@ class ChangeTransaction:
             self.state.rollback()
             raise
         report = ChangeReport(operation, before, after, after.can_commit)
-        if not report.accepted:
+        if not report.accepted and before.can_commit:
             self.state.rollback()
             raise ChangeRejected(operation, after)
         self.state.commit()
