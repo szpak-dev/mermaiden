@@ -1,5 +1,5 @@
 {% if element.comment %}%% {{ element.comment }}{{ "\n" -}}{% endif %}
-class {{ element.id }} { {{ "\n" -}}
+class {{ element.id }}[{{ element.label | mermaid_quote }}] { {{ "\n" -}}
 {% for annotation in element.annotations %}
   <<{{ annotation }}>>{{ "\n" -}}
 {% endfor %}

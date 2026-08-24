@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from importlib import import_module
 from inspect import Parameter, getmembers, isclass, signature
 from types import ModuleType
-from typing import Any, get_type_hints
+from typing import Annotated, Any, get_args, get_origin, get_type_hints
 
 from pydantic import ValidationError, create_model
 from wireup import injectable
@@ -115,7 +115,7 @@ class DiagramCatalog:
 
     @staticmethod
     def _payload_fields(method: Callable[..., object]) -> dict[str, tuple[object, object]]:
-        hints = get_type_hints(method)
+        hints = get_type_hints(method, include_extras=True)
         return {
             parameter.name: DiagramCatalog._payload_field(parameter, hints)
             for parameter in signature(method).parameters.values()
@@ -126,7 +126,12 @@ class DiagramCatalog:
     def _payload_field(parameter: Parameter, hints: Mapping[str, object]) -> tuple[object, object]:
         annotation = hints.get(parameter.name, Any)
         if parameter.kind is Parameter.VAR_POSITIONAL:
-            return tuple[annotation, ...], ()
+            if get_origin(annotation) is Annotated:
+                item, *metadata = get_args(annotation)
+                annotation = Annotated[tuple[item, ...], *metadata]
+            else:
+                annotation = tuple[annotation, ...]
+            return annotation, ...
         default = ... if parameter.default is Parameter.empty else parameter.default
         return annotation, default
 

@@ -70,7 +70,7 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
         "classdiagram": (
             "classDiagram",
             "namespace domain",
-            "class Animal",
+            'class Animal["Animal species"]',
             "<|--",
             "o--",
             "<..",
