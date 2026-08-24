@@ -27,7 +27,7 @@ class TreeView(DiagramModel):
 
 
     @property
-    def root_elements(self) -> tuple[TreeItem, ...]:
+    def tree_roots(self) -> tuple[TreeItem, ...]:
         child_ids = {
             relation.child_id
             for relation in self.find_relations()
@@ -35,12 +35,12 @@ class TreeView(DiagramModel):
         }
         return tuple(
             item
-            for item in super(TreeView, self).root_elements
+            for item in self.root_elements
             if isinstance(item, TreeItem) and item.id not in child_ids
         )
 
-    def add_item(self, id: str, label: str, parent_id: str = "") -> ChangeReport:
-        return self._add_element(f"add tree item '{id}'", TreeItem(id=id, label=label), parent_id)
+    def add_item(self, id: str, label: str) -> ChangeReport:
+        return self._add_element(f"add tree item '{id}'", TreeItem(id=id, label=label))
 
     def add_branch(self, id: str, parent_id: str, child_id: str) -> ChangeReport:
         return self._add_relation(f"add tree branch '{id}'", TreeBranch(id=id, element_ids=(parent_id, child_id)))
