@@ -91,16 +91,20 @@ class DiagramFixtures:
 
         treeview = self.registry.get_diagram("treeView-beta")
         assert isinstance(treeview, TreeView)
-        for id, label in (("root", "root/"), ("source", "src/"), ("tests", "tests/"), ("readme", "README.md")):
-            treeview.add_item(id, label)
-        for id, parent, child in (
-            ("root_source", "root", "source"),
-            ("root_tests", "root", "tests"),
-            ("root_readme", "root", "readme"),
+        for id, label in (
+            ("root", "root/"),
+            ("source", "src/"),
+            ("package", "mermaiden/"),
+            ("tests", "tests/"),
+            ("readme", "README.md"),
         ):
-            treeview.add_branch(id, parent, child)
+            treeview.add_item(id, label)
         treeview.add_annotation("source_note", "source", icon="folder")
+        treeview.add_branch("root_source", "root", "source")
         treeview.add_annotation("tests_note", "tests", icon="test")
+        treeview.add_branch("root_tests", "root", "tests")
+        treeview.add_branch("source_package", "source", "package")
+        treeview.add_branch("root_readme", "root", "readme")
         treeview.add_annotation("readme_note", "readme",
                                 highlight=True, description="Documentation")
 

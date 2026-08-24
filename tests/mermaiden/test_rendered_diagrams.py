@@ -67,6 +67,7 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             "treeView-beta",
             "root/",
             "src/ icon(folder)",
+            "mermaiden/",
             "tests/ icon(test)",
             "README.md :::highlight ## Documentation",
         ),
@@ -226,5 +227,6 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
         assert all(line == line.rstrip() for line in source.splitlines())
 
     assert diagrams["treeview"].endswith(
-        "treeView-beta\nroot/\n  src/ icon(folder)\n  tests/ icon(test)\n  README.md :::highlight ## Documentation\n"
+        "treeView-beta\nroot/\n  src/ icon(folder)\n    mermaiden/\n"
+        "  tests/ icon(test)\n  README.md :::highlight ## Documentation\n"
     )
