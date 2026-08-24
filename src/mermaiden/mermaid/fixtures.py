@@ -109,13 +109,14 @@ class DiagramFixtures:
         classes.add_namespace("domain", "Domain", comment="Domain types")
         classes.add_class(
             "Animal",
+            "Animal species",
             attributes=(ClassAttribute(name="name", type="String"),),
             methods=(ClassMethod(name="sound", return_type="void"),),
             annotations=("abstract",),
             parent_id="domain",
         )
-        classes.add_class("Duck", parent_id="domain")
-        classes.add_class("Pond", parent_id="domain")
+        classes.add_class("Duck", "Duck", parent_id="domain")
+        classes.add_class("Pond", "Pond", parent_id="domain")
         classes.add_relation("inherits", "Animal", "Duck",
                              ClassRelationKind.INHERITANCE, "extends")
         classes.add_relation("hosts", "Pond", "Duck",

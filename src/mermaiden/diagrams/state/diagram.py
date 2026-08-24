@@ -28,7 +28,7 @@ class StateDiagram(DiagramModel):
     )
 
 
-    def add_state(self, id: str, label: str = "", composite_id: str = "") -> ChangeReport:
+    def add_state(self, id: str, label: str, composite_id: str = "") -> ChangeReport:
         return self._add_node(State(id=id, label=label), composite_id, "state")
 
     def add_initial(self, id: str, composite_id: str = "") -> ChangeReport:
@@ -37,7 +37,7 @@ class StateDiagram(DiagramModel):
     def add_final(self, id: str, composite_id: str = "") -> ChangeReport:
         return self._add_node(Final(id=id, label="final"), composite_id, "final state")
 
-    def add_composite(self, id: str, label: str = "", composite_id: str = "") -> ChangeReport:
+    def add_composite(self, id: str, label: str, composite_id: str = "") -> ChangeReport:
         return self._add_node(CompositeState(id=id, label=label), composite_id, "composite state")
 
     def add_choice(self, id: str, label: str = "", composite_id: str = "") -> ChangeReport:

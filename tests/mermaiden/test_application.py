@@ -1,4 +1,6 @@
 import json
+from collections.abc import Mapping
+from typing import cast
 
 from mermaiden.application import Application, DiagramCommand
 
@@ -34,3 +36,19 @@ class TestApplication:
         )
 
         assert "actor actor as Actor" in application.render(diagram)
+
+    def test_preserves_and_renders_a_class_identifier_separately_from_its_label(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("classDiagram")
+
+        application.apply(
+            diagram,
+            DiagramCommand("add_class", {"id": "example_class", "label": "Example Class"}),
+        )
+
+        snapshot = application.snapshot(diagram)
+        fields = cast(Mapping[str, object], snapshot.elements[0]["fields"])
+
+        assert fields["id"] == "example_class"
+        assert fields["label"] == "Example Class"
+        assert 'class example_class["Example Class"] {' in application.render(diagram)

@@ -1,7 +1,8 @@
 from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import Annotated, ClassVar
 
+from pydantic import Field
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
@@ -39,14 +40,14 @@ class SequenceDiagram(DiagramModel):
     def add_participant(
         self,
         id: str,
-        label: str = "",
+        label: str,
         kind: ParticipantKind = ParticipantKind.PARTICIPANT,
         box_id: str = "",
         created: bool = False,
     ) -> ChangeReport:
         return self._add_element(
             f"add participant '{id}'",
-            Participant(id=id, label=label or id, participant_kind=kind, created=created),
+            Participant(id=id, label=label, participant_kind=kind, created=created),
             box_id,
         )
 
@@ -102,7 +103,11 @@ class SequenceDiagram(DiagramModel):
         )
 
     def add_note(
-        self, id: str, text: str, *participant_ids: str, position: NotePosition = NotePosition.OVER
+        self,
+        id: str,
+        text: str,
+        *participant_ids: Annotated[str, Field(min_length=1, max_length=2)],
+        position: NotePosition = NotePosition.OVER,
     ) -> ChangeReport:
         return self._annotate(
             f"add note '{id}'",

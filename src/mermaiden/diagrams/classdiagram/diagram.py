@@ -28,7 +28,7 @@ class ClassDiagram(DiagramModel):
     def add_class(
         self,
         id: str,
-        label: str = "",
+        label: str,
         *,
         attributes: Sequence[str | ClassAttribute] = (),
         methods: Sequence[str | ClassMethod] = (),
@@ -40,7 +40,7 @@ class ClassDiagram(DiagramModel):
             f"add class '{id}'",
             Class(
                 id=id,
-                label=label or id,
+                label=label,
                 attributes=tuple(attributes),
                 methods=tuple(methods),
                 annotations=tuple(annotations),
