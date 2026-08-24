@@ -1,5 +1,5 @@
 
-from ...core.element import Container, Entity, RequiresChildren
+from ...core.element import Container, Entity
 
 
 class Terminal(Entity):
@@ -14,7 +14,7 @@ class Special(Entity):
     pass
 
 
-class CompositeExpression(Container, RequiresChildren):
+class CompositeExpression(Container):
     pass
 
 
