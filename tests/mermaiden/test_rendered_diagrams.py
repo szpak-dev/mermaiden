@@ -51,7 +51,10 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
         ),
         "railroad": (
             "railroad-ebnf-beta",
-            'r_v_expression = term "+" term ;',
+            "r_v_alternative = ? first ? | ? second ? ;",
+            'r_v_optional = [ "value" ] ;',
+            "r_v_repetition = { value } ;",
+            "r_v_group = ( ? grouped ? ) ;",
         ),
         "wardley": (
             "wardley-beta",
