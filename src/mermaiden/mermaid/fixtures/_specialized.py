@@ -1,6 +1,7 @@
 from ...diagrams.application import DiagramsApplication
 from ...diagrams.c4.configuration import C4ContextDiagramConfiguration
 from ...diagrams.c4.diagram import C4ContextDiagram
+from ...diagrams.c4.relations import RelationshipDirection
 from ...diagrams.cynefin.diagram import CynefinDiagram
 from ...diagrams.cynefin.elements import DomainKind
 from ...diagrams.domain import DiagramModel
@@ -35,7 +36,7 @@ def build_specialized_fixtures(registry: DiagramsApplication) -> dict[str, Diagr
     c4.add_system("banking", "Internet Banking System", "Provides online banking", "Python")
     c4.add_database("accounts", "Accounts Database", "Stores account balances", "PostgreSQL")
     c4.add_relationship("uses", "customer", "banking", "Uses")
-    c4.add_relationship("reads", "banking", "accounts", "Reads account data")
+    c4.add_relationship("reads", "banking", "accounts", "Reads account data", RelationshipDirection.RIGHT)
 
     ishikawa = registry.get_diagram("ishikawa-beta")
     assert isinstance(ishikawa, IshikawaDiagram)

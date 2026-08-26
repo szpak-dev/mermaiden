@@ -34,6 +34,7 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             'System(banking, "Internet Banking System", "Provides online banking", "Python")',
             'SystemDb(accounts, "Accounts Database", "Stores account balances", "PostgreSQL")',
             'Rel(customer, banking, "Uses")',
+            'Rel_R(banking, accounts, "Reads account data")',
         ),
         "cynefin": (
             "cynefin-beta",

@@ -9,7 +9,7 @@ from ..domain import DiagramDefinition, DiagramModel
 from .configuration import C4ContextDiagramConfiguration
 from .constraints import C4ContextDiagramConstraint
 from .elements import Person, System, SystemDb, SystemQueue
-from .relations import Relationship
+from .relations import Relationship, RelationshipDirection
 
 
 @injectable(as_type=DiagramModel, qualifier="c4", lifetime="scoped")
@@ -42,7 +42,15 @@ class C4ContextDiagram(DiagramModel):
             f"add queue '{id}'", SystemQueue(id=id, label=label, description=description, technology=technology)
         )
 
-    def add_relationship(self, id: str, source_id: str, target_id: str, label: str) -> ChangeReport:
+    def add_relationship(
+        self,
+        id: str,
+        source_id: str,
+        target_id: str,
+        label: str,
+        direction: RelationshipDirection = RelationshipDirection.DEFAULT,
+    ) -> ChangeReport:
         return self._add_relation(
-            f"add relationship '{id}'", Relationship(id=id, element_ids=(source_id, target_id), label=label)
+            f"add relationship '{id}'",
+            Relationship(id=id, element_ids=(source_id, target_id), label=label, direction=direction),
         )
