@@ -91,6 +91,7 @@ class TestApplication:
         ("diagram_id", "configuration"),
         (
             ("block", {"padding": 12}),
+            ("architecture-beta", {"nodeSeparation": 96, "seed": 7}),
             ("pie", {"legendPosition": "top"}),
             ("gitGraph", {"nodeLabel": {"width": 90, "height": 110, "x": -20, "y": 5}}),
         ),
@@ -114,6 +115,36 @@ class TestApplication:
         assert restored.configuration == diagram.configuration
         assert type(restored.configuration) is type(diagram.configuration)
         assert application.render(restored) == source
+
+    def test_serializes_non_default_architecture_configuration(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("architecture-beta")
+
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "configure",
+                {
+                    "useMaxWidth": False,
+                    "padding": 48,
+                    "iconSize": 96,
+                    "fontSize": 18,
+                    "randomize": True,
+                    "nodeSeparation": 120,
+                    "idealEdgeLengthMultiplier": 2,
+                    "edgeElasticity": 0.7,
+                    "numIter": 3000,
+                    "seed": 7,
+                },
+            ),
+        )
+
+        assert (
+            'architecture: {"useMaxWidth": false, "padding": 48.0, "iconSize": 96.0, '
+            '"fontSize": 18.0, "randomize": true, "nodeSeparation": 120.0, '
+            '"idealEdgeLengthMultiplier": 2.0, "edgeElasticity": 0.7, "numIter": 3000, "seed": 7.0}'
+            in application.render(diagram)
+        )
 
     def test_rejects_version_one_before_reading_version_two_configuration(self) -> None:
         application = Application.create()
