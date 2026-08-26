@@ -79,6 +79,23 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
             "seed": 1,
         },
     }
+    assert configurations["C4Context"] == {
+        "wrap": True,
+        "c4": {
+            "diagramMarginX": 50,
+            "diagramMarginY": 10,
+            "c4ShapeMargin": 50,
+            "c4ShapePadding": 20,
+            "width": 216,
+            "height": 60,
+            "boxMargin": 10,
+            "useMaxWidth": True,
+            "c4ShapeInRow": 4,
+            "nextLinePaddingX": 0,
+            "c4BoundaryInRow": 2,
+            "messageFontSize": 12,
+        },
+    }
     assert configurations["swimlane-beta"] == {
         "wrap": True,
         "swimlane": {
