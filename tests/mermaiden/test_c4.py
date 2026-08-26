@@ -3,10 +3,27 @@ import json
 import pytest
 
 from mermaiden.application import Application, DiagramCommand, UnknownCommand
+from mermaiden.core.constraint import ChangeRejected
+from mermaiden.diagrams.c4.diagram import C4ContextDiagram
 from mermaiden.diagrams.c4.relations import Relationship, RelationshipDirection
 
 
 class TestC4:
+    def _diagram_with_relationship(self) -> tuple[Application, C4ContextDiagram]:
+        application = Application.create()
+        diagram = application.create_diagram("C4Context")
+        assert isinstance(diagram, C4ContextDiagram)
+        application.apply(diagram, DiagramCommand("add_person", {"id": "user", "label": "User"}))
+        application.apply(diagram, DiagramCommand("add_system", {"id": "app", "label": "Application"}))
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_relationship",
+                {"id": "uses", "source_id": "user", "target_id": "app", "label": "Uses"},
+            ),
+        )
+        return application, diagram
+
     @pytest.mark.parametrize(
         ("direction", "mermaid_function"),
         (
@@ -68,5 +85,94 @@ class TestC4:
                         "label": "Uses",
                         "direction": "Rel_Sideways",
                     },
+                ),
+            )
+
+    @pytest.mark.parametrize(
+        ("offset_x", "offset_y"),
+        (
+            (16, 8),
+            (-16, -8),
+            (-16, 8),
+        ),
+    )
+    def test_renders_and_restores_relationship_label_offsets(self, offset_x: int, offset_y: int) -> None:
+        application, diagram = self._diagram_with_relationship()
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "set_relationship_label_offset",
+                {"id": "uses", "offset_x": offset_x, "offset_y": offset_y},
+            ),
+        )
+
+        relationship = diagram.find_relations()[0]
+        source = application.render(diagram)
+        restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
+        restored_relationship = restored.find_relations()[0]
+
+        assert isinstance(relationship, Relationship)
+        assert relationship.offset_x == offset_x
+        assert relationship.offset_y == offset_y
+        assert f'UpdateRelStyle(user, app, $offsetX="{offset_x}", $offsetY="{offset_y}")' in source
+        assert isinstance(restored_relationship, Relationship)
+        assert restored_relationship == relationship
+        assert application.render(restored) == source
+
+    def test_renders_offsets_after_every_relationship_declaration(self) -> None:
+        application, diagram = self._diagram_with_relationship()
+        application.apply(diagram, DiagramCommand("add_system", {"id": "database", "label": "Database"}))
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_relationship",
+                {"id": "reads", "source_id": "app", "target_id": "database", "label": "Reads"},
+            ),
+        )
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "set_relationship_label_offset",
+                {"id": "uses", "offset_x": 12, "offset_y": -6},
+            ),
+        )
+
+        source = application.render(diagram)
+
+        assert source.index('Rel(app, database, "Reads")') < source.index("UpdateRelStyle(user, app")
+
+    def test_resetting_both_offsets_removes_the_style_statement(self) -> None:
+        application, diagram = self._diagram_with_relationship()
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "set_relationship_label_offset",
+                {"id": "uses", "offset_x": 12, "offset_y": -6},
+            ),
+        )
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "set_relationship_label_offset",
+                {"id": "uses", "offset_x": 0, "offset_y": 0},
+            ),
+        )
+
+        relationship = diagram.find_relations()[0]
+
+        assert isinstance(relationship, Relationship)
+        assert relationship.offset_x == 0
+        assert relationship.offset_y == 0
+        assert "UpdateRelStyle" not in application.render(diagram)
+
+    def test_rejects_an_unknown_relationship_when_setting_offsets(self) -> None:
+        application, diagram = self._diagram_with_relationship()
+
+        with pytest.raises(ChangeRejected, match="Relationship 'missing' does not exist"):
+            application.apply(
+                diagram,
+                DiagramCommand(
+                    "set_relationship_label_offset",
+                    {"id": "missing", "offset_x": 12, "offset_y": 8},
                 ),
             )

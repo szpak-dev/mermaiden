@@ -14,3 +14,5 @@ class RelationshipDirection(StrEnum):
 
 class Relationship(Relation):
     direction: RelationshipDirection = RelationshipDirection.DEFAULT
+    offset_x: int = 0
+    offset_y: int = 0
