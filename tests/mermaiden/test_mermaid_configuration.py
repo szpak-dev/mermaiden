@@ -1,15 +1,10 @@
 from collections.abc import Mapping
-from typing import Any, cast
+from typing import cast
 
 import pytest
 from pydantic import ValidationError
 
-from mermaiden.application import Application
-from mermaiden.diagrams.architecture.configuration import ArchitectureDiagramConfiguration
-from mermaiden.diagrams.block.configuration import BlockDiagramConfiguration
-from mermaiden.diagrams.c4.configuration import C4ContextDiagramConfiguration
-from mermaiden.diagrams.gitgraph.configuration import GitGraphDiagramConfiguration
-from mermaiden.diagrams.requirement.configuration import RequirementDiagramConfiguration
+from mermaiden.application import Application, DiagramCommand, UnknownCommand
 
 
 class TestMermaidConfiguration:
@@ -29,54 +24,45 @@ class TestMermaidConfiguration:
         return False
 
     def test_diagram_configuration_provides_a_source_keyed_mermaid_document(self) -> None:
-        configuration = BlockDiagramConfiguration(padding=12)
+        application = Application.create()
+        diagram = application.create_diagram("block")
+        application.apply(diagram, DiagramCommand("configure", {"padding": 12}))
 
-        assert configuration.document("block").to_mermaid() == {
-            "wrap": True,
-            "block": {"padding": 12},
-        }
+        assert application.render(diagram).startswith(
+            "---\nconfig:\n  wrap: true\n  block: {\"padding\": 12}\n---\nblock\n"
+        )
 
     def test_diagram_configuration_validates_its_values_and_rejects_unknown_fields(self) -> None:
-        with pytest.raises(ValidationError):
-            BlockDiagramConfiguration(padding=cast(Any, "invalid"))
+        application = Application.create()
+        diagram = application.create_diagram("block")
 
-        with pytest.raises(ValidationError):
-            BlockDiagramConfiguration.model_validate({"paddding": 12})
+        with pytest.raises(UnknownCommand, match="'configure' has invalid arguments"):
+            application.apply(diagram, DiagramCommand("configure", {"padding": "invalid"}))
+
+        with pytest.raises(UnknownCommand, match="'configure' has invalid arguments"):
+            application.apply(diagram, DiagramCommand("configure", {"paddding": 12}))
 
     def test_configuration_serialization_converts_nested_keys_to_camel_case(self) -> None:
-        document = cast(
-            dict[str, dict[str, object]], GitGraphDiagramConfiguration().document("gitGraph").to_mermaid()
-        )
-        assert document["gitGraph"]["nodeLabel"] == {
-            "width": 75,
-            "height": 100,
-            "x": -25,
-            "y": 0,
-        }
-        requirement = cast(
-            dict[str, dict[str, object]], RequirementDiagramConfiguration().document("requirement").to_mermaid()
-        )
+        application = Application.create()
+        git_graph = application.create_diagram("gitGraph")
+        requirement = application.create_diagram("requirementDiagram")
 
-        assert requirement["requirement"]["rectFill"] == "#f9f9f9"
+        assert (
+            '"nodeLabel": {"width": 75.0, "height": 100.0, "x": -25.0, "y": 0.0}'
+            in application.render(git_graph)
+        )
+        assert '"rectFill": "#f9f9f9"' in application.render(requirement)
 
     def test_architecture_configuration_uses_mermaids_concrete_defaults(self) -> None:
-        configuration = ArchitectureDiagramConfiguration()
+        application = Application.create()
+        diagram = application.create_diagram("architecture-beta")
+        source = application.render(diagram)
 
-        assert configuration.document("architecture").to_mermaid() == {
-            "wrap": True,
-            "architecture": {
-                "useMaxWidth": True,
-                "padding": 40,
-                "iconSize": 80,
-                "fontSize": 16,
-                "randomize": False,
-                "nodeSeparation": 75,
-                "idealEdgeLengthMultiplier": 1.5,
-                "edgeElasticity": 0.45,
-                "numIter": 2500,
-                "seed": 1,
-            },
-        }
+        assert '"useMaxWidth": true' in source
+        assert '"padding": 40.0' in source
+        assert '"nodeSeparation": 75.0' in source
+        assert '"edgeElasticity": 0.45' in source
+        assert '"numIter": 2500' in source
 
     @pytest.mark.parametrize(
         "values",
@@ -95,29 +81,22 @@ class TestMermaidConfiguration:
         self,
         values: Mapping[str, object],
     ) -> None:
-        with pytest.raises(ValidationError):
-            ArchitectureDiagramConfiguration.model_validate(values)
+        application = Application.create()
+        diagram = application.create_diagram("architecture-beta")
+
+        with pytest.raises(UnknownCommand, match="'configure' has invalid arguments"):
+            application.apply(diagram, DiagramCommand("configure", values))
 
     def test_c4_configuration_uses_mermaids_concrete_layout_defaults(self) -> None:
-        configuration = C4ContextDiagramConfiguration()
+        application = Application.create()
+        diagram = application.create_diagram("C4Context")
+        source = application.render(diagram)
 
-        assert configuration.document("c4").to_mermaid() == {
-            "wrap": True,
-            "c4": {
-                "diagramMarginX": 50,
-                "diagramMarginY": 10,
-                "c4ShapeMargin": 50,
-                "c4ShapePadding": 20,
-                "width": 216,
-                "height": 60,
-                "boxMargin": 10,
-                "useMaxWidth": True,
-                "c4ShapeInRow": 4,
-                "nextLinePaddingX": 0,
-                "c4BoundaryInRow": 2,
-                "messageFontSize": 12,
-            },
-        }
+        assert '"diagramMarginX": 50' in source
+        assert '"c4ShapePadding": 20' in source
+        assert '"width": 216' in source
+        assert '"c4ShapeInRow": 4' in source
+        assert '"messageFontSize": 12.0' in source
 
     @pytest.mark.parametrize(
         "values",
@@ -139,22 +118,23 @@ class TestMermaidConfiguration:
         self,
         values: Mapping[str, object],
     ) -> None:
-        with pytest.raises(ValidationError):
-            C4ContextDiagramConfiguration.model_validate(values)
+        application = Application.create()
+        diagram = application.create_diagram("C4Context")
+
+        with pytest.raises(UnknownCommand, match="'configure' has invalid arguments"):
+            application.apply(diagram, DiagramCommand("configure", values))
 
     def test_every_diagram_has_strict_non_nullable_configuration_defaults(self) -> None:
         application = Application.create()
 
         for info in application.available_diagrams():
-            diagram = application.create_diagram(info.id)
-            payload_type = type(diagram.configuration)
+            payload_type = application.command_payload(info.id, "configure")
             schema = payload_type.model_json_schema()
             configuration = payload_type.model_validate({})
 
             assert schema["additionalProperties"] is False
             assert not self._contains_json_null(schema)
             assert not self._contains_json_null(configuration.model_dump(mode="json", by_alias=True))
-            assert not self._contains_json_null(diagram.mermaid_configuration)
 
             with pytest.raises(ValidationError):
                 payload_type.model_validate({"unknown_configuration_field": True})

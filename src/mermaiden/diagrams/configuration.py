@@ -22,16 +22,21 @@ class MermaidConfigurationModel(BaseModel):
 
 class MermaidConfiguration(MermaidConfigurationModel):
 
-    wrap: bool = True
+    wrap: bool
     diagrams: Mapping[str, SerializeAsAny["MermaidDiagramConfiguration"]]
 
     def to_mermaid(self) -> dict[str, object]:
-        document = self.model_dump(mode="json", by_alias=True)
-        diagrams = document.pop("diagrams")
+        document = self.model_dump(mode="json", by_alias=True, exclude={"diagrams"})
+        diagrams = {
+            key: value.model_dump(mode="json", by_alias=True, exclude={"wrap"})
+            for key, value in self.diagrams.items()
+        }
         return {**document, **{key: value for key, value in diagrams.items() if value}}
 
 
 class MermaidDiagramConfiguration(MermaidConfigurationModel):
 
+    wrap: bool = True
+
     def document(self, source: str) -> MermaidConfiguration:
-        return MermaidConfiguration(diagrams={source: self})
+        return MermaidConfiguration(wrap=self.wrap, diagrams={source: self})

@@ -1,3 +1,6 @@
+import json
+
+from mermaiden.application import Application, DiagramCommand
 from mermaiden.cli import MermaidenCli
 
 
@@ -254,3 +257,29 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
         "treeView-beta\nroot/\n  src/ icon(folder)\n    mermaiden/\n"
         "  tests/ icon(test)\n  README.md :::highlight ## Documentation\n"
     )
+
+
+class TestMermaidApplication:
+    def test_front_matter_honors_the_configured_wrap_value(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("flowchart")
+        application.apply(diagram, DiagramCommand("configure", {"wrap": False}))
+        source = application.render(diagram)
+
+        assert source.startswith(
+            "---\n"
+            "config:\n"
+            "  wrap: false\n"
+            "---\n"
+            "flowchart TD\n"
+        )
+
+    def test_configured_wrap_value_survives_snapshot_restoration(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("flowchart")
+        application.apply(diagram, DiagramCommand("configure", {"wrap": False}))
+
+        snapshot = json.loads(json.dumps(application.snapshot(diagram).to_dict()))
+        restored = application.restore(snapshot)
+
+        assert application.render(restored).startswith("---\nconfig:\n  wrap: false\n---\nflowchart TD\n")

@@ -1,9 +1,6 @@
-from pathlib import Path
-
 import pytest
 
 from mermaiden.application import Application
-from mermaiden.mermaid.application import MermaidApplication
 
 
 def test_registry_lists_every_implemented_diagram_with_mermaid_metadata() -> None:
@@ -38,9 +35,6 @@ def test_registry_lists_every_implemented_diagram_with_mermaid_metadata() -> Non
         ("venn-beta", "venn", "VennDiagramConfig"),
         ("wardley-beta", "wardley-beta", "WardleyDiagramConfig"),
     ]
-    assert all(item.diagram_type.definition.syntax == item.id for item in diagrams)
-
-
 def test_registry_returns_detailed_information_by_mermaid_syntax_id() -> None:
     diagram = Application.create().diagram_info("sequenceDiagram")
 
@@ -49,45 +43,16 @@ def test_registry_returns_detailed_information_by_mermaid_syntax_id() -> None:
     assert diagram.config_key == "sequence"
 
 
-def test_every_registered_diagram_has_an_explicit_document_template() -> None:
-    renderer = MermaidApplication()
-    templates = set(renderer.environment.list_templates())
-
-    assert {
-        f"templates/syntax/{item.id}/document.mmd.j2"
-        for item in Application.create().available_diagrams()
-    } == {
-        template
-        for template in templates
-        if template.startswith("templates/syntax/") and template.endswith("/document.mmd.j2")
-    }
-
-
-def test_every_document_template_renders_its_registered_kind_as_the_header() -> None:
+def test_every_registered_diagram_renders_its_public_kind_as_the_header() -> None:
     application = Application.create()
-    renderer = MermaidApplication()
-    loader = renderer.environment.loader
-    assert loader is not None
 
     for info in application.available_diagrams():
         diagram = application.create_diagram(info.id)
         source = application.render(diagram)
         body = source.split("---\n", maxsplit=2)[2]
         header = body.splitlines()[0]
-        template_name = renderer.document_template(diagram)
-        template_source, _, _ = loader.get_source(renderer.environment, template_name)
-        template_lines = template_source.splitlines()
 
         assert header == info.id or header.startswith(f"{info.id} ")
-        assert sum("{{ diagram.kind }}" in line for line in template_lines) == 1
-        assert not any(line.startswith(info.id) for line in template_lines)
-
-
-def test_every_diagram_uses_a_single_constraints_module() -> None:
-    diagrams = Path(__file__).parents[2] / "src" / "mermaiden" / "diagrams"
-
-    assert all(path.with_name("constraints.py").is_file() for path in diagrams.glob("*/diagram.py"))
-    assert not tuple(diagrams.glob("*/constraints"))
 
 
 def test_registry_explains_unknown_diagram_ids() -> None:

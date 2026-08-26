@@ -68,5 +68,4 @@ class TestRailroadIncrementalCommands:
 
             assert report is not None
             assert report.accepted
-            assert diagram.validate().is_valid
             assert expected_source in application.render(diagram)

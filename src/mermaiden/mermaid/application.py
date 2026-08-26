@@ -91,9 +91,8 @@ class MermaidApplication:
         entries = "".join(
             f"  {key}: {json.dumps(value, ensure_ascii=False)}\n"
             for key, value in configuration.items()
-            if key != "wrap"
         )
-        return f"---\nconfig:\n  wrap: true\n{entries}---\n{body}"
+        return f"---\nconfig:\n{entries}---\n{body}"
 
 
 @injectable
