@@ -1,4 +1,4 @@
-C4Context{{ "\n" -}}
+{{ diagram.kind }}{{ "\n" -}}
 {% for item in diagram.root_elements %}{% if item.kind == "system_db" %}SystemDb{% elif item.kind == "system_queue" %}SystemQueue{% else %}{{ item.kind | capitalize }}{% endif %}({{ item.id }}, {{ item.label | mermaid_quote }}{% if item.description %}, {{ item.description | mermaid_quote }}{% endif %}{% if item.technology %}, {{ item.technology | mermaid_quote }}{% endif %}){{ "\n" -}}{% endfor %}
 {% for relation in diagram.find_relations() %}{{ relation.direction.value }}({{ relation.element_ids[0] }}, {{ relation.element_ids[1] }}, {{ relation.label | mermaid_quote }}){{ "\n" -}}{% endfor %}
 {% for relation in diagram.find_relations() if relation.offset_x or relation.offset_y %}UpdateRelStyle({{ relation.element_ids[0] }}, {{ relation.element_ids[1] }}, $offsetX="{{ relation.offset_x }}", $offsetY="{{ relation.offset_y }}"){{ "\n" -}}{% endfor %}

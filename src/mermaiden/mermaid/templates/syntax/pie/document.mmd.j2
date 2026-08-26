@@ -1,3 +1,3 @@
-pie{% if diagram.show_data %} showData{% endif %}{{ "\n" -}}
+{{ diagram.kind }}{% if diagram.show_data %} showData{% endif %}{{ "\n" -}}
 {% if diagram.title %}title {{ diagram.title | mermaid_quote }}{{ "\n" -}}{% endif %}
 {% for slice in diagram.root_elements %}{{ slice.label | mermaid_quote }} : {{ slice.value }}{{ "\n" -}}{% endfor %}

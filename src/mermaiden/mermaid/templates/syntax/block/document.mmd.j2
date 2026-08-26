@@ -5,4 +5,4 @@
 {% elif item.kind == "block_space" %}space{% if item.span is not none %}:{{ item.span }}{% endif %}{{ "\n" -}}{% endif %}
 {% endfor -%}
 {%- endmacro %}
-block{{ "\n" -}}{% if diagram.columns is not none %}columns {{ diagram.columns }}{{ "\n" -}}{% endif %}{{ render(diagram.root_elements) }}
+{{ diagram.kind }}{{ "\n" -}}{% if diagram.columns is not none %}columns {{ diagram.columns }}{{ "\n" -}}{% endif %}{{ render(diagram.root_elements) }}

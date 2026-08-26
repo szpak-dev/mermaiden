@@ -1,4 +1,4 @@
-erDiagram{{ "\n" -}}
+{{ diagram.kind }}{{ "\n" -}}
 direction {{ diagram.direction }}{{ "\n" -}}
 {% for relation in diagram.find_relations() %}{{ relation.element_ids[0] }} {{ relation.notation }} {{ relation.element_ids[1] }} : {{ relation.label }}{{ "\n" -}}{% endfor %}
 {% for entity in diagram.root_elements %}{{ entity.id }}[{{ entity.label | mermaid_quote }}] {

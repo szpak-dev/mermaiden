@@ -1,4 +1,4 @@
-eventmodeling{{ "\n" -}}
+{{ diagram.kind }}{{ "\n" -}}
 {% set types = {"actor": "ui", "command": "cmd", "view": "rmo", "event": "evt"} %}
 {% set frames = namespace(number=0) %}
 {% for swimlane in diagram.root_elements %}{% for element in swimlane.elements %}{% set frames.number = frames.number + 1 %}tf {{ "%02d" | format(frames.number) }} {{ types[element.kind] }} {{ element.id }}{{ "\n" -}}{% endfor %}{% endfor %}
