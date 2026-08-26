@@ -96,15 +96,6 @@ class DiagramModel(DiagramAggregate):
     constraints: Sequence[Constraint]
     configuration: MermaidDiagramConfiguration
 
-    def configure(self, configuration: MermaidDiagramConfiguration) -> None:
-        expected = type(self.configuration)
-        if type(configuration) is not expected:
-            raise TypeError(
-                f"Configuration for '{self.kind}' must be '{expected.__name__}', "
-                f"received '{type(configuration).__name__}'."
-            )
-        object.__setattr__(self, "configuration", configuration)
-
     @property
     def kind(self) -> str:
         return self.definition.syntax

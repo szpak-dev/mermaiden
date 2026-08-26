@@ -14,7 +14,6 @@ from ..core.element import Element
 from ..core.model import ValueModel
 from ..core.relation import Relation
 from .application import DiagramInfo, DiagramsApplication
-from .configuration import MermaidDiagramConfiguration
 from .domain import DiagramModel
 
 
@@ -51,19 +50,21 @@ class DiagramCatalog:
         )
 
     def command_names(self, info: DiagramInfo) -> tuple[str, ...]:
-        return tuple(sorted(self._command_methods(info)))
+        return tuple(
+            sorted(
+                name
+                for name, method in info.diagram_type.__dict__.items()
+                if not name.startswith("_")
+                if callable(method)
+                if self._is_command(method)
+            )
+        )
 
-    def command_payload(
-        self,
-        diagram_id: str,
-        command_name: str,
-    ) -> type[CommandPayload] | type[MermaidDiagramConfiguration]:
+    def command_payload(self, diagram_id: str, command_name: str) -> type[CommandPayload]:
         info = self.registry.get(diagram_id)
-        method = self._command_methods(info).get(command_name)
-        if method is None:
+        method = getattr(info.diagram_type, command_name, None)
+        if command_name not in self.command_names(info) or not callable(method):
             raise KeyError(f"Unknown command '{command_name}' for diagram '{diagram_id}'.")
-        if method is DiagramModel.configure:
-            return type(self.registry.get_diagram(diagram_id).configuration)
         fields: dict[str, Any] = self._payload_fields(method)
         return create_model(
             f"{info.diagram_type.__name__}{self._pascal_case(command_name)}Payload",
@@ -71,23 +72,12 @@ class DiagramCatalog:
             **fields,
         )
 
-    def _command_methods(self, info: DiagramInfo) -> dict[str, Callable[..., object]]:
-        commands = {
-            name: method
-            for name, method in info.diagram_type.__dict__.items()
-            if not name.startswith("_")
-            if callable(method)
-            if self._is_command(method)
-        }
-        commands[DiagramModel.configure.__name__] = DiagramModel.configure
-        return commands
-
     def validate_command(
         self,
         diagram: DiagramModel,
         command_name: str,
         payload: Mapping[str, object],
-    ) -> CommandPayload | MermaidDiagramConfiguration:
+    ) -> CommandPayload:
         try:
             return self.command_payload(diagram.kind, command_name).model_validate(payload)
         except ValidationError as error:

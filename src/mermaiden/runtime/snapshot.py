@@ -22,7 +22,6 @@ class SnapshotError(RuntimeError):
 class DiagramSnapshot:
     version: int
     kind: str
-    configuration: Mapping[str, object]
     elements: tuple[Mapping[str, object], ...]
     relations: tuple[Mapping[str, object], ...]
     annotations: tuple[Mapping[str, object], ...]
@@ -32,7 +31,6 @@ class DiagramSnapshot:
         return {
             "version": self.version,
             "kind": self.kind,
-            "configuration": dict(self.configuration),
             "elements": list(self.elements),
             "relations": list(self.relations),
             "annotations": list(self.annotations),
@@ -41,17 +39,16 @@ class DiagramSnapshot:
 
 
 class DiagramSnapshotCodec:
-    version = 2
+    version = 1
 
     def snapshot(self, diagram: Diagram) -> DiagramSnapshot:
         return DiagramSnapshot(
-            version=self.version,
-            kind=diagram.kind,
-            configuration=cast(Mapping[str, object], self._encode(self._configuration(diagram))),
-            elements=tuple(cast(Mapping[str, object], self._encode(item)) for item in diagram.root_elements),
-            relations=tuple(cast(Mapping[str, object], self._encode(item)) for item in diagram.find_relations()),
-            annotations=tuple(cast(Mapping[str, object], self._encode(item)) for item in diagram.find_annotations()),
-            properties={
+            self.version,
+            diagram.kind,
+            tuple(cast(Mapping[str, object], self._encode(item)) for item in diagram.root_elements),
+            tuple(cast(Mapping[str, object], self._encode(item)) for item in diagram.find_relations()),
+            tuple(cast(Mapping[str, object], self._encode(item)) for item in diagram.find_annotations()),
+            {
                 field.name: self._encode(getattr(diagram, field.name))
                 for field in fields(cast(Any, diagram))
                 if field.name not in {"runtime", "structure", "constraints", "configuration"}
@@ -60,31 +57,21 @@ class DiagramSnapshotCodec:
 
     def restore(self, payload: Mapping[str, object]) -> DiagramSnapshot:
         try:
-            version = int(cast(Any, payload["version"]))
-        except (KeyError, TypeError, ValueError) as error:
-            raise SnapshotError("Snapshot is malformed.") from error
-        if version != self.version:
-            raise SnapshotError(f"Unsupported snapshot version '{version}'; expected version '{self.version}'.")
-        try:
             snapshot = DiagramSnapshot(
-                version=version,
-                kind=self._string(payload["kind"], "kind"),
-                configuration=self._mapping(payload["configuration"], "configuration"),
-                elements=self._objects(payload["elements"], "elements"),
-                relations=self._objects(payload["relations"], "relations"),
-                annotations=self._objects(payload["annotations"], "annotations"),
-                properties=self._mapping(payload.get("properties", {}), "properties"),
+                int(cast(Any, payload["version"])),
+                self._string(payload["kind"], "kind"),
+                self._objects(payload["elements"], "elements"),
+                self._objects(payload["relations"], "relations"),
+                self._objects(payload["annotations"], "annotations"),
+                self._mapping(payload.get("properties", {}), "properties"),
             )
         except (KeyError, TypeError, ValueError) as error:
             raise SnapshotError("Snapshot is malformed.") from error
+        if snapshot.version != self.version:
+            raise SnapshotError(f"Unsupported snapshot version '{snapshot.version}'.")
         return snapshot
 
     def hydrate(self, snapshot: DiagramSnapshot, diagram: Diagram) -> DiagramData:
-        current_configuration = self._configuration(diagram)
-        configuration = self.decode_value(snapshot.configuration, type(current_configuration))
-        if type(configuration) is not type(current_configuration):
-            raise SnapshotError(f"Snapshot configuration is not valid for diagram '{diagram.kind}'.")
-        object.__setattr__(diagram, "configuration", configuration)
         elements = tuple(self.decode_value(item, Element) for item in snapshot.elements)
         relations = tuple(self.decode_value(item, Relation) for item in snapshot.relations)
         annotations = tuple(self.decode_value(item, Annotation) for item in snapshot.annotations)
@@ -160,13 +147,6 @@ class DiagramSnapshotCodec:
     @staticmethod
     def _reference(item_type: type[object]) -> str:
         return f"{item_type.__module__}:{item_type.__qualname__}"
-
-    @staticmethod
-    def _configuration(diagram: Diagram) -> BaseModel:
-        configuration = getattr(diagram, "configuration", None)
-        if not isinstance(configuration, BaseModel):
-            raise SnapshotError(f"Diagram '{diagram.kind}' has no persistable configuration.")
-        return configuration
 
     def _resolve(self, reference: str, expected: Any) -> type[Any]:
         module_name, separator, qualified_name = reference.partition(":")

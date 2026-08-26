@@ -10,7 +10,6 @@ from .core.constraint import ChangeReport
 from .core.diagram import Diagram
 from .diagrams.application import DiagramInfo, DiagramsApplication
 from .diagrams.catalog import CommandPayload, DiagramCatalog, DiagramDescription
-from .diagrams.configuration import MermaidDiagramConfiguration
 from .diagrams.domain import DiagramModel
 from .mermaid.application import MermaidApplication
 from .runtime.snapshot import DiagramSnapshot, DiagramSnapshotCodec
@@ -51,11 +50,7 @@ class Application:
         with self._container.enter_scope() as scope:
             return scope.get(DiagramCatalog).describe(diagram_id)
 
-    def command_payload(
-        self,
-        diagram_id: str,
-        command_name: str,
-    ) -> type[CommandPayload] | type[MermaidDiagramConfiguration]:
+    def command_payload(self, diagram_id: str, command_name: str) -> type[CommandPayload]:
         with self._container.enter_scope() as scope:
             return scope.get(DiagramCatalog).command_payload(diagram_id, command_name)
 
@@ -72,11 +67,6 @@ class Application:
                 payload = scope.get(DiagramCatalog).validate_command(diagram, command.operation, command.arguments)
         except (KeyError, ValueError) as error:
             raise UnknownCommand(f"Command '{command.operation}' has invalid arguments.") from error
-        if isinstance(payload, MermaidDiagramConfiguration):
-            diagram.configure(payload)
-            return None
-        if not isinstance(payload, CommandPayload):
-            raise AssertionError("Diagram command did not produce a command payload.")
         result = self._invoke(operation, payload)
         return result
 
