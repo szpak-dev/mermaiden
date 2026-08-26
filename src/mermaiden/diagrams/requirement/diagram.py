@@ -71,4 +71,4 @@ class RequirementDiagram(DiagramModel):
         )
 
     def remove_relation(self, id: str) -> ChangeReport:
-        return super().remove_relation(id)
+        return DiagramModel.remove_relation(self, id)
