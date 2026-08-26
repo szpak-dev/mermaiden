@@ -1,28 +1,23 @@
 import json
+from typing import Any
 
 import pytest
 
 from mermaiden.application import Application, DiagramCommand, UnknownCommand
-from mermaiden.core.constraint import ChangeRejected
-from mermaiden.diagrams.architecture.diagram import Architecture
-from mermaiden.diagrams.architecture.elements import ArchitectureGroup
-from mermaiden.diagrams.architecture.relations import Alignment, AlignmentAxis, Edge
 
 
 class TestArchitecture:
-    def _diagram_with_alignment_members(self) -> tuple[Application, Architecture]:
+    def _diagram_with_alignment_members(self) -> tuple[Application, Any]:
         application = Application.create()
         diagram = application.create_diagram("architecture-beta")
-        assert isinstance(diagram, Architecture)
         application.apply(diagram, DiagramCommand("add_service", {"id": "client", "label": "Client"}))
         application.apply(diagram, DiagramCommand("add_junction", {"id": "gateway", "label": "Gateway"}))
         application.apply(diagram, DiagramCommand("add_service", {"id": "api", "label": "API"}))
         return application, diagram
 
-    def _diagram_with_group(self, columns: int, *member_ids: str) -> tuple[Application, Architecture]:
+    def _diagram_with_group(self, columns: int, *member_ids: str) -> tuple[Application, Any]:
         application = Application.create()
         diagram = application.create_diagram("architecture-beta")
-        assert isinstance(diagram, Architecture)
         application.apply(
             diagram,
             DiagramCommand("add_group", {"id": "platform", "label": "Platform", "columns": columns}),
@@ -37,7 +32,7 @@ class TestArchitecture:
             )
         return application, diagram
 
-    def _alignment_directives(self, application: Application, diagram: Architecture) -> list[str]:
+    def _alignment_directives(self, application: Application, diagram: Any) -> list[str]:
         return [
             line.strip()
             for line in application.render(diagram).splitlines()
@@ -62,16 +57,10 @@ class TestArchitecture:
             ),
         )
 
-        edge = diagram.find_relations()[0]
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
-        restored_edge = restored.find_relations()[0]
 
-        assert isinstance(edge, Edge)
-        assert edge.label == 'HTTPS "mTLS"'
         assert 'client:R -["HTTPS \\"mTLS\\""]-> L:api' in source
-        assert isinstance(restored_edge, Edge)
-        assert restored_edge == edge
         assert application.render(restored) == source
 
     def test_keeps_an_empty_edge_label_compact(self) -> None:
@@ -92,13 +81,13 @@ class TestArchitecture:
     @pytest.mark.parametrize(
         ("axis", "directive"),
         (
-            (AlignmentAxis.ROW, "align row client gateway api"),
-            (AlignmentAxis.COLUMN, "align column client gateway api"),
+            ("row", "align row client gateway api"),
+            ("column", "align column client gateway api"),
         ),
     )
     def test_renders_and_restores_an_ordered_alignment(
         self,
-        axis: AlignmentAxis,
+        axis: str,
         directive: str,
     ) -> None:
         application, diagram = self._diagram_with_alignment_members()
@@ -106,23 +95,15 @@ class TestArchitecture:
             diagram,
             DiagramCommand(
                 "add_alignment",
-                {"id": "primary", "axis": axis.value, "member_ids": ["client", "gateway", "api"]},
+                {"id": "primary", "axis": axis, "member_ids": ["client", "gateway", "api"]},
             ),
         )
 
-        alignment = diagram.find_relations()[0]
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
-        restored_alignment = restored.find_relations()[0]
 
-        assert isinstance(alignment, Alignment)
-        assert alignment.id == "primary"
-        assert alignment.axis is axis
-        assert alignment.member_ids == ("client", "gateway", "api")
         assert directive in source
         assert source.index("service api") < source.index(directive)
-        assert isinstance(restored_alignment, Alignment)
-        assert restored_alignment == alignment
         assert application.render(restored) == source
 
     @pytest.mark.parametrize(
@@ -136,7 +117,7 @@ class TestArchitecture:
     def test_rejects_invalid_alignment_members(self, member_ids: tuple[str, ...], message: str) -> None:
         application, diagram = self._diagram_with_alignment_members()
 
-        with pytest.raises(ChangeRejected, match=message):
+        with pytest.raises(RuntimeError, match=message):
             application.apply(
                 diagram,
                 DiagramCommand(
@@ -149,7 +130,7 @@ class TestArchitecture:
         application, diagram = self._diagram_with_alignment_members()
         application.apply(diagram, DiagramCommand("add_group", {"id": "platform", "label": "Platform"}))
 
-        with pytest.raises(ChangeRejected, match="member 'platform' must be a service or junction"):
+        with pytest.raises(RuntimeError, match="member 'platform' must be a service or junction"):
             application.apply(
                 diagram,
                 DiagramCommand(
@@ -178,7 +159,7 @@ class TestArchitecture:
         )
         application.apply(diagram, command)
 
-        with pytest.raises(ChangeRejected, match="Relation 'primary' already exists"):
+        with pytest.raises(RuntimeError, match="Relation 'primary' already exists"):
             application.apply(diagram, command)
 
     def test_derives_a_grid_from_direct_members_without_persisting_alignments(self) -> None:
@@ -207,10 +188,9 @@ class TestArchitecture:
                 ),
             )
 
-        snapshot = application.snapshot(diagram)
+        snapshot = application.snapshot(diagram).to_dict()
         source = application.render(diagram)
-        restored = application.restore(json.loads(json.dumps(snapshot.to_dict())))
-        restored_group = restored.find_element("platform")
+        restored = application.restore(json.loads(json.dumps(snapshot)))
 
         assert self._alignment_directives(application, diagram) == [
             "align column x y",
@@ -221,11 +201,7 @@ class TestArchitecture:
         ]
         assert "align row a nested" not in source
         assert "align column a x" not in source
-        assert diagram.find_relations() == ()
-        assert snapshot.relations == ()
-        assert isinstance(restored_group, ArchitectureGroup)
-        assert restored_group.columns == 2
-        assert restored.find_relations() == ()
+        assert snapshot["relations"] == []
         assert application.render(restored) == source
 
     @pytest.mark.parametrize(

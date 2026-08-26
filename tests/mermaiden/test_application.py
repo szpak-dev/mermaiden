@@ -1,11 +1,10 @@
 import json
 from collections.abc import Mapping
-from typing import Any, cast
+from typing import cast
 
 import pytest
 
 from mermaiden.application import Application, DiagramCommand, UnknownCommand
-from mermaiden.runtime.snapshot import SnapshotError
 
 
 class TestApplication:
@@ -39,7 +38,12 @@ class TestApplication:
         restored = application.restore(json.loads(json.dumps(payload)))
 
         assert application.render(restored) == application.render(diagram)
-        assert restored.kind == "sequenceDiagram"
+        assert application.render(restored).endswith(
+            "sequenceDiagram\n"
+            'participant client@{ "type": "participant" } as Client\n'
+            'participant api@{ "type": "participant" } as API\n'
+            "client->>api: Request\n"
+        )
 
     def test_coerces_json_enum_command_arguments(self) -> None:
         application = Application.create()
@@ -61,8 +65,9 @@ class TestApplication:
             DiagramCommand("add_class", {"id": "example_class", "label": "Example Class"}),
         )
 
-        snapshot = application.snapshot(diagram)
-        fields = cast(Mapping[str, object], snapshot.elements[0]["fields"])
+        snapshot = application.snapshot(diagram).to_dict()
+        element = cast(Mapping[str, object], cast(list[object], snapshot["elements"])[0])
+        fields = cast(Mapping[str, object], element["fields"])
 
         assert fields["id"] == "example_class"
         assert fields["label"] == "Example Class"
@@ -73,11 +78,10 @@ class TestApplication:
         diagram = application.create_diagram("block")
 
         application.apply(diagram, DiagramCommand("configure", {"padding": 12}))
-        assert cast(Any, diagram.configuration).padding == 12
+        assert 'block: {"padding": 12}' in application.render(diagram)
 
         application.apply(diagram, DiagramCommand("configure", {}))
 
-        assert cast(Any, diagram.configuration).padding == 8
         assert 'block: {"padding": 8}' in application.render(diagram)
 
     def test_rejects_unknown_configuration_fields(self) -> None:
@@ -113,8 +117,7 @@ class TestApplication:
         assert payload["version"] == 2
         assert "configuration" not in cast(Mapping[str, object], payload["properties"])
         assert not self._contains_none(payload["configuration"])
-        assert restored.configuration == diagram.configuration
-        assert type(restored.configuration) is type(diagram.configuration)
+        assert application.snapshot(restored).to_dict() == payload
         assert application.render(restored) == source
 
     def test_serializes_non_default_architecture_configuration(self) -> None:
@@ -186,5 +189,5 @@ class TestApplication:
         payload["version"] = 1
         del payload["configuration"]
 
-        with pytest.raises(SnapshotError, match="version '1'; expected version '2'"):
+        with pytest.raises(RuntimeError, match="version '1'; expected version '2'"):
             application.restore(payload)

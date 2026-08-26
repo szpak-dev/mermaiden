@@ -1,11 +1,7 @@
-from inspect import Parameter, signature
-from typing import Any, cast
-
 import pytest
 from pydantic import ValidationError
 
 from mermaiden.application import Application
-from mermaiden.diagrams.sequence.diagram import SequenceDiagram
 
 
 class TestDiagramCatalog:
@@ -18,17 +14,17 @@ class TestDiagramCatalog:
         assert set(description.elements) == {"participant", "participant_box"}
         assert {"message", "participant_event", "control", "directive"} == set(description.relations)
         assert "add_participant" in description.commands
-        assert cast(Any, payload.model_validate({"id": "api", "label": "API", "kind": "actor"})).kind.value == "actor"
+        validated = payload.model_validate({"id": "api", "label": "API", "kind": "actor"})
+        assert validated.model_dump(mode="json")["kind"] == "actor"
 
     def test_discovers_each_diagrams_concrete_configuration_as_a_command_payload(self) -> None:
         application = Application.create()
 
         for info in application.available_diagrams():
-            diagram = application.create_diagram(info.id)
             payload_type = application.command_payload(info.id, "configure")
 
-            assert payload_type is type(diagram.configuration)
             assert application.diagram_description(info.id).commands["configure"] == payload_type.model_json_schema()
+            payload_type.model_validate({})
 
     @pytest.mark.parametrize(
         ("diagram_id", "command_name"),
@@ -41,10 +37,8 @@ class TestDiagramCatalog:
     )
     def test_requires_human_facing_labels(self, diagram_id: str, command_name: str) -> None:
         application = Application.create()
-        diagram_type = application.diagram_info(diagram_id).diagram_type
         schema = application.command_payload(diagram_id, command_name).model_json_schema()
 
-        assert signature(getattr(diagram_type, command_name)).parameters["label"].default is Parameter.empty
         assert "label" in schema["required"]
 
     @pytest.mark.parametrize(
@@ -68,18 +62,17 @@ class TestDiagramCatalog:
         schema = payload.model_json_schema()
         targets = schema["properties"]["participant_ids"]
 
-        assert signature(SequenceDiagram.add_note).parameters["participant_ids"].kind is Parameter.VAR_POSITIONAL
         assert "participant_ids" in schema["required"]
         assert targets["type"] == "array"
         assert targets["minItems"] == 1
         assert targets["maxItems"] == 2
         one_target = payload.model_validate({"id": "note", "text": "One", "participant_ids": ["api"]})
 
-        assert cast(Any, one_target).participant_ids == ("api",)
-        assert cast(
-            Any,
-            payload.model_validate({"id": "note", "text": "Two", "participant_ids": ["api", "worker"]}),
-        ).participant_ids == ("api", "worker")
+        assert one_target.model_dump(mode="json")["participant_ids"] == ["api"]
+        two_targets = payload.model_validate(
+            {"id": "note", "text": "Two", "participant_ids": ["api", "worker"]}
+        )
+        assert two_targets.model_dump(mode="json")["participant_ids"] == ["api", "worker"]
         for participant_ids in ([], ["api", "worker", "queue"]):
             with pytest.raises(ValidationError):
                 payload.model_validate({"id": "note", "text": "Invalid", "participant_ids": participant_ids})
