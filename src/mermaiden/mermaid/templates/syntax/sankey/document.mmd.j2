@@ -1,2 +1,2 @@
-sankey{{ "\n" -}}
+{{ diagram.kind }}{{ "\n" -}}
 {% for relation in diagram.find_relations() %}{{ diagram.find_element(relation.source_id).label | mermaid_quote }},{{ diagram.find_element(relation.target_id).label | mermaid_quote }},{{ relation.value }}{{ "\n" -}}{% endfor %}

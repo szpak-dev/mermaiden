@@ -1,4 +1,4 @@
-radar-beta{{ "\n" -}}
+{{ diagram.kind }}{{ "\n" -}}
 {% if diagram.title %}title {{ diagram.title }}{{ "\n" -}}{% endif %}
 {% for axis in diagram.root_elements if axis.kind == "radar_axis" %}{{ "axis " if loop.first }}{{ axis.id }}[{{ axis.label | mermaid_quote }}]{{ ", " if not loop.last else "\n" }}{% endfor %}
 {% for curve in diagram.root_elements if curve.kind == "radar_curve" %}curve {{ curve.id }}[{{ curve.label | mermaid_quote }}]{ {{ curve.values | map("mermaid_number") | join(", ") }} }{{ "\n" -}}{% endfor %}

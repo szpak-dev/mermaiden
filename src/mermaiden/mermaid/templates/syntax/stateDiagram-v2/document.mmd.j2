@@ -18,5 +18,5 @@ state {{ element.id | mermaid_id("s") }} { {{ "\n" -}}
 {% with annotation=annotation -%}{% include template_prefix ~ "/annotations/state_note.mmd.j2" -%}{% endwith -%}
 {% endfor -%}
 {%- endmacro %}
-stateDiagram-v2 {{ diagram.direction.value }}{{ "\n" -}}
+{{ diagram.kind }} {{ diagram.direction.value }}{{ "\n" -}}
 {{ render(diagram.root_elements, "") }}

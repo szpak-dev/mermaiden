@@ -63,6 +63,26 @@ def test_every_registered_diagram_has_an_explicit_document_template() -> None:
     }
 
 
+def test_every_document_template_renders_its_registered_kind_as_the_header() -> None:
+    application = Application.create()
+    renderer = MermaidApplication()
+    loader = renderer.environment.loader
+    assert loader is not None
+
+    for info in application.available_diagrams():
+        diagram = application.create_diagram(info.id)
+        source = application.render(diagram)
+        body = source.split("---\n", maxsplit=2)[2]
+        header = body.splitlines()[0]
+        template_name = renderer.document_template(diagram)
+        template_source, _, _ = loader.get_source(renderer.environment, template_name)
+        template_lines = template_source.splitlines()
+
+        assert header == info.id or header.startswith(f"{info.id} ")
+        assert sum("{{ diagram.kind }}" in line for line in template_lines) == 1
+        assert not any(line.startswith(info.id) for line in template_lines)
+
+
 def test_every_diagram_uses_a_single_constraints_module() -> None:
     diagrams = Path(__file__).parents[2] / "src" / "mermaiden" / "diagrams"
 

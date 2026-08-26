@@ -8,6 +8,6 @@ section {{ item.label }}{{ "\n" -}}
 {% endif -%}
 {% endfor -%}
 {%- endmacro %}
-timeline{{ "\n" -}}
+{{ diagram.kind }}{{ "\n" -}}
 {% if diagram.title %}title {{ diagram.title }}{{ "\n" -}}{% endif %}
 {{ render(diagram.root_elements) }}

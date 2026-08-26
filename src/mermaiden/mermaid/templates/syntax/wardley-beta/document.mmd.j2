@@ -1,4 +1,4 @@
-wardley-beta{{ "\n" -}}
+{{ diagram.kind }}{{ "\n" -}}
 {% for item in diagram.root_elements %}{% if item.kind == "component" %}{% if item.anchor %}anchor{% else %}component{% endif %} {{ item.label | mermaid_quote }} [{{ item.visibility }}, {{ item.evolution }}]{% if item.decorator %} ({{ item.decorator }}){% endif %}{{ "\n" -}}{% endif %}{% endfor %}
 {% for relation in diagram.find_relations() %}{{ diagram.find_element(relation.element_ids[0]).label | mermaid_quote }} -> {{ diagram.find_element(relation.element_ids[1]).label | mermaid_quote }}{% if relation.label %}; {{ relation.label }}{% endif %}{{ "\n" -}}{% endfor %}
 {% for item in diagram.root_elements %}{% if item.kind == "evolution" %}evolve {{ diagram.find_element(item.label).label | mermaid_quote }} {{ item.target }}{{ "\n" -}}{% endif %}{% endfor %}
