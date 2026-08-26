@@ -1,2 +1,2 @@
 {{ diagram.kind }}{{ "\n" -}}
-{% if diagram.title %}title {{ diagram.title }}{{ "\n" -}}{% endif %}{% for field in diagram.root_elements %}{% if field.bits is not none %}+{{ field.bits }}{% elif field.end is none %}{{ field.start }}{% else %}{{ field.start }}-{{ field.end }}{% endif %}: {{ field.label | mermaid_quote }}{{ "\n" -}}{% endfor %}
+{% if diagram.title %}title {{ diagram.title }}{{ "\n" -}}{% endif %}{% for item in diagram.root_elements %}{% with element=item %}{% include template_prefix ~ "/elements/" ~ element.kind ~ ".mmd.j2" %}{% endwith %}{% endfor %}

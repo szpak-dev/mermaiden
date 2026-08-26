@@ -37,7 +37,14 @@ class Application:
 
     @classmethod
     def create(cls) -> "Application":
-        return cls(create_sync_container(injectables=[mermaiden], config={}))
+        container = create_sync_container(injectables=[mermaiden], config={})
+        with container.enter_scope() as scope:
+            registry = scope.get(DiagramsApplication)
+            scope.get(MermaidApplication).validate_template_ownership(
+                registry,
+                scope.get(DiagramCatalog),
+            )
+        return cls(container)
 
     def available_diagrams(self) -> tuple[DiagramInfo, ...]:
         with self._container.enter_scope() as scope:

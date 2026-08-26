@@ -1,6 +1,4 @@
 {{ diagram.kind }}{{ "\n" -}}
-{% for effect in diagram.root_elements if effect.kind == "effect" %}{{ effect.label }}{{ "\n" -}}{% endfor %}
-{% macro causes(items, depth=0) -%}
-{% for item in items %}{{ "  " * depth }}{{ item.label }}{{ "\n" -}}{% if item.elements is defined %}{{ causes(item.elements, depth + 1) }}{% endif %}{% endfor %}
-{%- endmacro %}
-{% for category in diagram.root_elements if category.kind == "category" %}{{ category.label }}{{ "\n" -}}{{ causes(category.elements, 1) }}{% endfor %}
+{% for item in diagram.root_elements if item.kind == "effect" %}{% with element=item, depth=0 %}{% include template_prefix ~ "/elements/" ~ element.kind ~ ".mmd.j2" %}{% endwith %}{% endfor %}
+{% for item in diagram.root_elements if item.kind == "category" %}{% with element=item, depth=0 %}{% include template_prefix ~ "/elements/" ~ element.kind ~ ".mmd.j2" %}{% endwith %}{% endfor %}
+{% for item in diagram.find_relations() %}{% with relation=item %}{% include template_prefix ~ "/relations/" ~ relation.kind ~ ".mmd.j2" %}{% endwith %}{% endfor %}

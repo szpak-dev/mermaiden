@@ -1,0 +1,2 @@
+{% import template_prefix ~ "/macros/elements.mmd.j2" as elements with context %}
+block:{{ element.id }}{% if element.span is not none %}:{{ element.span }}{% endif %}{{ "\n" -}}{% if element.columns is not none %}  columns {{ element.columns }}{{ "\n" -}}{% endif %}{{ elements.render(element.elements) | indent(2, true) }}end{{ "\n" -}}

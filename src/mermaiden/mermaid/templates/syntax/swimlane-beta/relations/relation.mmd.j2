@@ -1,1 +1,0 @@
-{{ relation.source_id | mermaid_id("e") }} -->{% if relation.condition is defined %}|{{ relation.condition | mermaid_quote }}|{% elif relation.label %}|{{ relation.label | mermaid_quote }}|{% endif %} {{ relation.target_id | mermaid_id("e") }}{{ "\n" -}}

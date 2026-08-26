@@ -1,0 +1,1 @@
+commit id: {{ element.label | mermaid_quote }}{% if element.commit_type %} type: {{ element.commit_type }}{% endif %}{% if element.tag %} tag: {{ element.tag | mermaid_quote }}{% endif %}{{ "\n" -}}

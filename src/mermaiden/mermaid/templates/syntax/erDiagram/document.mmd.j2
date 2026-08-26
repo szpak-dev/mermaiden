@@ -1,6 +1,4 @@
 {{ diagram.kind }}{{ "\n" -}}
 direction {{ diagram.direction }}{{ "\n" -}}
-{% for relation in diagram.find_relations() %}{{ relation.element_ids[0] }} {{ relation.notation }} {{ relation.element_ids[1] }} : {{ relation.label }}{{ "\n" -}}{% endfor %}
-{% for entity in diagram.root_elements %}{{ entity.id }}[{{ entity.label | mermaid_quote }}] {
-{% for attribute in entity.elements %}  {{ attribute.data_type }} {{ attribute.label }}{% if attribute.keys %} {{ attribute.keys | join(", ") }}{% endif %}{% if attribute.comment %} {{ attribute.comment | mermaid_quote }}{% endif %}{{ "\n" -}}{% endfor %}}
-{% endfor %}
+{% for item in diagram.find_relations() %}{% with relation=item %}{% include template_prefix ~ "/relations/" ~ relation.kind ~ ".mmd.j2" %}{% endwith %}{% endfor %}
+{% for item in diagram.root_elements %}{% with element=item %}{% include template_prefix ~ "/elements/" ~ element.kind ~ ".mmd.j2" %}{% endwith %}{% endfor %}

@@ -1,0 +1,11 @@
+{% macro render(items, scope) -%}
+{% for item in items -%}
+{% with element=item -%}{% include template_prefix ~ "/elements/" ~ element.kind ~ ".mmd.j2" -%}{% endwith -%}
+{% endfor -%}
+{% for item in diagram.transitions_for(scope) -%}
+{% with relation=item -%}{% include template_prefix ~ "/relations/" ~ relation.kind ~ ".mmd.j2" -%}{% endwith -%}
+{% endfor -%}
+{% for item in diagram.notes_for(scope) -%}
+{% with annotation=item -%}{% include template_prefix ~ "/annotations/" ~ annotation.kind ~ ".mmd.j2" -%}{% endwith -%}
+{% endfor -%}
+{%- endmacro %}

@@ -1,0 +1,1 @@
+{% for item in element.elements %}{% with element=item %}{% include template_prefix ~ "/elements/" ~ element.kind ~ ".mmd.j2" %}{% endwith %}{% endfor %}

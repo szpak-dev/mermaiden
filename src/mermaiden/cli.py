@@ -6,7 +6,9 @@ from wireup import SyncContainer, create_sync_container
 
 import mermaiden
 
-from .mermaid.application import MermaidPreviewApplication
+from .diagrams.application import DiagramsApplication
+from .diagrams.catalog import DiagramCatalog
+from .mermaid.application import MermaidApplication, MermaidPreviewApplication
 from .mermaid.compatibility import CompatibilityReport, MermaidCompatibilityService
 from .mermaid.compatibility.schema import MermaidDiagramConfig, MermaidSchemaStore
 from .mermaid.fixtures import DiagramFixtures
@@ -18,7 +20,14 @@ class MermaidenCli:
 
     @classmethod
     def create(cls) -> "MermaidenCli":
-        return cls(create_sync_container(injectables=[mermaiden], config={}))
+        container = create_sync_container(injectables=[mermaiden], config={})
+        with container.enter_scope() as scope:
+            registry = scope.get(DiagramsApplication)
+            scope.get(MermaidApplication).validate_template_ownership(
+                registry,
+                scope.get(DiagramCatalog),
+            )
+        return cls(container)
 
     def mermaid_diagram_configs(self) -> tuple[MermaidDiagramConfig, ...]:
         with self._container.enter_scope() as scope:

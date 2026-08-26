@@ -1,0 +1,1 @@
+curve {{ element.id }}[{{ element.label | mermaid_quote }}]{ {{ element.values | map("mermaid_number") | join(", ") }} }{{ "\n" -}}

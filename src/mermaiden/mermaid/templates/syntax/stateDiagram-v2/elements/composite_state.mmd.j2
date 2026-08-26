@@ -1,0 +1,5 @@
+{% import template_prefix ~ "/macros/state.mmd.j2" as state with context %}
+{% if element.label %}{{ element.id | mermaid_id("s") }}: {{ element.label | mermaid_quote }}{{ "\n" -}}{% endif %}
+state {{ element.id | mermaid_id("s") }} { {{ "\n" -}}
+{{ state.render(element.elements, element.id) | indent(2, true) }}
+}{{ "\n" -}}

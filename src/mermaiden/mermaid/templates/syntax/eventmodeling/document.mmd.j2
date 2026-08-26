@@ -1,4 +1,4 @@
 {{ diagram.kind }}{{ "\n" -}}
-{% set types = {"actor": "ui", "command": "cmd", "view": "rmo", "event": "evt"} %}
 {% set frames = namespace(number=0) %}
-{% for swimlane in diagram.root_elements %}{% for element in swimlane.elements %}{% set frames.number = frames.number + 1 %}tf {{ "%02d" | format(frames.number) }} {{ types[element.kind] }} {{ element.id }}{{ "\n" -}}{% endfor %}{% endfor %}
+{% for item in diagram.root_elements %}{% with element=item %}{% include template_prefix ~ "/elements/" ~ element.kind ~ ".mmd.j2" %}{% endwith %}{% endfor %}
+{% for item in diagram.find_relations() %}{% with relation=item %}{% include template_prefix ~ "/relations/" ~ relation.kind ~ ".mmd.j2" %}{% endwith %}{% endfor %}

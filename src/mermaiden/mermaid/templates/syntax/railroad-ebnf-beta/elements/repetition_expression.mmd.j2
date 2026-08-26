@@ -1,0 +1,2 @@
+{% import template_prefix ~ "/macros/expression.mmd.j2" as expression with context -%}
+{ {% if element.elements %}{{ expression.render(element.elements[0]) }}{% else %}{{ "" | mermaid_quote }}{% endif %} }{{- "" -}}
