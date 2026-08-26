@@ -33,8 +33,12 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             'Person(customer, "Customer", "A personal banking customer")',
             'System(banking, "Internet Banking System", "Provides online banking", "Python")',
             'SystemDb(accounts, "Accounts Database", "Stores account balances", "PostgreSQL")',
+            'SystemQueue(notifications, "Notifications", "Publishes account events", "Kafka")',
             'Rel(customer, banking, "Uses")',
             'Rel_R(banking, accounts, "Reads account data")',
+            'UpdateRelStyle(customer, banking, $offsetX="16", $offsetY="8")',
+            'UpdateRelStyle(banking, accounts, $offsetX="-20", $offsetY="12")',
+            'UpdateRelStyle(banking, notifications, $offsetX="-12", $offsetY="-8")',
         ),
         "cynefin": (
             "cynefin-beta",
