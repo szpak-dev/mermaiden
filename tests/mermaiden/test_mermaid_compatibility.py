@@ -42,6 +42,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         for diagram_id, values in configurations.items()
         if diagram_id
         not in {
+                "architecture-beta",
                 "block",
                 "C4Context",
                 "cynefin-beta",
@@ -63,6 +64,21 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
                 "wardley-beta",
         }
     )
+    assert configurations["architecture-beta"] == {
+        "wrap": True,
+        "architecture": {
+            "useMaxWidth": True,
+            "padding": 40,
+            "iconSize": 80,
+            "fontSize": 16,
+            "randomize": False,
+            "nodeSeparation": 75,
+            "idealEdgeLengthMultiplier": 1.5,
+            "edgeElasticity": 0.45,
+            "numIter": 2500,
+            "seed": 1,
+        },
+    }
     assert configurations["swimlane-beta"] == {
         "wrap": True,
         "swimlane": {

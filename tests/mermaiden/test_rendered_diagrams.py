@@ -220,6 +220,14 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             assert source.startswith("---\nconfig:\n  wrap: true\n  packet: {")
         elif name == "radar":
             assert source.startswith("---\nconfig:\n  wrap: true\n  radar: {")
+        elif name == "architecture":
+            assert source.startswith(
+                "---\nconfig:\n  wrap: true\n"
+                '  architecture: {"useMaxWidth": true, "padding": 40.0, "iconSize": 80.0, '
+                '"fontSize": 16.0, "randomize": false, "nodeSeparation": 96.0, '
+                '"idealEdgeLengthMultiplier": 1.5, "edgeElasticity": 0.45, "numIter": 2500, "seed": 7.0}\n'
+                "---\n"
+            )
         else:
             assert source.startswith("---\nconfig:\n  wrap: true\n---\n")
         for fragment in fragments:
