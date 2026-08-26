@@ -50,6 +50,22 @@ payload_type = application.command_payload("sequenceDiagram", "add_participant")
 payload = payload_type.model_validate({"id": "api", "kind": "control"})
 ```
 
+Every diagram description also advertises a typed `configure` command derived from that diagram's concrete
+configuration model. Configuration is replaced as one complete value: omitted fields take their declared concrete
+defaults, and unknown fields are rejected. Configuration fields and payloads never use `None` or nullable schema
+types as patch sentinels.
+
+```python
+diagram = application.create_diagram("block")
+configuration_type = application.command_payload("block", "configure")
+configuration_type.model_validate({"padding": 12})
+application.apply(diagram, DiagramCommand("configure", {"padding": 12}))
+```
+
+Snapshots use version 2 and persist the concrete configuration type and values. Version 1 snapshots are not
+silently reinterpreted; callers upgrading to the next major release must recreate or deliberately migrate stored
+version 1 snapshots.
+
 ## Development
 
 The repository uses a single host-mode CI target:
