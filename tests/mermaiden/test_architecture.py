@@ -5,6 +5,7 @@ import pytest
 from mermaiden.application import Application, DiagramCommand, UnknownCommand
 from mermaiden.core.constraint import ChangeRejected
 from mermaiden.diagrams.architecture.diagram import Architecture
+from mermaiden.diagrams.architecture.elements import ArchitectureGroup
 from mermaiden.diagrams.architecture.relations import Alignment, AlignmentAxis, Edge
 
 
@@ -17,6 +18,31 @@ class TestArchitecture:
         application.apply(diagram, DiagramCommand("add_junction", {"id": "gateway", "label": "Gateway"}))
         application.apply(diagram, DiagramCommand("add_service", {"id": "api", "label": "API"}))
         return application, diagram
+
+    def _diagram_with_group(self, columns: int, *member_ids: str) -> tuple[Application, Architecture]:
+        application = Application.create()
+        diagram = application.create_diagram("architecture-beta")
+        assert isinstance(diagram, Architecture)
+        application.apply(
+            diagram,
+            DiagramCommand("add_group", {"id": "platform", "label": "Platform", "columns": columns}),
+        )
+        for member_id in member_ids:
+            application.apply(
+                diagram,
+                DiagramCommand(
+                    "add_service",
+                    {"id": member_id, "label": member_id.upper(), "group_id": "platform"},
+                ),
+            )
+        return application, diagram
+
+    def _alignment_directives(self, application: Application, diagram: Architecture) -> list[str]:
+        return [
+            line.strip()
+            for line in application.render(diagram).splitlines()
+            if line.strip().startswith("align ")
+        ]
 
     def test_renders_and_restores_a_quoted_edge_label(self) -> None:
         application = Application.create()
@@ -154,3 +180,80 @@ class TestArchitecture:
 
         with pytest.raises(ChangeRejected, match="Relation 'primary' already exists"):
             application.apply(diagram, command)
+
+    def test_derives_a_grid_from_direct_members_without_persisting_alignments(self) -> None:
+        application, diagram = self._diagram_with_group(2, "a")
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_group",
+                {"id": "nested", "label": "Nested", "parent_id": "platform", "columns": 1},
+            ),
+        )
+        for member_id in ("x", "y"):
+            application.apply(
+                diagram,
+                DiagramCommand(
+                    "add_service",
+                    {"id": member_id, "label": member_id.upper(), "group_id": "nested"},
+                ),
+            )
+        for member_id in ("b", "c", "d"):
+            application.apply(
+                diagram,
+                DiagramCommand(
+                    "add_junction",
+                    {"id": member_id, "label": member_id.upper(), "group_id": "platform"},
+                ),
+            )
+
+        snapshot = application.snapshot(diagram)
+        source = application.render(diagram)
+        restored = application.restore(json.loads(json.dumps(snapshot.to_dict())))
+        restored_group = restored.find_element("platform")
+
+        assert self._alignment_directives(application, diagram) == [
+            "align column x y",
+            "align row a b",
+            "align row c d",
+            "align column a c",
+            "align column b d",
+        ]
+        assert "align row a nested" not in source
+        assert "align column a x" not in source
+        assert diagram.find_relations() == ()
+        assert snapshot.relations == ()
+        assert isinstance(restored_group, ArchitectureGroup)
+        assert restored_group.columns == 2
+        assert restored.find_relations() == ()
+        assert application.render(restored) == source
+
+    @pytest.mark.parametrize(
+        ("columns", "member_ids", "directives"),
+        (
+            (1, ("a", "b", "c"), ["align column a b c"]),
+            (2, ("a", "b", "c"), ["align row a b", "align column a c"]),
+            (4, ("a", "b", "c"), ["align row a b c"]),
+            (3, ("a",), []),
+        ),
+    )
+    def test_columns_derive_deterministic_non_singleton_directives(
+        self,
+        columns: int,
+        member_ids: tuple[str, ...],
+        directives: list[str],
+    ) -> None:
+        application, diagram = self._diagram_with_group(columns, *member_ids)
+
+        assert self._alignment_directives(application, diagram) == directives
+
+    @pytest.mark.parametrize("columns", (0, -1))
+    def test_rejects_non_positive_group_columns(self, columns: int) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("architecture-beta")
+
+        with pytest.raises(UnknownCommand, match="'add_group' has invalid arguments"):
+            application.apply(
+                diagram,
+                DiagramCommand("add_group", {"id": "platform", "label": "Platform", "columns": columns}),
+            )
