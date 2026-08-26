@@ -92,6 +92,7 @@ class TestApplication:
         (
             ("block", {"padding": 12}),
             ("architecture-beta", {"nodeSeparation": 96, "seed": 7}),
+            ("C4Context", {"c4ShapeInRow": 3, "messageFontSize": 16}),
             ("pie", {"legendPosition": "top"}),
             ("gitGraph", {"nodeLabel": {"width": 90, "height": 110, "x": -20, "y": 5}}),
         ),
@@ -143,6 +144,39 @@ class TestApplication:
             'architecture: {"useMaxWidth": false, "padding": 48.0, "iconSize": 96.0, '
             '"fontSize": 18.0, "randomize": true, "nodeSeparation": 120.0, '
             '"idealEdgeLengthMultiplier": 2.0, "edgeElasticity": 0.7, "numIter": 3000, "seed": 7.0}'
+            in application.render(diagram)
+        )
+
+    def test_serializes_non_default_c4_configuration(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("C4Context")
+
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "configure",
+                {
+                    "diagramMarginX": 64,
+                    "diagramMarginY": 24,
+                    "c4ShapeMargin": 56,
+                    "c4ShapePadding": 28,
+                    "width": 240,
+                    "height": 72,
+                    "boxMargin": 16,
+                    "useMaxWidth": False,
+                    "c4ShapeInRow": 3,
+                    "nextLinePaddingX": 12,
+                    "c4BoundaryInRow": 1,
+                    "messageFontSize": 16,
+                },
+            ),
+        )
+
+        assert (
+            'c4: {"diagramMarginX": 64, "diagramMarginY": 24, "c4ShapeMargin": 56, '
+            '"c4ShapePadding": 28, "width": 240, "height": 72, "boxMargin": 16, '
+            '"useMaxWidth": false, "c4ShapeInRow": 3, "nextLinePaddingX": 12.0, '
+            '"c4BoundaryInRow": 1, "messageFontSize": 16.0}'
             in application.render(diagram)
         )
 

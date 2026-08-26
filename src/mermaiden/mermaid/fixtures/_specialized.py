@@ -1,4 +1,5 @@
 from ...diagrams.application import DiagramsApplication
+from ...diagrams.c4.configuration import C4ContextDiagramConfiguration
 from ...diagrams.c4.diagram import C4ContextDiagram
 from ...diagrams.cynefin.diagram import CynefinDiagram
 from ...diagrams.cynefin.elements import DomainKind
@@ -29,6 +30,7 @@ def build_specialized_fixtures(registry: DiagramsApplication) -> dict[str, Diagr
 
     c4 = registry.get_diagram("C4Context")
     assert isinstance(c4, C4ContextDiagram)
+    c4.configure(C4ContextDiagramConfiguration(c4_shape_in_row=3, next_line_padding_x=12, message_font_size=16))
     c4.add_person("customer", "Customer", "A personal banking customer")
     c4.add_system("banking", "Internet Banking System", "Provides online banking", "Python")
     c4.add_database("accounts", "Accounts Database", "Stores account balances", "PostgreSQL")

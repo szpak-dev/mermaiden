@@ -228,6 +228,15 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
                 '"idealEdgeLengthMultiplier": 1.5, "edgeElasticity": 0.45, "numIter": 2500, "seed": 7.0}\n'
                 "---\n"
             )
+        elif name == "c4":
+            assert source.startswith(
+                "---\nconfig:\n  wrap: true\n"
+                '  c4: {"diagramMarginX": 50, "diagramMarginY": 10, "c4ShapeMargin": 50, '
+                '"c4ShapePadding": 20, "width": 216, "height": 60, "boxMargin": 10, '
+                '"useMaxWidth": true, "c4ShapeInRow": 3, "nextLinePaddingX": 12.0, '
+                '"c4BoundaryInRow": 2, "messageFontSize": 16.0}\n'
+                "---\n"
+            )
         else:
             assert source.startswith("---\nconfig:\n  wrap: true\n---\n")
         for fragment in fragments:

@@ -7,6 +7,7 @@ from pydantic import ValidationError
 from mermaiden.application import Application
 from mermaiden.diagrams.architecture.configuration import ArchitectureDiagramConfiguration
 from mermaiden.diagrams.block.configuration import BlockDiagramConfiguration
+from mermaiden.diagrams.c4.configuration import C4ContextDiagramConfiguration
 from mermaiden.diagrams.gitgraph.configuration import GitGraphDiagramConfiguration
 from mermaiden.diagrams.requirement.configuration import RequirementDiagramConfiguration
 
@@ -96,6 +97,50 @@ class TestMermaidConfiguration:
     ) -> None:
         with pytest.raises(ValidationError):
             ArchitectureDiagramConfiguration.model_validate(values)
+
+    def test_c4_configuration_uses_mermaids_concrete_layout_defaults(self) -> None:
+        configuration = C4ContextDiagramConfiguration()
+
+        assert configuration.document("c4").to_mermaid() == {
+            "wrap": True,
+            "c4": {
+                "diagramMarginX": 50,
+                "diagramMarginY": 10,
+                "c4ShapeMargin": 50,
+                "c4ShapePadding": 20,
+                "width": 216,
+                "height": 60,
+                "boxMargin": 10,
+                "useMaxWidth": True,
+                "c4ShapeInRow": 4,
+                "nextLinePaddingX": 0,
+                "c4BoundaryInRow": 2,
+                "messageFontSize": 12,
+            },
+        }
+
+    @pytest.mark.parametrize(
+        "values",
+        (
+            {"diagram_margin_x": -1},
+            {"diagram_margin_y": -1},
+            {"c4_shape_margin": -1},
+            {"c4_shape_padding": -1},
+            {"width": -1},
+            {"height": -1},
+            {"box_margin": -1},
+            {"c4_shape_in_row": -1},
+            {"c4_boundary_in_row": -1},
+            {"message_font_size": 0},
+            {"message_font_size": ""},
+        ),
+    )
+    def test_c4_configuration_rejects_invalid_layout_values(
+        self,
+        values: Mapping[str, object],
+    ) -> None:
+        with pytest.raises(ValidationError):
+            C4ContextDiagramConfiguration.model_validate(values)
 
     def test_every_diagram_has_strict_non_nullable_configuration_defaults(self) -> None:
         application = Application.create()
