@@ -20,6 +20,16 @@ class TestDiagramCatalog:
         assert "add_participant" in description.commands
         assert cast(Any, payload.model_validate({"id": "api", "label": "API", "kind": "actor"})).kind.value == "actor"
 
+    def test_discovers_each_diagrams_concrete_configuration_as_a_command_payload(self) -> None:
+        application = Application.create()
+
+        for info in application.available_diagrams():
+            diagram = application.create_diagram(info.id)
+            payload_type = application.command_payload(info.id, "configure")
+
+            assert payload_type is type(diagram.configuration)
+            assert application.diagram_description(info.id).commands["configure"] == payload_type.model_json_schema()
+
     @pytest.mark.parametrize(
         ("diagram_id", "command_name"),
         (
