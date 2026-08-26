@@ -86,6 +86,7 @@ def test_rendered_diagrams_cover_every_supported_building_block() -> None:
             "service api[API] in platform",
             "junction events in platform",
             'web:R -["HTTPS \\"mTLS\\""]-> L:api',
+            "align column api events",
             "Persistent storage",
         ),
         "sequence": (

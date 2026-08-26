@@ -1,7 +1,7 @@
 from ...diagrams.application import DiagramsApplication
 from ...diagrams.architecture.configuration import ArchitectureDiagramConfiguration
 from ...diagrams.architecture.diagram import Architecture
-from ...diagrams.architecture.relations import Port
+from ...diagrams.architecture.relations import AlignmentAxis, Port
 from ...diagrams.block.diagram import BlockDiagram
 from ...diagrams.classdiagram.diagram import ClassDiagram
 from ...diagrams.classdiagram.elements import ClassAttribute, ClassMethod
@@ -89,6 +89,7 @@ def build_structural_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     architecture.add_edge("web_api", "web", "api", Port.RIGHT, Port.LEFT, 'HTTPS "mTLS"')
     architecture.add_edge("api_events", "api", "events", Port.BOTTOM, Port.TOP)
     architecture.add_edge("api_database", "api", "database", Port.RIGHT, Port.LEFT)
+    architecture.add_alignment("platform_column", AlignmentAxis.COLUMN, ("api", "events"))
     architecture.add_note("web_note", "web", "Client gateway")
     architecture.add_note("api_note", "api", "Public API")
     architecture.add_note("database_note", "database", "Persistent storage")
