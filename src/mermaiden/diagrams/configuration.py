@@ -13,8 +13,10 @@ class MermaidConfigurationNaming:
 class MermaidConfigurationModel(BaseModel):
     model_config = ConfigDict(
         alias_generator=MermaidConfigurationNaming.to_camel_case,
+        extra="forbid",
         frozen=True,
         populate_by_name=True,
+        validate_default=True,
     )
 
 
