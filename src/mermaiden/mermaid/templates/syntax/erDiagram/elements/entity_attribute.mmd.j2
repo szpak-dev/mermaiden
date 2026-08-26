@@ -1,0 +1,1 @@
+  {{ element.data_type }} {{ element.label }}{% if element.keys %} {{ element.keys | join(", ") }}{% endif %}{% if element.comment %} {{ element.comment | mermaid_quote }}{% endif %}{{ "\n" -}}

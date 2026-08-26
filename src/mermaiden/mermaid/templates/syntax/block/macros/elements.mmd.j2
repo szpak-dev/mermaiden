@@ -1,0 +1,5 @@
+{% macro render(items) -%}
+{% for item in items -%}
+{% with element=item -%}{% include template_prefix ~ "/elements/" ~ element.kind ~ ".mmd.j2" %}{% endwith -%}
+{% endfor -%}
+{%- endmacro %}

@@ -1,13 +1,4 @@
-{% macro render(items) -%}
-{% for item in items -%}
-{% if item.kind == "timeline_section" -%}
-section {{ item.label }}{{ "\n" -}}
-{{ render(item.elements) | indent(2, true) }}
-{% elif item.kind == "timeline_period" -%}
-{{ item.label }}{% for event in item.elements %} : {{ event.label }}{% endfor %}{{ "\n" -}}
-{% endif -%}
-{% endfor -%}
-{%- endmacro %}
+{% import template_prefix ~ "/macros/elements.mmd.j2" as elements with context %}
 {{ diagram.kind }}{{ "\n" -}}
 {% if diagram.title %}title {{ diagram.title }}{{ "\n" -}}{% endif %}
-{{ render(diagram.root_elements) }}
+{{ elements.render(diagram.root_elements) }}

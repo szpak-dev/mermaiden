@@ -1,0 +1,2 @@
+{% import template_prefix ~ "/macros/elements.mmd.j2" as elements with context %}
+{{ "  " * depth }}{{ element.label }}{{ "\n" -}}{{ elements.render(element.elements, depth + 1) }}

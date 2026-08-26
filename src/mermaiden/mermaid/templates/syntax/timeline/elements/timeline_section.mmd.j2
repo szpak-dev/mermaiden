@@ -1,0 +1,3 @@
+{% import template_prefix ~ "/macros/elements.mmd.j2" as elements with context %}
+section {{ element.label }}{{ "\n" -}}
+{{ elements.render(element.elements) | indent(2, true) }}

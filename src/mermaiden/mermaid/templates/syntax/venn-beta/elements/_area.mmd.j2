@@ -1,0 +1,1 @@
+{{ declaration }}[{{ element.label | mermaid_quote }}]{% if element.size is not none %}:{{ element.size | mermaid_number }}{% endif %}{{ "\n" -}}{% for item in element.elements %}{% with element=item %}{% include template_prefix ~ "/elements/" ~ element.kind ~ ".mmd.j2" %}{% endwith %}{% endfor %}

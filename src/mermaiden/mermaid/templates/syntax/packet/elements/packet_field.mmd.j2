@@ -1,0 +1,1 @@
+{% if element.bits is not none %}+{{ element.bits }}{% elif element.end is none %}{{ element.start }}{% else %}{{ element.start }}-{{ element.end }}{% endif %}: {{ element.label | mermaid_quote }}{{ "\n" -}}

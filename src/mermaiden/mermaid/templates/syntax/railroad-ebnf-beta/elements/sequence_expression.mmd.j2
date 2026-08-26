@@ -1,0 +1,2 @@
+{% import template_prefix ~ "/macros/expression.mmd.j2" as expression with context -%}
+{% if element.elements %}{% for child in element.elements %}{{ expression.render(child) }}{% if not loop.last %} {% endif %}{% endfor %}{% else %}{{ "" | mermaid_quote }}{% endif -%}

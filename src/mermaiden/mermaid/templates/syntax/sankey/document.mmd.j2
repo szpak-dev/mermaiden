@@ -1,2 +1,3 @@
 {{ diagram.kind }}{{ "\n" -}}
-{% for relation in diagram.find_relations() %}{{ diagram.find_element(relation.source_id).label | mermaid_quote }},{{ diagram.find_element(relation.target_id).label | mermaid_quote }},{{ relation.value }}{{ "\n" -}}{% endfor %}
+{% for item in diagram.root_elements %}{% with element=item %}{% include template_prefix ~ "/elements/" ~ element.kind ~ ".mmd.j2" %}{% endwith %}{% endfor %}
+{% for item in diagram.find_relations() %}{% with relation=item %}{% include template_prefix ~ "/relations/" ~ relation.kind ~ ".mmd.j2" %}{% endwith %}{% endfor %}

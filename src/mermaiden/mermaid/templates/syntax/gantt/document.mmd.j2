@@ -1,3 +1,3 @@
 {{ diagram.kind }}{{ "\n" -}}
 {% if diagram.title %}title {{ diagram.title }}{{ "\n" -}}{% endif %}dateFormat {{ diagram.date_format }}{{ "\n" -}}
-{% for item in diagram.root_elements %}{% if item.kind == "section" %}section {{ item.label }}{{ "\n" -}}{% for task in item.elements %}{{ task.label }} : {{ task.metadata | join(", ") }}{{ "\n" -}}{% endfor %}{% elif item.kind == "marker" %}vert {{ item.date }} : {{ item.label }}{{ "\n" -}}{% endif %}{% endfor %}
+{% for item in diagram.root_elements %}{% with element=item %}{% include template_prefix ~ "/elements/" ~ element.kind ~ ".mmd.j2" %}{% endwith %}{% endfor %}

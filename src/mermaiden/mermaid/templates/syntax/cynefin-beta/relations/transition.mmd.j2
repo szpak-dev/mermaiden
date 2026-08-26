@@ -1,0 +1,1 @@
+{{ diagram.find_element(relation.element_ids[0]).domain.value }} --> {{ diagram.find_element(relation.element_ids[1]).domain.value }}{% if relation.label %} : {{ relation.label | mermaid_quote }}{% endif %}{{ "\n" -}}

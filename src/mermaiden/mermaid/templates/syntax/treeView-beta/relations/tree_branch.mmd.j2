@@ -1,0 +1,1 @@
+{% with element=diagram.find_element(relation.child_id), depth=depth + 1 %}{% include template_prefix ~ "/elements/" ~ element.kind ~ ".mmd.j2" %}{% endwith %}

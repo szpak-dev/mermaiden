@@ -4,17 +4,21 @@ import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import ClassVar
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 from wireup import injectable
 
 from ..core.diagram import DiagramView
+from ..diagrams.application import DiagramsApplication
+from ..diagrams.catalog import DiagramCatalog
 from .domain import MermaidPreview
 
 
 @injectable
 @dataclass(frozen=True, slots=True)
 class MermaidApplication:
+    _template_ownership_validated: ClassVar[bool] = False
     wrap: bool = field(default=True, init=False)
     environment: Environment = field(init=False)
 
@@ -53,6 +57,24 @@ class MermaidApplication:
 
     def document_template(self, diagram: DiagramView) -> str:
         return f"{self._template_prefix(diagram)}/document.mmd.j2"
+
+    def validate_template_ownership(
+        self,
+        registry: DiagramsApplication,
+        catalog: DiagramCatalog,
+    ) -> None:
+        if self._template_ownership_validated:
+            return
+        for info in registry.available():
+            diagram = catalog.describe(info.id)
+            prefix = f"templates/syntax/{diagram.id}"
+            for kind in diagram.elements:
+                self.environment.get_template(f"{prefix}/elements/{kind}.mmd.j2")
+            for kind in diagram.relations:
+                self.environment.get_template(f"{prefix}/relations/{kind}.mmd.j2")
+            for kind in diagram.annotations:
+                self.environment.get_template(f"{prefix}/annotations/{kind}.mmd.j2")
+        type(self)._template_ownership_validated = True
 
     @staticmethod
     def _identifier(value: object, namespace: str) -> str:

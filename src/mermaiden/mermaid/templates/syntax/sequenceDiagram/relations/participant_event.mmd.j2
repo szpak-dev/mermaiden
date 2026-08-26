@@ -1,0 +1,2 @@
+{% import "templates/syntax/sequenceDiagram/macros/participant.mmd.j2" as sequence %}
+{% set participant = diagram.find_element(relation.element_ids[0]) %}{% if relation.action == "create" %}{{ sequence.declaration(participant, "create ") }}{% else %}{{ relation.action }} {{ participant.id }}{% endif %}{{ "\n" -}}
