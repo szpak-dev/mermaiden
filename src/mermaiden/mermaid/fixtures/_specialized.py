@@ -61,6 +61,8 @@ def build_specialized_fixtures(registry: DiagramsApplication) -> dict[str, Diagr
     cynefin.add_item("investigate", "Investigate root cause", DomainKind.COMPLEX)
     cynefin.add_item("analyze", "Analyze performance data", DomainKind.COMPLICATED)
     cynefin.add_item("restart", "Restart service", DomainKind.CLEAR)
+    cynefin.add_item("contain", "Contain the incident", DomainKind.CHAOTIC)
+    cynefin.add_item("classify", "Classify the situation", DomainKind.CONFUSION)
     cynefin.add_transition("pattern", "investigate", "analyze", "Pattern identified")
 
     kanban = registry.get_diagram("kanban")

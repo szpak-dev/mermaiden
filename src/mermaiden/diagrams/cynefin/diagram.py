@@ -31,3 +31,7 @@ class CynefinDiagram(DiagramModel):
         return self._add_relation(
             f"add transition '{id}'", Transition(id=id, element_ids=(source_id, target_id), label=label)
         )
+
+    @property
+    def domain_kinds(self) -> tuple[DomainKind, ...]:
+        return tuple(DomainKind)
