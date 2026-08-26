@@ -1,7 +1,8 @@
 from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import Annotated, ClassVar
 
+from pydantic import Field
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
@@ -28,7 +29,13 @@ class Architecture(DiagramModel):
         "ArchitectureDiagramConfig",
     )
 
-    def add_group(self, id: str, label: str, parent_id: str = "", columns: int = 1) -> ChangeReport:
+    def add_group(
+        self,
+        id: str,
+        label: str,
+        parent_id: str = "",
+        columns: Annotated[int, Field(ge=1)] = 1,
+    ) -> ChangeReport:
         return self._add_element(
             f"add group '{id}'", ArchitectureGroup(id=id, label=label, elements=(), columns=columns), parent_id
         )

@@ -1,3 +1,4 @@
 {% import "templates/macros/document.mmd.j2" as mmd with context %}
 group {{ element.id }}[{{ element.label }}]{{ "\n" -}}
 {{ mmd.elements(element.elements, 1, element.id) }}
+{{ mmd.relations(element.grid_alignments, 1) }}
