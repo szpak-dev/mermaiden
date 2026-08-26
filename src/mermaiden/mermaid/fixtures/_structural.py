@@ -86,7 +86,7 @@ def build_structural_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     architecture.add_service("api", "API", "platform")
     architecture.add_junction("events", "Events", "platform")
     architecture.add_service("database", "Database", "data")
-    architecture.add_edge("web_api", "web", "api", Port.RIGHT, Port.LEFT)
+    architecture.add_edge("web_api", "web", "api", Port.RIGHT, Port.LEFT, 'HTTPS "mTLS"')
     architecture.add_edge("api_events", "api", "events", Port.BOTTOM, Port.TOP)
     architecture.add_edge("api_database", "api", "database", Port.RIGHT, Port.LEFT)
     architecture.add_note("web_note", "web", "Client gateway")
