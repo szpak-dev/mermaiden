@@ -55,14 +55,3 @@ class Diagram(DiagramView):
 
     def accept(self, visitor: DiagramVisitor[Result]) -> Result:
         return visitor.visit(self)
-
-
-__all__ = [
-    "Container",
-    "Diagram",
-    "DiagramView",
-    "DiagramVisitor",
-    "Element",
-    "Entity",
-    "Relation",
-]
