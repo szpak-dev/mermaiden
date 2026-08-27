@@ -15,10 +15,9 @@ class FlowchartConstraint(DiagramConstraint):
     def flows(diagram: ConstraintDiagram) -> tuple[Flow, ...]:
         return tuple(item for item in diagram.find_relations() if isinstance(item, Flow))
 
+
 @injectable(as_type=FlowchartConstraint, qualifier="conditional_flows_have_conditions")
 class ConditionalFlowsHaveConditions(FlowchartConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         return tuple(
             self.violation(
@@ -29,9 +28,9 @@ class ConditionalFlowsHaveConditions(FlowchartConstraint):
             if isinstance(flow, ConditionalFlow) and not flow.condition.strip()
         )
 
+
 @injectable(as_type=FlowchartConstraint, qualifier="decision_branches_are_conditioned")
 class DecisionBranchesAreConditioned(FlowchartConstraint):
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues: list[Violation] = []
         flows = self.flows(diagram)
@@ -54,9 +53,9 @@ class DecisionBranchesAreConditioned(FlowchartConstraint):
                 )
         return tuple(issues)
 
+
 @injectable(as_type=FlowchartConstraint, qualifier="every_node_is_reachable")
 class EveryNodeIsReachable(FlowchartConstraint):
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         starts = [item for item in diagram.walk_elements() if isinstance(item, Start)]
         if len(starts) != 1:
@@ -77,19 +76,18 @@ class EveryNodeIsReachable(FlowchartConstraint):
             if isinstance(node, FlowNode) and node.id not in reached
         )
 
+
 @injectable(as_type=FlowchartConstraint, qualifier="exactly_one_start")
 class ExactlyOneStart(FlowchartConstraint):
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         count = sum(isinstance(item, Start) for item in diagram.walk_elements())
         if count == 1:
             return ()
         return (self.violation(f"Flowchart requires exactly one start; found {count}."),)
 
+
 @injectable(as_type=FlowchartConstraint, qualifier="flow_endpoints_are_nodes")
 class FlowEndpointsAreNodes(FlowchartConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         elements = {item.id: item for item in diagram.walk_elements()}
         return tuple(
@@ -104,10 +102,9 @@ class FlowEndpointsAreNodes(FlowchartConstraint):
             and not (isinstance(elements[flow.source_id], FlowNode) and isinstance(elements[flow.target_id], FlowNode))
         )
 
+
 @injectable(as_type=FlowchartConstraint, qualifier="flows_are_binary")
 class FlowsAreBinary(FlowchartConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         return tuple(
             self.violation(
@@ -118,9 +115,9 @@ class FlowsAreBinary(FlowchartConstraint):
             if len(flow.element_ids) != 2
         )
 
+
 @injectable(as_type=FlowchartConstraint, qualifier="node_degree_rules")
 class NodeDegreeRules(FlowchartConstraint):
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         incoming: defaultdict[str, list[Flow]] = defaultdict(list)
         outgoing: defaultdict[str, list[Flow]] = defaultdict(list)
@@ -180,10 +177,9 @@ class NodeDegreeRules(FlowchartConstraint):
             )
         ]
 
+
 @injectable(as_type=FlowchartConstraint, qualifier="notes_are_valid")
 class NotesAreValid(FlowchartConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues: list[Violation] = []
         for note in (item for item in diagram.find_annotations() if isinstance(item, Note)):

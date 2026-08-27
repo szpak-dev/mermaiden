@@ -23,7 +23,6 @@ class GitGraphDiagram(DiagramModel):
         "GitGraphDiagramConfig",
     )
 
-
     def add_commit(self, id: str, label: str, commit_type: CommitType | str = "", tag: str = "") -> ChangeReport:
         return self._add_element(f"add commit '{id}'", Commit(id=id, label=label, commit_type=commit_type, tag=tag))
 

@@ -29,7 +29,6 @@ class Radar(DiagramModel):
         "RadarDiagramConfig",
     )
 
-
     def set_title(self, title: str) -> None:
         object.__setattr__(self, "title", title)
 

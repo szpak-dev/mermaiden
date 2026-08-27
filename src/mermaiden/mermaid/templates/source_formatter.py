@@ -14,8 +14,5 @@ class MermaidSourceFormatter:
         return "\n".join(line for line in lines if line).rstrip("\n") + "\n"
 
     def wrap(self, body: str, configuration: Mapping[str, object]) -> str:
-        entries = "".join(
-            f"  {key}: {json.dumps(value, ensure_ascii=False)}\n"
-            for key, value in configuration.items()
-        )
+        entries = "".join(f"  {key}: {json.dumps(value, ensure_ascii=False)}\n" for key, value in configuration.items())
         return f"---\nconfig:\n{entries}---\n{body}"

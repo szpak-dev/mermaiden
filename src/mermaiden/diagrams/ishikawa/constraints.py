@@ -1,4 +1,3 @@
-
 from wireup import injectable
 
 from ...core.constraint import ConstraintDiagram, Violation
@@ -12,7 +11,6 @@ class IshikawaDiagramConstraint(DiagramConstraint):
 
 @injectable(as_type=IshikawaDiagramConstraint, qualifier="ishikawa_structure")
 class IshikawaDiagramStructure(IshikawaDiagramConstraint):
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         effects = tuple(item for item in diagram.root_elements if isinstance(item, Effect))
         issues = [

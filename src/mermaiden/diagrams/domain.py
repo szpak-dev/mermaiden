@@ -44,7 +44,6 @@ class DiagramConstraint(BlockingConstraint):
 class Members(DiagramConstraint):
     package: str
 
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues = [
             self.violation(

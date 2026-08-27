@@ -23,7 +23,6 @@ class KanbanDiagram(DiagramModel):
         "KanbanDiagramConfig",
     )
 
-
     def add_column(self, id: str, label: str) -> ChangeReport:
         return self._add_element(f"add column '{id}'", Column(id=id, label=label))
 

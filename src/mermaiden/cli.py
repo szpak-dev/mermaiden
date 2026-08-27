@@ -60,11 +60,9 @@ class MermaidenCli:
         parser = argparse.ArgumentParser()
         commands = parser.add_subparsers(dest="command", required=True)
         fixtures = commands.add_parser("fixtures")
-        fixtures.add_argument("--output", "-o", type=Path,
-                              default=Path(".preview"))
+        fixtures.add_argument("--output", "-o", type=Path, default=Path(".preview"))
         preview = commands.add_parser("preview")
-        preview.add_argument("--output", "-o", type=Path,
-                             default=Path(".preview/index.html"))
+        preview.add_argument("--output", "-o", type=Path, default=Path(".preview/index.html"))
         commands.add_parser("compat")
         arguments = parser.parse_args()
         cli = cls.create()
@@ -76,11 +74,9 @@ class MermaidenCli:
         if arguments.command == "compat":
             report = cli.verify_compatibility()
             for diagram in report.diagrams:
-                print(
-                    f"{diagram.diagram_id}: {'valid' if report.diagram_valid(diagram) else 'invalid'}")
+                print(f"{diagram.diagram_id}: {'valid' if report.diagram_valid(diagram) else 'invalid'}")
             for diagram in report.missing_diagrams:
-                print(
-                    f"{diagram.config_key}: not implemented ({diagram.schema_definition})")
+                print(f"{diagram.config_key}: not implemented ({diagram.schema_definition})")
             for violation in report.syntax_violations:
                 print(f"{violation.diagram_id}: {violation.message}")
             if not report.valid:

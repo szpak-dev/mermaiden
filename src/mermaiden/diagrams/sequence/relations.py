@@ -34,8 +34,6 @@ class Message(Relation):
     deactivate: bool = False
 
 
-
-
 class ParticipantEvent(Relation):
     action: str = "activate"
 

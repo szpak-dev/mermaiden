@@ -1,4 +1,3 @@
-
 from wireup import injectable
 
 from ...core.constraint import ConstraintDiagram, Violation
@@ -10,11 +9,8 @@ class PieConstraint(DiagramConstraint):
     pass
 
 
-
 @injectable(as_type=PieConstraint, qualifier="pie_slice_values")
 class SlicesArePositive(PieConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         return tuple(
             self.violation(f"Pie slice '{slice.id}' must be greater than zero.", path=f"elements.{slice.id}")

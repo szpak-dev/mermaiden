@@ -23,7 +23,6 @@ class IshikawaDiagram(DiagramModel):
         "IshikawaDiagramConfig",
     )
 
-
     def add_effect(self, id: str, label: str) -> ChangeReport:
         return self._add_element(f"add effect '{id}'", Effect(id=id, label=label))
 

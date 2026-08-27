@@ -26,7 +26,6 @@ class SwimlaneDiagram(DiagramModel):
         "SwimlaneDiagramConfig",
     )
 
-
     def add_lane(self, id: str, label: str) -> ChangeReport:
         return self._add_element(f"add lane '{id}'", Swimlane(id=id, label=label))
 

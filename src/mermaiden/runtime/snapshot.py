@@ -142,9 +142,7 @@ class DiagramSnapshotCodec:
         if isinstance(value, BaseModel):
             return {
                 "$type": self._reference(type(value)),
-                "fields": {
-                    name: self._encode(getattr(value, name)) for name in type(value).model_fields
-                },
+                "fields": {name: self._encode(getattr(value, name)) for name in type(value).model_fields},
             }
         if is_dataclass(value) and not isinstance(value, type):
             return {

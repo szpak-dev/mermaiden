@@ -8,7 +8,6 @@ from ..domain import StructureConstraint
 
 @injectable(as_type=Constraint, qualifier="identities_are_valid")
 class IdentitiesAreValid(StructureConstraint):
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         groups = (
             ("element", tuple(item.id for item in diagram.walk_elements())),

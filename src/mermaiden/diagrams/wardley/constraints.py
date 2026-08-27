@@ -1,4 +1,3 @@
-
 from wireup import injectable
 
 from ...core.constraint import ConstraintDiagram, Violation
@@ -12,8 +11,6 @@ class WardleyDiagramConstraint(DiagramConstraint):
 
 @injectable(as_type=WardleyDiagramConstraint, qualifier="wardley_structure")
 class WardleyDiagramStructure(WardleyDiagramConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         components = {item.id for item in diagram.walk_elements() if isinstance(item, Component)}
         issues = [

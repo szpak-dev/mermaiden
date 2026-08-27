@@ -46,9 +46,7 @@ class CompatibilityReport:
     @property
     def valid(self) -> bool:
         return (
-            all(diagram.valid for diagram in self.diagrams)
-            and not self.missing_diagrams
-            and not self.syntax_violations
+            all(diagram.valid for diagram in self.diagrams) and not self.missing_diagrams and not self.syntax_violations
         )
 
     def diagram_valid(self, diagram: DiagramCompatibility) -> bool:
@@ -81,12 +79,10 @@ class MermaidCompatibilityService:
             try:
                 info = self.registry.get_by_config_key(upstream.config_key)
             except KeyError:
-                missing.append(MissingDiagramCompatibility(
-                    upstream.config_key, upstream.schema_definition))
+                missing.append(MissingDiagramCompatibility(upstream.config_key, upstream.schema_definition))
                 continue
             source = self.renderer.render(self.registry.get_diagram(info.id))
-            local = configuration.local_contract(
-                info.config_key, info.schema_definition, source)
+            local = configuration.local_contract(info.config_key, info.schema_definition, source)
             sources[info.id] = fixture_sources[info.id] if verify_syntax and info.id in fixture_sources else source
             diagrams.append(
                 DiagramCompatibility(
@@ -96,6 +92,5 @@ class MermaidCompatibilityService:
                     configuration.supports(local, upstream),
                 )
             )
-        syntax_violations = self.syntax.validate(
-            sources) if verify_syntax else ()
+        syntax_violations = self.syntax.validate(sources) if verify_syntax else ()
         return CompatibilityReport(lock, tuple(diagrams), tuple(missing), syntax_violations)

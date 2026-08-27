@@ -1,4 +1,3 @@
-
 from enum import StrEnum
 
 from ...core.relation import Relation

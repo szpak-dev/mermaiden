@@ -1,4 +1,3 @@
-
 from pydantic import Field
 
 from ...core.element import Container, Entity

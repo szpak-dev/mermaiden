@@ -6,7 +6,6 @@ from ..domain import StructureConstraint
 
 @injectable(as_type=Constraint, qualifier="annotations_have_targets")
 class AnnotationsHaveTargets(StructureConstraint):
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         return tuple(
             self.violation(

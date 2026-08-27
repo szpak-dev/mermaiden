@@ -7,6 +7,7 @@ class GitGraphNodeLabel(MermaidConfigurationModel):
     x: float = -25
     y: float = 0
 
+
 class GitGraphDiagramConfiguration(MermaidDiagramConfiguration):
     title_top_margin: int = 25
     diagram_padding: float = 8

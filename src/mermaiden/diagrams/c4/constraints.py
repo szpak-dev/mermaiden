@@ -1,4 +1,3 @@
-
 from wireup import injectable
 
 from ...core.constraint import ConstraintDiagram, Violation
@@ -13,8 +12,6 @@ class C4ContextDiagramConstraint(DiagramConstraint):
 
 @injectable(as_type=C4ContextDiagramConstraint, qualifier="c4_structure")
 class C4ContextDiagramStructure(C4ContextDiagramConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues = [
             self.violation(f"C4 element '{item.id}' must use a Mermaid-safe identifier.", path=f"elements.{item.id}")
