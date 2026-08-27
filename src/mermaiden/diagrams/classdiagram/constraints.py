@@ -1,4 +1,3 @@
-
 from wireup import injectable
 
 from ...core.constraint import ConstraintDiagram, Violation
@@ -10,10 +9,9 @@ from .relations import ClassRelation
 class ClassDiagramConstraint(DiagramConstraint):
     pass
 
+
 @injectable(as_type=ClassDiagramConstraint, qualifier="classdiagram_relations")
 class ClassRelationsAreBinary(ClassDiagramConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         classes = {item.id for item in diagram.walk_elements() if isinstance(item, Class)}
         return tuple(

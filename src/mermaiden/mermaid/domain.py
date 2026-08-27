@@ -10,20 +10,14 @@ from wireup import injectable
 @dataclass(frozen=True, slots=True)
 class MermaidPreview:
     def write_sources(self, sources: Mapping[str, str], output: Path) -> Path:
-        sections = "\n".join(self._source_section(name, source)
-                             for name, source in sources.items())
+        sections = "\n".join(self._source_section(name, source) for name, source in sources.items())
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(self._document(sections), encoding="utf-8")
         return output
 
     @staticmethod
     def _source_section(name: str, source: str) -> str:
-        return (
-            "<section>"
-            f"<h2>{escape(name)}</h2>"
-            f'<pre class="mermaid">{escape(source)}</pre>'
-            "</section>"
-        )
+        return f'<section><h2>{escape(name)}</h2><pre class="mermaid">{escape(source)}</pre></section>'
 
     @staticmethod
     def _document(sections: str) -> str:

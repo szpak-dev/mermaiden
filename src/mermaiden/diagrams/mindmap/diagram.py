@@ -23,7 +23,6 @@ class Mindmap(DiagramModel):
         "MindmapDiagramConfig",
     )
 
-
     def add_root(self, id: str, label: str) -> ChangeReport:
         return self._add_node(MindmapNode(id=id, label=label), "", "root")
 

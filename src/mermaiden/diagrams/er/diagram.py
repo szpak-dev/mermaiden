@@ -28,7 +28,6 @@ class EntityRelationshipDiagram(DiagramModel):
         "ErDiagramConfig",
     )
 
-
     def set_direction(self, direction: str) -> None:
         object.__setattr__(self, "direction", direction)
 

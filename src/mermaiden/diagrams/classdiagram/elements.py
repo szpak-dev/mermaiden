@@ -12,7 +12,6 @@ class Visibility(StrEnum):
 
 
 class ClassAttribute(ValueModel):
-
     name: str
     type: str = ""
     visibility: Visibility = Visibility.PUBLIC
@@ -22,7 +21,6 @@ class ClassAttribute(ValueModel):
 
 
 class ClassMethod(ValueModel):
-
     name: str
     parameters: tuple[str, ...] = ()
     return_type: str = ""

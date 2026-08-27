@@ -1,4 +1,3 @@
-
 from wireup import injectable
 
 from ...core.constraint import ConstraintDiagram, Violation
@@ -12,8 +11,6 @@ class GitGraphDiagramConstraint(DiagramConstraint):
 
 @injectable(as_type=GitGraphDiagramConstraint, qualifier="gitgraph_structure")
 class GitGraphDiagramStructure(GitGraphDiagramConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         branches = tuple(item for item in diagram.root_elements if isinstance(item, Branch))
         branch_names = {item.label for item in branches}

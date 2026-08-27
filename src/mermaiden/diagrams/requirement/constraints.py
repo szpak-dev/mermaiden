@@ -1,4 +1,3 @@
-
 from wireup import injectable
 
 from ...core.constraint import ConstraintDiagram, Violation
@@ -15,8 +14,6 @@ class RequirementDiagramConstraint(DiagramConstraint):
 
 @injectable(as_type=RequirementDiagramConstraint, qualifier="requirement_relations")
 class RelationsAreValid(RequirementDiagramConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         elements = {item.id: item for item in diagram.walk_elements()}
         issues: list[Violation] = []

@@ -27,7 +27,6 @@ class StateDiagram(DiagramModel):
         "StateDiagramConfig",
     )
 
-
     def add_state(self, id: str, label: str, composite_id: str = "") -> ChangeReport:
         return self._add_node(State(id=id, label=label), composite_id, "state")
 
@@ -94,9 +93,7 @@ class StateDiagram(DiagramModel):
 
     def notes_for(self, composite_id: str = "") -> tuple[StateNote, ...]:
         return tuple(
-            item
-            for item in self.find_annotations()
-            if isinstance(item, StateNote) and item.scope_id == composite_id
+            item for item in self.find_annotations() if isinstance(item, StateNote) and item.scope_id == composite_id
         )
 
     def remove_transition(self, id: str) -> ChangeReport:

@@ -24,7 +24,6 @@ class Timeline(DiagramModel):
         "TimelineDiagramConfig",
     )
 
-
     def set_title(self, title: str) -> None:
         object.__setattr__(self, "title", title)
 

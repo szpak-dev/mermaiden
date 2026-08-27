@@ -48,6 +48,4 @@ class MermaidCliRenderer:
             return MermaidCliResult(process.returncode, svgs, output)
 
     def markdown(self, sources: Mapping[str, str]) -> str:
-        return "\n".join(
-            f"## {diagram_id}\n```mermaid\n{source}```" for diagram_id, source in sources.items()
-        )
+        return "\n".join(f"## {diagram_id}\n```mermaid\n{source}```" for diagram_id, source in sources.items())

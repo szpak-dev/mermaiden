@@ -65,23 +65,13 @@ def build_analytical_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     )
     requirements.add_element("service", "software", "docs/service.md")
     requirements.add_element("test_suite", "test", "tests/requirements.py")
-    requirements.add_relation(
-        "system_contains_login", "system", "login", RequirementRelationKind.CONTAINS
-    )
+    requirements.add_relation("system_contains_login", "system", "login", RequirementRelationKind.CONTAINS)
     requirements.add_relation("login_copies_api", "login", "api", RequirementRelationKind.COPIES)
     requirements.add_relation("api_derives_latency", "api", "latency", RequirementRelationKind.DERIVES)
-    requirements.add_relation(
-        "service_satisfies_system", "service", "system", RequirementRelationKind.SATISFIES
-    )
-    requirements.add_relation(
-        "test_verifies_login", "test_suite", "login", RequirementRelationKind.VERIFIES
-    )
-    requirements.add_relation(
-        "policy_refines_system", "policy", "system", RequirementRelationKind.REFINES
-    )
-    requirements.add_relation(
-        "device_traces_policy", "device", "policy", RequirementRelationKind.TRACES
-    )
+    requirements.add_relation("service_satisfies_system", "service", "system", RequirementRelationKind.SATISFIES)
+    requirements.add_relation("test_verifies_login", "test_suite", "login", RequirementRelationKind.VERIFIES)
+    requirements.add_relation("policy_refines_system", "policy", "system", RequirementRelationKind.REFINES)
+    requirements.add_relation("device_traces_policy", "device", "policy", RequirementRelationKind.TRACES)
 
     mindmap = registry.get_diagram("mindmap")
     assert isinstance(mindmap, Mindmap)

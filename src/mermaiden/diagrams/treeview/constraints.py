@@ -1,4 +1,3 @@
-
 from wireup import injectable
 
 from ...core.annotation import TargetKind
@@ -14,10 +13,9 @@ class TreeViewConstraint(DiagramConstraint):
     def branches(diagram: ConstraintDiagram) -> tuple[TreeBranch, ...]:
         return tuple(item for item in diagram.find_relations() if isinstance(item, TreeBranch))
 
+
 @injectable(as_type=TreeViewConstraint, qualifier="treeview_annotations")
 class AnnotationsAreValid(TreeViewConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues: list[Violation] = []
         for annotation in diagram.find_annotations():
@@ -39,10 +37,9 @@ class AnnotationsAreValid(TreeViewConstraint):
                 )
         return tuple(issues)
 
+
 @injectable(as_type=TreeViewConstraint, qualifier="treeview_acyclic")
 class BranchesAreAcyclic(TreeViewConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         children: dict[str, list[str]] = {}
         for branch in self.branches(diagram):
@@ -70,10 +67,9 @@ class BranchesAreAcyclic(TreeViewConstraint):
                 stack.extend((child, False) for child in reversed(children.get(node, [])))
         return ()
 
+
 @injectable(as_type=TreeViewConstraint, qualifier="treeview_branches")
 class BranchesAreValid(TreeViewConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         elements = {item.id: item for item in diagram.walk_elements()}
         parents: set[str] = set()

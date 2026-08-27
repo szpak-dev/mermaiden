@@ -1,4 +1,3 @@
-
 from wireup import injectable
 
 from ...core.constraint import ConstraintDiagram, Violation
@@ -13,7 +12,6 @@ class EventModelingDiagramConstraint(DiagramConstraint):
 
 @injectable(as_type=EventModelingDiagramConstraint, qualifier="eventmodeling_structure")
 class EventModelingDiagramStructure(EventModelingDiagramConstraint):
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues = [
             self.violation(

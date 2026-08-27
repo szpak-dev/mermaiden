@@ -1,4 +1,3 @@
-
 from wireup import injectable
 
 from ...core.constraint import ConstraintDiagram, Violation
@@ -10,11 +9,8 @@ class KanbanDiagramConstraint(DiagramConstraint):
     pass
 
 
-
 @injectable(as_type=KanbanDiagramConstraint, qualifier="kanban_structure")
 class KanbanDiagramStructure(KanbanDiagramConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues = [
             self.violation(f"Kanban column '{item.id}' must have a label.", path=f"elements.{item.id}")

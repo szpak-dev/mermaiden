@@ -1,4 +1,3 @@
-
 from wireup import injectable
 
 from ...core.constraint import ConstraintDiagram, Violation
@@ -15,8 +14,6 @@ class SwimlaneConstraint(DiagramConstraint):
 
 @injectable(as_type=SwimlaneConstraint, qualifier="flow_endpoints_are_nodes")
 class FlowEndpointsAreNodes(SwimlaneConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         elements = {item.id: item for item in diagram.walk_elements()}
         return tuple(
@@ -34,10 +31,9 @@ class FlowEndpointsAreNodes(SwimlaneConstraint):
             )
         )
 
+
 @injectable(as_type=SwimlaneConstraint, qualifier="flows_are_binary")
 class FlowsAreBinary(SwimlaneConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         return tuple(
             self.violation(
@@ -48,10 +44,9 @@ class FlowsAreBinary(SwimlaneConstraint):
             if len(flow.element_ids) != 2
         )
 
+
 @injectable(as_type=SwimlaneConstraint, qualifier="lanes_are_top_level")
 class LanesAreTopLevel(SwimlaneConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         root_ids = {item.id for item in diagram.root_elements if isinstance(item, Swimlane)}
         return tuple(
@@ -60,10 +55,9 @@ class LanesAreTopLevel(SwimlaneConstraint):
             if isinstance(lane, Swimlane) and lane.id not in root_ids
         )
 
+
 @injectable(as_type=SwimlaneConstraint, qualifier="nodes_belong_to_lanes")
 class NodesBelongToLanes(SwimlaneConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         return tuple(
             self.violation(f"Node '{node.id}' must belong to a lane.", path=f"elements.{node.id}")

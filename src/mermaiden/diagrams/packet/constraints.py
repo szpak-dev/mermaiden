@@ -1,4 +1,3 @@
-
 from wireup import injectable
 
 from ...core.constraint import ConstraintDiagram, Violation
@@ -10,11 +9,8 @@ class PacketConstraint(DiagramConstraint):
     pass
 
 
-
 @injectable(as_type=PacketConstraint, qualifier="packet_structure")
 class PacketStructure(PacketConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         return tuple(
             self.violation(

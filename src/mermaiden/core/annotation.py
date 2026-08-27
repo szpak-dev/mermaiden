@@ -10,13 +10,11 @@ class TargetKind(StrEnum):
 
 
 class TargetRef(ValueModel):
-
     kind: TargetKind
     id: str
 
 
 class Annotation(ClassifiedValueModel):
-
     id: str
     targets: tuple[TargetRef, ...]
 

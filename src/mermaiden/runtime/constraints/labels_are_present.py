@@ -6,7 +6,6 @@ from ..domain import StructureConstraint
 
 @injectable(as_type=Constraint, qualifier="labels_are_present")
 class LabelsArePresent(StructureConstraint):
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         return tuple(
             self.violation(

@@ -32,7 +32,6 @@ class RailroadDiagram(DiagramModel):
         "RailroadDiagramConfig",
     )
 
-
     def add_rule(self, id: str, label: str) -> ChangeReport:
         return self._add_element(f"add rule '{id}'", SequenceExpression(id=id, label=label))
 

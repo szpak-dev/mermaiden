@@ -1,5 +1,3 @@
-
-
 from wireup import injectable
 
 from ..domain import DiagramConstraint

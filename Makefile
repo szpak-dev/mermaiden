@@ -1,4 +1,4 @@
-.PHONY: ci compat diagrams-test diagrams-validate
+.PHONY: ci compat diagrams-test diagrams-validate format
 
 VENV := .venv
 PYTHON := $(VENV)/bin/python
@@ -21,9 +21,14 @@ diagrams-validate: $(PYTHON)
 diagrams-test: diagrams-validate
 	open .preview/index.html
 
+format: $(PYTHON)
+	@$(PYTHON) -m ruff format .
+	@$(PYTHON) -m ruff check --fix .
+
 ci: $(PYTHON)
 	@$(PYTHON) -m ensurepip --upgrade
 	@$(PYTHON) -m pip install -e ".[dev]"
+	@$(PYTHON) -m ruff format --check .
 	@$(PYTHON) -m ruff check .
 	@$(PYTHON) -m pyright
 	@$(PYTHON) -m pytest

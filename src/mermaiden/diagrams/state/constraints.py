@@ -1,4 +1,3 @@
-
 from wireup import injectable
 
 from ...core.annotation import TargetKind
@@ -14,10 +13,9 @@ class StateDiagramConstraint(DiagramConstraint):
     def transitions(diagram: ConstraintDiagram) -> tuple[StateTransition, ...]:
         return tuple(item for item in diagram.find_relations() if isinstance(item, StateTransition))
 
+
 @injectable(as_type=StateDiagramConstraint, qualifier="state_notes")
 class NotesAreValid(StateDiagramConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         elements = {item.id: item for item in diagram.walk_elements()}
         return tuple(
@@ -29,10 +27,9 @@ class NotesAreValid(StateDiagramConstraint):
             or not isinstance(elements.get(note.targets[0].id), StateNode)
         )
 
+
 @injectable(as_type=StateDiagramConstraint, qualifier="state_transitions")
 class TransitionsAreValid(StateDiagramConstraint):
-
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         elements = {item.id: item for item in diagram.walk_elements()}
         issues: list[Violation] = []

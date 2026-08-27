@@ -7,7 +7,6 @@ from ..domain import StructureConstraint
 
 @injectable(as_type=Constraint, qualifier="references_exist")
 class ReferencesExist(StructureConstraint):
-
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         element_ids = {item.id for item in diagram.walk_elements()}
         relation_ids = {item.id for item in diagram.find_relations()}

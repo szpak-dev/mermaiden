@@ -39,7 +39,6 @@ class Flowchart(DiagramModel):
         "FlowchartDiagramConfig",
     )
 
-
     def add_group(
         self,
         id: str,
