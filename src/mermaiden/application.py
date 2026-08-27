@@ -13,6 +13,8 @@ from .diagrams.catalog import CommandPayload, DiagramCatalog, DiagramDescription
 from .diagrams.configuration import MermaidDiagramConfiguration
 from .diagrams.domain import DiagramModel
 from .mermaid.application import MermaidApplication
+from .mermaid.templates import MermaidTemplateOwnership
+from .mermaid.validation import MermaidRenderReport, MermaidRenderValidator
 from .runtime.snapshot import DiagramSnapshot, DiagramSnapshotCodec
 
 
@@ -39,11 +41,7 @@ class Application:
     def create(cls) -> "Application":
         container = create_sync_container(injectables=[mermaiden], config={})
         with container.enter_scope() as scope:
-            registry = scope.get(DiagramsApplication)
-            scope.get(MermaidApplication).validate_template_ownership(
-                registry,
-                scope.get(DiagramCatalog),
-            )
+            scope.get(MermaidTemplateOwnership).validate()
         return cls(container)
 
     def available_diagrams(self) -> tuple[DiagramInfo, ...]:
@@ -98,6 +96,10 @@ class Application:
     def render(self, diagram: Diagram) -> str:
         with self._container.enter_scope() as scope:
             return scope.get(MermaidApplication).render(diagram)
+
+    def validate_render(self, diagram: Diagram) -> MermaidRenderReport:
+        with self._container.enter_scope() as scope:
+            return scope.get(MermaidRenderValidator).validate(diagram)
 
     @staticmethod
     def _invoke(operation: Callable[..., object], payload: CommandPayload) -> ChangeReport | None:

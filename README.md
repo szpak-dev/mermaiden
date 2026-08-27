@@ -40,6 +40,15 @@ restored = application.restore(payload)
 source = application.render(restored)
 ```
 
+Before committing a revision, callers can require Mermaid's complete rendering and layout phase to produce an SVG. The report is non-mutating and identifies the compatible Mermaid version together with structured diagnostics on failure.
+
+```python
+report = application.validate_render(restored)
+if not report.success:
+    raise RuntimeError(report.diagnostics)
+svg = report.svg
+```
+
 Snapshots have a versioned envelope and may be stored as JSON. `Application.restore()` validates restored state before returning it. Command argument values use the diagram operation names; JSON string values are accepted for enum arguments.
 
 The caller can discover the REST contract without maintaining a manifest. `diagram_description()` returns JSON Schema for the diagram's elements, relations, annotations, and commands. `command_payload()` returns the generated Pydantic request model for one command.
