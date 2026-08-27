@@ -23,6 +23,7 @@ class TestRailroadIncrementalCommands:
             "add_rule",
             "add_special",
             "add_terminal",
+            "remove_element",
         }
         with pytest.raises(UnknownCommand):
             application.apply(diagram, DiagramCommand("add_rule", {"id": "bad"}))

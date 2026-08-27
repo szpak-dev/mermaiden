@@ -78,6 +78,14 @@ class Application:
             return None
         return self._invoke(operation, payload)
 
+    def execute(
+        self,
+        diagram: DiagramModel,
+        operation: str,
+        arguments: Mapping[str, object],
+    ) -> ChangeReport | None:
+        return self.apply(diagram, DiagramCommand(operation, arguments))
+
     def snapshot(self, diagram: DiagramModel) -> DiagramSnapshot:
         return self.persistence.snapshot(diagram)
 

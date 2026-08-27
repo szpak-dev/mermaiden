@@ -6,6 +6,7 @@ MERMAID_VERSION = "11.16.0"
 
 
 class MermaidRenderDiagnosticCode(StrEnum):
+    DIAGRAM_INVALID = "diagram_invalid"
     SOURCE_GENERATION_FAILED = "source_generation_failed"
     RENDERER_UNAVAILABLE = "renderer_unavailable"
     RENDER_FAILED = "render_failed"

@@ -22,7 +22,10 @@ class TestSankey:
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
-        assert set(application.diagram_description("sankey").commands) == {item.operation for item in commands}
+        assert set(application.diagram_description("sankey").commands) == {item.operation for item in commands} | {
+            "remove_element",
+            "remove_relation",
+        }
         assert '"Grid, \\"main\\"","Homes",113.726' in source
         assert application.render(restored) == source
 

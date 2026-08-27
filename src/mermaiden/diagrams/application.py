@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 from wireup import SyncContainer, injectable
 
-from ..runtime.snapshot import DiagramSnapshot, DiagramSnapshotCodec
+from ..runtime.snapshot import DiagramSnapshot, DiagramSnapshotCodec, SnapshotError
 from .domain import DiagramModel
 
 
@@ -85,11 +85,24 @@ class DiagramFactory:
 
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
+class DiagramPersistenceValidator:
+    def ensure(self, diagram: DiagramModel, operation: str) -> None:
+        report = diagram.validate()
+        if report.can_commit:
+            return
+        details = "; ".join(item.message for item in report.blocking)
+        raise SnapshotError(f"Cannot {operation} invalid diagram '{diagram.kind}': {details}")
+
+
+@injectable(lifetime="scoped")
+@dataclass(frozen=True, slots=True)
 class DiagramPersistenceApplication:
     diagrams: DiagramFactory
     snapshots: DiagramSnapshotCodec
+    validator: DiagramPersistenceValidator
 
     def snapshot(self, diagram: DiagramModel) -> DiagramSnapshot:
+        self.validator.ensure(diagram, "persist")
         return self.snapshots.snapshot(diagram)
 
     def restore(self, payload: Mapping[str, object]) -> DiagramModel:
@@ -97,4 +110,5 @@ class DiagramPersistenceApplication:
         diagram = self.diagrams.create(snapshot.kind)
         data = self.snapshots.hydrate(snapshot, diagram)
         diagram.restore_snapshot(data)
+        self.validator.ensure(diagram, "restore")
         return diagram

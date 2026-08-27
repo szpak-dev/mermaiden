@@ -4,7 +4,15 @@ from typing import Never
 
 from wireup import injectable
 
-from ..core.constraint import ChangeRejected, ChangeReport, Constraint, ConstraintLevel, ValidationReport, Violation
+from ..core.constraint import (
+    ChangeRejected,
+    ChangeReport,
+    Constraint,
+    ConstraintLevel,
+    DiagramObjectReference,
+    ValidationReport,
+    Violation,
+)
 from ..core.diagram import Diagram
 from .diagrams.annotations import Annotations
 from .diagrams.elements import Elements
@@ -23,6 +31,7 @@ class ChangeTransaction:
         candidate: DiagramData,
         diagram: Diagram,
         observer: ConstraintInspection,
+        removed: tuple[DiagramObjectReference, ...],
     ) -> ChangeReport:
         before = observer.inspect(diagram)
         self.state.stage(candidate)
@@ -31,7 +40,7 @@ class ChangeTransaction:
         except Exception:
             self.state.rollback()
             raise
-        report = ChangeReport(operation, before, after, after.can_commit)
+        report = ChangeReport(operation, before, after, after.can_commit, removed)
         if not report.accepted and before.can_commit:
             self.state.rollback()
             raise ChangeRejected(operation, after)

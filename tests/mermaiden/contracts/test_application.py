@@ -4,7 +4,8 @@ from typing import cast
 
 import pytest
 
-from mermaiden.application import Application, DiagramCommand, UnknownCommand
+from mermaiden import Application
+from mermaiden.application import DiagramCommand, UnknownCommand
 
 
 class TestApplication:
@@ -100,23 +101,41 @@ class TestApplication:
             application.apply(diagram, DiagramCommand("configure", {"paddding": 12}))
 
     @pytest.mark.parametrize(
-        ("diagram_id", "configuration"),
+        ("diagram_id", "configuration", "setup"),
         (
-            ("block", {"padding": 12}),
-            ("architecture-beta", {"nodeSeparation": 96, "seed": 7}),
-            ("C4Context", {"c4ShapeInRow": 3, "messageFontSize": 16}),
-            ("pie", {"legendPosition": "top"}),
-            ("gitGraph", {"nodeLabel": {"width": 90, "height": 110, "x": -20, "y": 5}}),
+            ("block", {"padding": 12}, DiagramCommand("add_block", {"id": "example", "label": "Example"})),
+            (
+                "architecture-beta",
+                {"nodeSeparation": 96, "seed": 7},
+                DiagramCommand("add_service", {"id": "example", "label": "Example"}),
+            ),
+            (
+                "C4Context",
+                {"c4ShapeInRow": 3, "messageFontSize": 16},
+                DiagramCommand("add_person", {"id": "example", "label": "Example"}),
+            ),
+            (
+                "pie",
+                {"legendPosition": "top"},
+                DiagramCommand("add_slice", {"id": "example", "label": "Example", "value": 1}),
+            ),
+            (
+                "gitGraph",
+                {"nodeLabel": {"width": 90, "height": 110, "x": -20, "y": 5}},
+                DiagramCommand("add_commit", {"id": "example", "label": "Example"}),
+            ),
         ),
     )
     def test_persists_scalar_enum_and_nested_configurations(
         self,
         diagram_id: str,
         configuration: Mapping[str, object],
+        setup: DiagramCommand,
     ) -> None:
         application = Application.create()
         diagram = application.create_diagram(diagram_id)
         application.apply(diagram, DiagramCommand("configure", configuration))
+        application.apply(diagram, setup)
         source = application.render(diagram)
 
         payload = application.snapshot(diagram).to_dict()

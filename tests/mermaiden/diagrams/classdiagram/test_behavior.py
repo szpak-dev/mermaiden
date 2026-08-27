@@ -48,6 +48,9 @@ class TestClassDiagram:
             "add_class",
             "add_relation",
             "add_note",
+            "remove_element",
+            "remove_relation",
+            "remove_annotation",
         }
         assert "namespace domain" in source
         assert "abstract" in source

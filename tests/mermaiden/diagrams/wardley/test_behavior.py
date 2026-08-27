@@ -30,7 +30,9 @@ class TestWardley:
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
-        assert set(application.diagram_description("wardley-beta").commands) == {item.operation for item in commands}
+        assert set(application.diagram_description("wardley-beta").commands) == {
+            item.operation for item in commands
+        } | {"remove_element", "remove_relation"}
         assert 'anchor "Business \\"goal\\"" [0.95, 0.63]' in source
         assert 'component "Cup of Tea" [0.79, 0.61] (build)' in source
         assert '"Business \\"goal\\"" -> "Cup of Tea"; needs' in source

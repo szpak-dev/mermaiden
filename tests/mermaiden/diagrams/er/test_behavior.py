@@ -48,6 +48,8 @@ class TestEntityRelationshipDiagram:
             "add_entity",
             "add_attribute",
             "add_relationship",
+            "remove_element",
+            "remove_relation",
         }
         assert "direction LR" in source
         assert "int id PK" in source

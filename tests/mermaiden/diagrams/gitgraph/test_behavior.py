@@ -23,7 +23,10 @@ class TestGitGraph:
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
-        assert set(application.diagram_description("gitGraph").commands) == {item.operation for item in commands}
+        assert set(application.diagram_description("gitGraph").commands) == {item.operation for item in commands} | {
+            "remove_element",
+            "remove_relation",
+        }
         assert 'commit id: "ZERO \\"root\\"" tag: "v1"' in source
         assert "branch develop order: 1" in source
         assert "checkout develop" in source

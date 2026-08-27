@@ -1,7 +1,9 @@
 import pytest
 from pydantic import ValidationError
 
-from mermaiden.application import Application
+from mermaiden import Application
+
+REMOVAL_COMMANDS = {"remove_element", "remove_relation", "remove_annotation"}
 
 
 class TestDiagramCatalog:
@@ -25,6 +27,28 @@ class TestDiagramCatalog:
 
             assert application.diagram_description(info.id).commands["configure"] == payload_type.model_json_schema()
             payload_type.model_validate({})
+
+    def test_advertises_removal_commands_for_each_supported_object_category(self) -> None:
+        application = Application.create()
+
+        for info in application.available_diagrams():
+            description = application.diagram_description(info.id)
+            expected = {
+                command
+                for command, objects in (
+                    ("remove_element", description.elements),
+                    ("remove_relation", description.relations),
+                    ("remove_annotation", description.annotations),
+                )
+                if objects
+            }
+
+            assert set(description.commands).intersection(REMOVAL_COMMANDS) == expected
+            for command in expected:
+                schema = application.command_payload(info.id, command).model_json_schema()
+                assert schema["required"] == ["id"]
+                if command != "remove_annotation":
+                    assert schema["properties"]["cascade"]["default"] is False
 
     @pytest.mark.parametrize(
         ("diagram_id", "command_name"),

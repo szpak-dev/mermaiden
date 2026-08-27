@@ -30,6 +30,9 @@ class TestArchitecture:
             "add_junction",
             "add_note",
             "add_service",
+            "remove_element",
+            "remove_relation",
+            "remove_annotation",
         }
 
     def _diagram_with_alignment_members(self) -> tuple[Application, Any]:

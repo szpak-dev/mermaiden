@@ -24,12 +24,24 @@ class TestFlowchart:
             DiagramCommand("add_node", {"id": "node", "label": "Node"}),
             DiagramCommand("add_subprocess", {"id": "subprocess", "label": "Subprocess"}),
             DiagramCommand("add_flow", {"id": "plain", "source_id": "start", "target_id": "action", "label": "go"}),
+            DiagramCommand("remove_flow", {"id": "plain"}),
+            DiagramCommand("add_flow", {"id": "start_action", "source_id": "start", "target_id": "action"}),
+            DiagramCommand("add_flow", {"id": "action_decision", "source_id": "action", "target_id": "decision"}),
             DiagramCommand(
                 "add_conditional_flow",
-                {"id": "conditional", "source_id": "decision", "target_id": "end", "condition": "yes"},
+                {"id": "yes", "source_id": "decision", "target_id": "data", "condition": "yes"},
             ),
+            DiagramCommand(
+                "add_conditional_flow",
+                {"id": "no", "source_id": "decision", "target_id": "io", "condition": "no"},
+            ),
+            DiagramCommand("add_flow", {"id": "data_document", "source_id": "data", "target_id": "document"}),
+            DiagramCommand("add_flow", {"id": "document_junction", "source_id": "document", "target_id": "junction"}),
+            DiagramCommand("add_flow", {"id": "io_junction", "source_id": "io", "target_id": "junction"}),
+            DiagramCommand("add_flow", {"id": "junction_node", "source_id": "junction", "target_id": "node"}),
+            DiagramCommand("add_flow", {"id": "node_subprocess", "source_id": "node", "target_id": "subprocess"}),
+            DiagramCommand("add_flow", {"id": "subprocess_end", "source_id": "subprocess", "target_id": "end"}),
             DiagramCommand("add_note", {"id": "note", "text": 'Use "care"', "element_ids": ["action", "decision"]}),
-            DiagramCommand("remove_flow", {"id": "plain"}),
         )
         for command in commands:
             application.apply(diagram, command)
@@ -37,7 +49,11 @@ class TestFlowchart:
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
-        assert set(application.diagram_description("flowchart").commands) == {item.operation for item in commands}
+        assert set(application.diagram_description("flowchart").commands) == {item.operation for item in commands} | {
+            "remove_element",
+            "remove_relation",
+            "remove_annotation",
+        }
         for fragment in (
             "subgraph",
             "shape: circle",
