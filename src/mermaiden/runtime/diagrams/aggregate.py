@@ -155,6 +155,9 @@ class DiagramAggregate(Diagram):
     def validate(self) -> ValidationReport:
         return self.observer.inspect(self)
 
+    def restore_snapshot(self, data: DiagramData) -> ChangeReport:
+        return self._apply("restore snapshot", data)
+
     def _apply(self, operation: str, candidate: DiagramData) -> ChangeReport:
         return self.runtime.transaction.apply(operation, candidate, self, self.observer)
 

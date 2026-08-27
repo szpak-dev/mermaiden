@@ -6,6 +6,7 @@ from types import UnionType
 from typing import Any, cast, get_args, get_origin, get_type_hints
 
 from pydantic import BaseModel
+from wireup import injectable
 
 from ..core.annotation import Annotation
 from ..core.diagram import Diagram
@@ -40,6 +41,7 @@ class DiagramSnapshot:
         }
 
 
+@injectable
 class DiagramSnapshotCodec:
     version = 2
 
