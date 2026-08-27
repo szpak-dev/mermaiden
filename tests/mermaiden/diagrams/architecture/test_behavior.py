@@ -4,6 +4,7 @@ from typing import Any
 import pytest
 
 from mermaiden.application import Application, DiagramCommand, UnknownCommand
+from mermaiden.core import ChangeRejected
 
 
 class TestArchitecture:
@@ -185,6 +186,152 @@ class TestArchitecture:
 
         with pytest.raises(RuntimeError, match=r"Relation 'primary' already exists"):
             application.apply(diagram, command)
+
+    def test_rejects_alignment_order_that_contradicts_edge_direction(self) -> None:
+        application, diagram = self._diagram_with_alignment_members()
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_edge",
+                {
+                    "id": "api_client",
+                    "source_id": "client",
+                    "target_id": "api",
+                    "source_port": "L",
+                    "target_port": "R",
+                },
+            ),
+        )
+
+        with pytest.raises(ChangeRejected) as rejected:
+            application.apply(
+                diagram,
+                DiagramCommand(
+                    "add_alignment",
+                    {"id": "request_path", "axis": "row", "member_ids": ("client", "api")},
+                ),
+            )
+
+        violation = rejected.value.report.blocking[0]
+        assert violation.code == "constraints.alignments_are_compatible"
+        assert violation.path == "relations.request_path"
+        assert "edge direction constraint(s) 'api_client' require the reverse order" in violation.message
+        assert [relation.id for relation in diagram.find_relations()] == ["api_client"]
+
+    def test_rejects_alignment_on_the_axis_separated_by_an_edge(self) -> None:
+        application, diagram = self._diagram_with_alignment_members()
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_alignment",
+                {"id": "request_row", "axis": "row", "member_ids": ("client", "api")},
+            ),
+        )
+
+        with pytest.raises(ChangeRejected, match=r"share a row.*'client_api'.*require separation"):
+            application.apply(
+                diagram,
+                DiagramCommand(
+                    "add_edge",
+                    {
+                        "id": "client_api",
+                        "source_id": "client",
+                        "target_id": "api",
+                        "source_port": "B",
+                        "target_port": "T",
+                    },
+                ),
+            )
+
+        assert [relation.id for relation in diagram.find_relations()] == ["request_row"]
+
+    def test_rejects_overlapping_alignments_on_the_same_axis(self) -> None:
+        application, diagram = self._diagram_with_alignment_members()
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_alignment",
+                {"id": "left", "axis": "row", "member_ids": ("client", "gateway")},
+            ),
+        )
+
+        with pytest.raises(ChangeRejected) as rejected:
+            application.apply(
+                diagram,
+                DiagramCommand(
+                    "add_alignment",
+                    {"id": "right", "axis": "row", "member_ids": ("gateway", "api")},
+                ),
+            )
+
+        violation = rejected.value.report.blocking[0]
+        assert violation.path == "relations.right"
+        assert violation.message == "Alignment 'right' overlaps alignment 'left' on row member 'gateway'."
+
+    def test_rejects_two_members_constrained_to_both_a_row_and_a_column(self) -> None:
+        application, diagram = self._diagram_with_alignment_members()
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_alignment",
+                {"id": "request_row", "axis": "row", "member_ids": ("client", "gateway")},
+            ),
+        )
+
+        with pytest.raises(ChangeRejected, match=r"constrain members 'client', 'gateway' to both a row and a column"):
+            application.apply(
+                diagram,
+                DiagramCommand(
+                    "add_alignment",
+                    {"id": "request_column", "axis": "column", "member_ids": ("client", "gateway")},
+                ),
+            )
+
+    def test_rejects_edge_direction_conflicting_with_group_column_alignments(self) -> None:
+        application, diagram = self._diagram_with_group(2, "client", "api")
+
+        with pytest.raises(ChangeRejected) as rejected:
+            application.apply(
+                diagram,
+                DiagramCommand(
+                    "add_edge",
+                    {
+                        "id": "api_client",
+                        "source_id": "client",
+                        "target_id": "api",
+                        "source_port": "L",
+                        "target_port": "R",
+                    },
+                ),
+            )
+
+        violation = rejected.value.report.blocking[0]
+        assert violation.path == "elements.platform.columns"
+        assert "Alignment 'platform_row_1'" in violation.message
+        assert diagram.find_relations() == ()
+
+    def test_rejects_a_restored_snapshot_with_conflicting_layout_constraints(self) -> None:
+        application, diagram = self._diagram_with_alignment_members()
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_edge",
+                {"id": "client_api", "source_id": "client", "target_id": "api"},
+            ),
+        )
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_alignment",
+                {"id": "request_row", "axis": "row", "member_ids": ("client", "api")},
+            ),
+        )
+        payload = json.loads(json.dumps(application.snapshot(diagram).to_dict()))
+        payload["relations"][0]["fields"]["source_port"]["value"] = "L"
+        payload["relations"][0]["fields"]["target_port"]["value"] = "R"
+
+        with pytest.raises(RuntimeError, match=r"Cannot restore invalid diagram 'architecture-beta':.*reverse order"):
+            application.restore(payload)
 
     def test_derives_a_grid_from_direct_members_without_persisting_alignments(self) -> None:
         application, diagram = self._diagram_with_group(2, "a")
