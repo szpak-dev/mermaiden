@@ -51,7 +51,9 @@ class TestSequenceDiagram:
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
-        assert set(application.diagram_description("sequenceDiagram").commands) == {item.operation for item in commands}
+        assert set(application.diagram_description("sequenceDiagram").commands) == {
+            item.operation for item in commands
+        } | {"remove_element", "remove_relation", "remove_annotation"}
         for fragment in (
             "box #eee Clients",
             "actor user as User",

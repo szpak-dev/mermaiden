@@ -25,6 +25,22 @@ class MermaidRenderValidator:
         return self.cli.version
 
     def validate(self, diagram: DiagramView) -> MermaidRenderReport:
+        validation = diagram.validate()
+        if not validation.can_commit:
+            return MermaidRenderReport(
+                diagram.kind,
+                self.mermaid_version,
+                diagnostics=(
+                    MermaidRenderDiagnostic(
+                        MermaidRenderDiagnosticCode.DIAGRAM_INVALID,
+                        "Diagram violates blocking constraints.",
+                        "\n".join(
+                            f"{violation.code} [{violation.path}]: {violation.message}"
+                            for violation in validation.blocking
+                        ),
+                    ),
+                ),
+            )
         try:
             source = self.renderer.render(diagram)
         except Exception as error:

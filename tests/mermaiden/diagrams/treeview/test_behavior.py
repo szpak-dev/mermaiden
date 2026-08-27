@@ -32,7 +32,9 @@ class TestTreeView:
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
-        assert set(application.diagram_description("treeView-beta").commands) == {item.operation for item in commands}
+        assert set(application.diagram_description("treeView-beta").commands) == {
+            item.operation for item in commands
+        } | {"remove_element", "remove_relation", "remove_annotation"}
         assert '"child \\"one\\"" :::highlight icon(folder) ## Docs' in source
         assert application.render(restored) == source
 

@@ -45,8 +45,7 @@ class DiagramCatalog:
             relations=self._models(info, "relations", Relation),
             annotations=self._models(info, "annotations", Annotation),
             commands={
-                name: self.command_payload(info.id, name).model_json_schema()
-                for name in self.command_names(info)
+                name: self.command_payload(info.id, name).model_json_schema() for name in self.command_names(info)
             },
         )
 
@@ -80,6 +79,13 @@ class DiagramCatalog:
             if self._is_command(method)
         }
         commands[DiagramModel.configure.__name__] = DiagramModel.configure
+        for name, module_name, parent in (
+            ("remove_element", "elements", Element),
+            ("remove_relation", "relations", Relation),
+            ("remove_annotation", "annotations", Annotation),
+        ):
+            if self._models(info, module_name, parent):
+                commands[name] = getattr(DiagramModel, name)
         return commands
 
     def validate_command(

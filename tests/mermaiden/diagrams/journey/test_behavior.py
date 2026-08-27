@@ -25,7 +25,9 @@ class TestJourney:
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
-        assert set(application.diagram_description("journey").commands) == {item.operation for item in commands}
+        assert set(application.diagram_description("journey").commands) == {item.operation for item in commands} | {
+            "remove_element"
+        }
         assert 'title Working "day"' in source
         assert "section Go to work" in source
         assert "Make tea: 5: Me, Cat" in source

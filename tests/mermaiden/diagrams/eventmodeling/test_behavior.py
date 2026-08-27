@@ -32,6 +32,8 @@ class TestEventModeling:
             "add_event",
             "add_view",
             "add_flow",
+            "remove_element",
+            "remove_relation",
         }
         for fragment in ("ui actor", "cmd command", "evt event", "rmo view"):
             assert fragment in source

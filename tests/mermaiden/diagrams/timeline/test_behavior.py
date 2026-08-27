@@ -23,7 +23,9 @@ class TestTimeline:
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
-        assert set(application.diagram_description("timeline").commands) == {item.operation for item in commands}
+        assert set(application.diagram_description("timeline").commands) == {item.operation for item in commands} | {
+            "remove_element"
+        }
         assert 'title Project "history"' in source
         assert "section Foundation" in source
         assert "2026 : First release" in source

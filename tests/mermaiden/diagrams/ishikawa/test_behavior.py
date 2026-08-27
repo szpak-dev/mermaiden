@@ -23,7 +23,9 @@ class TestIshikawa:
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
-        assert set(application.diagram_description("ishikawa-beta").commands) == {item.operation for item in commands}
+        assert set(application.diagram_description("ishikawa-beta").commands) == {
+            item.operation for item in commands
+        } | {"remove_element", "remove_relation"}
         for fragment in (
             'Blurry "photo"',
             "Equipment",

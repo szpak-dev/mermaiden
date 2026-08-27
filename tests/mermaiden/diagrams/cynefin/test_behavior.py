@@ -17,6 +17,8 @@ class TestCynefin:
             "configure",
             "add_item",
             "add_transition",
+            "remove_element",
+            "remove_relation",
         }
         with pytest.raises(UnknownCommand):
             application.apply(diagram, DiagramCommand("add_item", {"id": "bad", "label": "Bad", "domain": "unknown"}))

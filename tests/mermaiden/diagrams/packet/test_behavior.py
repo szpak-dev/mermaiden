@@ -22,7 +22,9 @@ class TestPacket:
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
-        assert set(application.diagram_description("packet").commands) == {item.operation for item in commands}
+        assert set(application.diagram_description("packet").commands) == {item.operation for item in commands} | {
+            "remove_element"
+        }
         assert 'title UDP "packet"' in source
         assert '+16: "Source port"' in source
         assert '16-31: "Length"' in source

@@ -42,6 +42,8 @@ class TestC4:
             "add_relationship",
             "add_system",
             "set_relationship_label_offset",
+            "remove_element",
+            "remove_relation",
         }
 
     def _diagram_with_relationship(self) -> tuple[Application, Any]:

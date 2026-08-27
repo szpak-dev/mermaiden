@@ -70,5 +70,5 @@ class RequirementDiagram(DiagramModel):
             RequirementRelation(id=id, element_ids=(source_id, target_id), label="", relation_kind=relation_kind),
         )
 
-    def remove_relation(self, id: str) -> ChangeReport:
-        return DiagramModel.remove_relation(self, id)
+    def remove_relation(self, id: str, *, cascade: bool = False) -> ChangeReport:
+        return DiagramModel.remove_relation(self, id, cascade=cascade)

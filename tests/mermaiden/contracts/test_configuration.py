@@ -4,7 +4,8 @@ from typing import cast
 import pytest
 from pydantic import ValidationError
 
-from mermaiden.application import Application, DiagramCommand, UnknownCommand
+from mermaiden import Application
+from mermaiden.application import DiagramCommand, UnknownCommand
 
 
 class TestMermaidConfiguration:

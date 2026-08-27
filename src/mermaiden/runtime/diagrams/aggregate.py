@@ -5,7 +5,7 @@ from typing import Never, Protocol
 from wireup import injectable
 
 from ...core.annotation import Annotation, TargetKind
-from ...core.constraint import ChangeReport, ValidationReport
+from ...core.constraint import ChangeReport, DiagramObjectKind, DiagramObjectReference, ValidationReport
 from ...core.diagram import Diagram
 from ...core.element import Element
 from ...core.error import OperationError
@@ -116,21 +116,32 @@ class DiagramAggregate(Diagram):
             )
         except OperationError as error:
             self._reject(operation, str(error))
-        return self._apply(operation, candidate)
+        removed = (
+            *(DiagramObjectReference(DiagramObjectKind.ELEMENT, item) for item in removed_ids),
+            *(DiagramObjectReference(DiagramObjectKind.RELATION, item) for item in dependent_relations),
+            *(DiagramObjectReference(DiagramObjectKind.ANNOTATION, item) for item in dependent_annotations),
+        )
+        return self._apply(operation, candidate, removed)
 
-    def remove_relation(self, id: str) -> ChangeReport:
+    def remove_relation(self, id: str, *, cascade: bool = False) -> ChangeReport:
         operation = f"remove relation '{id}'"
         try:
-            if any(
-                target.id == id and target.kind is TargetKind.RELATION
+            dependent_annotations = tuple(
+                annotation.id
                 for annotation in self.state.current.annotations
-                for target in annotation.targets
-            ):
+                if any(target.id == id and target.kind is TargetKind.RELATION for target in annotation.targets)
+            )
+            if dependent_annotations and not cascade:
                 raise OperationError(f"Relation '{id}' still has annotations; remove them first.")
             candidate = self.relations.remove(id)
+            candidate = self.annotations.without_targets(candidate, relation_ids=(id,))
         except OperationError as error:
             self._reject(operation, str(error))
-        return self._apply(operation, candidate)
+        removed = (
+            DiagramObjectReference(DiagramObjectKind.RELATION, id),
+            *(DiagramObjectReference(DiagramObjectKind.ANNOTATION, item) for item in dependent_annotations),
+        )
+        return self._apply(operation, candidate, removed)
 
     def remove_annotation(self, id: str) -> ChangeReport:
         operation = f"remove annotation '{id}'"
@@ -138,7 +149,11 @@ class DiagramAggregate(Diagram):
             candidate = self.annotations.remove(id)
         except OperationError as error:
             self._reject(operation, str(error))
-        return self._apply(operation, candidate)
+        return self._apply(
+            operation,
+            candidate,
+            (DiagramObjectReference(DiagramObjectKind.ANNOTATION, id),),
+        )
 
     def find_element(self, id: str) -> Element | None:
         return self.elements.find(id)
@@ -158,8 +173,13 @@ class DiagramAggregate(Diagram):
     def restore_snapshot(self, data: DiagramData) -> ChangeReport:
         return self._apply("restore snapshot", data)
 
-    def _apply(self, operation: str, candidate: DiagramData) -> ChangeReport:
-        return self.runtime.transaction.apply(operation, candidate, self, self.observer)
+    def _apply(
+        self,
+        operation: str,
+        candidate: DiagramData,
+        removed: tuple[DiagramObjectReference, ...] = (),
+    ) -> ChangeReport:
+        return self.runtime.transaction.apply(operation, candidate, self, self.observer, removed)
 
     def _reject(self, operation: str, message: str) -> Never:
         self.runtime.transaction.reject(operation, message)

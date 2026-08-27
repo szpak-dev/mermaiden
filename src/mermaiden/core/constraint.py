@@ -14,6 +14,18 @@ class ConstraintLevel(StrEnum):
     ADVISORY = "advisory"
 
 
+class DiagramObjectKind(StrEnum):
+    ELEMENT = "element"
+    RELATION = "relation"
+    ANNOTATION = "annotation"
+
+
+@dataclass(frozen=True, slots=True)
+class DiagramObjectReference:
+    kind: DiagramObjectKind
+    id: str
+
+
 class ConstraintDiagram(Protocol):
     @property
     def root_elements(self) -> Sequence[Element]: ...
@@ -63,6 +75,7 @@ class ChangeReport:
     before: ValidationReport
     after: ValidationReport
     accepted: bool
+    removed: tuple[DiagramObjectReference, ...] = ()
 
     @property
     def introduced(self) -> tuple[Violation, ...]:

@@ -1,6 +1,6 @@
 import pytest
 
-from mermaiden.application import Application
+from mermaiden import Application
 
 
 def test_registry_lists_every_implemented_diagram_with_mermaid_metadata() -> None:

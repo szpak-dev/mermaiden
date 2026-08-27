@@ -15,7 +15,7 @@ pip install mermaiden
 ## Quick start
 
 ```python
-from mermaiden.application import Application
+from mermaiden import Application
 
 application = Application.create()
 diagrams = application.available_diagrams()
@@ -29,7 +29,8 @@ print(diagrams)
 `Application` is the boundary for API and persistence adapters. Create a diagram by Mermaid syntax id, apply a named domain command, and persist the JSON-safe snapshot returned by the application.
 
 ```python
-from mermaiden.application import Application, DiagramCommand
+from mermaiden import Application
+from mermaiden.application import DiagramCommand
 
 application = Application.create()
 diagram = application.create_diagram("sequenceDiagram")
