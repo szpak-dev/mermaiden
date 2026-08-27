@@ -42,6 +42,17 @@ class TestApplication:
             "client->>api: Request\n"
         )
 
+    def test_creates_independent_diagram_instances_of_the_same_kind(self) -> None:
+        application = Application.create()
+        first = application.create_diagram("sequenceDiagram")
+        second = application.create_diagram("sequenceDiagram")
+
+        application.apply(first, DiagramCommand("add_participant", {"id": "first", "label": "First"}))
+
+        assert first is not second
+        assert "participant first" in application.render(first)
+        assert "participant first" not in application.render(second)
+
     def test_coerces_json_enum_command_arguments(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("sequenceDiagram")

@@ -1,120 +1,24 @@
-import base64
-import json
-import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import ClassVar
 
-from jinja2 import Environment, FileSystemLoader, StrictUndefined
 from wireup import injectable
 
 from ..core.diagram import DiagramView
-from ..diagrams.application import DiagramsApplication
-from ..diagrams.catalog import DiagramCatalog
 from .domain import MermaidPreview
+from .templates import MermaidSourceFormatter, MermaidTemplateRenderer
 
 
 @injectable
 @dataclass(frozen=True, slots=True)
 class MermaidApplication:
-    _template_ownership_validated: ClassVar[bool] = False
+    templates: MermaidTemplateRenderer
+    source: MermaidSourceFormatter
     wrap: bool = field(default=True, init=False)
-    environment: Environment = field(init=False)
-
-    def __post_init__(self) -> None:
-        environment = Environment(
-            loader=FileSystemLoader(Path(__file__).parent),
-            undefined=StrictUndefined,
-            autoescape=False,
-            keep_trailing_newline=True,
-            trim_blocks=True,
-            lstrip_blocks=True,
-            newline_sequence="\n",
-        )
-        environment.filters.update(
-            {
-                "mermaid_id": self._identifier,
-                "mermaid_number": self._number,
-                "mermaid_quote": self._quote,
-                "tree_label": self._tree_label,
-            }
-        )
-        object.__setattr__(self, "environment", environment)
 
     def render(self, diagram: DiagramView) -> str:
-        body = self.environment.get_template(self.document_template(diagram)).render(
-            diagram=diagram,
-            template_prefix=self._template_prefix(diagram),
-        )
-        source = self._canonical_text(body)
-        return self._wrap(source, diagram.mermaid_configuration) if self.wrap else source
-
-
-    @staticmethod
-    def _template_prefix(diagram: DiagramView) -> str:
-        return f"templates/syntax/{diagram.kind}"
-
-    def document_template(self, diagram: DiagramView) -> str:
-        return f"{self._template_prefix(diagram)}/document.mmd.j2"
-
-    def validate_template_ownership(
-        self,
-        registry: DiagramsApplication,
-        catalog: DiagramCatalog,
-    ) -> None:
-        if self._template_ownership_validated:
-            return
-        for info in registry.available():
-            diagram = catalog.describe(info.id)
-            prefix = f"templates/syntax/{diagram.id}"
-            for kind in diagram.elements:
-                self.environment.get_template(f"{prefix}/elements/{kind}.mmd.j2")
-            for kind in diagram.relations:
-                self.environment.get_template(f"{prefix}/relations/{kind}.mmd.j2")
-            for kind in diagram.annotations:
-                self.environment.get_template(f"{prefix}/annotations/{kind}.mmd.j2")
-        type(self)._template_ownership_validated = True
-
-    @staticmethod
-    def _identifier(value: object, namespace: str) -> str:
-        text = str(value)
-        identifier = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
-        token = (
-            f"v_{text}"
-            if identifier.fullmatch(text)
-            else f"b_{base64.b32encode(text.encode()).decode().rstrip('=').lower()}"
-        )
-        return f"{namespace}_{token}"
-
-    @staticmethod
-    def _quote(value: object) -> str:
-        return json.dumps(str(value), ensure_ascii=False)
-
-    @staticmethod
-    def _number(value: float | int) -> str:
-        return str(int(value)) if isinstance(value, float) and value.is_integer() else str(value)
-
-    @staticmethod
-    def _tree_label(value: object) -> str:
-        text = str(value)
-        if not text or text != text.strip() or "  " in text or any(token in text for token in ('"', ":::", "##")):
-            return json.dumps(text, ensure_ascii=False)
-        return text
-
-    @staticmethod
-    def _canonical_text(value: str) -> str:
-        normalized = value.replace("\r\n", "\n").replace("\r", "\n")
-        lines = (line.rstrip() for line in normalized.split("\n"))
-        return "\n".join(line for line in lines if line).rstrip("\n") + "\n"
-
-    @staticmethod
-    def _wrap(body: str, configuration: Mapping[str, object]) -> str:
-        entries = "".join(
-            f"  {key}: {json.dumps(value, ensure_ascii=False)}\n"
-            for key, value in configuration.items()
-        )
-        return f"---\nconfig:\n{entries}---\n{body}"
+        body = self.source.canonicalize(self.templates.render(diagram))
+        return self.source.wrap(body, diagram.mermaid_configuration) if self.wrap else body
 
 
 @injectable
