@@ -5,6 +5,7 @@ from typing import ClassVar, cast
 
 from ..core.constraint import (
     BlockingConstraint,
+    ChangeReport,
     Constraint,
     ConstraintDiagram,
     ValidationReport,
@@ -96,6 +97,30 @@ class DiagramModel(DiagramAggregate):
     constraints: Sequence[Constraint]
     configuration: MermaidDiagramConfiguration
     mutations: MutationKernel
+
+    def update_element(
+        self,
+        id: str,
+        kind: str,
+        changes: Mapping[str, object],
+    ) -> ChangeReport:
+        return self.mutations.update_element(self, id, kind, changes)
+
+    def update_relation(
+        self,
+        id: str,
+        kind: str,
+        changes: Mapping[str, object],
+    ) -> ChangeReport:
+        return self.mutations.update_relation(self, id, kind, changes)
+
+    def update_annotation(
+        self,
+        id: str,
+        kind: str,
+        changes: Mapping[str, object],
+    ) -> ChangeReport:
+        return self.mutations.update_annotation(self, id, kind, changes)
 
     def configure(self, configuration: MermaidDiagramConfiguration) -> None:
         expected = type(self.configuration)

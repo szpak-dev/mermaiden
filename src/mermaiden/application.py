@@ -9,9 +9,11 @@ import mermaiden
 from .core.constraint import ChangeReport
 from .core.diagram import Diagram
 from .diagrams.application import DiagramFactory, DiagramInfo, DiagramPersistenceApplication, DiagramsApplication
-from .diagrams.catalog import CommandPayload, DiagramCatalog, DiagramDescription
+from .diagrams.catalog.models import DiagramDescription
+from .diagrams.catalog.service import DiagramCatalog
 from .diagrams.configuration import MermaidDiagramConfiguration
 from .diagrams.domain import DiagramModel
+from .domain import CommandPayloadType, ValidatedCommandPayload
 from .mermaid.application import MermaidApplication
 from .mermaid.templates import MermaidTemplateOwnership
 from .mermaid.validation import MermaidRenderReport, MermaidRenderValidator
@@ -59,7 +61,7 @@ class Application:
         self,
         diagram_id: str,
         command_name: str,
-    ) -> type[CommandPayload] | type[MermaidDiagramConfiguration]:
+    ) -> CommandPayloadType:
         return self.catalog.command_payload(diagram_id, command_name)
 
     def create_diagram(self, diagram_id: str) -> DiagramModel:
@@ -98,18 +100,27 @@ class Application:
     def validate_render(self, diagram: Diagram) -> MermaidRenderReport:
         return self.render_validator.validate(diagram)
 
-    @staticmethod
-    def _invoke(operation: Callable[..., object], payload: CommandPayload) -> ChangeReport | None:
+    def _invoke(
+        self,
+        operation: Callable[..., object],
+        payload: ValidatedCommandPayload,
+    ) -> ChangeReport | None:
         parameters = tuple(signature(operation).parameters.values())
-        values = payload.model_dump()
+        values = payload.model_dump(exclude_unset=True)
         variadic = next((item for item in parameters if item.kind is item.VAR_POSITIONAL), None)
         positional = ()
         if variadic is not None:
-            positional = tuple(
-                values.pop(item.name)
-                for item in parameters
-                if item.kind in {item.POSITIONAL_ONLY, item.POSITIONAL_OR_KEYWORD}
-            ) + tuple(values.pop(variadic.name))
+            variadic_values = values.pop(variadic.name)
+            if not isinstance(variadic_values, tuple):
+                raise UnknownCommand("Variadic command arguments must be a tuple.")
+            positional = (
+                tuple(
+                    values.pop(item.name)
+                    for item in parameters
+                    if item.kind in {item.POSITIONAL_ONLY, item.POSITIONAL_OR_KEYWORD}
+                )
+                + variadic_values
+            )
         result = operation(*positional, **values)
         if result is not None and not isinstance(result, ChangeReport):
             raise UnknownCommand("Command is not a mutation.")

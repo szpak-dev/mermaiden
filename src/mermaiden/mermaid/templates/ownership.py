@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from wireup import injectable
 
 from ...diagrams.application import DiagramsApplication
-from ...diagrams.catalog import DiagramCatalog
+from ...diagrams.catalog.service import DiagramCatalog
 from .renderer import MermaidTemplateRenderer
 
 

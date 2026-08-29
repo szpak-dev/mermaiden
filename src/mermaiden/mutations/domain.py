@@ -1,8 +1,35 @@
 from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
 
+from ..core.annotation import Annotation
 from ..core.constraint import ChangeReport
+from ..core.element import Element
+from ..core.relation import Relation
+from ..domain import CommandPayloadType
 from ..runtime.diagrams.aggregate import DiagramAggregate
+
+
+class MutationPayloadFactory(ABC):
+    @abstractmethod
+    def element(
+        self,
+        diagram_name: str,
+        object_types: Mapping[str, type[Element]],
+    ) -> CommandPayloadType: ...
+
+    @abstractmethod
+    def relation(
+        self,
+        diagram_name: str,
+        object_types: Mapping[str, type[Relation]],
+    ) -> CommandPayloadType: ...
+
+    @abstractmethod
+    def annotation(
+        self,
+        diagram_name: str,
+        object_types: Mapping[str, type[Annotation]],
+    ) -> CommandPayloadType: ...
 
 
 class MutationKernel(ABC):
