@@ -5,7 +5,7 @@ from typing import cast
 
 import pytest
 
-from mermaiden import Application
+from mermaiden.application import Application, DiagramCommand
 
 ROOT = Path(__file__).resolve().parents[3]
 CONTRACT_ROOT = ROOT / "docs" / "contracts" / "diagram-mutations"
@@ -16,6 +16,52 @@ EXAMPLE_END = "<!-- mutation-conformance-example:end -->"
 
 
 class TestMutationConformance:
+    def test_public_boundary_applies_mutation_commands_and_round_trips(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("block")
+        commands = (
+            DiagramCommand("add_group", {"id": "source_example", "label": "Source Example"}),
+            DiagramCommand("add_group", {"id": "target_example", "label": "Target Example"}),
+            DiagramCommand(
+                "add_block",
+                {"id": "first_example", "label": "First Example", "parent_id": "source_example"},
+            ),
+            DiagramCommand(
+                "add_block",
+                {"id": "second_example", "label": "Second Example", "parent_id": "source_example"},
+            ),
+            DiagramCommand(
+                "update_element",
+                {
+                    "id": "first_example",
+                    "kind": "block_node",
+                    "changes": {"label": "Updated First Example"},
+                },
+            ),
+            DiagramCommand(
+                "move_element",
+                {
+                    "id": "first_example",
+                    "kind": "block_node",
+                    "parent_id": "target_example",
+                    "position": 0,
+                },
+            ),
+            DiagramCommand(
+                "reorder_elements",
+                {"parent_id": "source_example", "element_ids": ["second_example"]},
+            ),
+        )
+
+        for command in commands:
+            application.apply(diagram, command)
+
+        snapshot = application.snapshot(diagram).to_dict()
+        restored = application.restore(json.loads(json.dumps(snapshot)))
+
+        assert application.snapshot(restored).to_dict() == snapshot
+        assert application.render(restored) == application.render(diagram)
+
     def test_matrix_catalog_and_payload_schemas_have_exact_coverage(self) -> None:
         application = Application.create()
         matrices = self._matrices()
@@ -67,10 +113,13 @@ class TestMutationConformance:
                 assert reorder_schema["additionalProperties"] is False
                 assert reorder_schema["required"] == ["parent_id", "element_ids"]
 
-    def test_every_matrix_approved_field_and_collection_accepts_a_strict_payload(self) -> None:
+    def test_every_matrix_approved_field_and_collection_has_one_strict_case(self) -> None:
         application = Application.create()
+        matrices = self._matrices()
+        expected_cases = self._expected_cases(matrices)
+        covered_cases: set[tuple[str, str, str, str]] = set()
 
-        for diagram_id, matrix in self._matrices().items():
+        for diagram_id, matrix in matrices.items():
             for category in ("elements", "relations", "annotations"):
                 objects = self._mapping(matrix[category])
                 if not objects:
@@ -94,6 +143,7 @@ class TestMutationConformance:
                         validated = payload.model_validate(arguments).model_dump(mode="json", exclude_unset=True)
                         validated_changes = self._mapping(validated["changes"])
                         assert set(validated_changes) == {field_name}
+                        covered_cases.add((diagram_id, category, kind, field_name))
 
             elements = self._mapping(matrix["elements"])
             if not elements:
@@ -106,6 +156,7 @@ class TestMutationConformance:
                     {"id": "element_example", "kind": kind, "parent_id": ""}
                 ).model_dump(mode="json", exclude_unset=True)
                 assert validated == {"id": "element_example", "kind": kind, "parent_id": "", "position": None}
+                covered_cases.add((diagram_id, "elements", kind, "move"))
 
             reorder_operation = cast(str, self._mapping(matrix["root_collection"])["reorder_command"])
             reorder_payload = application.command_payload(diagram_id, reorder_operation)
@@ -118,6 +169,13 @@ class TestMutationConformance:
                     {"parent_id": owner, "element_ids": ["element_example"]}
                 ).model_dump(mode="json", exclude_unset=True)
                 assert validated == {"parent_id": owner, "element_ids": ["element_example"]}
+                kind = "$root" if not owner else owner.removesuffix("_example")
+                covered_cases.add((diagram_id, "elements", kind, "reorder"))
+
+        assert covered_cases == expected_cases, (
+            f"missing conformance cases: {sorted(expected_cases.difference(covered_cases))}; "
+            f"extra conformance cases: {sorted(covered_cases.difference(expected_cases))}"
+        )
 
     def test_matrix_unsupported_operations_are_absent_and_rejected(self) -> None:
         application = Application.create()
@@ -132,7 +190,7 @@ class TestMutationConformance:
                     application.command_payload(diagram_id, operation)
                 diagram = application.create_diagram(diagram_id)
                 with pytest.raises(RuntimeError, match="invalid arguments"):
-                    application.execute(diagram, operation, {})
+                    application.apply(diagram, DiagramCommand(operation, {}))
 
     def test_readme_mutation_example_executes_without_drift(self) -> None:
         readme = README_PATH.read_text(encoding="utf-8")
@@ -168,6 +226,27 @@ class TestMutationConformance:
         root = self._mapping(matrix["root_collection"])
         operations.add(cast(str, root["reorder_command"]))
         return operations
+
+    def _expected_cases(
+        self,
+        matrices: Mapping[str, Mapping[str, object]],
+    ) -> set[tuple[str, str, str, str]]:
+        cases: set[tuple[str, str, str, str]] = set()
+        for diagram_id, matrix in matrices.items():
+            for category in ("elements", "relations", "annotations"):
+                for kind, value in self._mapping(matrix[category]).items():
+                    item = self._mapping(value)
+                    cases.update(
+                        (diagram_id, category, kind, field_name)
+                        for field_name, classification in self._mapping(item["fields"]).items()
+                        if classification == "updateable"
+                    )
+                    if category == "elements":
+                        cases.add((diagram_id, category, kind, "move"))
+                        if "child_collection" in item:
+                            cases.add((diagram_id, category, kind, "reorder"))
+            cases.add((diagram_id, "elements", "$root", "reorder"))
+        return cases
 
     def _operation(self, objects: Mapping[str, object]) -> str:
         operations = {cast(str, self._mapping(value)["update_command"]) for value in objects.values()}
