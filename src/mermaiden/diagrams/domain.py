@@ -12,6 +12,7 @@ from ..core.constraint import (
 )
 from ..core.diagram import Diagram
 from ..core.element import Container, RequiresChildren
+from ..mutations.domain import MutationKernel
 from ..runtime.diagrams.aggregate import DiagramAggregate
 from ..runtime.domain import ConstraintInspection
 from .configuration import MermaidDiagramConfiguration
@@ -94,6 +95,7 @@ class DiagramModel(DiagramAggregate):
     structure: ConstraintInspection
     constraints: Sequence[Constraint]
     configuration: MermaidDiagramConfiguration
+    mutations: MutationKernel
 
     def configure(self, configuration: MermaidDiagramConfiguration) -> None:
         expected = type(self.configuration)

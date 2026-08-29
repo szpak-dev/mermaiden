@@ -6,7 +6,7 @@ from wireup import injectable
 
 from ...core.diagram import Diagram
 from .configuration import DiagramConfigurationReader
-from .domain import SNAPSHOT_VERSION, DiagramSnapshot
+from .domain import SNAPSHOT_VERSION, TRANSIENT_DIAGRAM_FIELDS, DiagramSnapshot
 from .value_encoder import SnapshotValueEncoder
 
 
@@ -29,6 +29,6 @@ class DiagramSnapshotBuilder:
             properties={
                 item.name: self.values.encode(getattr(diagram, item.name))
                 for item in fields(cast(Any, diagram))
-                if item.name not in {"runtime", "structure", "constraints", "configuration"}
+                if item.name not in TRANSIENT_DIAGRAM_FIELDS
             },
         )

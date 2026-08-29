@@ -1,7 +1,9 @@
 from collections.abc import Mapping
 from dataclasses import dataclass
+from typing import Final
 
 SNAPSHOT_VERSION = 2
+TRANSIENT_DIAGRAM_FIELDS: Final = frozenset({"runtime", "structure", "constraints", "configuration", "mutations"})
 
 
 class SnapshotError(RuntimeError):

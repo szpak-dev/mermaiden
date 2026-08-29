@@ -9,7 +9,7 @@ from ...core.element import Element
 from ...core.relation import Relation
 from ..diagrams.state import DiagramData
 from .configuration import DiagramConfigurationReader
-from .domain import DiagramSnapshot, SnapshotError
+from .domain import TRANSIENT_DIAGRAM_FIELDS, DiagramSnapshot, SnapshotError
 from .value_decoder import SnapshotValueDecoder
 
 
@@ -30,7 +30,7 @@ class DiagramSnapshotHydrator:
         annotations = tuple(self.values.decode(item, Annotation) for item in snapshot.annotations)
         for name, value in snapshot.properties.items():
             item = next((field for field in fields(cast(Any, diagram)) if field.name == name), None)
-            if item is None or name in {"runtime", "structure", "constraints", "configuration"}:
+            if item is None or name in TRANSIENT_DIAGRAM_FIELDS:
                 raise SnapshotError(f"Snapshot property '{name}' is not supported.")
             object.__setattr__(diagram, name, self.values.decode(value, item.type))
         return DiagramData(elements, relations, annotations)

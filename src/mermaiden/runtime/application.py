@@ -33,21 +33,55 @@ class ChangeTransaction:
         observer: ConstraintInspection,
         removed: tuple[DiagramObjectReference, ...],
     ) -> ChangeReport:
+        return self._apply(
+            operation,
+            candidate,
+            diagram,
+            observer,
+            removed,
+            False,
+        )
+
+    def apply_valid_candidate(
+        self,
+        operation: str,
+        candidate: DiagramData,
+        diagram: Diagram,
+        observer: ConstraintInspection,
+        removed: tuple[DiagramObjectReference, ...],
+    ) -> ChangeReport:
+        return self._apply(
+            operation,
+            candidate,
+            diagram,
+            observer,
+            removed,
+            True,
+        )
+
+    def _apply(
+        self,
+        operation: str,
+        candidate: DiagramData,
+        diagram: Diagram,
+        observer: ConstraintInspection,
+        removed: tuple[DiagramObjectReference, ...],
+        require_valid_candidate: bool,
+    ) -> ChangeReport:
         before = observer.inspect(diagram)
         self.state.stage(candidate)
         try:
             after = observer.inspect(diagram)
+            if not after.can_commit and (require_valid_candidate or before.can_commit):
+                raise ChangeRejected(operation, after)
+            self.state.commit()
         except Exception:
             self.state.rollback()
             raise
-        report = ChangeReport(operation, before, after, after.can_commit, removed)
-        if not report.accepted and before.can_commit:
-            self.state.rollback()
-            raise ChangeRejected(operation, after)
-        self.state.commit()
-        return report
+        return ChangeReport(operation, before, after, True, removed)
 
     def reject(self, operation: str, message: str) -> Never:
+        self.state.rollback()
         current = ValidationReport(
             (
                 Violation(
@@ -59,6 +93,9 @@ class ChangeTransaction:
             )
         )
         raise ChangeRejected(operation, current)
+
+    def rollback(self) -> None:
+        self.state.rollback()
 
 
 @dataclass(frozen=True, slots=True)
