@@ -1,6 +1,7 @@
 import json
 
 import pytest
+from contracts.mutation_conformance import assert_mutation_conformance
 
 from mermaiden.application import Application, DiagramCommand, UnknownCommand
 
@@ -109,3 +110,5 @@ class TestRailroadIncrementalCommands:
             assert report is not None
             assert report.accepted
             assert expected_source in application.render(diagram)
+
+        assert_mutation_conformance(application, application.snapshot(diagram).to_dict())

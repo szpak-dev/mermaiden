@@ -27,12 +27,14 @@ class Elements:
     def update(self, id: str, kind: str, changes: Mapping[str, object]) -> DiagramData:
         target = self._require_unique(id)
         self._validate_update(target, kind, changes)
-        values = target.model_dump()
+        values = target.model_dump(exclude={"elements"})
         values.update(changes)
         try:
             updated = type(target).model_validate(values)
         except ValidationError as error:
             raise OperationError(f"Element '{id}' changes are invalid: {error}") from error
+        if isinstance(target, Container):
+            updated = updated.model_copy(update={"elements": target.elements})
         elements = self._replace(self.state.current.elements, id, updated)
         return replace(self.state.current, elements=elements)
 

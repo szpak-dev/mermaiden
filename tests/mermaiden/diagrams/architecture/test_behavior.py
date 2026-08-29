@@ -2,6 +2,7 @@ import json
 from typing import Any
 
 import pytest
+from contracts.mutation_conformance import assert_mutation_conformance
 
 from mermaiden.application import Application, DiagramCommand, UnknownCommand
 from mermaiden.core import ChangeRejected
@@ -13,12 +14,44 @@ class TestArchitecture:
         diagram = application.create_diagram("architecture-beta")
 
         application.apply(diagram, DiagramCommand("configure", {"nodeSeparation": 96, "seed": 7}))
-        application.apply(diagram, DiagramCommand("add_service", {"id": "api", "label": "API"}))
+        application.apply(diagram, DiagramCommand("add_group", {"id": "group_example", "label": "Group Example"}))
+        application.apply(diagram, DiagramCommand("add_service", {"id": "client_example", "label": "Client Example"}))
+        application.apply(
+            diagram, DiagramCommand("add_junction", {"id": "gateway_example", "label": "Gateway Example"})
+        )
+        application.apply(diagram, DiagramCommand("add_service", {"id": "api_example", "label": "API Example"}))
         application.apply(
             diagram,
-            DiagramCommand("add_note", {"id": "api_note", "element_id": "api", "text": 'Public "API"'}),
+            DiagramCommand(
+                "add_edge",
+                {
+                    "id": "edge_example",
+                    "source_id": "client_example",
+                    "target_id": "api_example",
+                    "label": "HTTPS Example",
+                },
+            ),
+        )
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_alignment",
+                {
+                    "id": "alignment_example",
+                    "axis": "row",
+                    "member_ids": ["client_example", "gateway_example", "api_example"],
+                },
+            ),
+        )
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_note",
+                {"id": "note_example", "element_id": "api_example", "text": 'Public "API"'},
+            ),
         )
 
+        assert_mutation_conformance(application, application.snapshot(diagram).to_dict())
         source = application.render(diagram)
 
         assert '"nodeSeparation": 96.0' in source
