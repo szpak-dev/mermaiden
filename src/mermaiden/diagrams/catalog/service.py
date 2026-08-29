@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 from wireup import injectable
 
-from ...domain import CommandPayloadType, ValidatedCommandPayload
+from ...domain import CommandPayload, ValidatedCommandPayload
 from ..application import DiagramInfo, DiagramsApplication
 from ..domain import DiagramModel
 from .commands import DiagramCommandCatalog
@@ -34,7 +34,7 @@ class DiagramCatalog:
     def command_names(self, info: DiagramInfo) -> tuple[str, ...]:
         return self.commands.names(info)
 
-    def command_payload(self, diagram_id: str, command_name: str) -> CommandPayloadType:
+    def command_payload(self, diagram_id: str, command_name: str) -> CommandPayload:
         return self.commands.payload(diagram_id, command_name)
 
     def validate_command(

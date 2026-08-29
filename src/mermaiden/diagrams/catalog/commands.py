@@ -3,15 +3,15 @@ from dataclasses import dataclass
 from inspect import Parameter, signature
 from typing import Annotated, cast, get_args, get_origin, get_type_hints
 
-from pydantic import ValidationError
+from pydantic import TypeAdapter, ValidationError
+from pydantic_core import CoreSchema, core_schema
 from wireup import injectable
 
 from ...core.constraint import ChangeReport
-from ...domain import CommandPayloadType, ValidatedCommandPayload
+from ...domain import CommandPayload, CommandPayloadSchema, ValidatedCommandPayload
 from ...mutations.domain import MutationPayloadFactory
 from ..application import DiagramInfo, DiagramsApplication
 from ..domain import DiagramModel
-from .models import CommandPayload
 from .objects import DiagramObjectCatalog
 
 
@@ -25,31 +25,21 @@ class DiagramCommandCatalog:
     def names(self, info: DiagramInfo) -> tuple[str, ...]:
         return tuple(sorted(self._methods(info)))
 
-    def payload(self, diagram_id: str, command_name: str) -> CommandPayloadType:
+    def payload(self, diagram_id: str, command_name: str) -> CommandPayload:
         info = self.registry.get(diagram_id)
         method = self._methods(info).get(command_name)
         if method is None:
             raise KeyError(f"Unknown command '{command_name}' for diagram '{diagram_id}'.")
         if method is DiagramModel.configure:
-            return cast(CommandPayloadType, type(self.registry.get_diagram(diagram_id).configuration))
+            configuration = self.registry.get_diagram(diagram_id).configuration
+            return cast(CommandPayload, configuration.__class__)
         if method is DiagramModel.update_element:
             return self.mutation_payloads.element(info.diagram_type.__name__, self.objects.elements(info))
         if method is DiagramModel.update_relation:
             return self.mutation_payloads.relation(info.diagram_type.__name__, self.objects.relations(info))
         if method is DiagramModel.update_annotation:
             return self.mutation_payloads.annotation(info.diagram_type.__name__, self.objects.annotations(info))
-        annotations, defaults = self._payload_fields(method)
-        name = f"{info.diagram_type.__name__}{self._pascal_case(command_name)}Payload"
-        namespace: dict[str, object] = {
-            "__module__": __name__,
-            "__annotations__": annotations,
-            **defaults,
-        }
-        payload_type = cast(
-            type[CommandPayload],
-            type(name, (CommandPayload,), namespace),
-        )
-        return cast(CommandPayloadType, payload_type)
+        return CommandPayloadSchema(self._payload_schema(method))
 
     def validate(
         self,
@@ -86,38 +76,34 @@ class DiagramCommandCatalog:
         return_type = get_type_hints(method).get("return")
         return return_type in {ChangeReport, type(None)}
 
-    def _payload_fields(
+    def _payload_schema(
         self,
         method: Callable[..., ChangeReport | None],
-    ) -> tuple[dict[str, object], dict[str, object]]:
+    ) -> CoreSchema:
         hints = get_type_hints(method, include_extras=True)
-        annotations: dict[str, object] = {}
-        defaults: dict[str, object] = {}
+        fields: dict[str, core_schema.TypedDictField] = {}
         for parameter in signature(method).parameters.values():
             if parameter.name == "self":
                 continue
-            annotation, default = self._payload_field(parameter, hints)
-            annotations[parameter.name] = annotation
-            defaults[parameter.name] = default
-        return annotations, defaults
+            annotation = self._payload_annotation(parameter, hints)
+            field_schema = TypeAdapter[object](annotation).core_schema
+            required = parameter.default is Parameter.empty
+            if not required:
+                field_schema = core_schema.with_default_schema(field_schema, default=parameter.default)
+            fields[parameter.name] = core_schema.typed_dict_field(field_schema, required=required)
+        return core_schema.typed_dict_schema(fields, extra_behavior="forbid")
 
-    def _payload_field(
+    def _payload_annotation(
         self,
         parameter: Parameter,
         hints: Mapping[str, object],
-    ) -> tuple[object, object]:
+    ) -> object:
         annotation = hints.get(parameter.name)
         if annotation is None:
             raise TypeError(f"Command parameter '{parameter.name}' has no type annotation.")
         if parameter.kind is Parameter.VAR_POSITIONAL:
             if get_origin(annotation) is Annotated:
                 item, *metadata = get_args(annotation)
-                annotation = Annotated[tuple[item, ...], *metadata]
-            else:
-                annotation = tuple[annotation, ...]
-            return annotation, ...
-        default = ... if parameter.default is Parameter.empty else parameter.default
-        return annotation, default
-
-    def _pascal_case(self, value: str) -> str:
-        return "".join(part.capitalize() for part in value.split("_"))
+                return Annotated[tuple[item, ...], *metadata]
+            return tuple[annotation, ...]
+        return annotation

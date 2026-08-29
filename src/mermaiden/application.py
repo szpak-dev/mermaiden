@@ -13,7 +13,7 @@ from .diagrams.catalog.models import DiagramDescription
 from .diagrams.catalog.service import DiagramCatalog
 from .diagrams.configuration import MermaidDiagramConfiguration
 from .diagrams.domain import DiagramModel
-from .domain import CommandPayloadType, ValidatedCommandPayload
+from .domain import CommandPayload, ValidatedCommandPayload
 from .mermaid.application import MermaidApplication
 from .mermaid.templates import MermaidTemplateOwnership
 from .mermaid.validation import MermaidRenderReport, MermaidRenderValidator
@@ -61,7 +61,7 @@ class Application:
         self,
         diagram_id: str,
         command_name: str,
-    ) -> CommandPayloadType:
+    ) -> CommandPayload:
         return self.catalog.command_payload(diagram_id, command_name)
 
     def create_diagram(self, diagram_id: str) -> DiagramModel:

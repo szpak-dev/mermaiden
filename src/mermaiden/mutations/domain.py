@@ -5,7 +5,7 @@ from ..core.annotation import Annotation
 from ..core.constraint import ChangeReport
 from ..core.element import Element
 from ..core.relation import Relation
-from ..domain import CommandPayloadType
+from ..domain import CommandPayload
 from ..runtime.diagrams.aggregate import DiagramAggregate
 
 
@@ -15,21 +15,21 @@ class MutationPayloadFactory(ABC):
         self,
         diagram_name: str,
         object_types: Mapping[str, type[Element]],
-    ) -> CommandPayloadType: ...
+    ) -> CommandPayload: ...
 
     @abstractmethod
     def relation(
         self,
         diagram_name: str,
         object_types: Mapping[str, type[Relation]],
-    ) -> CommandPayloadType: ...
+    ) -> CommandPayload: ...
 
     @abstractmethod
     def annotation(
         self,
         diagram_name: str,
         object_types: Mapping[str, type[Annotation]],
-    ) -> CommandPayloadType: ...
+    ) -> CommandPayload: ...
 
 
 class MutationKernel(ABC):

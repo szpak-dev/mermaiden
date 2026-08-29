@@ -3,10 +3,6 @@ from collections.abc import Mapping
 from ...core.model import ValueModel
 
 
-class CommandPayload(ValueModel):
-    pass
-
-
 class DiagramDescription(ValueModel):
     id: str
     name: str
