@@ -28,7 +28,8 @@ class TestMindmap:
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
         assert set(application.diagram_description("mindmap").commands) == {item.operation for item in commands} | {
-            "remove_element"
+            "update_element",
+            "remove_element",
         }
         for fragment in ('["Square"]', '("Rounded")', '(("Circle"))', '))"Bang"((', ')"Cloud"(', '{{"Hexagon"}}'):
             assert fragment in source

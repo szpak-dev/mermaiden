@@ -32,7 +32,9 @@ class TestEventModeling:
             "add_event",
             "add_view",
             "add_flow",
+            "update_element",
             "remove_element",
+            "update_relation",
             "remove_relation",
         }
         for fragment in ("ui actor", "cmd command", "evt event", "rmo view"):

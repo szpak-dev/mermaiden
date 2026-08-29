@@ -31,8 +31,11 @@ class TestArchitecture:
             "add_junction",
             "add_note",
             "add_service",
+            "update_element",
             "remove_element",
+            "update_relation",
             "remove_relation",
+            "update_annotation",
             "remove_annotation",
         }
 

@@ -24,7 +24,8 @@ class TestVenn:
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
         assert set(application.diagram_description("venn-beta").commands) == {item.operation for item in commands} | {
-            "remove_element"
+            "update_element",
+            "remove_element",
         }
         assert 'set front["Front \\"end\\""]:20' in source
         assert 'text react["React"]' in source

@@ -42,7 +42,9 @@ class TestC4:
             "add_relationship",
             "add_system",
             "set_relationship_label_offset",
+            "update_element",
             "remove_element",
+            "update_relation",
             "remove_relation",
         }
 

@@ -48,8 +48,11 @@ class TestClassDiagram:
             "add_class",
             "add_relation",
             "add_note",
+            "update_element",
             "remove_element",
+            "update_relation",
             "remove_relation",
+            "update_annotation",
             "remove_annotation",
         }
         assert "namespace domain" in source

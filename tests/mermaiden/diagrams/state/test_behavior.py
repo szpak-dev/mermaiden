@@ -38,7 +38,14 @@ class TestStateDiagram:
 
         assert set(application.diagram_description("stateDiagram-v2").commands) == {
             item.operation for item in commands
-        } | {"remove_element", "remove_relation", "remove_annotation"}
+        } | {
+            "update_element",
+            "remove_element",
+            "update_relation",
+            "remove_relation",
+            "update_annotation",
+            "remove_annotation",
+        }
         for fragment in (
             'state "Idle \\"state\\""',
             "<<choice>>",

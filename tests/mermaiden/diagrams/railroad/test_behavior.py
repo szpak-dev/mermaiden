@@ -23,6 +23,7 @@ class TestRailroadIncrementalCommands:
             "add_rule",
             "add_special",
             "add_terminal",
+            "update_element",
             "remove_element",
         }
         with pytest.raises(UnknownCommand):
