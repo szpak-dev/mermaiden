@@ -1,0 +1,28 @@
+{
+  "diagram_id": "packet",
+  "root_collection": {
+    "reorder_command": "reorder_elements",
+    "membership": "Exact permutation of current root element IDs."
+  },
+  "elements": {
+    "packet_field": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "start": "updateable",
+        "end": "updateable",
+        "bits": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root"
+        ]
+      },
+      "kind_classification": "immutable"
+    }
+  },
+  "relations": {},
+  "annotations": {}
+}

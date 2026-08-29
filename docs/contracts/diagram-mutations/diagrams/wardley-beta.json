@@ -1,0 +1,78 @@
+{
+  "diagram_id": "wardley-beta",
+  "root_collection": {
+    "reorder_command": "reorder_elements",
+    "membership": "Exact permutation of current root element IDs."
+  },
+  "elements": {
+    "component": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "visibility": "updateable",
+        "evolution": "updateable",
+        "decorator": "updateable",
+        "anchor": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root"
+        ]
+      },
+      "kind_classification": "immutable"
+    },
+    "evolution": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "target": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root"
+        ]
+      },
+      "kind_classification": "immutable"
+    },
+    "pipeline": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "elements": "move_or_reorder_only"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root"
+        ]
+      },
+      "child_collection": {
+        "reorder_command": "reorder_elements",
+        "membership": "Exact permutation of current direct child IDs."
+      },
+      "kind_classification": "immutable"
+    }
+  },
+  "relations": {
+    "dependency": {
+      "update_command": "update_relation",
+      "fields": {
+        "id": "immutable",
+        "element_ids": "updateable",
+        "label": "updateable",
+        "operator": "updateable"
+      },
+      "retargeting": {
+        "field": "element_ids",
+        "ordered": true
+      },
+      "kind_classification": "immutable"
+    }
+  },
+  "annotations": {}
+}

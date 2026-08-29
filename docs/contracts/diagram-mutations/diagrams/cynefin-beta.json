@@ -1,0 +1,40 @@
+{
+  "diagram_id": "cynefin-beta",
+  "root_collection": {
+    "reorder_command": "reorder_elements",
+    "membership": "Exact permutation of current root element IDs."
+  },
+  "elements": {
+    "domain": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "domain": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root"
+        ]
+      },
+      "kind_classification": "immutable"
+    }
+  },
+  "relations": {
+    "transition": {
+      "update_command": "update_relation",
+      "fields": {
+        "id": "immutable",
+        "element_ids": "updateable",
+        "label": "updateable"
+      },
+      "retargeting": {
+        "field": "element_ids",
+        "ordered": true
+      },
+      "kind_classification": "immutable"
+    }
+  },
+  "annotations": {}
+}

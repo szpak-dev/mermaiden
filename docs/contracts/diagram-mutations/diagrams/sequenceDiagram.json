@@ -1,0 +1,122 @@
+{
+  "diagram_id": "sequenceDiagram",
+  "root_collection": {
+    "reorder_command": "reorder_elements",
+    "membership": "Exact permutation of current root element IDs."
+  },
+  "elements": {
+    "participant": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "participant_kind": "updateable",
+        "created": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root",
+          "participant_box"
+        ]
+      },
+      "kind_classification": "immutable"
+    },
+    "participant_box": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "elements": "move_or_reorder_only",
+        "color": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root"
+        ]
+      },
+      "child_collection": {
+        "reorder_command": "reorder_elements",
+        "membership": "Exact permutation of current direct child IDs."
+      },
+      "kind_classification": "immutable"
+    }
+  },
+  "relations": {
+    "control": {
+      "update_command": "update_relation",
+      "fields": {
+        "id": "immutable",
+        "element_ids": "updateable",
+        "label": "updateable",
+        "control_kind": "updateable"
+      },
+      "retargeting": {
+        "field": "element_ids",
+        "ordered": true
+      },
+      "kind_classification": "immutable"
+    },
+    "directive": {
+      "update_command": "update_relation",
+      "fields": {
+        "id": "immutable",
+        "element_ids": "updateable",
+        "label": "updateable",
+        "directive_kind": "updateable"
+      },
+      "retargeting": {
+        "field": "element_ids",
+        "ordered": true
+      },
+      "kind_classification": "immutable"
+    },
+    "message": {
+      "update_command": "update_relation",
+      "fields": {
+        "id": "immutable",
+        "element_ids": "updateable",
+        "label": "updateable",
+        "message_kind": "updateable",
+        "activate": "updateable",
+        "deactivate": "updateable"
+      },
+      "retargeting": {
+        "field": "element_ids",
+        "ordered": true
+      },
+      "kind_classification": "immutable"
+    },
+    "participant_event": {
+      "update_command": "update_relation",
+      "fields": {
+        "id": "immutable",
+        "element_ids": "updateable",
+        "label": "updateable",
+        "action": "updateable"
+      },
+      "retargeting": {
+        "field": "element_ids",
+        "ordered": true
+      },
+      "kind_classification": "immutable"
+    }
+  },
+  "annotations": {
+    "sequence_note": {
+      "update_command": "update_annotation",
+      "fields": {
+        "id": "immutable",
+        "targets": "updateable",
+        "text": "updateable",
+        "position": "updateable"
+      },
+      "retargeting": {
+        "field": "targets",
+        "ordered": true
+      },
+      "kind_classification": "immutable"
+    }
+  }
+}

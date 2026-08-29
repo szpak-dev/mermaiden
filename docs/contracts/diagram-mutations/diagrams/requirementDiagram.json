@@ -1,0 +1,61 @@
+{
+  "diagram_id": "requirementDiagram",
+  "root_collection": {
+    "reorder_command": "reorder_elements",
+    "membership": "Exact permutation of current root element IDs."
+  },
+  "elements": {
+    "requirement": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "requirement_id": "updateable",
+        "text": "updateable",
+        "requirement_type": "updateable",
+        "risk": "updateable",
+        "verification_method": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root"
+        ]
+      },
+      "kind_classification": "immutable"
+    },
+    "requirement_element": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "element_type": "updateable",
+        "document_reference": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root"
+        ]
+      },
+      "kind_classification": "immutable"
+    }
+  },
+  "relations": {
+    "requirement_relation": {
+      "update_command": "update_relation",
+      "fields": {
+        "id": "immutable",
+        "element_ids": "updateable",
+        "label": "updateable",
+        "relation_kind": "updateable"
+      },
+      "retargeting": {
+        "field": "element_ids",
+        "ordered": true
+      },
+      "kind_classification": "immutable"
+    }
+  },
+  "annotations": {}
+}

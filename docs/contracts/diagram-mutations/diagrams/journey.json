@@ -1,0 +1,46 @@
+{
+  "diagram_id": "journey",
+  "root_collection": {
+    "reorder_command": "reorder_elements",
+    "membership": "Exact permutation of current root element IDs."
+  },
+  "elements": {
+    "journey_section": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "elements": "move_or_reorder_only"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root"
+        ]
+      },
+      "child_collection": {
+        "reorder_command": "reorder_elements",
+        "membership": "Exact permutation of current direct child IDs."
+      },
+      "kind_classification": "immutable"
+    },
+    "journey_task": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "score": "updateable",
+        "actors": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "journey_section"
+        ]
+      },
+      "kind_classification": "immutable"
+    }
+  },
+  "relations": {},
+  "annotations": {}
+}

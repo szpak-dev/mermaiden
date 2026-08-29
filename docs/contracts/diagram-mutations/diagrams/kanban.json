@@ -1,0 +1,47 @@
+{
+  "diagram_id": "kanban",
+  "root_collection": {
+    "reorder_command": "reorder_elements",
+    "membership": "Exact permutation of current root element IDs."
+  },
+  "elements": {
+    "column": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "elements": "move_or_reorder_only"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root"
+        ]
+      },
+      "child_collection": {
+        "reorder_command": "reorder_elements",
+        "membership": "Exact permutation of current direct child IDs."
+      },
+      "kind_classification": "immutable"
+    },
+    "task": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "assigned": "updateable",
+        "ticket": "updateable",
+        "priority": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "column"
+        ]
+      },
+      "kind_classification": "immutable"
+    }
+  },
+  "relations": {},
+  "annotations": {}
+}

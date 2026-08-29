@@ -1,0 +1,187 @@
+{
+  "diagram_id": "mindmap",
+  "root_collection": {
+    "reorder_command": "reorder_elements",
+    "membership": "Exact permutation of current root element IDs."
+  },
+  "elements": {
+    "bang": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "elements": "move_or_reorder_only"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "mindmap_node",
+          "square",
+          "rounded_square",
+          "circle",
+          "bang",
+          "cloud",
+          "hexagon"
+        ]
+      },
+      "child_collection": {
+        "reorder_command": "reorder_elements",
+        "membership": "Exact permutation of current direct child IDs."
+      },
+      "kind_classification": "immutable"
+    },
+    "circle": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "elements": "move_or_reorder_only"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "mindmap_node",
+          "square",
+          "rounded_square",
+          "circle",
+          "bang",
+          "cloud",
+          "hexagon"
+        ]
+      },
+      "child_collection": {
+        "reorder_command": "reorder_elements",
+        "membership": "Exact permutation of current direct child IDs."
+      },
+      "kind_classification": "immutable"
+    },
+    "cloud": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "elements": "move_or_reorder_only"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "mindmap_node",
+          "square",
+          "rounded_square",
+          "circle",
+          "bang",
+          "cloud",
+          "hexagon"
+        ]
+      },
+      "child_collection": {
+        "reorder_command": "reorder_elements",
+        "membership": "Exact permutation of current direct child IDs."
+      },
+      "kind_classification": "immutable"
+    },
+    "hexagon": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "elements": "move_or_reorder_only"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "mindmap_node",
+          "square",
+          "rounded_square",
+          "circle",
+          "bang",
+          "cloud",
+          "hexagon"
+        ]
+      },
+      "child_collection": {
+        "reorder_command": "reorder_elements",
+        "membership": "Exact permutation of current direct child IDs."
+      },
+      "kind_classification": "immutable"
+    },
+    "mindmap_node": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "elements": "move_or_reorder_only"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root",
+          "mindmap_node",
+          "square",
+          "rounded_square",
+          "circle",
+          "bang",
+          "cloud",
+          "hexagon"
+        ]
+      },
+      "child_collection": {
+        "reorder_command": "reorder_elements",
+        "membership": "Exact permutation of current direct child IDs."
+      },
+      "kind_classification": "immutable"
+    },
+    "rounded_square": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "elements": "move_or_reorder_only"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "mindmap_node",
+          "square",
+          "rounded_square",
+          "circle",
+          "bang",
+          "cloud",
+          "hexagon"
+        ]
+      },
+      "child_collection": {
+        "reorder_command": "reorder_elements",
+        "membership": "Exact permutation of current direct child IDs."
+      },
+      "kind_classification": "immutable"
+    },
+    "square": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "elements": "move_or_reorder_only"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "mindmap_node",
+          "square",
+          "rounded_square",
+          "circle",
+          "bang",
+          "cloud",
+          "hexagon"
+        ]
+      },
+      "child_collection": {
+        "reorder_command": "reorder_elements",
+        "membership": "Exact permutation of current direct child IDs."
+      },
+      "kind_classification": "immutable"
+    }
+  },
+  "relations": {},
+  "annotations": {}
+}

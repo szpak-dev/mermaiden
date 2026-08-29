@@ -1,0 +1,106 @@
+{
+  "diagram_id": "architecture-beta",
+  "root_collection": {
+    "reorder_command": "reorder_elements",
+    "membership": "Exact permutation of current root element IDs."
+  },
+  "elements": {
+    "architecture_group": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "elements": "move_or_reorder_only",
+        "columns": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root",
+          "architecture_group"
+        ]
+      },
+      "child_collection": {
+        "reorder_command": "reorder_elements",
+        "membership": "Exact permutation of current direct child IDs."
+      },
+      "kind_classification": "immutable"
+    },
+    "junction": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root",
+          "architecture_group"
+        ]
+      },
+      "kind_classification": "immutable"
+    },
+    "service": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root",
+          "architecture_group"
+        ]
+      },
+      "kind_classification": "immutable"
+    }
+  },
+  "relations": {
+    "alignment": {
+      "update_command": "update_relation",
+      "fields": {
+        "id": "immutable",
+        "element_ids": "updateable",
+        "label": "updateable",
+        "axis": "updateable"
+      },
+      "retargeting": {
+        "field": "element_ids",
+        "ordered": true
+      },
+      "kind_classification": "immutable"
+    },
+    "edge": {
+      "update_command": "update_relation",
+      "fields": {
+        "id": "immutable",
+        "element_ids": "updateable",
+        "label": "updateable",
+        "source_port": "updateable",
+        "target_port": "updateable"
+      },
+      "retargeting": {
+        "field": "element_ids",
+        "ordered": true
+      },
+      "kind_classification": "immutable"
+    }
+  },
+  "annotations": {
+    "architecture_note": {
+      "update_command": "update_annotation",
+      "fields": {
+        "id": "immutable",
+        "targets": "updateable",
+        "text": "updateable"
+      },
+      "retargeting": {
+        "field": "targets",
+        "ordered": true
+      },
+      "kind_classification": "immutable"
+    }
+  }
+}

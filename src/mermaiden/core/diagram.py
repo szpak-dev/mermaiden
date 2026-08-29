@@ -4,7 +4,7 @@ from typing import Protocol, TypeVar
 
 from .annotation import Annotation
 from .constraint import ChangeReport, ValidationReport
-from .element import Container, Element, Entity
+from .element import Element
 from .relation import Relation
 
 Result = TypeVar("Result", covariant=True)
@@ -55,14 +55,3 @@ class Diagram(DiagramView):
 
     def accept(self, visitor: DiagramVisitor[Result]) -> Result:
         return visitor.visit(self)
-
-
-__all__ = [
-    "Container",
-    "Diagram",
-    "DiagramView",
-    "DiagramVisitor",
-    "Element",
-    "Entity",
-    "Relation",
-]
