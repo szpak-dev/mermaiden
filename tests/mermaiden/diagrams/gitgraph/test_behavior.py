@@ -24,7 +24,9 @@ class TestGitGraph:
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
         assert set(application.diagram_description("gitGraph").commands) == {item.operation for item in commands} | {
+            "update_element",
             "remove_element",
+            "update_relation",
             "remove_relation",
         }
         assert 'commit id: "ZERO \\"root\\"" tag: "v1"' in source

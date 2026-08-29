@@ -23,7 +23,8 @@ class TestPie:
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
         assert set(application.diagram_description("pie").commands) == {item.operation for item in commands} | {
-            "remove_element"
+            "update_element",
+            "remove_element",
         }
         assert "pie showData" in source
         assert 'title "Adopted \\"pets\\""' in source

@@ -50,8 +50,11 @@ class TestFlowchart:
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
         assert set(application.diagram_description("flowchart").commands) == {item.operation for item in commands} | {
+            "update_element",
             "remove_element",
+            "update_relation",
             "remove_relation",
+            "update_annotation",
             "remove_annotation",
         }
         for fragment in (

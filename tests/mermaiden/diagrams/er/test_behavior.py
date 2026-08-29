@@ -48,7 +48,9 @@ class TestEntityRelationshipDiagram:
             "add_entity",
             "add_attribute",
             "add_relationship",
+            "update_element",
             "remove_element",
+            "update_relation",
             "remove_relation",
         }
         assert "direction LR" in source

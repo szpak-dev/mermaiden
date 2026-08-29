@@ -32,7 +32,8 @@ class TestKanban:
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
         assert set(application.diagram_description("kanban").commands) == {item.operation for item in commands} | {
-            "remove_element"
+            "update_element",
+            "remove_element",
         }
         assert 'todo["To \\"do\\""]' in source
         assert 'docs["Write docs"]' in source

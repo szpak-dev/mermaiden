@@ -34,7 +34,14 @@ class TestTreeView:
 
         assert set(application.diagram_description("treeView-beta").commands) == {
             item.operation for item in commands
-        } | {"remove_element", "remove_relation", "remove_annotation"}
+        } | {
+            "update_element",
+            "remove_element",
+            "update_relation",
+            "remove_relation",
+            "update_annotation",
+            "remove_annotation",
+        }
         assert '"child \\"one\\"" :::highlight icon(folder) ## Docs' in source
         assert application.render(restored) == source
 

@@ -23,7 +23,8 @@ class TestPacket:
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
         assert set(application.diagram_description("packet").commands) == {item.operation for item in commands} | {
-            "remove_element"
+            "update_element",
+            "remove_element",
         }
         assert 'title UDP "packet"' in source
         assert '+16: "Source port"' in source

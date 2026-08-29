@@ -28,7 +28,8 @@ class TestRadar:
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
         assert set(application.diagram_description("radar-beta").commands) == {item.operation for item in commands} | {
-            "remove_element"
+            "update_element",
+            "remove_element",
         }
         for fragment in (
             'title Quality "comparison"',

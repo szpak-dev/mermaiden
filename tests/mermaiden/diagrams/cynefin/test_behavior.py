@@ -17,7 +17,9 @@ class TestCynefin:
             "configure",
             "add_item",
             "add_transition",
+            "update_element",
             "remove_element",
+            "update_relation",
             "remove_relation",
         }
         with pytest.raises(UnknownCommand):
