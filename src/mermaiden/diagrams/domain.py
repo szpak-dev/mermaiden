@@ -1,7 +1,9 @@
 import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import ClassVar, cast
+from typing import Annotated, ClassVar, cast
+
+from pydantic import Field
 
 from ..core.constraint import (
     BlockingConstraint,
@@ -121,6 +123,25 @@ class DiagramModel(DiagramAggregate):
         changes: Mapping[str, object],
     ) -> ChangeReport:
         return self.mutations.update_annotation(self, id, kind, changes)
+
+    def move_element(
+        self,
+        id: str,
+        kind: str,
+        parent_id: str,
+        position: int | None = None,
+    ) -> ChangeReport:
+        return self.mutations.move_element(self, id, kind, parent_id, position)
+
+    def reorder_elements(
+        self,
+        parent_id: str,
+        element_ids: Annotated[
+            Sequence[Annotated[str, Field(min_length=1)]],
+            Field(json_schema_extra={"uniqueItems": True}),
+        ],
+    ) -> ChangeReport:
+        return self.mutations.reorder_elements(self, parent_id, element_ids)
 
     def configure(self, configuration: MermaidDiagramConfiguration) -> None:
         expected = type(self.configuration)

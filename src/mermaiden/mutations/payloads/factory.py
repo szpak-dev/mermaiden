@@ -36,6 +36,17 @@ class PydanticMutationPayloadFactory(MutationPayloadFactory):
     ) -> CommandPayload:
         return self._create(diagram_name, "update_annotation", object_types)
 
+    def move_element(
+        self,
+        diagram_name: str,
+        object_types: Mapping[str, type[Element]],
+    ) -> CommandPayload:
+        variants = {
+            kind: self._move_variant(diagram_name, kind, object_type)
+            for kind, object_type in object_types.items()
+        }
+        return self._payload("move_element", variants)
+
     def _create(
         self,
         diagram_name: str,
@@ -46,9 +57,16 @@ class PydanticMutationPayloadFactory(MutationPayloadFactory):
             kind: self._variant(diagram_name, command_name, kind, object_type)
             for kind, object_type in object_types.items()
         }
+        return self._payload(command_name, variants)
+
+    def _payload(
+        self,
+        command_name: str,
+        variants: Mapping[str, CoreSchema],
+    ) -> CommandPayload:
         if not variants:
             raise ValueError(f"Command '{command_name}' has no object payloads.")
-        schema = core_schema.tagged_union_schema(variants, discriminator="kind")
+        schema = core_schema.tagged_union_schema(dict(variants), discriminator="kind")
         return CommandPayloadSchema(schema)
 
     def _variant(
@@ -84,6 +102,27 @@ class PydanticMutationPayloadFactory(MutationPayloadFactory):
             fields,
             extra_behavior="forbid",
             ref=f"{diagram_name}_{command_name}_{kind}_payload",
+        )
+
+    def _move_variant(
+        self,
+        diagram_name: str,
+        kind: str,
+        object_type: type[Element],
+    ) -> CoreSchema:
+        fields = {
+            "id": core_schema.typed_dict_field(
+                TypeAdapter[object](object_type.model_fields["id"].rebuild_annotation()).core_schema,
+                required=True,
+            ),
+            "kind": core_schema.typed_dict_field(core_schema.literal_schema([kind]), required=True),
+            "parent_id": core_schema.typed_dict_field(core_schema.str_schema(), required=True),
+            "position": core_schema.typed_dict_field(core_schema.int_schema(ge=0), required=False),
+        }
+        return core_schema.typed_dict_schema(
+            fields,
+            extra_behavior="forbid",
+            ref=f"{diagram_name}_move_element_{kind}_payload",
         )
 
     def _require_changes(self, value: object) -> object:
