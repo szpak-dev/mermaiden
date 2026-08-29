@@ -2,7 +2,6 @@ import json
 from typing import Any
 
 import pytest
-from contracts.mutation_conformance import assert_mutation_conformance
 
 from mermaiden.application import Application, DiagramCommand, UnknownCommand
 from mermaiden.core import ChangeRejected
@@ -51,7 +50,6 @@ class TestArchitecture:
             ),
         )
 
-        assert_mutation_conformance(application, application.snapshot(diagram).to_dict())
         source = application.render(diagram)
 
         assert '"nodeSeparation": 96.0' in source

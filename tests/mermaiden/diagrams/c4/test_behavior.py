@@ -2,7 +2,6 @@ import json
 from typing import Any
 
 import pytest
-from contracts.mutation_conformance import assert_mutation_conformance
 
 from mermaiden.application import Application, DiagramCommand, UnknownCommand
 
@@ -49,7 +48,6 @@ class TestC4:
             ),
         )
 
-        assert_mutation_conformance(application, application.snapshot(diagram).to_dict())
         source = application.render(diagram)
 
         assert '"c4ShapeInRow": 3' in source

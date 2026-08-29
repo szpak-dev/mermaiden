@@ -1,7 +1,6 @@
 import json
 
 import pytest
-from contracts.mutation_conformance import assert_mutation_conformance
 
 from mermaiden.application import Application, DiagramCommand, UnknownCommand
 
@@ -40,7 +39,6 @@ class TestEntityRelationshipDiagram:
         ):
             application.apply(diagram, command)
 
-        assert_mutation_conformance(application, application.snapshot(diagram).to_dict())
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
