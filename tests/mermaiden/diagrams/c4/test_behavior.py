@@ -201,8 +201,13 @@ class TestC4:
 
     def test_rejects_an_unknown_relationship_when_setting_offsets(self) -> None:
         application, diagram = self._diagram_with_relationship()
+        before = json.dumps(
+            application.snapshot(diagram).to_dict(),
+            sort_keys=True,
+            separators=(",", ":"),
+        )
 
-        with pytest.raises(RuntimeError, match=r"Relationship 'missing' does not exist"):
+        with pytest.raises(RuntimeError, match=r"Relation 'missing' does not exist"):
             application.apply(
                 diagram,
                 DiagramCommand(
@@ -210,3 +215,12 @@ class TestC4:
                     {"id": "missing", "offset_x": 12, "offset_y": 8},
                 ),
             )
+
+        assert (
+            json.dumps(
+                application.snapshot(diagram).to_dict(),
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+            == before
+        )

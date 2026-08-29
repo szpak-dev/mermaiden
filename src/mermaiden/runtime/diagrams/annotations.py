@@ -1,4 +1,7 @@
+from collections.abc import Mapping
 from dataclasses import dataclass, replace
+
+from pydantic import ValidationError
 
 from ...core.annotation import Annotation, TargetKind
 from ...core.error import OperationError
@@ -21,6 +24,33 @@ class Annotations:
         return replace(
             self.state.current,
             annotations=tuple(item for item in self.state.current.annotations if item.id != id),
+        )
+
+    def update(self, id: str, kind: str, changes: Mapping[str, object]) -> DiagramData:
+        matches = tuple(item for item in self.state.current.annotations if item.id == id)
+        if not matches:
+            raise OperationError(f"Annotation '{id}' does not exist.")
+        if len(matches) > 1:
+            raise OperationError(f"Annotation '{id}' is duplicated.")
+        target = next(iter(matches))
+        if target.kind != kind:
+            raise OperationError(f"Annotation '{id}' has kind '{target.kind}', not '{kind}'.")
+        if not changes:
+            raise OperationError("Annotation changes must contain at least one field.")
+        if "id" in changes:
+            raise OperationError("Annotation field cannot be updated: id.")
+        unknown = set(changes).difference(type(target).model_fields)
+        if unknown:
+            raise OperationError(f"Unknown annotation fields: {', '.join(sorted(unknown))}.")
+        values = target.model_dump()
+        values.update(changes)
+        try:
+            updated = type(target).model_validate(values)
+        except ValidationError as error:
+            raise OperationError(f"Annotation '{id}' changes are invalid: {error}") from error
+        return replace(
+            self.state.current,
+            annotations=tuple(updated if item is target else item for item in self.state.current.annotations),
         )
 
     def without_targets(

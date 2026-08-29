@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wireup import injectable
@@ -56,18 +56,9 @@ class C4ContextDiagram(DiagramModel):
         )
 
     def set_relationship_label_offset(self, id: str, offset_x: int, offset_y: int) -> ChangeReport:
-        operation = f"set relationship label offset '{id}'"
-        relationship = next(
-            (item for item in self.find_relations() if isinstance(item, Relationship) and item.id == id),
-            None,
+        return self.mutations.update_relation(
+            self,
+            id,
+            Relationship.kind_for(),
+            {"offset_x": offset_x, "offset_y": offset_y},
         )
-        if relationship is None:
-            self._reject(operation, f"Relationship '{id}' does not exist.")
-        values = relationship.model_dump()
-        values.update(offset_x=offset_x, offset_y=offset_y)
-        updated = Relationship.model_validate(values)
-        candidate = replace(
-            self.state.current,
-            relations=tuple(updated if item is relationship else item for item in self.state.current.relations),
-        )
-        return self._apply(operation, candidate)
