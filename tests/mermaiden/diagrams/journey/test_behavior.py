@@ -28,6 +28,8 @@ class TestJourney:
         assert set(application.diagram_description("journey").commands) == {item.operation for item in commands} | {
             "update_element",
             "remove_element",
+            "move_element",
+            "reorder_elements",
         }
         assert 'title Working "day"' in source
         assert "section Go to work" in source

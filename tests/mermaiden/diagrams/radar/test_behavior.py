@@ -30,6 +30,8 @@ class TestRadar:
         assert set(application.diagram_description("radar-beta").commands) == {item.operation for item in commands} | {
             "update_element",
             "remove_element",
+            "move_element",
+            "reorder_elements",
         }
         for fragment in (
             'title Quality "comparison"',

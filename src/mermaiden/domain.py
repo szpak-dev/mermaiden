@@ -41,8 +41,9 @@ class CommandPayload(Protocol):
 
 
 class CommandPayloadSchema:
-    def __init__(self, schema: CoreSchema) -> None:
+    def __init__(self, schema: CoreSchema, invocation_defaults: Sequence[str]) -> None:
         self._schema = schema
+        self._invocation_defaults = frozenset(invocation_defaults)
         self._validator = SchemaValidator(schema)
         self._serializer = SchemaSerializer(schema)
 
@@ -59,6 +60,7 @@ class CommandPayloadSchema:
             if not isinstance(name, str):
                 raise TypeError("A command payload field name must be a string.")
             values[name] = item
+        fields_set = fields_set.union(self._invocation_defaults.intersection(values))
         return CommandArguments(values, fields_set, self._serializer)
 
     def model_json_schema(self) -> JsonSchema:

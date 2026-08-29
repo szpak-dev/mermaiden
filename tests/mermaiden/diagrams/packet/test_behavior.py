@@ -25,6 +25,8 @@ class TestPacket:
         assert set(application.diagram_description("packet").commands) == {item.operation for item in commands} | {
             "update_element",
             "remove_element",
+            "move_element",
+            "reorder_elements",
         }
         assert 'title UDP "packet"' in source
         assert '+16: "Source port"' in source

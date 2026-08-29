@@ -39,7 +39,9 @@ class DiagramCommandCatalog:
             return self.mutation_payloads.relation(info.diagram_type.__name__, self.objects.relations(info))
         if method is DiagramModel.update_annotation:
             return self.mutation_payloads.annotation(info.diagram_type.__name__, self.objects.annotations(info))
-        return CommandPayloadSchema(self._payload_schema(method))
+        if method is DiagramModel.move_element:
+            return self.mutation_payloads.move_element(info.diagram_type.__name__, self.objects.elements(info))
+        return CommandPayloadSchema(self._payload_schema(method), ())
 
     def validate(
         self,
@@ -63,6 +65,8 @@ class DiagramCommandCatalog:
         commands[DiagramModel.configure.__name__] = DiagramModel.configure
         if self.objects.elements(info):
             commands[DiagramModel.update_element.__name__] = DiagramModel.update_element
+            commands[DiagramModel.move_element.__name__] = DiagramModel.move_element
+            commands[DiagramModel.reorder_elements.__name__] = DiagramModel.reorder_elements
             commands[DiagramModel.remove_element.__name__] = DiagramModel.remove_element
         if self.objects.relations(info):
             commands[DiagramModel.update_relation.__name__] = DiagramModel.update_relation

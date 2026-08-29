@@ -32,7 +32,14 @@ class TestWardley:
 
         assert set(application.diagram_description("wardley-beta").commands) == {
             item.operation for item in commands
-        } | {"update_element", "remove_element", "update_relation", "remove_relation"}
+        } | {
+            "update_element",
+            "remove_element",
+            "move_element",
+            "reorder_elements",
+            "update_relation",
+            "remove_relation",
+        }
         assert 'anchor "Business \\"goal\\"" [0.95, 0.63]' in source
         assert 'component "Cup of Tea" [0.79, 0.61] (build)' in source
         assert '"Business \\"goal\\"" -> "Cup of Tea"; needs' in source

@@ -26,6 +26,8 @@ class TestVenn:
         assert set(application.diagram_description("venn-beta").commands) == {item.operation for item in commands} | {
             "update_element",
             "remove_element",
+            "move_element",
+            "reorder_elements",
         }
         assert 'set front["Front \\"end\\""]:20' in source
         assert 'text react["React"]' in source

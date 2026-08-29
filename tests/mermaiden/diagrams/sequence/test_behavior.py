@@ -56,6 +56,8 @@ class TestSequenceDiagram:
         } | {
             "update_element",
             "remove_element",
+            "move_element",
+            "reorder_elements",
             "update_relation",
             "remove_relation",
             "update_annotation",

@@ -31,6 +31,13 @@ class MutationPayloadFactory(ABC):
         object_types: Mapping[str, type[Annotation]],
     ) -> CommandPayload: ...
 
+    @abstractmethod
+    def move_element(
+        self,
+        diagram_name: str,
+        object_types: Mapping[str, type[Element]],
+    ) -> CommandPayload: ...
+
 
 class MutationKernel(ABC):
     @abstractmethod
