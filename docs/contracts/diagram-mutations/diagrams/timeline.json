@@ -1,0 +1,64 @@
+{
+  "diagram_id": "timeline",
+  "root_collection": {
+    "reorder_command": "reorder_elements",
+    "membership": "Exact permutation of current root element IDs."
+  },
+  "elements": {
+    "timeline_event": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "timeline_period"
+        ]
+      },
+      "kind_classification": "immutable"
+    },
+    "timeline_period": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "elements": "move_or_reorder_only"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root",
+          "timeline_section"
+        ]
+      },
+      "child_collection": {
+        "reorder_command": "reorder_elements",
+        "membership": "Exact permutation of current direct child IDs."
+      },
+      "kind_classification": "immutable"
+    },
+    "timeline_section": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "elements": "move_or_reorder_only"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root"
+        ]
+      },
+      "child_collection": {
+        "reorder_command": "reorder_elements",
+        "membership": "Exact permutation of current direct child IDs."
+      },
+      "kind_classification": "immutable"
+    }
+  },
+  "relations": {},
+  "annotations": {}
+}

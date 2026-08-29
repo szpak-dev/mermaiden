@@ -1,0 +1,81 @@
+{
+  "diagram_id": "classDiagram",
+  "root_collection": {
+    "reorder_command": "reorder_elements",
+    "membership": "Exact permutation of current root element IDs."
+  },
+  "elements": {
+    "class": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "attributes": "updateable",
+        "methods": "updateable",
+        "annotations": "updateable",
+        "comment": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root",
+          "class_namespace"
+        ]
+      },
+      "kind_classification": "immutable"
+    },
+    "class_namespace": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "elements": "move_or_reorder_only",
+        "comment": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root"
+        ]
+      },
+      "child_collection": {
+        "reorder_command": "reorder_elements",
+        "membership": "Exact permutation of current direct child IDs."
+      },
+      "kind_classification": "immutable"
+    }
+  },
+  "relations": {
+    "class_relation": {
+      "update_command": "update_relation",
+      "fields": {
+        "id": "immutable",
+        "element_ids": "updateable",
+        "label": "updateable",
+        "relation_kind": "updateable",
+        "source_label": "updateable",
+        "target_label": "updateable"
+      },
+      "retargeting": {
+        "field": "element_ids",
+        "ordered": true
+      },
+      "kind_classification": "immutable"
+    }
+  },
+  "annotations": {
+    "class_note": {
+      "update_command": "update_annotation",
+      "fields": {
+        "id": "immutable",
+        "targets": "updateable",
+        "text": "updateable"
+      },
+      "retargeting": {
+        "field": "targets",
+        "ordered": true
+      },
+      "kind_classification": "immutable"
+    }
+  }
+}

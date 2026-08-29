@@ -1,4 +1,4 @@
-.PHONY: ci compat diagrams-test diagrams-validate format
+.PHONY: ci compat diagrams-test diagrams-validate format mutation-contract
 
 VENV := .venv
 PYTHON := $(VENV)/bin/python
@@ -24,6 +24,9 @@ diagrams-test: diagrams-validate
 format: $(PYTHON)
 	@$(PYTHON) -m ruff format .
 	@$(PYTHON) -m ruff check --fix .
+
+mutation-contract: $(PYTHON)
+	@$(PYTHON) scripts/render_mutation_contract.py --write
 
 ci: $(PYTHON)
 	@$(PYTHON) -m ensurepip --upgrade

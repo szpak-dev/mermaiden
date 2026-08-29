@@ -1,0 +1,199 @@
+{
+  "contract_version": 1,
+  "schema_dialect": "https://json-schema.org/draft/2020-12/schema",
+  "schema_source": "Application.diagram_description()",
+  "payload_schema_sources": {
+    "object.id_schema": "The selected object's public id property schema.",
+    "object.kind_const": "A string const containing the selected catalogued object kind.",
+    "object.updateable_field_schemas": "The selected object's public property schemas whose matrix classification is updateable."
+  },
+  "generation_command": "make mutation-contract",
+  "semantics": [
+    {
+      "name": "Stable identity",
+      "rule": "Object IDs and concrete kinds are immutable; the required kind discriminator must match the selected object and every update and move preserves both."
+    },
+    {
+      "name": "Partial update",
+      "rule": "Only fields in changes are replaced; omitted fields retain their current values."
+    },
+    {
+      "name": "Null",
+      "rule": "Explicit null is accepted only when the selected public field schema is nullable."
+    },
+    {
+      "name": "Strict payloads",
+      "rule": "Unknown payload and change fields are rejected before dispatch; changes contains at least one field."
+    },
+    {
+      "name": "Move",
+      "rule": "Moving changes only direct containment and position, preserves the complete subtree, rejects cycles and incompatible parents, uses an empty parent_id for root, accepts positions 0..N after removing the target, and appends when position is omitted."
+    },
+    {
+      "name": "Reorder",
+      "rule": "Reordering requires an exact, duplicate-free permutation of the selected root or container's current direct member IDs; an empty parent_id selects root."
+    },
+    {
+      "name": "Retarget",
+      "rule": "Relation members and annotation targets are ordered, preserve the owning object ID, and run existing reference, cardinality, kind, uniqueness, and diagram constraints."
+    },
+    {
+      "name": "No-op",
+      "rule": "An unchanged patch, current placement, or current exact order is accepted without changing rendered or persisted state."
+    },
+    {
+      "name": "Atomic rejection",
+      "rule": "Argument, operation, constraint, and unexpected failures restore the byte-for-byte snapshot that existed before the command."
+    },
+    {
+      "name": "Invalid pre-state",
+      "rule": "Update, move, and reorder commit only when the resulting state can commit, even when the pre-state was already invalid."
+    },
+    {
+      "name": "Discovery",
+      "rule": "Each supported operation has one name and a strict JSON-shaped schema discoverable through diagram_description and command_payload."
+    }
+  ],
+  "commands": {
+    "update_element": {
+      "applies_to": "elements",
+      "payload_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "kind",
+          "changes"
+        ],
+        "properties": {
+          "id": {
+            "$source": "object.id_schema"
+          },
+          "kind": {
+            "$source": "object.kind_const"
+          },
+          "changes": {
+            "type": "object",
+            "additionalProperties": false,
+            "minProperties": 1,
+            "properties": {
+              "$source": "object.updateable_field_schemas"
+            }
+          }
+        }
+      }
+    },
+    "update_relation": {
+      "applies_to": "relations",
+      "payload_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "kind",
+          "changes"
+        ],
+        "properties": {
+          "id": {
+            "$source": "object.id_schema"
+          },
+          "kind": {
+            "$source": "object.kind_const"
+          },
+          "changes": {
+            "type": "object",
+            "additionalProperties": false,
+            "minProperties": 1,
+            "properties": {
+              "$source": "object.updateable_field_schemas"
+            }
+          }
+        }
+      }
+    },
+    "update_annotation": {
+      "applies_to": "annotations",
+      "payload_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "kind",
+          "changes"
+        ],
+        "properties": {
+          "id": {
+            "$source": "object.id_schema"
+          },
+          "kind": {
+            "$source": "object.kind_const"
+          },
+          "changes": {
+            "type": "object",
+            "additionalProperties": false,
+            "minProperties": 1,
+            "properties": {
+              "$source": "object.updateable_field_schemas"
+            }
+          }
+        }
+      }
+    },
+    "move_element": {
+      "applies_to": "elements",
+      "payload_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "kind",
+          "parent_id"
+        ],
+        "properties": {
+          "id": {
+            "$source": "object.id_schema"
+          },
+          "kind": {
+            "$source": "object.kind_const"
+          },
+          "parent_id": {
+            "type": "string"
+          },
+          "position": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "reorder_elements": {
+      "applies_to": "root and container direct element collections",
+      "payload_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "parent_id",
+          "element_ids"
+        ],
+        "properties": {
+          "parent_id": {
+            "type": "string"
+          },
+          "element_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          }
+        }
+      }
+    }
+  },
+  "classifications": {
+    "updateable": "Public semantic field; partial update preserves object identity.",
+    "move_or_reorder_only": "Containment and order are owned by move/reorder commands.",
+    "immutable": "Stable object identity or concrete kind."
+  }
+}

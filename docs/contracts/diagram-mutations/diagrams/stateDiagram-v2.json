@@ -1,0 +1,169 @@
+{
+  "diagram_id": "stateDiagram-v2",
+  "root_collection": {
+    "reorder_command": "reorder_elements",
+    "membership": "Exact permutation of current root element IDs."
+  },
+  "elements": {
+    "choice": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root",
+          "composite_state"
+        ]
+      },
+      "kind_classification": "immutable"
+    },
+    "composite_state": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable",
+        "elements": "move_or_reorder_only"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root",
+          "composite_state"
+        ]
+      },
+      "child_collection": {
+        "reorder_command": "reorder_elements",
+        "membership": "Exact permutation of current direct child IDs."
+      },
+      "kind_classification": "immutable"
+    },
+    "final": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root",
+          "composite_state"
+        ]
+      },
+      "kind_classification": "immutable"
+    },
+    "fork": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root",
+          "composite_state"
+        ]
+      },
+      "kind_classification": "immutable"
+    },
+    "initial": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root",
+          "composite_state"
+        ]
+      },
+      "kind_classification": "immutable"
+    },
+    "join": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root",
+          "composite_state"
+        ]
+      },
+      "kind_classification": "immutable"
+    },
+    "state": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root",
+          "composite_state"
+        ]
+      },
+      "kind_classification": "immutable"
+    },
+    "state_node": {
+      "update_command": "update_element",
+      "fields": {
+        "id": "immutable",
+        "label": "updateable"
+      },
+      "placement": {
+        "move_command": "move_element",
+        "allowed_parents": [
+          "$root",
+          "composite_state"
+        ]
+      },
+      "kind_classification": "immutable"
+    }
+  },
+  "relations": {
+    "state_transition": {
+      "update_command": "update_relation",
+      "fields": {
+        "id": "immutable",
+        "element_ids": "updateable",
+        "label": "updateable",
+        "scope_id": "updateable",
+        "source_terminal": "updateable",
+        "target_terminal": "updateable"
+      },
+      "retargeting": {
+        "field": "element_ids",
+        "ordered": true
+      },
+      "kind_classification": "immutable"
+    }
+  },
+  "annotations": {
+    "state_note": {
+      "update_command": "update_annotation",
+      "fields": {
+        "id": "immutable",
+        "targets": "updateable",
+        "text": "updateable",
+        "position": "updateable",
+        "scope_id": "updateable"
+      },
+      "retargeting": {
+        "field": "targets",
+        "ordered": true
+      },
+      "kind_classification": "immutable"
+    }
+  }
+}
