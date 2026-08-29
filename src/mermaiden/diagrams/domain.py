@@ -129,7 +129,7 @@ class DiagramModel(DiagramAggregate):
         id: str,
         kind: str,
         parent_id: str,
-        position: int | None = None,
+        position: int | None,
     ) -> ChangeReport:
         return self.mutations.move_element(self, id, kind, parent_id, position)
 

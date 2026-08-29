@@ -41,7 +41,7 @@ class DiagramCommandCatalog:
             return self.mutation_payloads.annotation(info.diagram_type.__name__, self.objects.annotations(info))
         if method is DiagramModel.move_element:
             return self.mutation_payloads.move_element(info.diagram_type.__name__, self.objects.elements(info))
-        return CommandPayloadSchema(self._payload_schema(method))
+        return CommandPayloadSchema(self._payload_schema(method), ())
 
     def validate(
         self,

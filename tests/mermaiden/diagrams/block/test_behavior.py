@@ -31,6 +31,8 @@ class TestBlock:
             "add_group",
             "update_element",
             "remove_element",
+            "move_element",
+            "reorder_elements",
         }
         assert 'front["Front \\"end\\""]' in source
         assert "space" in source

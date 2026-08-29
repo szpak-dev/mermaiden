@@ -26,6 +26,8 @@ class TestGitGraph:
         assert set(application.diagram_description("gitGraph").commands) == {item.operation for item in commands} | {
             "update_element",
             "remove_element",
+            "move_element",
+            "reorder_elements",
             "update_relation",
             "remove_relation",
         }

@@ -30,6 +30,8 @@ class TestMindmap:
         assert set(application.diagram_description("mindmap").commands) == {item.operation for item in commands} | {
             "update_element",
             "remove_element",
+            "move_element",
+            "reorder_elements",
         }
         for fragment in ('["Square"]', '("Rounded")', '(("Circle"))', '))"Bang"((', ')"Cloud"(', '{{"Hexagon"}}'):
             assert fragment in source

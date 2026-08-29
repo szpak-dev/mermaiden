@@ -50,6 +50,8 @@ class TestEntityRelationshipDiagram:
             "add_relationship",
             "update_element",
             "remove_element",
+            "move_element",
+            "reorder_elements",
             "update_relation",
             "remove_relation",
         }

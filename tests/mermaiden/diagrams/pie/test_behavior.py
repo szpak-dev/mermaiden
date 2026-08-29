@@ -25,6 +25,8 @@ class TestPie:
         assert set(application.diagram_description("pie").commands) == {item.operation for item in commands} | {
             "update_element",
             "remove_element",
+            "move_element",
+            "reorder_elements",
         }
         assert "pie showData" in source
         assert 'title "Adopted \\"pets\\""' in source

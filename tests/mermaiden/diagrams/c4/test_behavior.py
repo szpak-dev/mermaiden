@@ -44,6 +44,8 @@ class TestC4:
             "set_relationship_label_offset",
             "update_element",
             "remove_element",
+            "move_element",
+            "reorder_elements",
             "update_relation",
             "remove_relation",
         }

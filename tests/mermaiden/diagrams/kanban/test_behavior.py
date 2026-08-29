@@ -34,6 +34,8 @@ class TestKanban:
         assert set(application.diagram_description("kanban").commands) == {item.operation for item in commands} | {
             "update_element",
             "remove_element",
+            "move_element",
+            "reorder_elements",
         }
         assert 'todo["To \\"do\\""]' in source
         assert 'docs["Write docs"]' in source

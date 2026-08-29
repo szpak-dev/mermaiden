@@ -33,7 +33,14 @@ class TestSwimlane:
 
         assert set(application.diagram_description("swimlane-beta").commands) == {
             item.operation for item in commands
-        } | {"update_element", "remove_element", "update_relation", "remove_relation"}
+        } | {
+            "update_element",
+            "remove_element",
+            "move_element",
+            "reorder_elements",
+            "update_relation",
+            "remove_relation",
+        }
         for fragment in (
             "subgraph",
             'e_v_start(["Start"])',

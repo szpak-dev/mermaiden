@@ -44,7 +44,14 @@ class TestRequirementDiagram:
 
         assert set(application.diagram_description("requirementDiagram").commands) == {
             item.operation for item in commands
-        } | {"update_element", "remove_element", "update_relation", "remove_relation"}
+        } | {
+            "update_element",
+            "remove_element",
+            "move_element",
+            "reorder_elements",
+            "update_relation",
+            "remove_relation",
+        }
         assert "functionalRequirement" in source
         assert 'text: "Users \\"sign in\\""' in source
         assert "element" in source

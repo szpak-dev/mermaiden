@@ -26,6 +26,8 @@ class TestTimeline:
         assert set(application.diagram_description("timeline").commands) == {item.operation for item in commands} | {
             "update_element",
             "remove_element",
+            "move_element",
+            "reorder_elements",
         }
         assert 'title Project "history"' in source
         assert "section Foundation" in source
