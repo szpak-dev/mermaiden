@@ -5,7 +5,7 @@ from typing import cast
 
 import pytest
 
-from mermaiden import Application
+from mermaiden.application import Application, DiagramCommand
 
 MATRIX_ROOT = Path(__file__).resolve().parents[3] / "docs" / "contracts" / "diagram-mutations" / "diagrams"
 
@@ -49,44 +49,53 @@ class TestObjectUpdates:
     ) -> None:
         application = Application.create()
         diagram = application.create_diagram("sequenceDiagram")
-        application.execute(
+        application.apply(
             diagram,
-            "add_participant",
-            {"id": "participant_example", "label": "Participant Example"},
+            DiagramCommand("add_participant", {"id": "participant_example", "label": "Participant Example"}),
         )
         before = application.snapshot(diagram).to_dict()
 
         with pytest.raises(RuntimeError, match=message):
-            application.execute(diagram, "update_element", arguments)
+            application.apply(diagram, DiagramCommand("update_element", arguments))
 
         assert application.snapshot(diagram).to_dict() == before
 
     def test_rejects_invalid_relation_references_without_changing_the_snapshot(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("sequenceDiagram")
-        application.execute(diagram, "add_participant", {"id": "first_example", "label": "First Example"})
-        application.execute(diagram, "add_participant", {"id": "second_example", "label": "Second Example"})
-        application.execute(
+        application.apply(
             diagram,
-            "add_message",
-            {
-                "id": "message_example",
-                "source_id": "first_example",
-                "target_id": "second_example",
-                "label": "Message Example",
-            },
+            DiagramCommand("add_participant", {"id": "first_example", "label": "First Example"}),
+        )
+        application.apply(
+            diagram,
+            DiagramCommand("add_participant", {"id": "second_example", "label": "Second Example"}),
+        )
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_message",
+                {
+                    "id": "message_example",
+                    "source_id": "first_example",
+                    "target_id": "second_example",
+                    "label": "Message Example",
+                },
+            ),
         )
         before = application.snapshot(diagram).to_dict()
 
         with pytest.raises(RuntimeError, match="unknown"):
-            application.execute(
+            application.apply(
                 diagram,
-                "update_relation",
-                {
-                    "id": "message_example",
-                    "kind": "message",
-                    "changes": {"element_ids": ["first_example", "missing_example"]},
-                },
+                DiagramCommand(
+                    "update_relation",
+                    {
+                        "id": "message_example",
+                        "kind": "message",
+                        "changes": {"element_ids": ["first_example", "missing_example"]},
+                    },
+                ),
             )
 
         assert application.snapshot(diagram).to_dict() == before
@@ -94,23 +103,30 @@ class TestObjectUpdates:
     def test_rejects_invalid_annotation_targets_without_changing_the_snapshot(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("sequenceDiagram")
-        application.execute(diagram, "add_participant", {"id": "first_example", "label": "First Example"})
-        application.execute(
+        application.apply(
             diagram,
-            "add_note",
-            {"id": "note_example", "text": "Note Example", "participant_ids": ["first_example"]},
+            DiagramCommand("add_participant", {"id": "first_example", "label": "First Example"}),
+        )
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_note",
+                {"id": "note_example", "text": "Note Example", "participant_ids": ["first_example"]},
+            ),
         )
         before = application.snapshot(diagram).to_dict()
 
         with pytest.raises(RuntimeError, match="unknown"):
-            application.execute(
+            application.apply(
                 diagram,
-                "update_annotation",
-                {
-                    "id": "note_example",
-                    "kind": "sequence_note",
-                    "changes": {"targets": [{"kind": "element", "id": "missing_example"}]},
-                },
+                DiagramCommand(
+                    "update_annotation",
+                    {
+                        "id": "note_example",
+                        "kind": "sequence_note",
+                        "changes": {"targets": [{"kind": "element", "id": "missing_example"}]},
+                    },
+                ),
             )
 
         assert application.snapshot(diagram).to_dict() == before
@@ -158,29 +174,41 @@ class TestObjectUpdates:
     def test_partial_element_updates_distinguish_omission_from_explicit_null(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("flowchart")
-        application.execute(diagram, "add_start", {"id": "start_example", "label": "Start Example"})
-        application.execute(diagram, "add_end", {"id": "end_example", "label": "End Example"})
-        application.execute(
+        application.apply(diagram, DiagramCommand("add_start", {"id": "start_example", "label": "Start Example"}))
+        application.apply(diagram, DiagramCommand("add_end", {"id": "end_example", "label": "End Example"}))
+        application.apply(
             diagram,
-            "add_flow",
-            {"id": "flow_example", "source_id": "start_example", "target_id": "end_example"},
+            DiagramCommand(
+                "add_flow",
+                {"id": "flow_example", "source_id": "start_example", "target_id": "end_example"},
+            ),
         )
-        application.execute(
+        application.apply(
             diagram,
-            "add_group",
-            {"id": "group_example", "label": "Group Example", "direction": "LR"},
+            DiagramCommand(
+                "add_group",
+                {"id": "group_example", "label": "Group Example", "direction": "LR"},
+            ),
         )
 
-        application.execute(
+        application.apply(
             diagram,
-            "update_element",
-            {"id": "group_example", "kind": "flow_group", "changes": {"label": "Updated Group Example"}},
+            DiagramCommand(
+                "update_element",
+                {
+                    "id": "group_example",
+                    "kind": "flow_group",
+                    "changes": {"label": "Updated Group Example"},
+                },
+            ),
         )
         omitted = self._fields(application.snapshot(diagram).to_dict(), "elements", "group_example")
-        application.execute(
+        application.apply(
             diagram,
-            "update_element",
-            {"id": "group_example", "kind": "flow_group", "changes": {"direction": None}},
+            DiagramCommand(
+                "update_element",
+                {"id": "group_example", "kind": "flow_group", "changes": {"direction": None}},
+            ),
         )
         cleared = self._fields(application.snapshot(diagram).to_dict(), "elements", "group_example")
 
@@ -194,22 +222,32 @@ class TestObjectUpdates:
     def test_relation_updates_preserve_identity_and_relation_targeted_annotations(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("sequenceDiagram")
-        application.execute(diagram, "add_participant", {"id": "first_example", "label": "First Example"})
-        application.execute(diagram, "add_participant", {"id": "second_example", "label": "Second Example"})
-        application.execute(
+        application.apply(
             diagram,
-            "add_message",
-            {
-                "id": "message_example",
-                "source_id": "first_example",
-                "target_id": "second_example",
-                "label": "Message Example",
-            },
+            DiagramCommand("add_participant", {"id": "first_example", "label": "First Example"}),
         )
-        application.execute(
+        application.apply(
             diagram,
-            "add_note",
-            {"id": "note_example", "text": "Note Example", "participant_ids": ["first_example"]},
+            DiagramCommand("add_participant", {"id": "second_example", "label": "Second Example"}),
+        )
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_message",
+                {
+                    "id": "message_example",
+                    "source_id": "first_example",
+                    "target_id": "second_example",
+                    "label": "Message Example",
+                },
+            ),
+        )
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_note",
+                {"id": "note_example", "text": "Note Example", "participant_ids": ["first_example"]},
+            ),
         )
         payload = application.snapshot(diagram).to_dict()
         note = self._object(payload, "annotations", "note_example")
@@ -221,10 +259,16 @@ class TestObjectUpdates:
         diagram = application.restore(payload)
         note_before = self._object(application.snapshot(diagram).to_dict(), "annotations", "note_example")
 
-        application.execute(
+        application.apply(
             diagram,
-            "update_relation",
-            {"id": "message_example", "kind": "message", "changes": {"label": "Updated Message Example"}},
+            DiagramCommand(
+                "update_relation",
+                {
+                    "id": "message_example",
+                    "kind": "message",
+                    "changes": {"label": "Updated Message Example"},
+                },
+            ),
         )
         snapshot = application.snapshot(diagram).to_dict()
         restored = application.restore(json.loads(json.dumps(snapshot)))
@@ -238,28 +282,38 @@ class TestObjectUpdates:
     def test_annotation_updates_preserve_target_order_and_survive_restore(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("sequenceDiagram")
-        application.execute(diagram, "add_participant", {"id": "first_example", "label": "First Example"})
-        application.execute(diagram, "add_participant", {"id": "second_example", "label": "Second Example"})
-        application.execute(
+        application.apply(
             diagram,
-            "add_note",
-            {"id": "note_example", "text": "Note Example", "participant_ids": ["first_example"]},
+            DiagramCommand("add_participant", {"id": "first_example", "label": "First Example"}),
+        )
+        application.apply(
+            diagram,
+            DiagramCommand("add_participant", {"id": "second_example", "label": "Second Example"}),
+        )
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_note",
+                {"id": "note_example", "text": "Note Example", "participant_ids": ["first_example"]},
+            ),
         )
 
-        application.execute(
+        application.apply(
             diagram,
-            "update_annotation",
-            {
-                "id": "note_example",
-                "kind": "sequence_note",
-                "changes": {
-                    "targets": [
-                        {"kind": "element", "id": "second_example"},
-                        {"kind": "element", "id": "first_example"},
-                    ],
-                    "text": "Updated Note Example",
+            DiagramCommand(
+                "update_annotation",
+                {
+                    "id": "note_example",
+                    "kind": "sequence_note",
+                    "changes": {
+                        "targets": [
+                            {"kind": "element", "id": "second_example"},
+                            {"kind": "element", "id": "first_example"},
+                        ],
+                        "text": "Updated Note Example",
+                    },
                 },
-            },
+            ),
         )
         snapshot = application.snapshot(diagram).to_dict()
         targets = cast(list[object], self._fields(snapshot, "annotations", "note_example")["targets"])
@@ -275,28 +329,35 @@ class TestObjectUpdates:
         application = Application.create()
         diagram = application.create_diagram("architecture-beta")
         for id in ("first_example", "second_example", "third_example"):
-            application.execute(diagram, "add_service", {"id": id, "label": id.replace("_", " ").title()})
-        application.execute(
+            application.apply(
+                diagram,
+                DiagramCommand("add_service", {"id": id, "label": id.replace("_", " ").title()}),
+            )
+        application.apply(
             diagram,
-            "add_alignment",
-            {
-                "id": "alignment_example",
-                "axis": "row",
-                "member_ids": ["first_example", "second_example", "third_example"],
-            },
+            DiagramCommand(
+                "add_alignment",
+                {
+                    "id": "alignment_example",
+                    "axis": "row",
+                    "member_ids": ["first_example", "second_example", "third_example"],
+                },
+            ),
         )
 
-        application.execute(
+        application.apply(
             diagram,
-            "update_relation",
-            {
-                "id": "alignment_example",
-                "kind": "alignment",
-                "changes": {
-                    "axis": "column",
-                    "element_ids": ["third_example", "second_example", "first_example"],
+            DiagramCommand(
+                "update_relation",
+                {
+                    "id": "alignment_example",
+                    "kind": "alignment",
+                    "changes": {
+                        "axis": "column",
+                        "element_ids": ["third_example", "second_example", "first_example"],
+                    },
                 },
-            },
+            ),
         )
         report = application.validate_render(diagram)
 

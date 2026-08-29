@@ -60,6 +60,77 @@ payload_type = application.command_payload("sequenceDiagram", "add_participant")
 payload = payload_type.model_validate({"id": "api", "kind": "control"})
 ```
 
+## Updating and moving elements
+
+Mutation arguments are JSON-shaped and validated before the diagram changes. Updates preserve identity, moves preserve the complete subtree, and reorders require the exact current members of one collection. Rejected mutations leave the complete snapshot unchanged.
+
+<!-- mutation-conformance-example:start -->
+```python
+from mermaiden import Application
+
+application = Application.create()
+diagram = application.create_diagram("block")
+application.execute(diagram, "add_group", {"id": "source_example", "label": "Source Example"})
+application.execute(diagram, "add_group", {"id": "target_example", "label": "Target Example"})
+for id, label in (
+    ("first_example", "First Example"),
+    ("second_example", "Second Example"),
+    ("third_example", "Third Example"),
+):
+    application.execute(
+        diagram,
+        "add_block",
+        {"id": id, "label": label, "parent_id": "source_example"},
+    )
+
+application.execute(
+    diagram,
+    "update_element",
+    {"id": "first_example", "kind": "block_node", "changes": {"label": "Updated First Example"}},
+)
+application.execute(
+    diagram,
+    "move_element",
+    {"id": "first_example", "kind": "block_node", "parent_id": "target_example", "position": 0},
+)
+application.execute(
+    diagram,
+    "reorder_elements",
+    {"parent_id": "source_example", "element_ids": ["third_example", "second_example"]},
+)
+
+for operation, arguments in (
+    (
+        "update_element",
+        {"id": "first_example", "kind": "block_node", "changes": {"id": "renamed_example"}},
+    ),
+    (
+        "move_element",
+        {"id": "second_example", "kind": "block_node", "parent_id": "third_example"},
+    ),
+    (
+        "reorder_elements",
+        {"parent_id": "source_example", "element_ids": ["second_example"]},
+    ),
+):
+    before = application.snapshot(diagram).to_dict()
+    try:
+        application.execute(diagram, operation, arguments)
+    except RuntimeError:
+        pass
+    else:
+        raise AssertionError(f"{operation} unexpectedly succeeded")
+    assert application.snapshot(diagram).to_dict() == before
+
+snapshot = application.snapshot(diagram).to_dict()
+restored = application.restore(snapshot)
+assert application.snapshot(restored).to_dict() == snapshot
+assert application.render(restored) == application.render(diagram)
+report = application.validate_render(restored)
+assert report.success and report.svg
+```
+<!-- mutation-conformance-example:end -->
+
 ## Development
 
 The repository uses a single host-mode CI target:

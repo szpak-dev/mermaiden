@@ -28,6 +28,25 @@ class TestC4:
                 {"id": "events", "label": "Events", "description": "Publishes events", "technology": "Kafka"},
             ),
         )
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_relationship",
+                {
+                    "id": "relationship_example",
+                    "source_id": "user",
+                    "target_id": "app",
+                    "label": "Uses Example",
+                },
+            ),
+        )
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "set_relationship_label_offset",
+                {"id": "relationship_example", "offset_x": 12, "offset_y": -6},
+            ),
+        )
 
         source = application.render(diagram)
 
