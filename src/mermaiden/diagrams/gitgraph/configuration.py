@@ -1,4 +1,4 @@
-from ..configuration import MermaidConfigurationModel, MermaidDiagramConfiguration
+from ..domain import MermaidConfigurationModel, MermaidDiagramConfiguration
 
 
 class GitGraphNodeLabel(MermaidConfigurationModel):

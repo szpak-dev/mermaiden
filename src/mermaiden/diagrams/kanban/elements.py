@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from ...core.element import Container, Entity
+from ...core.domain import Container, Entity
 
 
 class KanbanPriority(StrEnum):

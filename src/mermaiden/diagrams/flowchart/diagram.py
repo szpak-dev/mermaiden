@@ -4,11 +4,11 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import ChangeReport
+from ...core.domain import ChangeReport
 from ..domain import DiagramDefinition, DiagramModel
 from .annotations import Notes
 from .configuration import FlowchartDiagramConfiguration
-from .constraints import FlowchartConstraint
+from .constraints.domain import FlowchartConstraint
 from .elements import (
     Action,
     DataStore,

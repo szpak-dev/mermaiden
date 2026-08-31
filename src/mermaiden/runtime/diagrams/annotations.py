@@ -3,8 +3,7 @@ from dataclasses import dataclass, replace
 
 from pydantic import ValidationError
 
-from ...core.annotation import Annotation, TargetKind
-from ...core.error import OperationError
+from ...core.domain import Annotation, OperationError, TargetKind
 from .state import DiagramData, DiagramState
 
 

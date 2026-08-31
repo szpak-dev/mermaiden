@@ -5,7 +5,7 @@ from typing import Annotated, ClassVar
 from pydantic import Field
 from wireup import injectable
 
-from ...core.constraint import ChangeReport
+from ...core.domain import ChangeReport
 from ..domain import DiagramDefinition, DiagramModel
 from .annotations import NotePosition, SequenceNotes
 from .configuration import SequenceDiagramConfiguration

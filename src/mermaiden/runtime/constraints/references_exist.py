@@ -1,7 +1,6 @@
 from wireup import injectable
 
-from ...core.annotation import TargetKind
-from ...core.constraint import Constraint, ConstraintDiagram, Violation
+from ...core.domain import Constraint, ConstraintDiagram, TargetKind, Violation
 from ..domain import StructureConstraint
 
 

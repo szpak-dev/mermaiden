@@ -4,12 +4,12 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import ChangeReport
+from ...core.domain import ChangeReport
 from ..domain import DiagramDefinition, DiagramModel
 from ..flowchart.elements import Direction
 from .annotations import NotePosition, StateNote, StateNotes
 from .configuration import StateDiagramConfiguration
-from .constraints import StateDiagramConstraint
+from .constraints.domain import StateDiagramConstraint
 from .elements import Choice, CompositeState, Final, Fork, Initial, Join, State, StateNode
 from .relations import StateTransition
 

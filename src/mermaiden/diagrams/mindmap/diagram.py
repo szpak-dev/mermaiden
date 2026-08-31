@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import ChangeReport
+from ...core.domain import ChangeReport
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import MindmapDiagramConfiguration
 from .constraints import MindmapConstraint

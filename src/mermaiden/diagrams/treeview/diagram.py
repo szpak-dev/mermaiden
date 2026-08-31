@@ -4,11 +4,11 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import ChangeReport
+from ...core.domain import ChangeReport
 from ..domain import DiagramDefinition, DiagramModel
 from .annotations import TreeAnnotations
 from .configuration import TreeViewDiagramConfiguration
-from .constraints import TreeViewConstraint
+from .constraints.domain import TreeViewConstraint
 from .elements import TreeItem
 from .relations import TreeBranch
 

@@ -1,9 +1,6 @@
 from dataclasses import dataclass, field
 
-from ...core.annotation import Annotation
-from ...core.element import Element
-from ...core.error import OperationError
-from ...core.relation import Relation
+from ...core.domain import Annotation, Element, OperationError, Relation
 
 
 @dataclass(frozen=True, slots=True)

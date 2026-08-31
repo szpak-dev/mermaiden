@@ -4,7 +4,7 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 from wireup import injectable
 
-from ...core.diagram import DiagramView
+from ...core.domain import DiagramView
 from .value_formatter import MermaidValueFormatter
 
 

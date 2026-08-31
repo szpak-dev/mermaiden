@@ -1,0 +1,16 @@
+from wireup import injectable
+
+from ....core.domain import ConstraintDiagram, Violation
+from ..elements import Swimlane
+from .domain import SwimlaneConstraint
+
+
+@injectable(as_type=SwimlaneConstraint, qualifier="lanes_are_top_level")
+class LanesAreTopLevel(SwimlaneConstraint):
+    def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
+        root_ids = {item.id for item in diagram.root_elements if isinstance(item, Swimlane)}
+        return tuple(
+            self.violation(f"Lane '{lane.id}' must be top-level.", path=f"elements.{lane.id}")
+            for lane in diagram.walk_elements()
+            if isinstance(lane, Swimlane) and lane.id not in root_ids
+        )

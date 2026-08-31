@@ -4,11 +4,11 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import ChangeReport
+from ...core.domain import ChangeReport
 from ..domain import DiagramDefinition, DiagramModel
 from ..flowchart.elements import Direction
 from .configuration import SwimlaneConfiguration
-from .constraints import SwimlaneConstraint
+from .constraints.domain import SwimlaneConstraint
 from .elements import Activity, Connector, Decision, End, Start, Swimlane, SwimlaneNode
 from .relations import ConditionalFlow, Flow
 

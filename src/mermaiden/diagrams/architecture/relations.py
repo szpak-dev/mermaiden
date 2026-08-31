@@ -3,7 +3,7 @@ from typing import Self
 
 from pydantic import Field, model_validator
 
-from ...core.relation import Relation
+from ...core.domain import Relation
 
 
 class Port(StrEnum):

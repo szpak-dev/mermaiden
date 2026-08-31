@@ -1,10 +1,7 @@
 from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
 
-from ..core.annotation import Annotation
-from ..core.constraint import ChangeReport
-from ..core.element import Element
-from ..core.relation import Relation
+from ..core.domain import Annotation, ChangeReport, Element, Relation
 from ..domain import CommandPayload
 from ..runtime.diagrams.aggregate import DiagramAggregate
 

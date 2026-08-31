@@ -4,14 +4,19 @@ from typing import Never, Protocol
 
 from wireup import injectable
 
-from ...core.annotation import Annotation, TargetKind
-from ...core.constraint import ChangeReport, DiagramObjectKind, DiagramObjectReference, ValidationReport
-from ...core.diagram import Diagram
-from ...core.element import Element
-from ...core.error import OperationError
-from ...core.relation import Relation
-from ..application import DiagramRuntime
-from ..domain import ConstraintInspection
+from ...core.domain import (
+    Annotation,
+    ChangeReport,
+    Diagram,
+    DiagramObjectKind,
+    DiagramObjectReference,
+    Element,
+    OperationError,
+    Relation,
+    TargetKind,
+    ValidationReport,
+)
+from ..domain import ConstraintInspection, DiagramRuntime
 from .state import DiagramData
 
 

@@ -1,7 +1,6 @@
 from enum import StrEnum
 
-from ...core.element import Container, Entity
-from ...core.model import ValueModel
+from ...core.domain import Container, Entity, ValueModel
 
 
 class Visibility(StrEnum):

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 from wireup import injectable
 
-from ...core.diagram import DiagramView
+from ...core.domain import DiagramView
 from ..application import MermaidApplication
 from .cli import MermaidCli
 from .domain import (

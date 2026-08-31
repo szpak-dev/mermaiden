@@ -4,7 +4,7 @@ from typing import Any, cast
 
 from wireup import injectable
 
-from ...core.diagram import Diagram
+from ...core.domain import Diagram
 from .configuration import DiagramConfigurationReader
 from .domain import SNAPSHOT_VERSION, TRANSIENT_DIAGRAM_FIELDS, DiagramSnapshot
 from .value_encoder import SnapshotValueEncoder

@@ -2,7 +2,7 @@ from collections import Counter
 
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, Violation
+from ...core.domain import Constraint, ConstraintDiagram, Violation
 from ..domain import StructureConstraint
 
 

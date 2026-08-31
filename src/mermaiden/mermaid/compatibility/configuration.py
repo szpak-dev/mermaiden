@@ -47,8 +47,7 @@ class MermaidConfiguration:
             for error in sorted(errors, key=lambda error: list(error.absolute_path))
         )
 
-    @staticmethod
-    def extract(source: str) -> Mapping[str, Any]:
+    def extract(self, source: str) -> Mapping[str, Any]:
         if not source.startswith("---\n"):
             return {}
         _, frontmatter, _ = source.split("---\n", 2)

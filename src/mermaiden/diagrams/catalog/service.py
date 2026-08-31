@@ -4,8 +4,8 @@ from dataclasses import dataclass
 from wireup import injectable
 
 from ...domain import CommandPayload, ValidatedCommandPayload
-from ..application import DiagramInfo, DiagramsApplication
-from ..domain import DiagramModel
+from ..application import DiagramsApplication
+from ..domain import DiagramInfo, DiagramModel
 from .commands import DiagramCommandCatalog
 from .models import DiagramDescription
 from .objects import DiagramObjectCatalog

@@ -3,8 +3,7 @@ from dataclasses import dataclass
 
 from wireup import injectable
 
-from ..core.constraint import ChangeReport
-from ..core.error import OperationError
+from ..core.domain import ChangeReport, OperationError
 from ..runtime.diagrams.aggregate import DiagramAggregate
 from ..runtime.diagrams.state import DiagramData
 from .domain import MutationKernel
@@ -98,8 +97,8 @@ class DiagramMutationKernel(MutationKernel):
             raise
         return self._commit(diagram, operation, candidate)
 
-    @staticmethod
     def _commit(
+        self,
         diagram: DiagramAggregate,
         operation: str,
         candidate: DiagramData,

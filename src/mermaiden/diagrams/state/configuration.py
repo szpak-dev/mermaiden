@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from ..configuration import MermaidDiagramConfiguration
+from ..domain import MermaidDiagramConfiguration
 
 
 class StateRenderer(StrEnum):

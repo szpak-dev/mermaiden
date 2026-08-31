@@ -3,8 +3,7 @@ from dataclasses import dataclass, replace
 
 from pydantic import ValidationError
 
-from ...core.element import Container, Element
-from ...core.error import OperationError
+from ...core.domain import Container, Element, OperationError
 from .state import DiagramData, DiagramState
 
 
@@ -99,8 +98,8 @@ class Elements:
             raise OperationError(f"Element '{id}' is duplicated.")
         return next(iter(matches))
 
-    @staticmethod
     def _validate_update(
+        self,
         target: Element,
         kind: str,
         changes: Mapping[str, object],

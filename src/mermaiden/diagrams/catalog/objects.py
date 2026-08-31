@@ -6,11 +6,8 @@ from inspect import getmembers, isclass
 
 from wireup import injectable
 
-from ...core.annotation import Annotation
-from ...core.element import Element
-from ...core.model import ClassifiedValueModel
-from ...core.relation import Relation
-from ..application import DiagramInfo
+from ...core.domain import Annotation, ClassifiedValueModel, Element, Relation
+from ..domain import DiagramInfo
 
 
 @injectable(lifetime="scoped")

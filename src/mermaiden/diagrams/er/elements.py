@@ -1,12 +1,11 @@
-from ...core.element import Container
-from ...core.element import Entity as EntityNode
+from ...core import domain
 
 
-class EntityAttribute(EntityNode):
+class EntityAttribute(domain.Entity):
     data_type: str = "string"
     keys: tuple[str, ...] = ()
     comment: str = ""
 
 
-class Entity(Container):
+class Entity(domain.Container):
     pass

@@ -5,11 +5,11 @@ from typing import Annotated, ClassVar
 from pydantic import Field
 from wireup import injectable
 
-from ...core.constraint import ChangeReport
+from ...core.domain import ChangeReport
 from ..domain import DiagramDefinition, DiagramModel
 from .annotations import ArchitectureNotes
 from .configuration import ArchitectureDiagramConfiguration
-from .constraints import ArchitectureConstraint
+from .constraints.structure import ArchitectureConstraint
 from .elements import ArchitectureGroup, Junction, Service
 from .relations import Alignment, AlignmentAxis, Edge, Port
 

@@ -5,10 +5,7 @@ from pydantic import TypeAdapter
 from pydantic_core import CoreSchema, core_schema
 from wireup import injectable
 
-from ...core.annotation import Annotation
-from ...core.element import Element
-from ...core.model import ClassifiedValueModel
-from ...core.relation import Relation
+from ...core.domain import Annotation, ClassifiedValueModel, Element, Relation
 from ...domain import CommandPayload, CommandPayloadSchema
 from ..domain import MutationPayloadFactory
 

@@ -1,4 +1,4 @@
-from ...core.element import Container
+from ...core.domain import Container
 
 
 class MindmapNode(Container):

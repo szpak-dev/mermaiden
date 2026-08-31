@@ -3,22 +3,58 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Annotated, ClassVar, cast
 
-from pydantic import Field
+from pydantic import BaseModel, ConfigDict, Field, SerializeAsAny
 
-from ..core.constraint import (
+from ..core.domain import (
     BlockingConstraint,
     ChangeReport,
     Constraint,
     ConstraintDiagram,
+    Container,
+    Diagram,
+    RequiresChildren,
     ValidationReport,
     Violation,
 )
-from ..core.diagram import Diagram
-from ..core.element import Container, RequiresChildren
 from ..mutations.domain import MutationKernel
 from ..runtime.diagrams.aggregate import DiagramAggregate
 from ..runtime.domain import ConstraintInspection
-from .configuration import MermaidDiagramConfiguration
+
+
+class MermaidConfigurationNaming:
+    @classmethod
+    def to_camel_case(cls, value: str) -> str:
+        first, *remaining = value.split("_")
+        return first + "".join(word.capitalize() for word in remaining)
+
+
+class MermaidConfigurationModel(BaseModel):
+    model_config = ConfigDict(
+        alias_generator=MermaidConfigurationNaming.to_camel_case,
+        extra="forbid",
+        frozen=True,
+        populate_by_name=True,
+        validate_default=True,
+    )
+
+
+class MermaidConfiguration(MermaidConfigurationModel):
+    wrap: bool
+    diagrams: Mapping[str, SerializeAsAny["MermaidDiagramConfiguration"]]
+
+    def to_mermaid(self) -> dict[str, object]:
+        document = self.model_dump(mode="json", by_alias=True, exclude={"diagrams"})
+        diagrams = {
+            key: value.model_dump(mode="json", by_alias=True, exclude={"wrap"}) for key, value in self.diagrams.items()
+        }
+        return {**document, **{key: value for key, value in diagrams.items() if value}}
+
+
+class MermaidDiagramConfiguration(MermaidConfigurationModel):
+    wrap: bool = True
+
+    def document(self, source: str) -> MermaidConfiguration:
+        return MermaidConfiguration(wrap=self.wrap, diagrams={source: self})
 
 
 @dataclass(frozen=True, slots=True)
@@ -34,14 +70,14 @@ class DiagramObserver[ConstraintT: Constraint](ConstraintInspection):
 
 @dataclass(frozen=True, slots=True)
 class DiagramConstraint(BlockingConstraint):
-    @staticmethod
-    def _snake_case(value: str) -> str:
+    def _snake_case(self, value: str) -> str:
         return re.sub(r"(?<!^)(?=[A-Z])", "_", value).lower()
 
     @property
     def code(self) -> str:
         package = getattr(self, "package", type(self).__module__)
-        return f"{package.rsplit('.', maxsplit=1)[-1]}.{self._snake_case(type(self).__name__)}"
+        boundary = "constraints" if ".constraints." in package else package.rsplit(".", maxsplit=1)[-1]
+        return f"{boundary}.{self._snake_case(type(self).__name__)}"
 
 
 @dataclass(frozen=True, slots=True)
@@ -164,3 +200,22 @@ class DiagramModel(DiagramAggregate):
     def observer(self) -> DiagramObserver[Constraint]:
         members = Members(type(self).__module__.removesuffix(".diagram"))
         return DiagramObserver(self.structure, (members, *self.constraints))
+
+
+@dataclass(frozen=True, slots=True)
+class DiagramInfo:
+    id: str
+    name: str
+    diagram_type: type[DiagramModel]
+    config_key: str
+    schema_definition: str
+
+    @classmethod
+    def from_diagram(cls, diagram: DiagramModel) -> "DiagramInfo":
+        return cls(
+            id=diagram.definition.syntax,
+            name=diagram.definition.name,
+            diagram_type=type(diagram),
+            config_key=diagram.definition.config_key,
+            schema_definition=diagram.definition.schema_definition,
+        )

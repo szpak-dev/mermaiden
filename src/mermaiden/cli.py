@@ -6,10 +6,10 @@ from wireup import SyncContainer, create_sync_container
 
 import mermaiden
 
-from .mermaid.application import MermaidPreviewApplication
 from .mermaid.compatibility import CompatibilityReport, MermaidCompatibilityService
 from .mermaid.compatibility.schema import MermaidDiagramConfig, MermaidSchemaStore
 from .mermaid.fixtures import DiagramFixtures
+from .mermaid.services.preview import MermaidPreviewApplication
 from .mermaid.templates import MermaidTemplateOwnership
 
 
@@ -49,8 +49,7 @@ class MermaidenCli:
         with self._container.enter_scope() as scope:
             return scope.get(MermaidCompatibilityService).verify()
 
-    @staticmethod
-    def _write_source(output: Path, name: str, source: str) -> Path:
+    def _write_source(self, output: Path, name: str, source: str) -> Path:
         path = output / f"{name}.mmd"
         path.write_text(source, encoding="utf-8")
         return path

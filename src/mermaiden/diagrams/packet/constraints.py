@@ -1,6 +1,6 @@
 from wireup import injectable
 
-from ...core.constraint import ConstraintDiagram, Violation
+from ...core.domain import ConstraintDiagram, Violation
 from ..domain import DiagramConstraint
 from .elements import PacketField
 

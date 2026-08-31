@@ -1,29 +1,9 @@
 from collections.abc import Hashable, Iterator, Mapping
 from dataclasses import dataclass
 
-from wireup import SyncContainer, injectable
+from wireup import injectable
 
-from ..runtime.snapshot import DiagramSnapshot, DiagramSnapshotCodec, SnapshotError
-from .domain import DiagramModel
-
-
-@dataclass(frozen=True, slots=True)
-class DiagramInfo:
-    id: str
-    name: str
-    diagram_type: type[DiagramModel]
-    config_key: str
-    schema_definition: str
-
-    @classmethod
-    def from_diagram(cls, diagram: DiagramModel) -> "DiagramInfo":
-        return cls(
-            id=diagram.definition.syntax,
-            name=diagram.definition.name,
-            diagram_type=type(diagram),
-            config_key=diagram.definition.config_key,
-            schema_definition=diagram.definition.schema_definition,
-        )
+from .domain import DiagramInfo, DiagramModel
 
 
 @injectable(lifetime="scoped")
@@ -69,46 +49,3 @@ class DiagramsApplication:
 
     def __iter__(self) -> Iterator[DiagramInfo]:
         return iter(self.available())
-
-
-@injectable(lifetime="scoped")
-@dataclass(frozen=True, slots=True)
-class DiagramFactory:
-    container: SyncContainer
-    registry: DiagramsApplication
-
-    def create(self, diagram_id: str) -> DiagramModel:
-        qualifier = self.registry.qualifier(diagram_id)
-        with self.container.enter_scope() as scope:
-            return scope.get(DiagramModel, qualifier=qualifier)
-
-
-@injectable(lifetime="scoped")
-@dataclass(frozen=True, slots=True)
-class DiagramPersistenceValidator:
-    def ensure(self, diagram: DiagramModel, operation: str) -> None:
-        report = diagram.validate()
-        if report.can_commit:
-            return
-        details = "; ".join(item.message for item in report.blocking)
-        raise SnapshotError(f"Cannot {operation} invalid diagram '{diagram.kind}': {details}")
-
-
-@injectable(lifetime="scoped")
-@dataclass(frozen=True, slots=True)
-class DiagramPersistenceApplication:
-    diagrams: DiagramFactory
-    snapshots: DiagramSnapshotCodec
-    validator: DiagramPersistenceValidator
-
-    def snapshot(self, diagram: DiagramModel) -> DiagramSnapshot:
-        self.validator.ensure(diagram, "persist")
-        return self.snapshots.snapshot(diagram)
-
-    def restore(self, payload: Mapping[str, object]) -> DiagramModel:
-        snapshot = self.snapshots.restore(payload)
-        diagram = self.diagrams.create(snapshot.kind)
-        data = self.snapshots.hydrate(snapshot, diagram)
-        diagram.restore_snapshot(data)
-        self.validator.ensure(diagram, "restore")
-        return diagram

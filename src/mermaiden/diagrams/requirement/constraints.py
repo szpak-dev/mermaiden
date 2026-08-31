@@ -1,14 +1,13 @@
 from wireup import injectable
 
-from ...core.constraint import ConstraintDiagram, Violation
+from ...core.domain import ConstraintDiagram, Violation
 from ..domain import DiagramConstraint
 from .elements import RequirementEndpoint
 from .relations import RequirementRelation
 
 
 class RequirementDiagramConstraint(DiagramConstraint):
-    @staticmethod
-    def relations(diagram: ConstraintDiagram) -> tuple[RequirementRelation, ...]:
+    def relations(self, diagram: ConstraintDiagram) -> tuple[RequirementRelation, ...]:
         return tuple(item for item in diagram.find_relations() if isinstance(item, RequirementRelation))
 
 

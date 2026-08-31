@@ -1,6 +1,6 @@
 from collections.abc import Mapping
 
-from ...core.model import ValueModel
+from ...core.domain import ValueModel
 
 
 class DiagramDescription(ValueModel):
