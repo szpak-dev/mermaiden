@@ -1,0 +1,90 @@
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+from mermaiden import Application
+
+
+class InstalledWheelSmoke:
+    def run(self) -> None:
+        self.verify_application()
+        with tempfile.TemporaryDirectory(prefix="mermaiden-installed-") as temporary:
+            self.verify_cli(Path(temporary))
+
+    def verify_application(self) -> None:
+        application = Application.create()
+        if not any(info.id == "block" for info in application.available_diagrams()):
+            raise RuntimeError("The installed diagram catalog does not contain 'block'.")
+        description = application.diagram_description("block")
+        expected_commands = {
+            "add_group",
+            "add_block",
+            "update_element",
+            "move_element",
+            "reorder_elements",
+            "remove_element",
+        }
+        if not expected_commands <= set(description.commands):
+            raise RuntimeError("The installed diagram catalog does not expose the public CRUD commands.")
+
+        diagram = application.create_diagram("block")
+        application.execute(diagram, "add_group", {"id": "source", "label": "Source"})
+        application.execute(diagram, "add_group", {"id": "target", "label": "Target"})
+        application.execute(diagram, "add_block", {"id": "first", "label": "First", "parent_id": "source"})
+        application.execute(diagram, "add_block", {"id": "second", "label": "Second", "parent_id": "source"})
+        application.execute(diagram, "add_block", {"id": "third", "label": "Third", "parent_id": "source"})
+        application.execute(
+            diagram,
+            "update_element",
+            {"id": "first", "kind": "block_node", "changes": {"label": "Updated First"}},
+        )
+        application.execute(
+            diagram,
+            "move_element",
+            {"id": "first", "kind": "block_node", "parent_id": "target", "position": 0},
+        )
+        application.execute(
+            diagram,
+            "reorder_elements",
+            {"parent_id": "source", "element_ids": ["third", "second"]},
+        )
+        application.execute(diagram, "remove_element", {"id": "second"})
+
+        snapshot = application.snapshot(diagram).to_dict()
+        restored = application.restore(snapshot)
+        if application.snapshot(restored).to_dict() != snapshot:
+            raise RuntimeError("The installed package did not preserve the public snapshot.")
+        source = application.render(restored)
+        if "Updated First" not in source or "Second" in source:
+            raise RuntimeError("The installed package did not render the applied CRUD operations.")
+
+    def verify_cli(self, temporary: Path) -> None:
+        help_result = self.run_cli(temporary, "--help")
+        if not all(command in help_result.stdout for command in ("fixtures", "preview", "compat")):
+            raise RuntimeError("The installed CLI help does not expose every public command.")
+
+        fixtures = temporary / "fixtures"
+        self.run_cli(temporary, "fixtures", "--output", str(fixtures))
+        if not any(fixtures.glob("*.mmd")):
+            raise RuntimeError("The installed CLI did not write Mermaid fixtures.")
+
+        preview = temporary / "preview" / "index.html"
+        self.run_cli(temporary, "preview", "--output", str(preview))
+        if not preview.exists() or not preview.read_text(encoding="utf-8"):
+            raise RuntimeError("The installed CLI did not write its preview.")
+
+        self.run_cli(temporary, "compat")
+
+    def run_cli(self, temporary: Path, *arguments: str) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            (sys.executable, "-I", "-m", "mermaiden.cli", *arguments),
+            cwd=temporary,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+
+
+if __name__ == "__main__":
+    InstalledWheelSmoke().run()

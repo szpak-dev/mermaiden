@@ -12,6 +12,11 @@ Python 3.12 or later is required.
 pip install mermaiden
 ```
 
+The wheel declares and installs its Python dependencies. Generating Mermaid source and using the `fixtures`, `preview`,
+and `compat` CLI commands need no additional tools. Full SVG validation through `Application.validate_render()` shells
+out to Mermaid CLI and requires Node.js with npm/npx plus a compatible browser; set `PUPPETEER_EXECUTABLE_PATH` when
+using a system browser.
+
 ## Quick start
 
 ```python
