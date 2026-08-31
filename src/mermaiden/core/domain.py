@@ -100,14 +100,18 @@ class DiagramObjectReference:
     id: str
 
 
-class ConstraintDiagram(Protocol):
+class ConstraintDiagram(ABC):
     @property
+    @abstractmethod
     def root_elements(self) -> Sequence[Element]: ...
 
+    @abstractmethod
     def walk_elements(self, parent_id: str) -> Sequence[Element]: ...
 
+    @abstractmethod
     def find_relations(self, element_id: str) -> Sequence[Relation]: ...
 
+    @abstractmethod
     def find_annotations(self, target_id: str) -> Sequence[Annotation]: ...
 
 
@@ -203,7 +207,7 @@ class DiagramVisitor(Protocol[Result]):
     def visit(self, diagram: "Diagram") -> Result: ...
 
 
-class DiagramView(ABC):
+class DiagramView(ConstraintDiagram):
     @property
     @abstractmethod
     def kind(self) -> str: ...
@@ -212,21 +216,8 @@ class DiagramView(ABC):
     @abstractmethod
     def mermaid_configuration(self) -> Mapping[str, object]: ...
 
-    @property
-    @abstractmethod
-    def root_elements(self) -> Sequence[Element]: ...
-
     @abstractmethod
     def find_element(self, id: str) -> Element | None: ...
-
-    @abstractmethod
-    def walk_elements(self, parent_id: str) -> Sequence[Element]: ...
-
-    @abstractmethod
-    def find_relations(self, element_id: str) -> Sequence[Relation]: ...
-
-    @abstractmethod
-    def find_annotations(self, target_id: str) -> Sequence[Annotation]: ...
 
     @abstractmethod
     def validate(self) -> ValidationReport: ...
