@@ -15,4 +15,4 @@ class ExactlyOneRoot(MindmapConstraint):
         count = sum(isinstance(item, MindmapNode) for item in diagram.root_elements)
         if count == 1:
             return ()
-        return (self.violation(f"Mindmap requires exactly one root; found {count}."),)
+        return (self.violation(f"Mindmap requires exactly one root; found {count}.", path=""),)

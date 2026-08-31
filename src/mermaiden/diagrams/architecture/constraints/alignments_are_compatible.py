@@ -26,12 +26,12 @@ class AlignmentsAreCompatible(ArchitectureConstraint):
     def _alignments(self, diagram: ConstraintDiagram) -> tuple[LayoutAlignment, ...]:
         declared = tuple(
             LayoutAlignment(item.id, item.axis, item.member_ids, f"relations.{item.id}")
-            for item in diagram.find_relations()
+            for item in diagram.find_relations("")
             if isinstance(item, Alignment)
         )
         derived = tuple(
             LayoutAlignment(item.id, item.axis, item.member_ids, f"elements.{group.id}.columns")
-            for group in diagram.walk_elements()
+            for group in diagram.walk_elements("")
             if isinstance(group, ArchitectureGroup)
             for item in group.grid_alignments
         )
@@ -98,7 +98,7 @@ class AlignmentsAreCompatible(ArchitectureConstraint):
     def _edge_constraints(self, diagram: ConstraintDiagram) -> tuple[ConstraintGraph, ConstraintGraph]:
         horizontal: defaultdict[str, list[EdgeConstraint]] = defaultdict(list)
         vertical: defaultdict[str, list[EdgeConstraint]] = defaultdict(list)
-        for relation in diagram.find_relations():
+        for relation in diagram.find_relations(""):
             if not isinstance(relation, Edge) or len(relation.element_ids) != 2:
                 continue
             source, target = relation.element_ids

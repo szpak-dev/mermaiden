@@ -6,8 +6,8 @@ from pydantic_core import CoreSchema, core_schema
 from wireup import injectable
 
 from ...core.domain import Annotation, ClassifiedValueModel, Element, Relation
+from ...diagrams.catalog.domain import MutationPayloadFactory
 from ...domain import CommandPayload, CommandPayloadSchema
-from ..domain import MutationPayloadFactory
 
 
 @injectable(as_type=MutationPayloadFactory, lifetime="scoped")

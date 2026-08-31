@@ -8,7 +8,7 @@ from .domain import SwimlaneConstraint
 @injectable(as_type=SwimlaneConstraint, qualifier="flow_endpoints_are_nodes")
 class FlowEndpointsAreNodes(SwimlaneConstraint):
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
-        elements = {item.id: item for item in diagram.walk_elements()}
+        elements = {item.id: item for item in diagram.walk_elements("")}
         return tuple(
             self.violation(
                 f"Flow '{flow.id}' endpoints must both be swimlane nodes.",

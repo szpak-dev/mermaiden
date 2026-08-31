@@ -12,6 +12,6 @@ class RelationsHaveParticipants(StructureConstraint):
                 f"Relation '{item.id}' requires at least two elements.",
                 path=f"relations.{item.id}",
             )
-            for item in diagram.find_relations()
+            for item in diagram.find_relations("")
             if len(item.element_ids) < 2
         )

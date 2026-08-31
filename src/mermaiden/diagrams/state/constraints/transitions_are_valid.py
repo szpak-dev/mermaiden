@@ -8,7 +8,7 @@ from .domain import StateDiagramConstraint
 @injectable(as_type=StateDiagramConstraint, qualifier="state_transitions")
 class TransitionsAreValid(StateDiagramConstraint):
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
-        elements = {item.id: item for item in diagram.walk_elements()}
+        elements = {item.id: item for item in diagram.walk_elements("")}
         issues: list[Violation] = []
         for transition in self.transitions(diagram):
             if len(transition.element_ids) != 2:

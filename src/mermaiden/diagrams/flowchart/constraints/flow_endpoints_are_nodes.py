@@ -8,7 +8,7 @@ from .domain import FlowchartConstraint
 @injectable(as_type=FlowchartConstraint, qualifier="flow_endpoints_are_nodes")
 class FlowEndpointsAreNodes(FlowchartConstraint):
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
-        elements = {item.id: item for item in diagram.walk_elements()}
+        elements = {item.id: item for item in diagram.walk_elements("")}
         return tuple(
             self.violation(
                 f"Flow '{flow.id}' endpoints must both be flow nodes.",

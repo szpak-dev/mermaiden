@@ -9,9 +9,9 @@ from wireup import injectable
 
 from ...core.domain import ChangeReport
 from ...domain import CommandPayload, CommandPayloadSchema, ValidatedCommandPayload
-from ...mutations.domain import MutationPayloadFactory
 from ..application import DiagramsApplication
 from ..domain import DiagramInfo, DiagramModel
+from .domain import MutationPayloadFactory
 from .objects import DiagramObjectCatalog
 
 

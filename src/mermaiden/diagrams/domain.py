@@ -1,4 +1,5 @@
 import re
+from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Annotated, ClassVar, cast
@@ -17,9 +18,55 @@ from ..core.domain import (
     ValidationReport,
     Violation,
 )
-from ..mutations.domain import MutationKernel
 from ..runtime.diagrams.aggregate import DiagramAggregate
 from ..runtime.domain import ConstraintInspection
+
+
+class MutationKernel(ABC):
+    @abstractmethod
+    def update_element(
+        self,
+        diagram: DiagramAggregate,
+        id: str,
+        kind: str,
+        changes: Mapping[str, object],
+    ) -> ChangeReport: ...
+
+    @abstractmethod
+    def update_relation(
+        self,
+        diagram: DiagramAggregate,
+        id: str,
+        kind: str,
+        changes: Mapping[str, object],
+    ) -> ChangeReport: ...
+
+    @abstractmethod
+    def update_annotation(
+        self,
+        diagram: DiagramAggregate,
+        id: str,
+        kind: str,
+        changes: Mapping[str, object],
+    ) -> ChangeReport: ...
+
+    @abstractmethod
+    def move_element(
+        self,
+        diagram: DiagramAggregate,
+        id: str,
+        kind: str,
+        parent_id: str,
+        position: int | None,
+    ) -> ChangeReport: ...
+
+    @abstractmethod
+    def reorder_elements(
+        self,
+        diagram: DiagramAggregate,
+        parent_id: str,
+        element_ids: Sequence[str],
+    ) -> ChangeReport: ...
 
 
 class MermaidConfigurationNaming:
@@ -91,7 +138,7 @@ class Members(DiagramConstraint):
                 f"Element '{item.id}' does not belong to this diagram.",
                 path=f"elements.{item.id}",
             )
-            for item in diagram.walk_elements()
+            for item in diagram.walk_elements("")
             if item.__class__.__module__ != f"{self.package}.elements"
         ]
         issues.extend(
@@ -99,7 +146,7 @@ class Members(DiagramConstraint):
                 f"Relation '{item.id}' does not belong to this diagram.",
                 path=f"relations.{item.id}",
             )
-            for item in diagram.find_relations()
+            for item in diagram.find_relations("")
             if item.__class__.__module__ != f"{self.package}.relations"
         )
         issues.extend(
@@ -107,7 +154,7 @@ class Members(DiagramConstraint):
                 f"Annotation '{item.id}' does not belong to this diagram.",
                 path=f"annotations.{item.id}",
             )
-            for item in diagram.find_annotations()
+            for item in diagram.find_annotations("")
             if item.__class__.__module__ != f"{self.package}.annotations"
         )
         issues.extend(
@@ -115,7 +162,7 @@ class Members(DiagramConstraint):
                 f"Element '{item.id}' must contain at least one child.",
                 path=f"elements.{item.id}",
             )
-            for item in diagram.walk_elements()
+            for item in diagram.walk_elements("")
             if isinstance(item, RequiresChildren) and not cast(Container, item).elements
         )
         return tuple(issues)

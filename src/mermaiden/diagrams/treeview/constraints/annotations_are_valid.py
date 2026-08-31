@@ -9,7 +9,7 @@ from .domain import TreeViewConstraint
 class AnnotationsAreValid(TreeViewConstraint):
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues: list[Violation] = []
-        for annotation in diagram.find_annotations():
+        for annotation in diagram.find_annotations(""):
             if not isinstance(annotation, TreeAnnotation):
                 continue
             if len(annotation.targets) != 1 or annotation.targets[0].kind is not TargetKind.ELEMENT:

@@ -9,7 +9,7 @@ from .domain import FlowchartConstraint
 class NotesAreValid(FlowchartConstraint):
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues: list[Violation] = []
-        for note in (item for item in diagram.find_annotations() if isinstance(item, Note)):
+        for note in (item for item in diagram.find_annotations("") if isinstance(item, Note)):
             if not note.text.strip():
                 issues.append(
                     self.violation(

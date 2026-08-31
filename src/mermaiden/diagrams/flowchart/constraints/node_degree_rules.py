@@ -17,7 +17,7 @@ class NodeDegreeRules(FlowchartConstraint):
             incoming[flow.target_id].append(flow)
             outgoing[flow.source_id].append(flow)
         issues: list[Violation] = []
-        for node in diagram.walk_elements():
+        for node in diagram.walk_elements(""):
             if isinstance(node, Start):
                 issues.extend(self._expect(node.id, len(incoming[node.id]), 0, 0, "incoming"))
                 issues.extend(self._expect(node.id, len(outgoing[node.id]), 1, 1, "outgoing"))

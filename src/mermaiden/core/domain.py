@@ -15,16 +15,6 @@ class OperationError(Exception):
 class ValueModel(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
-    def __init__(self, *arguments: object, **values: object) -> None:
-        names = tuple(type(self).model_fields)
-        if len(arguments) > len(names):
-            raise TypeError(f"{type(self).__name__} accepts at most {len(names)} positional arguments.")
-        positional = dict(zip(names, arguments, strict=False))
-        duplicates = positional.keys() & values.keys()
-        if duplicates:
-            raise TypeError(f"{type(self).__name__} received duplicate fields: {', '.join(sorted(duplicates))}.")
-        super().__init__(**positional, **values)
-
 
 class ClassifiedValueModel(ValueModel):
     @property
@@ -114,11 +104,11 @@ class ConstraintDiagram(Protocol):
     @property
     def root_elements(self) -> Sequence[Element]: ...
 
-    def walk_elements(self, parent_id: str = "") -> Sequence[Element]: ...
+    def walk_elements(self, parent_id: str) -> Sequence[Element]: ...
 
-    def find_relations(self, element_id: str = "") -> Sequence[Relation]: ...
+    def find_relations(self, element_id: str) -> Sequence[Relation]: ...
 
-    def find_annotations(self, target_id: str = "") -> Sequence[Annotation]: ...
+    def find_annotations(self, target_id: str) -> Sequence[Annotation]: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -196,7 +186,7 @@ class Constraint(ABC):
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         return ()
 
-    def violation(self, message: str, *, path: str = "") -> Violation:
+    def violation(self, message: str, *, path: str) -> Violation:
         return Violation(code=self.code, message=message, path=path, level=self.level)
 
 
@@ -230,13 +220,13 @@ class DiagramView(ABC):
     def find_element(self, id: str) -> Element | None: ...
 
     @abstractmethod
-    def walk_elements(self, parent_id: str = "") -> Sequence[Element]: ...
+    def walk_elements(self, parent_id: str) -> Sequence[Element]: ...
 
     @abstractmethod
-    def find_relations(self, element_id: str = "") -> Sequence[Relation]: ...
+    def find_relations(self, element_id: str) -> Sequence[Relation]: ...
 
     @abstractmethod
-    def find_annotations(self, target_id: str = "") -> Sequence[Annotation]: ...
+    def find_annotations(self, target_id: str) -> Sequence[Annotation]: ...
 
     @abstractmethod
     def validate(self) -> ValidationReport: ...
@@ -251,10 +241,10 @@ class Diagram(DiagramView):
     ) -> bool: ...
 
     @abstractmethod
-    def remove_element(self, id: str, *, cascade: bool = False) -> ChangeReport: ...
+    def remove_element(self, id: str, *, cascade: bool) -> ChangeReport: ...
 
     @abstractmethod
-    def remove_relation(self, id: str, *, cascade: bool = False) -> ChangeReport: ...
+    def remove_relation(self, id: str, *, cascade: bool) -> ChangeReport: ...
 
     @abstractmethod
     def remove_annotation(self, id: str) -> ChangeReport: ...

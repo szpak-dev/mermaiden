@@ -10,7 +10,7 @@ from .domain import FlowchartConstraint
 @injectable(as_type=FlowchartConstraint, qualifier="every_node_is_reachable")
 class EveryNodeIsReachable(FlowchartConstraint):
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
-        starts = [item for item in diagram.walk_elements() if isinstance(item, Start)]
+        starts = [item for item in diagram.walk_elements("") if isinstance(item, Start)]
         if len(starts) != 1:
             return ()
         adjacency: defaultdict[str, list[str]] = defaultdict(list)
@@ -25,6 +25,6 @@ class EveryNodeIsReachable(FlowchartConstraint):
                     pending.append(target)
         return tuple(
             self.violation(f"Node '{node.id}' is unreachable from the start.", path=f"elements.{node.id}")
-            for node in diagram.walk_elements()
+            for node in diagram.walk_elements("")
             if isinstance(node, FlowNode) and node.id not in reached
         )

@@ -4,9 +4,9 @@ from dataclasses import dataclass
 from wireup import injectable
 
 from ..core.domain import ChangeReport, OperationError
+from ..diagrams.domain import MutationKernel
 from ..runtime.diagrams.aggregate import DiagramAggregate
 from ..runtime.diagrams.state import DiagramData
-from .domain import MutationKernel
 
 
 @injectable(as_type=MutationKernel)

@@ -5,4 +5,4 @@ from ..relations import TreeBranch
 
 class TreeViewConstraint(DiagramConstraint):
     def branches(self, diagram: ConstraintDiagram) -> tuple[TreeBranch, ...]:
-        return tuple(item for item in diagram.find_relations() if isinstance(item, TreeBranch))
+        return tuple(item for item in diagram.find_relations("") if isinstance(item, TreeBranch))

@@ -11,7 +11,7 @@ class DecisionBranchesAreConditioned(FlowchartConstraint):
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues: list[Violation] = []
         flows = self.flows(diagram)
-        for decision in (item for item in diagram.walk_elements() if isinstance(item, Decision)):
+        for decision in (item for item in diagram.walk_elements("") if isinstance(item, Decision)):
             branches = tuple(flow for flow in flows if flow.source_id == decision.id)
             conditions = [flow.condition.strip() for flow in branches if isinstance(flow, ConditionalFlow)]
             if len(conditions) != len(branches) or any(not item for item in conditions):

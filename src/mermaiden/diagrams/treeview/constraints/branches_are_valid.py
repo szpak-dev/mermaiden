@@ -8,7 +8,7 @@ from .domain import TreeViewConstraint
 @injectable(as_type=TreeViewConstraint, qualifier="treeview_branches")
 class BranchesAreValid(TreeViewConstraint):
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
-        elements = {item.id: item for item in diagram.walk_elements()}
+        elements = {item.id: item for item in diagram.walk_elements("")}
         parents: set[str] = set()
         issues: list[Violation] = []
         for branch in self.branches(diagram):

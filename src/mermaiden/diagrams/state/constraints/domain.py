@@ -5,4 +5,4 @@ from ..relations import StateTransition
 
 class StateDiagramConstraint(DiagramConstraint):
     def transitions(self, diagram: ConstraintDiagram) -> tuple[StateTransition, ...]:
-        return tuple(item for item in diagram.find_relations() if isinstance(item, StateTransition))
+        return tuple(item for item in diagram.find_relations("") if isinstance(item, StateTransition))

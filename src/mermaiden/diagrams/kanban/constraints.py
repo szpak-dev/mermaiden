@@ -27,7 +27,7 @@ class KanbanDiagramStructure(KanbanDiagramConstraint):
                 f"Kanban task '{item.id}' has unsupported priority '{item.priority}'.",
                 path=f"elements.{item.id}",
             )
-            for item in diagram.walk_elements()
+            for item in diagram.walk_elements("")
             if isinstance(item, Task) and item.priority and item.priority not in KanbanPriority
         )
         return tuple(issues)

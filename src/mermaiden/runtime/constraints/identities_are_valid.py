@@ -10,9 +10,9 @@ from ..domain import StructureConstraint
 class IdentitiesAreValid(StructureConstraint):
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         groups = (
-            ("element", tuple(item.id for item in diagram.walk_elements())),
-            ("relation", tuple(item.id for item in diagram.find_relations())),
-            ("annotation", tuple(item.id for item in diagram.find_annotations())),
+            ("element", tuple(item.id for item in diagram.walk_elements(""))),
+            ("relation", tuple(item.id for item in diagram.find_relations(""))),
+            ("annotation", tuple(item.id for item in diagram.find_annotations(""))),
         )
         issues: list[Violation] = []
         for kind, identities in groups:

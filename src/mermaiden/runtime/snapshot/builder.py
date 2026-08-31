@@ -22,9 +22,11 @@ class DiagramSnapshotBuilder:
             kind=diagram.kind,
             configuration=cast(Mapping[str, object], self.values.encode(self.configurations.read(diagram))),
             elements=tuple(cast(Mapping[str, object], self.values.encode(item)) for item in diagram.root_elements),
-            relations=tuple(cast(Mapping[str, object], self.values.encode(item)) for item in diagram.find_relations()),
+            relations=tuple(
+                cast(Mapping[str, object], self.values.encode(item)) for item in diagram.find_relations("")
+            ),
             annotations=tuple(
-                cast(Mapping[str, object], self.values.encode(item)) for item in diagram.find_annotations()
+                cast(Mapping[str, object], self.values.encode(item)) for item in diagram.find_annotations("")
             ),
             properties={
                 item.name: self.values.encode(getattr(diagram, item.name))

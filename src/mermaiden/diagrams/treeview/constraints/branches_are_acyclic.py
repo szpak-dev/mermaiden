@@ -14,7 +14,7 @@ class BranchesAreAcyclic(TreeViewConstraint):
 
         visited: set[str] = set()
         active: set[str] = set()
-        for item in diagram.walk_elements():
+        for item in diagram.walk_elements(""):
             if item.id in visited:
                 continue
             stack: list[tuple[str, bool]] = [(item.id, False)]

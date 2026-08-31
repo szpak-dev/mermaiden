@@ -11,6 +11,6 @@ class LanesAreTopLevel(SwimlaneConstraint):
         root_ids = {item.id for item in diagram.root_elements if isinstance(item, Swimlane)}
         return tuple(
             self.violation(f"Lane '{lane.id}' must be top-level.", path=f"elements.{lane.id}")
-            for lane in diagram.walk_elements()
+            for lane in diagram.walk_elements("")
             if isinstance(lane, Swimlane) and lane.id not in root_ids
         )
