@@ -4,11 +4,11 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.domain import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import C4ContextDiagramConfiguration
 from .constraints import C4ContextDiagramConstraint
-from .elements import Person, System, SystemDb, SystemQueue
+from .elements import C4Element, Person, System, SystemDb, SystemQueue
 from .relations import Relationship, RelationshipDirection
 
 
@@ -23,6 +23,9 @@ class C4ContextDiagram(DiagramModel):
         "c4",
         "C4DiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        return element_type in (C4Element, Person, System, SystemDb, SystemQueue) and parent_type is None
 
     def add_person(self, id: str, label: str, description: str = "") -> ChangeReport:
         return self._add_element(f"add person '{id}'", Person(id=id, label=label, description=description))

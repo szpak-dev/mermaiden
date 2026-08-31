@@ -13,6 +13,7 @@
         "elements": "move_or_reorder_only",
         "columns": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
@@ -23,8 +24,7 @@
       "child_collection": {
         "reorder_command": "reorder_elements",
         "membership": "Exact permutation of current direct child IDs."
-      },
-      "kind_classification": "immutable"
+      }
     },
     "junction": {
       "update_command": "update_element",
@@ -32,14 +32,14 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root",
           "architecture_group"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "service": {
       "update_command": "update_element",
@@ -47,14 +47,14 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root",
           "architecture_group"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     }
   },
   "relations": {

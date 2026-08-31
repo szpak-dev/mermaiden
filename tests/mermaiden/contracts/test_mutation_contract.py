@@ -81,8 +81,10 @@ class TestMutationContract:
                             assert classification == "updateable"
 
     def test_defines_compatible_element_placement_and_one_order_owner(self) -> None:
+        application = Application.create()
         contract = self._load_contract()
         for diagram_id, value in self._object(contract["diagrams"]).items():
+            description = application.diagram_description(diagram_id)
             diagram = self._object(value)
             elements = self._object(diagram["elements"])
             root = self._object(diagram["root_collection"])
@@ -97,6 +99,7 @@ class TestMutationContract:
                 item = self._object(value)
                 placement = self._object(item["placement"])
                 parents = self._strings(placement["allowed_parents"])
+                assert parents == description.placements[kind].allowed_parents
                 assert parents, f"{diagram_id}.{kind} has no compatible placement"
                 assert set(parents) <= {"$root", *containers}
                 assert placement["move_command"] == "move_element"

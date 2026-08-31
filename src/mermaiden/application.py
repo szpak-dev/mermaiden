@@ -36,6 +36,7 @@ class Application:
 
     def initialize(self) -> None:
         self.template_ownership.validate()
+        self.catalog.validate()
 
     def available_diagrams(self) -> tuple[DiagramInfo, ...]:
         return self.diagrams.available()

@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.domain import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import BlockDiagramConfiguration
 from .constraints import BlockDiagramConstraint
@@ -23,6 +23,11 @@ class BlockDiagram(DiagramModel):
         "block",
         "BlockDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        if element_type is BlockGroup:
+            return parent_type is None
+        return element_type in (BlockNode, BlockSpace) and (parent_type is None or parent_type is BlockGroup)
 
     def set_columns(self, columns: int) -> None:
         object.__setattr__(self, "columns", columns)

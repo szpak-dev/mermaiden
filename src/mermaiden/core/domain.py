@@ -244,6 +244,13 @@ class DiagramView(ABC):
 
 class Diagram(DiagramView):
     @abstractmethod
+    def accepts_parent(
+        self,
+        element_type: type[Element],
+        parent_type: type[Container] | None,
+    ) -> bool: ...
+
+    @abstractmethod
     def remove_element(self, id: str, *, cascade: bool = False) -> ChangeReport: ...
 
     @abstractmethod

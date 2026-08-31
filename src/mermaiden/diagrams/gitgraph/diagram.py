@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.domain import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import GitGraphDiagramConfiguration
 from .constraints import GitGraphDiagramConstraint
@@ -22,6 +22,9 @@ class GitGraphDiagram(DiagramModel):
         "gitGraph",
         "GitGraphDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        return element_type in (Branch, Checkout, Commit) and parent_type is None
 
     def add_commit(self, id: str, label: str, commit_type: CommitType | str = "", tag: str = "") -> ChangeReport:
         return self._add_element(f"add commit '{id}'", Commit(id=id, label=label, commit_type=commit_type, tag=tag))

@@ -12,6 +12,7 @@
         "label": "updateable",
         "elements": "move_or_reorder_only"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
@@ -22,8 +23,7 @@
       "child_collection": {
         "reorder_command": "reorder_elements",
         "membership": "Exact permutation of current direct child IDs."
-      },
-      "kind_classification": "immutable"
+      }
     },
     "cause": {
       "update_command": "update_element",
@@ -31,13 +31,13 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "category"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "effect": {
       "update_command": "update_element",
@@ -45,13 +45,13 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     }
   },
   "relations": {

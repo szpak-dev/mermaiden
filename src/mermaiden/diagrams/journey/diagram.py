@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.domain import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import JourneyDiagramConfiguration
 from .constraints import JourneyConstraint
@@ -23,6 +23,11 @@ class Journey(DiagramModel):
         "journey",
         "JourneyDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        if element_type is JourneySection:
+            return parent_type is None
+        return element_type is JourneyTask and parent_type is JourneySection
 
     def set_title(self, title: str) -> None:
         object.__setattr__(self, "title", title)

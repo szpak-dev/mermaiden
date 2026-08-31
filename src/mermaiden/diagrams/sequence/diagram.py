@@ -5,7 +5,7 @@ from typing import Annotated, ClassVar
 from pydantic import Field
 from wireup import injectable
 
-from ...core.domain import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .annotations import NotePosition, SequenceNotes
 from .configuration import SequenceDiagramConfiguration
@@ -33,6 +33,11 @@ class SequenceDiagram(DiagramModel):
         "sequence",
         "SequenceDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        if element_type is ParticipantBox:
+            return parent_type is None
+        return element_type is Participant and (parent_type is None or parent_type is ParticipantBox)
 
     def add_box(self, id: str, label: str, color: str = "") -> ChangeReport:
         return self._add_element(f"add box '{id}'", ParticipantBox(id=id, label=label, elements=(), color=color))

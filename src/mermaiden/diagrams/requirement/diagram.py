@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.domain import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import RequirementDiagramConfiguration
 from .constraints import RequirementDiagramConstraint
@@ -29,6 +29,9 @@ class RequirementDiagram(DiagramModel):
         "requirement",
         "RequirementDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        return element_type in (Requirement, RequirementElement) and parent_type is None
 
     def add_requirement(
         self,

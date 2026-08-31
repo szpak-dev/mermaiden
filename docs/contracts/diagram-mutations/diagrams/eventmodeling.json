@@ -11,13 +11,13 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "swimlane"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "command": {
       "update_command": "update_element",
@@ -25,13 +25,13 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "swimlane"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "event": {
       "update_command": "update_element",
@@ -39,13 +39,13 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "swimlane"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "swimlane": {
       "update_command": "update_element",
@@ -54,6 +54,7 @@
         "label": "updateable",
         "elements": "move_or_reorder_only"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
@@ -63,8 +64,7 @@
       "child_collection": {
         "reorder_command": "reorder_elements",
         "membership": "Exact permutation of current direct child IDs."
-      },
-      "kind_classification": "immutable"
+      }
     },
     "view": {
       "update_command": "update_element",
@@ -72,13 +72,13 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "swimlane"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     }
   },
   "relations": {

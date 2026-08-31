@@ -26,7 +26,7 @@ format: $(PYTHON)
 	@$(PYTHON) -m ruff check --fix .
 
 mutation-contract: $(PYTHON)
-	@$(PYTHON) scripts/render_mutation_contract.py --write
+	@PYTHONPATH=src $(PYTHON) scripts/render_mutation_contract.py --write
 
 ci: $(PYTHON)
 	@$(PYTHON) -m ensurepip --upgrade

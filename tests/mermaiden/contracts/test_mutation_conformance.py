@@ -102,6 +102,10 @@ class TestMutationConformance:
 
             elements = self._mapping(matrix["elements"])
             if elements:
+                assert {
+                    kind: self._strings(self._mapping(self._mapping(value)["placement"])["allowed_parents"])
+                    for kind, value in elements.items()
+                } == {kind: placement.allowed_parents for kind, placement in description.placements.items()}
                 move_operation = cast(
                     str,
                     self._mapping(self._mapping(next(iter(elements.values())))["placement"])["move_command"],

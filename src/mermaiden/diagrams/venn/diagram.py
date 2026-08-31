@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.domain import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import VennConfiguration
 from .constraints import VennConstraint
@@ -22,6 +22,11 @@ class Venn(DiagramModel):
         "venn",
         "VennDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        if element_type in (VennSet, VennUnion):
+            return parent_type is None
+        return element_type is VennText and parent_type in (VennSet, VennUnion)
 
     def add_set(self, id: str, label: str, size: float | None = None) -> ChangeReport:
         return self._add_element(f"add set '{id}'", VennSet(id=id, label=label, elements=(), size=size))

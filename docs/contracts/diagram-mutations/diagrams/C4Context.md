@@ -1,6 +1,6 @@
 # `C4Context` mutation matrix
 
-Generated from [`C4Context.json`](C4Context.json). Do not edit directly.
+Generated from public `Application` discovery. Do not edit directly.
 
 Root ordering: `reorder_elements` over the exact direct-member permutation.
 

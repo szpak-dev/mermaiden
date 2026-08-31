@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.domain import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import SankeyDiagramConfiguration
 from .constraints import SankeyConstraint
@@ -23,6 +23,9 @@ class Sankey(DiagramModel):
         "sankey",
         "SankeyDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        return element_type is SankeyNode and parent_type is None
 
     def add_node(self, id: str, label: str) -> ChangeReport:
         return self._add_element(f"add node '{id}'", SankeyNode(id=id, label=label))

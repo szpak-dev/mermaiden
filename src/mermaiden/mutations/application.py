@@ -73,7 +73,7 @@ class DiagramMutationKernel(MutationKernel):
     ) -> ChangeReport:
         operation = f"move element '{id}'"
         try:
-            candidate = diagram.elements.move(id, kind, parent_id, position)
+            candidate = diagram.elements.move(id, kind, parent_id, position, diagram)
         except OperationError as error:
             diagram.runtime.transaction.reject(operation, str(error))
         except Exception:

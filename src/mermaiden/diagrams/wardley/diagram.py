@@ -4,11 +4,11 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.domain import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import WardleyDiagramConfiguration
 from .constraints import WardleyDiagramConstraint
-from .elements import Component, Evolution
+from .elements import Component, Evolution, Pipeline
 from .relations import Dependency
 
 
@@ -23,6 +23,9 @@ class WardleyDiagram(DiagramModel):
         "wardley-beta",
         "WardleyDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        return element_type in (Component, Evolution, Pipeline) and parent_type is None
 
     def add_component(
         self, id: str, label: str, visibility: float, evolution: float, decorator: str = ""

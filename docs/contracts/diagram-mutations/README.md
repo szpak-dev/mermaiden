@@ -1,7 +1,7 @@
 # Diagram mutation contract
 
-This documentation is generated from `contract.json` and `diagrams/*.json`.
-Run `make mutation-contract` after changing the machine-readable sources.
+This documentation is generated from public `Application` discovery and `contract.json` semantics.
+Run `make mutation-contract` after changing the public catalog or contract semantics.
 
 Contract version: `1`.
 

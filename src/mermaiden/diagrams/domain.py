@@ -12,6 +12,7 @@ from ..core.domain import (
     ConstraintDiagram,
     Container,
     Diagram,
+    Element,
     RequiresChildren,
     ValidationReport,
     Violation,
@@ -135,6 +136,13 @@ class DiagramModel(DiagramAggregate):
     constraints: Sequence[Constraint]
     configuration: MermaidDiagramConfiguration
     mutations: MutationKernel
+
+    def accepts_parent(
+        self,
+        element_type: type[Element],
+        parent_type: type[Container] | None,
+    ) -> bool:
+        return False
 
     def update_element(
         self,

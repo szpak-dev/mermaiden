@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.domain import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import EntityRelationshipDiagramConfiguration
 from .constraints import EntityRelationshipDiagramConstraint
@@ -27,6 +27,11 @@ class EntityRelationshipDiagram(DiagramModel):
         "er",
         "ErDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        if element_type is Entity:
+            return parent_type is None
+        return element_type is EntityAttribute and parent_type is Entity
 
     def set_direction(self, direction: str) -> None:
         object.__setattr__(self, "direction", direction)

@@ -69,7 +69,7 @@ class DiagramAggregate(Diagram):
 
     def _add_element(self, operation: str, element: Element, parent_id: str = "") -> ChangeReport:
         try:
-            candidate = self.elements.add(element, parent_id)
+            candidate = self.elements.add(element, parent_id, self)
         except OperationError as error:
             self._reject(operation, str(error))
         return self._apply(operation, candidate)

@@ -8,6 +8,74 @@ from mermaiden.application import Application, DiagramCommand
 
 
 class TestElementMovement:
+    def test_gantt_add_and_move_reject_task_at_root_without_changing_snapshot(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("gantt")
+        application.apply(diagram, DiagramCommand("add_section", {"id": "section_example", "label": "Section"}))
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_task",
+                {
+                    "id": "task_example",
+                    "label": "Task",
+                    "metadata": (),
+                    "section_id": "section_example",
+                },
+            ),
+        )
+        before = application.snapshot(diagram).to_dict()
+
+        rejected = (
+            DiagramCommand(
+                "add_task",
+                {"id": "root_task", "label": "Root Task", "metadata": (), "section_id": ""},
+            ),
+            DiagramCommand(
+                "move_element",
+                {"id": "task_example", "kind": "task", "parent_id": ""},
+            ),
+        )
+        for command in rejected:
+            with pytest.raises(RuntimeError, match="cannot be placed in \\$root"):
+                application.apply(diagram, command)
+            assert application.snapshot(diagram).to_dict() == before
+
+    def test_add_and_move_reject_incompatible_container_kind_without_changing_snapshot(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("timeline")
+        application.apply(diagram, DiagramCommand("add_section", {"id": "section_example", "label": "Section"}))
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_period",
+                {"id": "period_example", "label": "Period", "section_id": "section_example"},
+            ),
+        )
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_event",
+                {"id": "event_example", "label": "Event", "period_id": "period_example"},
+            ),
+        )
+        before = application.snapshot(diagram).to_dict()
+
+        rejected = (
+            DiagramCommand(
+                "add_event",
+                {"id": "section_event", "label": "Event", "period_id": "section_example"},
+            ),
+            DiagramCommand(
+                "move_element",
+                {"id": "event_example", "kind": "timeline_event", "parent_id": "section_example"},
+            ),
+        )
+        for command in rejected:
+            with pytest.raises(RuntimeError, match="cannot be placed"):
+                application.apply(diagram, command)
+            assert application.snapshot(diagram).to_dict() == before
+
     @pytest.mark.parametrize(
         "element_ids",
         (

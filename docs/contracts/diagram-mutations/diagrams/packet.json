@@ -14,13 +14,13 @@
         "end": "updateable",
         "bits": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     }
   },
   "relations": {},

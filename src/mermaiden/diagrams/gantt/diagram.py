@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.domain import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import GanttConfiguration
 from .constraints import GanttConstraint
@@ -24,6 +24,11 @@ class Gantt(DiagramModel):
         "gantt",
         "GanttDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        if element_type in (Marker, Section):
+            return parent_type is None
+        return element_type in (Milestone, Task) and parent_type is Section
 
     def set_title(self, title: str) -> None:
         object.__setattr__(self, "title", title)

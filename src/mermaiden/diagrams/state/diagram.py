@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.domain import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from ..flowchart.elements import Direction
 from .annotations import NotePosition, StateNote, StateNotes
@@ -26,6 +26,11 @@ class StateDiagram(DiagramModel):
         "state",
         "StateDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        return (element_type is CompositeState or issubclass(element_type, StateNode)) and (
+            parent_type is None or parent_type is CompositeState
+        )
 
     def add_state(self, id: str, label: str, composite_id: str = "") -> ChangeReport:
         return self._add_node(State(id=id, label=label), composite_id, "state")

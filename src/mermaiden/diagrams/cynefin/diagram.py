@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.domain import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import CynefinDiagramConfiguration
 from .constraints import CynefinDiagramConstraint
@@ -23,6 +23,9 @@ class CynefinDiagram(DiagramModel):
         "cynefin",
         "CynefinDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        return element_type is Domain and parent_type is None
 
     def add_item(self, id: str, label: str, domain: DomainKind) -> ChangeReport:
         return self._add_element(f"add {domain.value} item '{id}'", Domain(id=id, label=label, domain=domain))

@@ -13,13 +13,13 @@
         "description": "updateable",
         "technology": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "person": {
       "update_command": "update_element",
@@ -29,13 +29,13 @@
         "description": "updateable",
         "technology": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "system": {
       "update_command": "update_element",
@@ -45,13 +45,13 @@
         "description": "updateable",
         "technology": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "system_db": {
       "update_command": "update_element",
@@ -61,13 +61,13 @@
         "description": "updateable",
         "technology": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "system_queue": {
       "update_command": "update_element",
@@ -77,13 +77,13 @@
         "description": "updateable",
         "technology": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     }
   },
   "relations": {
