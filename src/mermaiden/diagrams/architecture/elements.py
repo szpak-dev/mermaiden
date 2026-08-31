@@ -1,6 +1,6 @@
 from pydantic import Field
 
-from ...core.element import Container, Entity
+from ...core.domain import Container, Entity
 from .relations import Alignment, AlignmentAxis
 
 

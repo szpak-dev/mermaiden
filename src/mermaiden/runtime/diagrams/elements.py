@@ -3,8 +3,7 @@ from dataclasses import dataclass, replace
 
 from pydantic import ValidationError
 
-from ...core.element import Container, Element
-from ...core.error import OperationError
+from ...core.domain import Container, Diagram, Element, OperationError
 from .state import DiagramData, DiagramState
 
 
@@ -12,7 +11,8 @@ from .state import DiagramData, DiagramState
 class Elements:
     state: DiagramState
 
-    def add(self, element: Element, parent_id: str = "") -> DiagramData:
+    def add(self, element: Element, parent_id: str, diagram: Diagram) -> DiagramData:
+        self._validate_placement(element, self._parent(parent_id), diagram)
         elements = self._insert(self.state.current.elements, element, parent_id)
         return replace(self.state.current, elements=elements)
 
@@ -44,16 +44,15 @@ class Elements:
         kind: str,
         parent_id: str,
         position: int | None,
+        diagram: Diagram,
     ) -> DiagramData:
         target = self._require_unique(id)
         if target.kind != kind:
             raise OperationError(f"Element '{id}' has kind '{target.kind}', not '{kind}'.")
-        if parent_id:
-            parent = self._require_unique(parent_id)
-            if not isinstance(parent, Container):
-                raise OperationError(f"Parent element '{parent_id}' is not a container.")
-            if parent_id in {item.id for item in self._walk((target,))}:
-                raise OperationError(f"Element '{id}' cannot be moved into its own subtree.")
+        parent = self._parent(parent_id)
+        self._validate_placement(target, parent, diagram)
+        if parent is not None and parent_id in {item.id for item in self._walk((target,))}:
+            raise OperationError(f"Element '{id}' cannot be moved into its own subtree.")
 
         elements = self._remove(self.state.current.elements, id)
         members = elements if not parent_id else self._children(elements, parent_id)
@@ -62,6 +61,20 @@ class Elements:
         insertion = len(members) if position is None else position
         moved = self._insert_at(elements, parent_id, target, insertion)
         return replace(self.state.current, elements=moved)
+
+    def _parent(self, parent_id: str) -> Container | None:
+        if not parent_id:
+            return None
+        parent = self._require_unique(parent_id)
+        if not isinstance(parent, Container):
+            raise OperationError(f"Parent element '{parent_id}' is not a container.")
+        return parent
+
+    def _validate_placement(self, element: Element, parent: Container | None, diagram: Diagram) -> None:
+        if diagram.accepts_parent(type(element), None if parent is None else type(parent)):
+            return
+        destination = "$root" if parent is None else f"{parent.kind} '{parent.id}'"
+        raise OperationError(f"Element '{element.id}' of kind '{element.kind}' cannot be placed in {destination}.")
 
     def reorder(self, parent_id: str, element_ids: Sequence[str]) -> DiagramData:
         elements = self.state.current.elements
@@ -99,8 +112,8 @@ class Elements:
             raise OperationError(f"Element '{id}' is duplicated.")
         return next(iter(matches))
 
-    @staticmethod
     def _validate_update(
+        self,
         target: Element,
         kind: str,
         changes: Mapping[str, object],

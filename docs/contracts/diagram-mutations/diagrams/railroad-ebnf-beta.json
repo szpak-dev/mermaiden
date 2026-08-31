@@ -12,22 +12,22 @@
         "label": "updateable",
         "elements": "move_or_reorder_only"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
-          "composite_expression",
-          "sequence_expression",
           "alternative_expression",
+          "composite_expression",
+          "group_expression",
           "optional_expression",
           "repetition_expression",
-          "group_expression"
+          "sequence_expression"
         ]
       },
       "child_collection": {
         "reorder_command": "reorder_elements",
         "membership": "Exact permutation of current direct child IDs."
-      },
-      "kind_classification": "immutable"
+      }
     },
     "composite_expression": {
       "update_command": "update_element",
@@ -36,22 +36,22 @@
         "label": "updateable",
         "elements": "move_or_reorder_only"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
-          "composite_expression",
-          "sequence_expression",
           "alternative_expression",
+          "composite_expression",
+          "group_expression",
           "optional_expression",
           "repetition_expression",
-          "group_expression"
+          "sequence_expression"
         ]
       },
       "child_collection": {
         "reorder_command": "reorder_elements",
         "membership": "Exact permutation of current direct child IDs."
-      },
-      "kind_classification": "immutable"
+      }
     },
     "group_expression": {
       "update_command": "update_element",
@@ -60,22 +60,22 @@
         "label": "updateable",
         "elements": "move_or_reorder_only"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
-          "composite_expression",
-          "sequence_expression",
           "alternative_expression",
+          "composite_expression",
+          "group_expression",
           "optional_expression",
           "repetition_expression",
-          "group_expression"
+          "sequence_expression"
         ]
       },
       "child_collection": {
         "reorder_command": "reorder_elements",
         "membership": "Exact permutation of current direct child IDs."
-      },
-      "kind_classification": "immutable"
+      }
     },
     "non_terminal": {
       "update_command": "update_element",
@@ -83,18 +83,18 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
-          "composite_expression",
-          "sequence_expression",
           "alternative_expression",
+          "composite_expression",
+          "group_expression",
           "optional_expression",
           "repetition_expression",
-          "group_expression"
+          "sequence_expression"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "optional_expression": {
       "update_command": "update_element",
@@ -103,22 +103,22 @@
         "label": "updateable",
         "elements": "move_or_reorder_only"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
-          "composite_expression",
-          "sequence_expression",
           "alternative_expression",
+          "composite_expression",
+          "group_expression",
           "optional_expression",
           "repetition_expression",
-          "group_expression"
+          "sequence_expression"
         ]
       },
       "child_collection": {
         "reorder_command": "reorder_elements",
         "membership": "Exact permutation of current direct child IDs."
-      },
-      "kind_classification": "immutable"
+      }
     },
     "repetition_expression": {
       "update_command": "update_element",
@@ -127,22 +127,22 @@
         "label": "updateable",
         "elements": "move_or_reorder_only"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
-          "composite_expression",
-          "sequence_expression",
           "alternative_expression",
+          "composite_expression",
+          "group_expression",
           "optional_expression",
           "repetition_expression",
-          "group_expression"
+          "sequence_expression"
         ]
       },
       "child_collection": {
         "reorder_command": "reorder_elements",
         "membership": "Exact permutation of current direct child IDs."
-      },
-      "kind_classification": "immutable"
+      }
     },
     "sequence_expression": {
       "update_command": "update_element",
@@ -151,23 +151,23 @@
         "label": "updateable",
         "elements": "move_or_reorder_only"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root",
-          "composite_expression",
-          "sequence_expression",
           "alternative_expression",
+          "composite_expression",
+          "group_expression",
           "optional_expression",
           "repetition_expression",
-          "group_expression"
+          "sequence_expression"
         ]
       },
       "child_collection": {
         "reorder_command": "reorder_elements",
         "membership": "Exact permutation of current direct child IDs."
-      },
-      "kind_classification": "immutable"
+      }
     },
     "special": {
       "update_command": "update_element",
@@ -175,18 +175,18 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
-          "composite_expression",
-          "sequence_expression",
           "alternative_expression",
+          "composite_expression",
+          "group_expression",
           "optional_expression",
           "repetition_expression",
-          "group_expression"
+          "sequence_expression"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "terminal": {
       "update_command": "update_element",
@@ -194,18 +194,18 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
-          "composite_expression",
-          "sequence_expression",
           "alternative_expression",
+          "composite_expression",
+          "group_expression",
           "optional_expression",
           "repetition_expression",
-          "group_expression"
+          "sequence_expression"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     }
   },
   "relations": {},

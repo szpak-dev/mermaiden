@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 from wireup import injectable
 
-from ...core.diagram import Diagram
+from ...core.domain import Diagram
 from ..diagrams.state import DiagramData
 from .builder import DiagramSnapshotBuilder
 from .domain import SNAPSHOT_VERSION, DiagramSnapshot

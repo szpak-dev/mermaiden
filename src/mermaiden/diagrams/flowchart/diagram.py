@@ -4,11 +4,11 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .annotations import Notes
 from .configuration import FlowchartDiagramConfiguration
-from .constraints import FlowchartConstraint
+from .constraints.domain import FlowchartConstraint
 from .elements import (
     Action,
     DataStore,
@@ -38,6 +38,11 @@ class Flowchart(DiagramModel):
         "flowchart",
         "FlowchartDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        return (element_type is FlowGroup or issubclass(element_type, FlowNode)) and (
+            parent_type is None or parent_type is FlowGroup
+        )
 
     def add_group(
         self,

@@ -4,8 +4,8 @@ from dataclasses import dataclass
 from wireup import injectable
 
 from ...domain import CommandPayload, ValidatedCommandPayload
-from ..application import DiagramInfo, DiagramsApplication
-from ..domain import DiagramModel
+from ..application import DiagramsApplication
+from ..domain import DiagramInfo, DiagramModel
 from .commands import DiagramCommandCatalog
 from .models import DiagramDescription
 from .objects import DiagramObjectCatalog
@@ -20,16 +20,23 @@ class DiagramCatalog:
 
     def describe(self, diagram_id: str) -> DiagramDescription:
         info = self.registry.get(diagram_id)
+        diagram = self.registry.get_diagram(diagram_id)
+        elements = self.objects.elements(info)
         return DiagramDescription(
             id=info.id,
             name=info.name,
-            elements=self.objects.schemas(self.objects.elements(info)),
+            elements=self.objects.schemas(elements),
             relations=self.objects.schemas(self.objects.relations(info)),
             annotations=self.objects.schemas(self.objects.annotations(info)),
+            placements=self.objects.placements(diagram, elements),
             commands={
                 name: self.commands.payload(info.id, name).model_json_schema() for name in self.commands.names(info)
             },
         )
+
+    def validate(self) -> None:
+        for info in self.registry:
+            self.describe(info.id)
 
     def command_names(self, info: DiagramInfo) -> tuple[str, ...]:
         return self.commands.names(info)

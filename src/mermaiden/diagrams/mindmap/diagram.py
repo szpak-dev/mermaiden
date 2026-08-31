@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import MindmapDiagramConfiguration
 from .constraints import MindmapConstraint
@@ -22,6 +22,13 @@ class Mindmap(DiagramModel):
         "mindmap",
         "MindmapDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        if not issubclass(element_type, MindmapNode):
+            return False
+        if parent_type is None:
+            return element_type is MindmapNode
+        return issubclass(parent_type, MindmapNode)
 
     def add_root(self, id: str, label: str) -> ChangeReport:
         return self._add_node(MindmapNode(id=id, label=label), "", "root")

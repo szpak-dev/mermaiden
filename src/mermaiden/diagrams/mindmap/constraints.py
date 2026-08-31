@@ -1,6 +1,6 @@
 from wireup import injectable
 
-from ...core.constraint import ConstraintDiagram, Violation
+from ...core.domain import ConstraintDiagram, Violation
 from ..domain import DiagramConstraint
 from .elements import MindmapNode
 
@@ -15,4 +15,4 @@ class ExactlyOneRoot(MindmapConstraint):
         count = sum(isinstance(item, MindmapNode) for item in diagram.root_elements)
         if count == 1:
             return ()
-        return (self.violation(f"Mindmap requires exactly one root; found {count}."),)
+        return (self.violation(f"Mindmap requires exactly one root; found {count}.", path=""),)

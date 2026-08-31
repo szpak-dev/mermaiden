@@ -3,11 +3,10 @@ from dataclasses import dataclass
 
 from wireup import injectable
 
-from ..core.constraint import ChangeReport
-from ..core.error import OperationError
+from ..core.domain import ChangeReport, OperationError
+from ..diagrams.domain import MutationKernel
 from ..runtime.diagrams.aggregate import DiagramAggregate
 from ..runtime.diagrams.state import DiagramData
-from .domain import MutationKernel
 
 
 @injectable(as_type=MutationKernel)
@@ -74,7 +73,7 @@ class DiagramMutationKernel(MutationKernel):
     ) -> ChangeReport:
         operation = f"move element '{id}'"
         try:
-            candidate = diagram.elements.move(id, kind, parent_id, position)
+            candidate = diagram.elements.move(id, kind, parent_id, position, diagram)
         except OperationError as error:
             diagram.runtime.transaction.reject(operation, str(error))
         except Exception:
@@ -98,8 +97,8 @@ class DiagramMutationKernel(MutationKernel):
             raise
         return self._commit(diagram, operation, candidate)
 
-    @staticmethod
     def _commit(
+        self,
         diagram: DiagramAggregate,
         operation: str,
         candidate: DiagramData,

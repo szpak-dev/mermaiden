@@ -13,14 +13,14 @@
         "participant_kind": "updateable",
         "created": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root",
           "participant_box"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "participant_box": {
       "update_command": "update_element",
@@ -30,6 +30,7 @@
         "elements": "move_or_reorder_only",
         "color": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
@@ -39,8 +40,7 @@
       "child_collection": {
         "reorder_command": "reorder_elements",
         "membership": "Exact permutation of current direct child IDs."
-      },
-      "kind_classification": "immutable"
+      }
     }
   },
   "relations": {

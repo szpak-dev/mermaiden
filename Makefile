@@ -1,4 +1,4 @@
-.PHONY: ci compat diagrams-test diagrams-validate format mutation-contract
+.PHONY: ci compat diagrams-test diagrams-validate format mutation-contract package-check
 
 VENV := .venv
 PYTHON := $(VENV)/bin/python
@@ -26,7 +26,22 @@ format: $(PYTHON)
 	@$(PYTHON) -m ruff check --fix .
 
 mutation-contract: $(PYTHON)
-	@$(PYTHON) scripts/render_mutation_contract.py --write
+	@PYTHONPATH=src $(PYTHON) scripts/render_mutation_contract.py --write
+
+package-check: $(PYTHON)
+	@set -eu; \
+	temporary=$$(mktemp -d); \
+	trap 'rm -rf "$$temporary"' EXIT; \
+	artifacts="$$temporary/artifacts"; \
+	environment="$$temporary/environment"; \
+	mkdir -p "$$artifacts"; \
+	$(PYTHON) -m build --outdir "$$artifacts"; \
+	$(PYTHON) -m twine check "$$artifacts"/*; \
+	$(PYTHON) -m venv "$$environment"; \
+	"$$environment/bin/python" -m pip install --no-cache-dir "$$artifacts"/*.whl; \
+	"$$environment/bin/python" -m pip check; \
+	cd "$$temporary"; \
+	"$$environment/bin/python" -I "$(CURDIR)/scripts/smoke_installed_wheel.py"
 
 ci: $(PYTHON)
 	@$(PYTHON) -m ensurepip --upgrade
@@ -37,4 +52,4 @@ ci: $(PYTHON)
 	@$(PYTHON) -m pytest
 	@$(MAKE) compat
 	@$(MAKE) diagrams-validate
-	@output=$$(mktemp -d); $(PYTHON) -m build --outdir "$$output" && $(PYTHON) -m twine check "$$output"/*
+	@$(MAKE) package-check

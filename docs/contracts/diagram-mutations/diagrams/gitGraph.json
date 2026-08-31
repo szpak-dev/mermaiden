@@ -12,13 +12,13 @@
         "label": "updateable",
         "order": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "checkout": {
       "update_command": "update_element",
@@ -26,13 +26,13 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "commit": {
       "update_command": "update_element",
@@ -42,13 +42,13 @@
         "commit_type": "updateable",
         "tag": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     }
   },
   "relations": {

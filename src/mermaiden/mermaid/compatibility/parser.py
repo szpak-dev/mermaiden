@@ -39,7 +39,6 @@ class MermaidSyntaxValidator:
             for diagnostic in report.diagnostics
         )
 
-    @staticmethod
-    def has_content(source: str) -> bool:
+    def has_content(self, source: str) -> bool:
         body = source.split("---\n", 2)[-1]
         return len(tuple(line for line in body.splitlines() if line.strip())) > 1

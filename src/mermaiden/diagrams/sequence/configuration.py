@@ -1,4 +1,4 @@
-from ..configuration import MermaidDiagramConfiguration
+from ..domain import MermaidDiagramConfiguration
 
 
 class SequenceDiagramConfiguration(MermaidDiagramConfiguration):

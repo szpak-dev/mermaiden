@@ -1,6 +1,6 @@
 # `stateDiagram-v2` mutation matrix
 
-Generated from [`stateDiagram-v2.json`](stateDiagram-v2.json). Do not edit directly.
+Generated from public `Application` discovery. Do not edit directly.
 
 Root ordering: `reorder_elements` over the exact direct-member permutation.
 

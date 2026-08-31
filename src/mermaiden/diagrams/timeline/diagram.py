@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import TimelineDiagramConfiguration
 from .constraints import TimelineConstraint
@@ -23,6 +23,13 @@ class Timeline(DiagramModel):
         "timeline",
         "TimelineDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        if element_type is TimelineSection:
+            return parent_type is None
+        if element_type is TimelinePeriod:
+            return parent_type is None or parent_type is TimelineSection
+        return element_type is TimelineEvent and parent_type is TimelinePeriod
 
     def set_title(self, title: str) -> None:
         object.__setattr__(self, "title", title)

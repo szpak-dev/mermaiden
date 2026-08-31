@@ -16,13 +16,13 @@
         "risk": "updateable",
         "verification_method": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "requirement_element": {
       "update_command": "update_element",
@@ -32,13 +32,13 @@
         "element_type": "updateable",
         "document_reference": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     }
   },
   "relations": {

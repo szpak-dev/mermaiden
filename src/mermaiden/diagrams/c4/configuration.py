@@ -1,6 +1,6 @@
 from pydantic import Field, field_validator
 
-from ..configuration import MermaidDiagramConfiguration
+from ..domain import MermaidDiagramConfiguration
 
 
 class C4ContextDiagramConfiguration(MermaidDiagramConfiguration):

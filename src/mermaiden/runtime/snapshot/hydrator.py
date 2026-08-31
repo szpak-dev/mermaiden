@@ -3,10 +3,7 @@ from typing import Any, cast
 
 from wireup import injectable
 
-from ...core.annotation import Annotation
-from ...core.diagram import Diagram
-from ...core.element import Element
-from ...core.relation import Relation
+from ...core.domain import Annotation, Diagram, Element, Relation
 from ..diagrams.state import DiagramData
 from .configuration import DiagramConfigurationReader
 from .domain import TRANSIENT_DIAGRAM_FIELDS, DiagramSnapshot, SnapshotError

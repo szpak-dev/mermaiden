@@ -1,6 +1,6 @@
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, Violation
+from ...core.domain import Constraint, ConstraintDiagram, Violation
 from ..domain import StructureConstraint
 
 
@@ -12,6 +12,6 @@ class AnnotationsHaveTargets(StructureConstraint):
                 f"Annotation '{item.id}' requires at least one target.",
                 path=f"annotations.{item.id}",
             )
-            for item in diagram.find_annotations()
+            for item in diagram.find_annotations("")
             if not item.targets
         )

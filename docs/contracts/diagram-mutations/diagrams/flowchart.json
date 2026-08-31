@@ -11,14 +11,14 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root",
           "flow_group"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "data_store": {
       "update_command": "update_element",
@@ -26,14 +26,14 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root",
           "flow_group"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "decision": {
       "update_command": "update_element",
@@ -41,14 +41,14 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root",
           "flow_group"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "document": {
       "update_command": "update_element",
@@ -56,14 +56,14 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root",
           "flow_group"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "end": {
       "update_command": "update_element",
@@ -71,14 +71,14 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root",
           "flow_group"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "flow_group": {
       "update_command": "update_element",
@@ -88,6 +88,7 @@
         "elements": "move_or_reorder_only",
         "direction": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
@@ -98,8 +99,7 @@
       "child_collection": {
         "reorder_command": "reorder_elements",
         "membership": "Exact permutation of current direct child IDs."
-      },
-      "kind_classification": "immutable"
+      }
     },
     "flow_node": {
       "update_command": "update_element",
@@ -107,14 +107,14 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root",
           "flow_group"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "input_output": {
       "update_command": "update_element",
@@ -122,14 +122,14 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root",
           "flow_group"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "junction": {
       "update_command": "update_element",
@@ -137,14 +137,14 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root",
           "flow_group"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "start": {
       "update_command": "update_element",
@@ -152,14 +152,14 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root",
           "flow_group"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "subprocess": {
       "update_command": "update_element",
@@ -167,14 +167,14 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root",
           "flow_group"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     }
   },
   "relations": {

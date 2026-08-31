@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from ...core.element import Entity
+from ...core.domain import Entity
 
 
 class CommitType(StrEnum):

@@ -4,14 +4,19 @@ from typing import Never, Protocol
 
 from wireup import injectable
 
-from ...core.annotation import Annotation, TargetKind
-from ...core.constraint import ChangeReport, DiagramObjectKind, DiagramObjectReference, ValidationReport
-from ...core.diagram import Diagram
-from ...core.element import Element
-from ...core.error import OperationError
-from ...core.relation import Relation
-from ..application import DiagramRuntime
-from ..domain import ConstraintInspection
+from ...core.domain import (
+    Annotation,
+    ChangeReport,
+    Diagram,
+    DiagramObjectKind,
+    DiagramObjectReference,
+    Element,
+    OperationError,
+    Relation,
+    TargetKind,
+    ValidationReport,
+)
+from ..domain import ConstraintInspection, DiagramRuntime
 from .state import DiagramData
 
 
@@ -64,7 +69,7 @@ class DiagramAggregate(Diagram):
 
     def _add_element(self, operation: str, element: Element, parent_id: str = "") -> ChangeReport:
         try:
-            candidate = self.elements.add(element, parent_id)
+            candidate = self.elements.add(element, parent_id, self)
         except OperationError as error:
             self._reject(operation, str(error))
         return self._apply(operation, candidate)

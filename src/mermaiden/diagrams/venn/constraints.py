@@ -1,6 +1,6 @@
 from wireup import injectable
 
-from ...core.constraint import ConstraintDiagram, Violation
+from ...core.domain import ConstraintDiagram, Violation
 from ..domain import DiagramConstraint
 from .elements import VennSet, VennUnion
 
@@ -12,7 +12,7 @@ class VennConstraint(DiagramConstraint):
 @injectable(as_type=VennConstraint, qualifier="venn_structure")
 class VennStructure(VennConstraint):
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
-        known_sets = {item.id for item in diagram.walk_elements() if isinstance(item, VennSet)}
+        known_sets = {item.id for item in diagram.walk_elements("") if isinstance(item, VennSet)}
         return tuple(
             self.violation(
                 f"Venn union '{item.id}' references undefined sets: {', '.join(missing)}.",

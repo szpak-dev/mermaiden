@@ -4,12 +4,13 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import RailroadDiagramConfiguration
 from .constraints import RailroadDiagramConstraint
 from .elements import (
     AlternativeExpression,
+    CompositeExpression,
     GroupExpression,
     NonTerminal,
     OptionalExpression,
@@ -31,6 +32,24 @@ class RailroadDiagram(DiagramModel):
         "railroad",
         "RailroadDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        supported = element_type in (
+            AlternativeExpression,
+            CompositeExpression,
+            GroupExpression,
+            NonTerminal,
+            OptionalExpression,
+            RepetitionExpression,
+            SequenceExpression,
+            Special,
+            Terminal,
+        )
+        if not supported:
+            return False
+        if parent_type is None:
+            return element_type is SequenceExpression
+        return issubclass(parent_type, CompositeExpression)
 
     def add_rule(self, id: str, label: str) -> ChangeReport:
         return self._add_element(f"add rule '{id}'", SequenceExpression(id=id, label=label))

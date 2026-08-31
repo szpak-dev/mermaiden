@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import KanbanDiagramConfiguration
 from .constraints import KanbanDiagramConstraint
@@ -22,6 +22,11 @@ class KanbanDiagram(DiagramModel):
         "kanban",
         "KanbanDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        if element_type is Column:
+            return parent_type is None
+        return element_type is Task and parent_type is Column
 
     def add_column(self, id: str, label: str) -> ChangeReport:
         return self._add_element(f"add column '{id}'", Column(id=id, label=label))

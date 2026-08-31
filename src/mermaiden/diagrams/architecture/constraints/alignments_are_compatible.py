@@ -1,51 +1,13 @@
-from collections import defaultdict, deque
-from collections.abc import Iterable, Mapping
-from dataclasses import dataclass
+from collections import defaultdict
+from collections.abc import Iterable
 
 from wireup import injectable
 
-from ...core.constraint import ConstraintDiagram, Violation
-from ..domain import DiagramConstraint
-from .elements import ArchitectureGroup
-from .relations import Alignment, AlignmentAxis, Edge, Port
-
-
-@injectable(qualifier="architecture_structure")
-class ArchitectureConstraint(DiagramConstraint):
-    pass
-
-
-@dataclass(frozen=True, slots=True)
-class _LayoutAlignment:
-    id: str
-    axis: AlignmentAxis
-    member_ids: tuple[str, ...]
-    path: str
-
-
-@dataclass(frozen=True, slots=True)
-class _EdgeConstraint:
-    successor_id: str
-    edge_id: str
-
-
-@dataclass(frozen=True, slots=True)
-class _ConstraintGraph:
-    outgoing: Mapping[str, tuple[_EdgeConstraint, ...]]
-
-    def path(self, start: str, target: str) -> tuple[str, ...]:
-        queue: deque[tuple[str, tuple[str, ...]]] = deque(((start, ()),))
-        visited = {start}
-        while queue:
-            current, edge_ids = queue.popleft()
-            for constraint in self.outgoing.get(current, ()):
-                path = (*edge_ids, constraint.edge_id)
-                if constraint.successor_id == target:
-                    return path
-                if constraint.successor_id not in visited:
-                    visited.add(constraint.successor_id)
-                    queue.append((constraint.successor_id, path))
-        return ()
+from ....core.domain import ConstraintDiagram, Violation
+from ..domain import ConstraintGraph, EdgeConstraint, LayoutAlignment
+from ..elements import ArchitectureGroup
+from ..relations import Alignment, AlignmentAxis, Edge, Port
+from .structure import ArchitectureConstraint
 
 
 @injectable(as_type=ArchitectureConstraint, qualifier="architecture_alignments_are_compatible")
@@ -61,22 +23,22 @@ class AlignmentsAreCompatible(ArchitectureConstraint):
             issues.extend(self._perpendicular_issues(alignment, perpendicular))
         return tuple(issues)
 
-    def _alignments(self, diagram: ConstraintDiagram) -> tuple[_LayoutAlignment, ...]:
+    def _alignments(self, diagram: ConstraintDiagram) -> tuple[LayoutAlignment, ...]:
         declared = tuple(
-            _LayoutAlignment(item.id, item.axis, item.member_ids, f"relations.{item.id}")
-            for item in diagram.find_relations()
+            LayoutAlignment(item.id, item.axis, item.member_ids, f"relations.{item.id}")
+            for item in diagram.find_relations("")
             if isinstance(item, Alignment)
         )
         derived = tuple(
-            _LayoutAlignment(item.id, item.axis, item.member_ids, f"elements.{group.id}.columns")
-            for group in diagram.walk_elements()
+            LayoutAlignment(item.id, item.axis, item.member_ids, f"elements.{group.id}.columns")
+            for group in diagram.walk_elements("")
             if isinstance(group, ArchitectureGroup)
             for item in group.grid_alignments
         )
         return (*declared, *derived)
 
-    def _overlap_issues(self, alignments: tuple[_LayoutAlignment, ...]) -> Iterable[Violation]:
-        owners: dict[tuple[AlignmentAxis, str], _LayoutAlignment] = {}
+    def _overlap_issues(self, alignments: tuple[LayoutAlignment, ...]) -> Iterable[Violation]:
+        owners: dict[tuple[AlignmentAxis, str], LayoutAlignment] = {}
         for alignment in alignments:
             for member_id in alignment.member_ids:
                 key = (alignment.axis, member_id)
@@ -90,7 +52,7 @@ class AlignmentsAreCompatible(ArchitectureConstraint):
                 else:
                     owners[key] = alignment
 
-    def _cross_axis_issues(self, alignments: tuple[_LayoutAlignment, ...]) -> Iterable[Violation]:
+    def _cross_axis_issues(self, alignments: tuple[LayoutAlignment, ...]) -> Iterable[Violation]:
         for index, first in enumerate(alignments):
             for second in alignments[index + 1 :]:
                 shared = tuple(member_id for member_id in first.member_ids if member_id in second.member_ids)
@@ -104,8 +66,8 @@ class AlignmentsAreCompatible(ArchitectureConstraint):
 
     def _ordering_issues(
         self,
-        alignment: _LayoutAlignment,
-        constraints: _ConstraintGraph,
+        alignment: LayoutAlignment,
+        constraints: ConstraintGraph,
     ) -> Iterable[Violation]:
         for index, earlier in enumerate(alignment.member_ids):
             for later in alignment.member_ids[index + 1 :]:
@@ -119,8 +81,8 @@ class AlignmentsAreCompatible(ArchitectureConstraint):
 
     def _perpendicular_issues(
         self,
-        alignment: _LayoutAlignment,
-        constraints: _ConstraintGraph,
+        alignment: LayoutAlignment,
+        constraints: ConstraintGraph,
     ) -> Iterable[Violation]:
         for index, first in enumerate(alignment.member_ids):
             for second in alignment.member_ids[index + 1 :]:
@@ -133,27 +95,25 @@ class AlignmentsAreCompatible(ArchitectureConstraint):
                         path=alignment.path,
                     )
 
-    @staticmethod
-    def _edge_constraints(diagram: ConstraintDiagram) -> tuple[_ConstraintGraph, _ConstraintGraph]:
-        horizontal: defaultdict[str, list[_EdgeConstraint]] = defaultdict(list)
-        vertical: defaultdict[str, list[_EdgeConstraint]] = defaultdict(list)
-        for relation in diagram.find_relations():
+    def _edge_constraints(self, diagram: ConstraintDiagram) -> tuple[ConstraintGraph, ConstraintGraph]:
+        horizontal: defaultdict[str, list[EdgeConstraint]] = defaultdict(list)
+        vertical: defaultdict[str, list[EdgeConstraint]] = defaultdict(list)
+        for relation in diagram.find_relations(""):
             if not isinstance(relation, Edge) or len(relation.element_ids) != 2:
                 continue
             source, target = relation.element_ids
             if (relation.source_port, relation.target_port) == (Port.RIGHT, Port.LEFT):
-                horizontal[source].append(_EdgeConstraint(target, relation.id))
+                horizontal[source].append(EdgeConstraint(target, relation.id))
             elif (relation.source_port, relation.target_port) == (Port.LEFT, Port.RIGHT):
-                horizontal[target].append(_EdgeConstraint(source, relation.id))
+                horizontal[target].append(EdgeConstraint(source, relation.id))
             elif (relation.source_port, relation.target_port) == (Port.BOTTOM, Port.TOP):
-                vertical[source].append(_EdgeConstraint(target, relation.id))
+                vertical[source].append(EdgeConstraint(target, relation.id))
             elif (relation.source_port, relation.target_port) == (Port.TOP, Port.BOTTOM):
-                vertical[target].append(_EdgeConstraint(source, relation.id))
+                vertical[target].append(EdgeConstraint(source, relation.id))
         return (
-            _ConstraintGraph({node: tuple(edges) for node, edges in horizontal.items()}),
-            _ConstraintGraph({node: tuple(edges) for node, edges in vertical.items()}),
+            ConstraintGraph({node: tuple(edges) for node, edges in horizontal.items()}),
+            ConstraintGraph({node: tuple(edges) for node, edges in vertical.items()}),
         )
 
-    @staticmethod
-    def _edge_list(edge_ids: tuple[str, ...]) -> str:
+    def _edge_list(self, edge_ids: tuple[str, ...]) -> str:
         return ", ".join(f"'{edge_id}'" for edge_id in edge_ids)

@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import RadarConfiguration
 from .constraints import RadarConstraint
@@ -28,6 +28,9 @@ class Radar(DiagramModel):
         "radar",
         "RadarDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        return element_type in (RadarAxis, RadarCurve) and parent_type is None
 
     def set_title(self, title: str) -> None:
         object.__setattr__(self, "title", title)

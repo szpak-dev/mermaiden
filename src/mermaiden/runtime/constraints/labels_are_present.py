@@ -1,6 +1,6 @@
 from wireup import injectable
 
-from ...core.constraint import Constraint, ConstraintDiagram, Violation
+from ...core.domain import Constraint, ConstraintDiagram, Violation
 from ..domain import StructureConstraint
 
 
@@ -12,6 +12,6 @@ class LabelsArePresent(StructureConstraint):
                 f"Element '{item.id}' requires a label.",
                 path=f"elements.{item.id}",
             )
-            for item in diagram.walk_elements()
+            for item in diagram.walk_elements("")
             if not item.label.strip()
         )

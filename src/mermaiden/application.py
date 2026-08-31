@@ -1,37 +1,25 @@
-from collections.abc import Callable, Mapping
+from collections.abc import Mapping
 from dataclasses import dataclass
-from inspect import signature
 
 from wireup import create_sync_container, injectable
 
 import mermaiden
 
-from .core.constraint import ChangeReport
-from .core.diagram import Diagram
-from .diagrams.application import DiagramFactory, DiagramInfo, DiagramPersistenceApplication, DiagramsApplication
+from .core.domain import ChangeRejected, ChangeReport, Diagram
+from .diagrams.application import DiagramsApplication
 from .diagrams.catalog.models import DiagramDescription
 from .diagrams.catalog.service import DiagramCatalog
-from .diagrams.configuration import MermaidDiagramConfiguration
-from .diagrams.domain import DiagramModel
-from .domain import CommandPayload, ValidatedCommandPayload
+from .diagrams.domain import DiagramInfo, DiagramModel
+from .diagrams.services.diagram_factory import DiagramFactory
+from .diagrams.services.persistence import DiagramPersistenceApplication
+from .domain import CommandPayload, DiagramCommand, UnknownCommand
 from .mermaid.application import MermaidApplication
 from .mermaid.templates import MermaidTemplateOwnership
 from .mermaid.validation import MermaidRenderReport, MermaidRenderValidator
+from .mutations.commands.application import DiagramCommandApplication
 from .runtime.snapshot import DiagramSnapshot
 
-
-class ApplicationError(RuntimeError):
-    pass
-
-
-class UnknownCommand(ApplicationError):
-    pass
-
-
-@dataclass(frozen=True, slots=True)
-class DiagramCommand:
-    operation: str
-    arguments: Mapping[str, object]
+__all__ = ["Application", "ChangeRejected", "DiagramCommand", "UnknownCommand"]
 
 
 @injectable(lifetime="scoped")
@@ -39,6 +27,7 @@ class DiagramCommand:
 class Application:
     diagrams: DiagramsApplication
     catalog: DiagramCatalog
+    commands: DiagramCommandApplication
     diagram_factory: DiagramFactory
     persistence: DiagramPersistenceApplication
     renderer: MermaidApplication
@@ -47,6 +36,7 @@ class Application:
 
     def initialize(self) -> None:
         self.template_ownership.validate()
+        self.catalog.validate()
 
     def available_diagrams(self) -> tuple[DiagramInfo, ...]:
         return self.diagrams.available()
@@ -68,17 +58,7 @@ class Application:
         return self.diagram_factory.create(diagram_id)
 
     def apply(self, diagram: DiagramModel, command: DiagramCommand) -> ChangeReport | None:
-        operation = getattr(diagram, command.operation, None)
-        if command.operation.startswith("_") or not callable(operation):
-            raise UnknownCommand(f"Command '{command.operation}' is not supported for '{diagram.kind}'.")
-        try:
-            payload = self.catalog.validate_command(diagram, command.operation, command.arguments)
-        except (KeyError, ValueError) as error:
-            raise UnknownCommand(f"Command '{command.operation}' has invalid arguments.") from error
-        if isinstance(payload, MermaidDiagramConfiguration):
-            diagram.configure(payload)
-            return None
-        return self._invoke(operation, payload)
+        return self.commands.apply(diagram, command)
 
     def execute(
         self,
@@ -99,32 +79,6 @@ class Application:
 
     def validate_render(self, diagram: Diagram) -> MermaidRenderReport:
         return self.render_validator.validate(diagram)
-
-    def _invoke(
-        self,
-        operation: Callable[..., object],
-        payload: ValidatedCommandPayload,
-    ) -> ChangeReport | None:
-        parameters = tuple(signature(operation).parameters.values())
-        values = payload.model_dump(exclude_unset=True)
-        variadic = next((item for item in parameters if item.kind is item.VAR_POSITIONAL), None)
-        positional = ()
-        if variadic is not None:
-            variadic_values = values.pop(variadic.name)
-            if not isinstance(variadic_values, tuple):
-                raise UnknownCommand("Variadic command arguments must be a tuple.")
-            positional = (
-                tuple(
-                    values.pop(item.name)
-                    for item in parameters
-                    if item.kind in {item.POSITIONAL_ONLY, item.POSITIONAL_OR_KEYWORD}
-                )
-                + variadic_values
-            )
-        result = operation(*positional, **values)
-        if result is not None and not isinstance(result, ChangeReport):
-            raise UnknownCommand("Command is not a mutation.")
-        return result
 
     @classmethod
     def create(cls) -> "Application":

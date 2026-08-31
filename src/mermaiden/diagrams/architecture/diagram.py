@@ -5,11 +5,11 @@ from typing import Annotated, ClassVar
 from pydantic import Field
 from wireup import injectable
 
-from ...core.constraint import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .annotations import ArchitectureNotes
 from .configuration import ArchitectureDiagramConfiguration
-from .constraints import ArchitectureConstraint
+from .constraints.structure import ArchitectureConstraint
 from .elements import ArchitectureGroup, Junction, Service
 from .relations import Alignment, AlignmentAxis, Edge, Port
 
@@ -28,6 +28,11 @@ class Architecture(DiagramModel):
         "architecture",
         "ArchitectureDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        return element_type in (ArchitectureGroup, Junction, Service) and (
+            parent_type is None or parent_type is ArchitectureGroup
+        )
 
     def add_group(
         self,

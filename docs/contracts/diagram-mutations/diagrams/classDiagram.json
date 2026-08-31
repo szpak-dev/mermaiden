@@ -15,14 +15,14 @@
         "annotations": "updateable",
         "comment": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "$root",
           "class_namespace"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "class_namespace": {
       "update_command": "update_element",
@@ -32,6 +32,7 @@
         "elements": "move_or_reorder_only",
         "comment": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
@@ -41,8 +42,7 @@
       "child_collection": {
         "reorder_command": "reorder_elements",
         "membership": "Exact permutation of current direct child IDs."
-      },
-      "kind_classification": "immutable"
+      }
     }
   },
   "relations": {

@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import IshikawaDiagramConfiguration
 from .constraints import IshikawaDiagramConstraint
@@ -22,6 +22,13 @@ class IshikawaDiagram(DiagramModel):
         "ishikawa",
         "IshikawaDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        if element_type is Effect:
+            return parent_type is None
+        if element_type is Category:
+            return parent_type is None or parent_type is Category
+        return element_type is Cause and parent_type is Category
 
     def add_effect(self, id: str, label: str) -> ChangeReport:
         return self._add_element(f"add effect '{id}'", Effect(id=id, label=label))

@@ -14,10 +14,21 @@ class TestDiagramCatalog:
         payload = application.command_payload("sequenceDiagram", "add_participant")
 
         assert set(description.elements) == {"participant", "participant_box"}
+        assert description.placements["participant"].allowed_parents == ("$root", "participant_box")
+        assert description.placements["participant_box"].allowed_parents == ("$root",)
         assert {"message", "participant_event", "control", "directive"} == set(description.relations)
         assert "add_participant" in description.commands
         validated = payload.model_validate({"id": "api", "label": "API", "kind": "actor"})
         assert validated.model_dump(mode="json")["kind"] == "actor"
+
+    def test_every_catalogued_element_has_one_public_placement_policy(self) -> None:
+        application = Application.create()
+
+        for info in application.available_diagrams():
+            description = application.diagram_description(info.id)
+
+            assert tuple(description.placements) == tuple(description.elements)
+            assert all(placement.allowed_parents for placement in description.placements.values())
 
     def test_discovers_each_diagrams_concrete_configuration_as_a_command_payload(self) -> None:
         application = Application.create()

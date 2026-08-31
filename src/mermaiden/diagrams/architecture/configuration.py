@@ -1,6 +1,6 @@
 from pydantic import Field
 
-from ..configuration import MermaidDiagramConfiguration
+from ..domain import MermaidDiagramConfiguration
 
 
 class ArchitectureDiagramConfiguration(MermaidDiagramConfiguration):

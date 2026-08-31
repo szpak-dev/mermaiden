@@ -13,6 +13,7 @@
         "elements": "move_or_reorder_only",
         "size": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
@@ -22,8 +23,7 @@
       "child_collection": {
         "reorder_command": "reorder_elements",
         "membership": "Exact permutation of current direct child IDs."
-      },
-      "kind_classification": "immutable"
+      }
     },
     "venn_text": {
       "update_command": "update_element",
@@ -31,14 +31,14 @@
         "id": "immutable",
         "label": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
           "venn_set",
           "venn_union"
         ]
-      },
-      "kind_classification": "immutable"
+      }
     },
     "venn_union": {
       "update_command": "update_element",
@@ -49,6 +49,7 @@
         "set_ids": "updateable",
         "size": "updateable"
       },
+      "kind_classification": "immutable",
       "placement": {
         "move_command": "move_element",
         "allowed_parents": [
@@ -58,8 +59,7 @@
       "child_collection": {
         "reorder_command": "reorder_elements",
         "membership": "Exact permutation of current direct child IDs."
-      },
-      "kind_classification": "immutable"
+      }
     }
   },
   "relations": {},

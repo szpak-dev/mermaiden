@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from wireup import injectable
 
-from ...core.diagram import Diagram
+from ...core.domain import Diagram
 from .domain import SnapshotError
 
 

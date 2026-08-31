@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import EventModelingDiagramConfiguration
 from .constraints import EventModelingDiagramConstraint
@@ -26,6 +26,11 @@ class EventModelingDiagram(DiagramModel):
         "eventmodeling",
         "EventModelingDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        if element_type is Swimlane:
+            return parent_type is None
+        return element_type in (Actor, Command, Event, View) and parent_type is Swimlane
 
     def add_swimlane(self, id: str, label: str) -> ChangeReport:
         return self._add_element(f"add swimlane '{id}'", Swimlane(id=id, label=label))

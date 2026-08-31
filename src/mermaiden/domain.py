@@ -1,9 +1,24 @@
 from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from typing import Literal, Protocol, cast, overload
 
 from pydantic.json_schema import GenerateJsonSchema
 from pydantic_core import CoreSchema, SchemaSerializer, SchemaValidator
+
+
+class ApplicationError(RuntimeError):
+    pass
+
+
+class UnknownCommand(ApplicationError):
+    pass
+
+
+@dataclass(frozen=True, slots=True)
+class DiagramCommand:
+    operation: str
+    arguments: Mapping[str, object]
 
 
 class JsonSchema(Mapping[str, object], ABC):

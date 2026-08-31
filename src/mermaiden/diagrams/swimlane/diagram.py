@@ -4,11 +4,11 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from ..flowchart.elements import Direction
 from .configuration import SwimlaneConfiguration
-from .constraints import SwimlaneConstraint
+from .constraints.domain import SwimlaneConstraint
 from .elements import Activity, Connector, Decision, End, Start, Swimlane, SwimlaneNode
 from .relations import ConditionalFlow, Flow
 
@@ -25,6 +25,11 @@ class SwimlaneDiagram(DiagramModel):
         "swimlane",
         "SwimlaneDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        if element_type is Swimlane:
+            return parent_type is None
+        return issubclass(element_type, SwimlaneNode) and parent_type is Swimlane
 
     def add_lane(self, id: str, label: str) -> ChangeReport:
         return self._add_element(f"add lane '{id}'", Swimlane(id=id, label=label))

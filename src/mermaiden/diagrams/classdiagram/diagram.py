@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.constraint import ChangeReport
+from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .annotations import ClassNotes
 from .configuration import ClassDiagramConfiguration
@@ -24,6 +24,11 @@ class ClassDiagram(DiagramModel):
         "class",
         "ClassDiagramConfig",
     )
+
+    def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
+        if element_type is ClassNamespace:
+            return parent_type is None
+        return element_type is Class and (parent_type is None or parent_type is ClassNamespace)
 
     def add_class(
         self,

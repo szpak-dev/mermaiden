@@ -1,116 +1,14 @@
 from collections.abc import Sequence
-from dataclasses import dataclass, field
-from typing import Never
+from dataclasses import dataclass
 
 from wireup import injectable
 
-from ..core.constraint import (
-    ChangeRejected,
-    ChangeReport,
+from ..core.domain import (
     Constraint,
-    ConstraintLevel,
-    DiagramObjectReference,
+    Diagram,
     ValidationReport,
-    Violation,
 )
-from ..core.diagram import Diagram
-from .diagrams.annotations import Annotations
-from .diagrams.elements import Elements
-from .diagrams.relations import Relations
-from .diagrams.state import DiagramData, DiagramState
 from .domain import ConstraintInspection
-
-
-@dataclass(frozen=True, slots=True)
-class ChangeTransaction:
-    state: DiagramState
-
-    def apply(
-        self,
-        operation: str,
-        candidate: DiagramData,
-        diagram: Diagram,
-        observer: ConstraintInspection,
-        removed: tuple[DiagramObjectReference, ...],
-    ) -> ChangeReport:
-        return self._apply(
-            operation,
-            candidate,
-            diagram,
-            observer,
-            removed,
-            False,
-        )
-
-    def apply_valid_candidate(
-        self,
-        operation: str,
-        candidate: DiagramData,
-        diagram: Diagram,
-        observer: ConstraintInspection,
-        removed: tuple[DiagramObjectReference, ...],
-    ) -> ChangeReport:
-        return self._apply(
-            operation,
-            candidate,
-            diagram,
-            observer,
-            removed,
-            True,
-        )
-
-    def _apply(
-        self,
-        operation: str,
-        candidate: DiagramData,
-        diagram: Diagram,
-        observer: ConstraintInspection,
-        removed: tuple[DiagramObjectReference, ...],
-        require_valid_candidate: bool,
-    ) -> ChangeReport:
-        before = observer.inspect(diagram)
-        self.state.stage(candidate)
-        try:
-            after = observer.inspect(diagram)
-            if not after.can_commit and (require_valid_candidate or before.can_commit):
-                raise ChangeRejected(operation, after)
-            self.state.commit()
-        except Exception:
-            self.state.rollback()
-            raise
-        return ChangeReport(operation, before, after, True, removed)
-
-    def reject(self, operation: str, message: str) -> Never:
-        self.state.rollback()
-        current = ValidationReport(
-            (
-                Violation(
-                    code="operation.rejected",
-                    message=message,
-                    path=operation,
-                    level=ConstraintLevel.BLOCKING,
-                ),
-            )
-        )
-        raise ChangeRejected(operation, current)
-
-    def rollback(self) -> None:
-        self.state.rollback()
-
-
-@dataclass(frozen=True, slots=True)
-class DiagramRuntime:
-    state: DiagramState = field(default_factory=DiagramState)
-    elements: Elements = field(init=False)
-    relations: Relations = field(init=False)
-    annotations: Annotations = field(init=False)
-    transaction: ChangeTransaction = field(init=False)
-
-    def __post_init__(self) -> None:
-        object.__setattr__(self, "elements", Elements(self.state))
-        object.__setattr__(self, "relations", Relations(self.state))
-        object.__setattr__(self, "annotations", Annotations(self.state))
-        object.__setattr__(self, "transaction", ChangeTransaction(self.state))
 
 
 @injectable(as_type=ConstraintInspection)

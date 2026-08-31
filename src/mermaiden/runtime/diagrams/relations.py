@@ -3,8 +3,7 @@ from dataclasses import dataclass, replace
 
 from pydantic import ValidationError
 
-from ...core.error import OperationError
-from ...core.relation import Relation
+from ...core.domain import OperationError, Relation
 from .state import DiagramData, DiagramState
 
 

@@ -6,6 +6,8 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any, cast
 
+from mermaiden import Application
+
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT_ROOT = ROOT / "docs" / "contracts" / "diagram-mutations"
 CONTRACT_PATH = CONTRACT_ROOT / "contract.json"
@@ -17,35 +19,94 @@ JsonObject = dict[str, Any]
 
 def load_contract(path: Path = CONTRACT_PATH) -> JsonObject:
     contract = _read_object(path)
-    diagrams: JsonObject = {}
-    for diagram_path in sorted(DIAGRAMS_PATH.glob("*.json")):
-        diagram = _read_object(diagram_path)
-        diagram_id = diagram.pop("diagram_id", None)
-        if diagram_id != diagram_path.stem:
-            raise ValueError(f"Diagram ID {diagram_id!r} must match filename '{diagram_path.name}'.")
-        diagrams[diagram_path.stem] = diagram
-    if not diagrams:
-        raise ValueError(f"No diagram contracts found under '{DIAGRAMS_PATH}'.")
-    contract["diagrams"] = diagrams
+    contract["diagrams"] = discover_diagrams()
     return contract
 
 
-def render_documents(contract: Mapping[str, Any]) -> dict[Path, str]:
+def discover_diagrams() -> JsonObject:
+    application = Application.create()
+    diagrams: JsonObject = {}
+    for info in application.available_diagrams():
+        description = application.diagram_description(info.id)
+        diagrams[info.id] = {
+            "root_collection": {
+                "reorder_command": "reorder_elements",
+                "membership": "Exact permutation of current root element IDs.",
+            },
+            "elements": {
+                kind: _element_contract(
+                    schema,
+                    description.placements[kind].allowed_parents,
+                )
+                for kind, schema in description.elements.items()
+            },
+            "relations": {
+                kind: _object_contract(schema, "relations") for kind, schema in description.relations.items()
+            },
+            "annotations": {
+                kind: _object_contract(schema, "annotations") for kind, schema in description.annotations.items()
+            },
+        }
+    return diagrams
+
+
+def _element_contract(schema: Mapping[str, object], allowed_parents: tuple[str, ...]) -> JsonObject:
+    contract = _object_contract(schema, "elements")
+    contract["placement"] = {
+        "move_command": "move_element",
+        "allowed_parents": list(allowed_parents),
+    }
+    fields = _object(contract["fields"], "fields")
+    if "elements" in fields:
+        contract["child_collection"] = {
+            "reorder_command": "reorder_elements",
+            "membership": "Exact permutation of current direct child IDs.",
+        }
+    return contract
+
+
+def _object_contract(schema: Mapping[str, object], category: str) -> JsonObject:
+    properties = _object(schema["properties"], "properties")
+    fields = {
+        name: "immutable" if name == "id" else "move_or_reorder_only" if name == "elements" else "updateable"
+        for name in properties
+    }
+    contract: JsonObject = {
+        "update_command": f"update_{category.removesuffix('s')}",
+        "fields": fields,
+    }
+    if category != "elements":
+        contract["retargeting"] = {
+            "field": "element_ids" if category == "relations" else "targets",
+            "ordered": True,
+        }
+    contract["kind_classification"] = "immutable"
+    return contract
+
+
+def render_artifacts(contract: Mapping[str, Any]) -> dict[Path, str]:
     classifications = _object(contract["classifications"], "classifications")
     diagrams = _object(contract["diagrams"], "diagrams")
-    documents = {DOCUMENT_PATH: render_overview(contract)}
+    artifacts = {DOCUMENT_PATH: render_overview(contract)}
     for diagram_id, value in diagrams.items():
         diagram = _object(value, f"diagrams.{diagram_id}")
-        documents[DIAGRAMS_PATH / f"{diagram_id}.md"] = render_diagram(diagram_id, diagram, classifications)
-    return documents
+        artifacts[DIAGRAMS_PATH / f"{diagram_id}.json"] = (
+            json.dumps(
+                {"diagram_id": diagram_id, **diagram},
+                indent=2,
+            )
+            + "\n"
+        )
+        artifacts[DIAGRAMS_PATH / f"{diagram_id}.md"] = render_diagram(diagram_id, diagram, classifications)
+    return artifacts
 
 
 def render_overview(contract: Mapping[str, Any]) -> str:
     lines = [
         "# Diagram mutation contract",
         "",
-        "This documentation is generated from `contract.json` and `diagrams/*.json`.",
-        "Run `make mutation-contract` after changing the machine-readable sources.",
+        "This documentation is generated from public `Application` discovery and `contract.json` semantics.",
+        "Run `make mutation-contract` after changing the public catalog or contract semantics.",
         "",
         f"Contract version: `{contract['contract_version']}`.",
         "",
@@ -108,7 +169,7 @@ def render_diagram(
     lines = [
         f"# `{diagram_id}` mutation matrix",
         "",
-        f"Generated from [`{diagram_id}.json`]({diagram_id}.json). Do not edit directly.",
+        "Generated from public `Application` discovery. Do not edit directly.",
         "",
         f"Root ordering: `{root['reorder_command']}` over the exact direct-member permutation.",
         "",
@@ -200,28 +261,30 @@ def main() -> None:
     mode.add_argument("--write", action="store_true", help="replace generated Markdown")
     mode.add_argument("--check", action="store_true", help="fail when generated Markdown has drifted")
     arguments = parser.parse_args()
-    documents = render_documents(load_contract())
+    artifacts = render_artifacts(load_contract())
     if arguments.write:
-        for path, rendered in documents.items():
+        for path, rendered in artifacts.items():
             path.write_text(rendered, encoding="utf-8")
-        expected = set(documents)
-        for path in DIAGRAMS_PATH.glob("*.md"):
+        expected = set(artifacts)
+        for path in (*DIAGRAMS_PATH.glob("*.json"), *DIAGRAMS_PATH.glob("*.md")):
             if path not in expected:
                 path.unlink()
         return
     if arguments.check:
         drifted = [
             path
-            for path, rendered in documents.items()
+            for path, rendered in artifacts.items()
             if not path.exists() or path.read_text(encoding="utf-8") != rendered
         ]
-        expected = set(documents)
-        drifted.extend(path for path in DIAGRAMS_PATH.glob("*.md") if path not in expected)
+        expected = set(artifacts)
+        drifted.extend(
+            path for path in (*DIAGRAMS_PATH.glob("*.json"), *DIAGRAMS_PATH.glob("*.md")) if path not in expected
+        )
         if drifted:
             names = ", ".join(str(path.relative_to(ROOT)) for path in sorted(drifted))
             raise SystemExit(f"Generated mutation contract is stale ({names}); run `make mutation-contract`.")
         return
-    print(documents[DOCUMENT_PATH], end="")
+    print(artifacts[DOCUMENT_PATH], end="")
 
 
 if __name__ == "__main__":

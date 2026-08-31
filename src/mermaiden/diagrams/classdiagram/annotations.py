@@ -1,7 +1,6 @@
 from collections.abc import Mapping, Sequence
 
-from ...core.annotation import Annotation, TargetKind, TargetRef
-from ...core.error import OperationError
+from ...core.domain import Annotation, OperationError, TargetKind, TargetRef
 
 
 class ClassNote(Annotation):

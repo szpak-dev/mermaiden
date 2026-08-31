@@ -1,6 +1,6 @@
 # `requirementDiagram` mutation matrix
 
-Generated from [`requirementDiagram.json`](requirementDiagram.json). Do not edit directly.
+Generated from public `Application` discovery. Do not edit directly.
 
 Root ordering: `reorder_elements` over the exact direct-member permutation.
 

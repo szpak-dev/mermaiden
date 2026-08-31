@@ -1,6 +1,6 @@
 from wireup import injectable
 
-from ...core.constraint import ConstraintDiagram, Violation
+from ...core.domain import ConstraintDiagram, Violation
 from ..domain import DiagramConstraint
 from .elements import Swimlane, SwimlaneMember
 from .relations import Flow
@@ -22,7 +22,7 @@ class EventModelingDiagramStructure(EventModelingDiagramConstraint):
         ]
         issues.extend(
             self.violation(f"Event Modeling flow '{item.id}' cannot be self-referential.", path=f"relations.{item.id}")
-            for item in diagram.find_relations()
+            for item in diagram.find_relations("")
             if isinstance(item, Flow) and len(item.element_ids) == 2 and item.element_ids[0] == item.element_ids[1]
         )
         issues.extend(

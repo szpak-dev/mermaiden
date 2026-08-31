@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from ...core.relation import Relation
+from ...core.domain import Relation
 
 
 class ClassRelationKind(StrEnum):

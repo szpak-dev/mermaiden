@@ -1,4 +1,4 @@
-from ...core.relation import ConditionalRelation, Relation
+from ...core.domain import ConditionalRelation, Relation
 
 
 class Flow(Relation):

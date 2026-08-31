@@ -15,12 +15,10 @@ class MermaidPreview:
         output.write_text(self._document(sections), encoding="utf-8")
         return output
 
-    @staticmethod
-    def _source_section(name: str, source: str) -> str:
+    def _source_section(self, name: str, source: str) -> str:
         return f'<section><h2>{escape(name)}</h2><pre class="mermaid">{escape(source)}</pre></section>'
 
-    @staticmethod
-    def _document(sections: str) -> str:
+    def _document(self, sections: str) -> str:
         return f"""<!doctype html>
 <html lang="en">
 <meta charset="utf-8">
