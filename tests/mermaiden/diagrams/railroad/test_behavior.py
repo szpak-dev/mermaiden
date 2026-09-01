@@ -11,6 +11,7 @@ class TestRailroadIncrementalCommands:
         diagram = application.create_diagram("railroad-ebnf-beta")
 
         application.apply(diagram, DiagramCommand("configure", {"compactMode": True, "fontSize": 16}))
+        application.apply(diagram, DiagramCommand("add_rule", {"id": "example", "label": "example"}))
 
         assert '"compactMode": true' in application.render(diagram)
         assert set(application.diagram_description("railroad-ebnf-beta").commands) == {

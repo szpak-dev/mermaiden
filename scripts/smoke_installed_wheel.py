@@ -1,19 +1,34 @@
+import json
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from typing import Any, cast
+
+from wireup import create_sync_container, injectable
 
 from mermaiden import Application
 
 
+@injectable
+class InstalledWheelConsumerService:
+    pass
+
+
 class InstalledWheelSmoke:
     def run(self) -> None:
-        self.verify_application()
+        application = self.verify_consumer_wireup_scan()
+        self.verify_application(application)
+        self.verify_durable_draft_workflow()
         with tempfile.TemporaryDirectory(prefix="mermaiden-installed-") as temporary:
             self.verify_cli(Path(temporary))
 
-    def verify_application(self) -> None:
-        application = Application.create()
+    def verify_consumer_wireup_scan(self) -> Application:
+        container = create_sync_container(injectables=[sys.modules[__name__]], config={})
+        container.get(InstalledWheelConsumerService)
+        return Application.create()
+
+    def verify_application(self, application: Application) -> None:
         if not any(info.id == "block" for info in application.available_diagrams()):
             raise RuntimeError("The installed diagram catalog does not contain 'block'.")
         description = application.diagram_description("block")
@@ -58,6 +73,51 @@ class InstalledWheelSmoke:
         source = application.render(restored)
         if "Updated First" not in source or "Second" in source:
             raise RuntimeError("The installed package did not render the applied CRUD operations.")
+
+    def verify_durable_draft_workflow(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("flowchart")
+        persisted = self.persist(application, diagram)
+
+        application = Application.create()
+        diagram = application.restore(persisted)
+        application.execute(diagram, "add_start", {"id": "start", "label": "Start"})
+        persisted = self.persist(application, diagram)
+
+        application = Application.create()
+        diagram = application.restore(persisted)
+        try:
+            application.execute(
+                diagram,
+                "add_flow",
+                {"id": "invalid", "source_id": "start", "target_id": "missing"},
+            )
+        except RuntimeError:
+            pass
+        else:
+            raise RuntimeError("The installed package accepted an invalid draft operation.")
+        if application.snapshot(diagram).to_dict() != persisted:
+            raise RuntimeError("A failed operation altered the last successfully persisted draft state.")
+
+        application.execute(diagram, "add_end", {"id": "end", "label": "End"})
+        persisted = self.persist(application, diagram)
+
+        application = Application.create()
+        diagram = application.restore(persisted)
+        application.execute(
+            diagram,
+            "add_flow",
+            {"id": "path", "source_id": "start", "target_id": "end"},
+        )
+        persisted = self.persist(application, diagram)
+
+        application = Application.create()
+        restored = application.restore(persisted)
+        if "e_v_start r_v_path@--> e_v_end" not in application.render(restored):
+            raise RuntimeError("The installed package did not render the completed restored flowchart.")
+
+    def persist(self, application: Application, diagram: Any) -> dict[str, object]:
+        return cast(dict[str, object], json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
     def verify_cli(self, temporary: Path) -> None:
         help_result = self.run_cli(temporary, "--help")

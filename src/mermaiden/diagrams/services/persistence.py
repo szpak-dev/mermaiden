@@ -17,7 +17,6 @@ class DiagramPersistenceApplication:
     validator: DiagramPersistenceValidator
 
     def snapshot(self, diagram: DiagramModel) -> DiagramSnapshot:
-        self.validator.ensure(diagram, "persist")
         return self.snapshots.snapshot(diagram)
 
     def restore(self, payload: Mapping[str, object]) -> DiagramModel:
@@ -25,5 +24,5 @@ class DiagramPersistenceApplication:
         diagram = self.diagrams.create(snapshot.kind)
         data = self.snapshots.hydrate(snapshot, diagram)
         diagram.restore_snapshot(data)
-        self.validator.ensure(diagram, "restore")
+        self.validator.ensure(diagram, "restore", allow_draft=snapshot.draft)
         return diagram

@@ -20,6 +20,7 @@ class DiagramSnapshotBuilder:
         return DiagramSnapshot(
             version=SNAPSHOT_VERSION,
             kind=diagram.kind,
+            draft=not diagram.validate().can_commit,
             configuration=cast(Mapping[str, object], self.values.encode(self.configurations.read(diagram))),
             elements=tuple(cast(Mapping[str, object], self.values.encode(item)) for item in diagram.root_elements),
             relations=tuple(

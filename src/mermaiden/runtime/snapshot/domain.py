@@ -14,6 +14,7 @@ class SnapshotError(RuntimeError):
 class DiagramSnapshot:
     version: int
     kind: str
+    draft: bool
     configuration: Mapping[str, object]
     elements: tuple[Mapping[str, object], ...]
     relations: tuple[Mapping[str, object], ...]
@@ -24,6 +25,7 @@ class DiagramSnapshot:
         return {
             "version": self.version,
             "kind": self.kind,
+            "draft": self.draft,
             "configuration": dict(self.configuration),
             "elements": list(self.elements),
             "relations": list(self.relations),

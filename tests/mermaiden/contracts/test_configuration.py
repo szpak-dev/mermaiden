@@ -23,6 +23,7 @@ class TestMermaidConfiguration:
         application = Application.create()
         diagram = application.create_diagram("block")
         application.apply(diagram, DiagramCommand("configure", {"padding": 12}))
+        application.apply(diagram, DiagramCommand("add_block", {"id": "example", "label": "Example"}))
 
         assert application.render(diagram).startswith(
             '---\nconfig:\n  wrap: true\n  block: {"padding": 12}\n---\nblock\n'
@@ -42,6 +43,14 @@ class TestMermaidConfiguration:
         application = Application.create()
         git_graph = application.create_diagram("gitGraph")
         requirement = application.create_diagram("requirementDiagram")
+        application.apply(git_graph, DiagramCommand("add_commit", {"id": "commit", "label": "Commit"}))
+        application.apply(
+            requirement,
+            DiagramCommand(
+                "add_requirement",
+                {"id": "requirement", "requirement_id": "REQ-1", "text": "Requirement"},
+            ),
+        )
 
         assert '"nodeLabel": {"width": 75.0, "height": 100.0, "x": -25.0, "y": 0.0}' in application.render(git_graph)
         assert '"rectFill": "#f9f9f9"' in application.render(requirement)
@@ -49,6 +58,7 @@ class TestMermaidConfiguration:
     def test_architecture_configuration_uses_mermaids_concrete_defaults(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("architecture-beta")
+        application.apply(diagram, DiagramCommand("add_service", {"id": "example", "label": "Example"}))
         source = application.render(diagram)
 
         assert '"useMaxWidth": true' in source
@@ -83,6 +93,7 @@ class TestMermaidConfiguration:
     def test_c4_configuration_uses_mermaids_concrete_layout_defaults(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("C4Context")
+        application.apply(diagram, DiagramCommand("add_person", {"id": "example", "label": "Example"}))
         source = application.render(diagram)
 
         assert '"diagramMarginX": 50' in source
