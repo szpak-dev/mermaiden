@@ -11,15 +11,15 @@ compat: $(PYTHON)
 
 diagrams-validate: $(PYTHON)
 	@PYTHONPATH=src $(PYTHON) -m mermaiden.cli fixtures
-	@PYTHONPATH=src $(PYTHON) -m mermaiden.cli preview --output .preview/index.html
-	@mkdir -p .preview/.validation
-	@: > .preview/.validation/diagrams.md; for file in .preview/*.mmd; do printf '## %s\n\n```mermaid\n' "$$(basename "$$file" .mmd)" >> .preview/.validation/diagrams.md; awk '1' "$$file" >> .preview/.validation/diagrams.md; printf '```\n\n' >> .preview/.validation/diagrams.md; done
-	@npx --yes --package=@mermaid-js/mermaid-cli mmdc -i .preview/.validation/diagrams.md -o .preview/.validation/diagrams.rendered.md
-	@index=1; for file in .preview/*.mmd; do mv ".preview/.validation/diagrams.rendered-$$index.svg" ".preview/.validation/$$(basename "$$file" .mmd).svg"; index=$$((index + 1)); done
-	@! rg -q 'Syntax error in text|Parse error|UnknownDiagramError|TypeError' .preview/.validation --glob '*.svg'
+	@PYTHONPATH=src $(PYTHON) -m mermaiden.cli preview --output .dev/preview/index.html
+	@mkdir -p .dev/preview/.validation
+	@: > .dev/preview/.validation/diagrams.md; for file in .dev/preview/*.mmd; do printf '## %s\n\n```mermaid\n' "$$(basename "$$file" .mmd)" >> .dev/preview/.validation/diagrams.md; awk '1' "$$file" >> .dev/preview/.validation/diagrams.md; printf '```\n\n' >> .dev/preview/.validation/diagrams.md; done
+	@npx --yes --package=@mermaid-js/mermaid-cli mmdc -i .dev/preview/.validation/diagrams.md -o .dev/preview/.validation/diagrams.rendered.md
+	@index=1; for file in .dev/preview/*.mmd; do mv ".dev/preview/.validation/diagrams.rendered-$$index.svg" ".dev/preview/.validation/$$(basename "$$file" .mmd).svg"; index=$$((index + 1)); done
+	@! rg -q 'Syntax error in text|Parse error|UnknownDiagramError|TypeError' .dev/preview/.validation --glob '*.svg'
 
 diagrams-test: diagrams-validate
-	open .preview/index.html
+	open .dev/preview/index.html
 
 format: $(PYTHON)
 	@$(PYTHON) -m ruff format .
