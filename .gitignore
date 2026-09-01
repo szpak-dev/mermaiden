@@ -6,6 +6,5 @@ __pycache__/
 src/mermaiden/_version.py
 dist/
 .compatibility-artifacts/
-.preview/
 compatibility/toolchains/*/node_modules/
 .dev/
