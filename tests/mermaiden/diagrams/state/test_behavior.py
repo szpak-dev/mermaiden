@@ -36,6 +36,9 @@ class TestStateDiagram:
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
+        body = source.split("---\n", maxsplit=2)[2]
+        assert body.splitlines()[:2] == ["stateDiagram-v2", "direction TB"]
+        assert "stateDiagram-v2 TD" not in source
         assert set(application.diagram_description("stateDiagram-v2").commands) == {
             item.operation for item in commands
         } | {
