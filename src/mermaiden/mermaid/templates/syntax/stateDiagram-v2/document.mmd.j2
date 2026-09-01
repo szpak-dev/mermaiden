@@ -1,3 +1,5 @@
 {% import template_prefix ~ "/macros/state.mmd.j2" as state with context %}
-{{ diagram.kind }} {{ diagram.direction.value }}{{ "\n" -}}
+{% set direction = "TB" if diagram.direction.value == "TD" else diagram.direction.value -%}
+{{ diagram.kind }}{{ "\n" -}}
+direction {{ direction }}{{ "\n" -}}
 {{ state.render(diagram.root_elements, "") }}
