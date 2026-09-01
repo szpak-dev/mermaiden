@@ -1,7 +1,7 @@
 from collections.abc import Mapping
 from dataclasses import dataclass
 
-from wireup import create_sync_container, injectable
+from wireup import create_sync_container
 
 import mermaiden
 
@@ -22,7 +22,6 @@ from .runtime.snapshot import DiagramSnapshot
 __all__ = ["Application", "ChangeRejected", "DiagramCommand", "UnknownCommand"]
 
 
-@injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class Application:
     diagrams: DiagramsApplication
@@ -75,6 +74,10 @@ class Application:
         return self.persistence.restore(payload)
 
     def render(self, diagram: Diagram) -> str:
+        report = diagram.validate()
+        if not report.can_commit:
+            details = "; ".join(item.message for item in report.blocking)
+            raise RuntimeError(f"Cannot render invalid diagram '{diagram.kind}': {details}")
         return self.renderer.render(diagram)
 
     def validate_render(self, diagram: Diagram) -> MermaidRenderReport:
@@ -84,6 +87,15 @@ class Application:
     def create(cls) -> "Application":
         container = create_sync_container(injectables=[mermaiden], config={})
         with container.enter_scope() as scope:
-            application = scope.get(cls)
+            application = cls(
+                diagrams=scope.get(DiagramsApplication),
+                catalog=scope.get(DiagramCatalog),
+                commands=scope.get(DiagramCommandApplication),
+                diagram_factory=scope.get(DiagramFactory),
+                persistence=scope.get(DiagramPersistenceApplication),
+                renderer=scope.get(MermaidApplication),
+                render_validator=scope.get(MermaidRenderValidator),
+                template_ownership=scope.get(MermaidTemplateOwnership),
+            )
             application.initialize()
             return application

@@ -11,6 +11,10 @@ class TestCynefin:
         diagram = application.create_diagram("cynefin-beta")
 
         application.apply(diagram, DiagramCommand("configure", {"width": 960, "showDomainDescriptions": False}))
+        application.apply(
+            diagram,
+            DiagramCommand("add_item", {"id": "example", "label": "Example", "domain": "clear"}),
+        )
 
         assert '"width": 960.0' in application.render(diagram)
         assert set(application.diagram_description("cynefin-beta").commands) == {

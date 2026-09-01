@@ -9,7 +9,9 @@ from ..domain import DiagramModel
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class DiagramPersistenceValidator:
-    def ensure(self, diagram: DiagramModel, operation: str) -> None:
+    def ensure(self, diagram: DiagramModel, operation: str, *, allow_draft: bool = False) -> None:
+        if allow_draft:
+            return
         report = diagram.validate()
         if report.can_commit:
             return

@@ -8,6 +8,11 @@ from .domain import SnapshotError
 
 @injectable
 class SnapshotValueValidator:
+    def boolean(self, value: object, name: str) -> bool:
+        if not isinstance(value, bool):
+            raise SnapshotError(f"Snapshot '{name}' must be a boolean.")
+        return value
+
     def mapping(self, value: object, name: str) -> Mapping[str, object]:
         if not isinstance(value, Mapping):
             raise SnapshotError(f"Snapshot '{name}' must be an object.")

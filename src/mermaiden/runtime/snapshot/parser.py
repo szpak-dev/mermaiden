@@ -26,6 +26,7 @@ class DiagramSnapshotParser:
             snapshot = DiagramSnapshot(
                 version=version,
                 kind=self.values.string(payload["kind"], "kind"),
+                draft=self.values.boolean(payload.get("draft", False), "draft"),
                 configuration=self.values.mapping(payload["configuration"], "configuration"),
                 elements=self.values.objects(payload["elements"], "elements"),
                 relations=self.values.objects(payload["relations"], "relations"),

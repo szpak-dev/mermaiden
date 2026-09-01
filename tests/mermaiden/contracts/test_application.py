@@ -52,7 +52,7 @@ class TestApplication:
 
         assert first is not second
         assert "participant first" in application.render(first)
-        assert "participant first" not in application.render(second)
+        assert not second.root_elements
 
     def test_coerces_json_enum_command_arguments(self) -> None:
         application = Application.create()
@@ -87,6 +87,7 @@ class TestApplication:
         diagram = application.create_diagram("block")
 
         application.apply(diagram, DiagramCommand("configure", {"padding": 12}))
+        application.apply(diagram, DiagramCommand("add_block", {"id": "example", "label": "Example"}))
         assert 'block: {"padding": 12}' in application.render(diagram)
 
         application.apply(diagram, DiagramCommand("configure", {}))
@@ -169,6 +170,7 @@ class TestApplication:
                 },
             ),
         )
+        application.apply(diagram, DiagramCommand("add_service", {"id": "example", "label": "Example"}))
 
         assert (
             'architecture: {"useMaxWidth": false, "padding": 48.0, "iconSize": 96.0, '
@@ -201,6 +203,7 @@ class TestApplication:
                 },
             ),
         )
+        application.apply(diagram, DiagramCommand("add_person", {"id": "example", "label": "Example"}))
 
         assert (
             'c4: {"diagramMarginX": 64, "diagramMarginY": 24, "c4ShapeMargin": 56, '
