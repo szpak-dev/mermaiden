@@ -10,7 +10,7 @@ compat: $(PYTHON)
 	@PYTHONPATH=src $(PYTHON) -m mermaiden.cli compat
 
 diagrams-validate: $(PYTHON)
-	@PYTHONPATH=src $(PYTHON) -m mermaiden.cli fixtures
+	@PYTHONPATH=src $(PYTHON) -m mermaiden.cli fixtures --output .dev/preview
 	@PYTHONPATH=src $(PYTHON) -m mermaiden.cli preview --output .dev/preview/index.html
 	@mkdir -p .dev/preview/.validation
 	@: > .dev/preview/.validation/diagrams.md; for file in .dev/preview/*.mmd; do printf '## %s\n\n```mermaid\n' "$$(basename "$$file" .mmd)" >> .dev/preview/.validation/diagrams.md; awk '1' "$$file" >> .dev/preview/.validation/diagrams.md; printf '```\n\n' >> .dev/preview/.validation/diagrams.md; done
