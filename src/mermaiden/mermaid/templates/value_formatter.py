@@ -24,6 +24,10 @@ class MermaidValueFormatter:
     def quote(self, value: object) -> str:
         return json.dumps(str(value), ensure_ascii=False)
 
+    def entity_quote(self, value: object) -> str:
+        escaped = "".join(self._entity_character(character) for character in str(value))
+        return f'"{escaped}"'
+
     def number(self, value: float | int) -> str:
         return str(int(value)) if isinstance(value, float) and value.is_integer() else str(value)
 
@@ -32,3 +36,11 @@ class MermaidValueFormatter:
         if not text or text != text.strip() or "  " in text or any(token in text for token in ('"', ":::", "##")):
             return json.dumps(text, ensure_ascii=False)
         return text
+
+    def _entity_character(self, character: str) -> str:
+        if character == '"':
+            return "#quot;"
+        codepoint = ord(character)
+        if character in "#&<>" or codepoint < 32 or codepoint == 127:
+            return f"#{codepoint};"
+        return character

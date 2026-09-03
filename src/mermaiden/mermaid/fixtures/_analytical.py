@@ -135,7 +135,13 @@ def build_analytical_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     er.add_attribute("customer_id", "id", "int", "CUSTOMER", ("PK",))
     er.add_entity("ORDER", "Order")
     er.add_attribute("order_id", "id", "int", "ORDER", ("PK",))
-    er.add_relationship("places", "CUSTOMER", "ORDER", "places", "||--o{")
+    er.add_relationship(
+        "places",
+        "CUSTOMER",
+        "ORDER",
+        'references content; "protected" — while scoped: [v2] #1 & <trusted>',
+        "||--o{",
+    )
 
     return {
         "requirement": requirements,
