@@ -27,6 +27,7 @@ class MermaidTemplateRenderer:
         environment.filters.update(
             {
                 "mermaid_id": self.values.identifier,
+                "mermaid_entity_quote": self.values.entity_quote,
                 "mermaid_number": self.values.number,
                 "mermaid_quote": self.values.quote,
                 "tree_label": self.values.tree_label,

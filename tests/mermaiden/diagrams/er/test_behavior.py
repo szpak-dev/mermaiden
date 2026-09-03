@@ -32,7 +32,7 @@ class TestEntityRelationshipDiagram:
                     "id": "places",
                     "source_id": "CUSTOMER",
                     "target_id": "ORDER",
-                    "label": "places",
+                    "label": 'references content; "protected" — while scoped: [v2] #1 & <trusted>',
                     "notation": "||--o{",
                 },
             ),
@@ -57,7 +57,10 @@ class TestEntityRelationshipDiagram:
         }
         assert "direction LR" in source
         assert "int id PK" in source
-        assert "CUSTOMER ||--o{ ORDER : places" in source
+        assert (
+            'CUSTOMER ||--o{ ORDER : "references content; #quot;protected#quot; — while scoped: '
+            '[v2] #35;1 #38; #60;trusted#62;"'
+        ) in source
         assert application.render(restored) == source
 
     def test_rejects_invalid_configuration_duplicates_and_unknown_entities(self) -> None:
