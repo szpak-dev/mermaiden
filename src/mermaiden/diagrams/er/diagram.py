@@ -8,7 +8,7 @@ from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import EntityRelationshipDiagramConfiguration
 from .constraints import EntityRelationshipDiagramConstraint
-from .elements import Entity, EntityAttribute
+from .elements import Entity, EntityAttribute, EntityAttributeDataType
 from .relations import EntityRelationship
 
 
@@ -43,7 +43,7 @@ class EntityRelationshipDiagram(DiagramModel):
         self,
         id: str,
         label: str,
-        data_type: str,
+        data_type: EntityAttributeDataType,
         entity_id: str,
         keys: tuple[str, ...] = (),
         comment: str = "",

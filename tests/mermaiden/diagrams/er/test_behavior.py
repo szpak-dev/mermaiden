@@ -1,4 +1,7 @@
 import json
+import re
+from collections.abc import Mapping
+from typing import cast
 
 import pytest
 
@@ -77,3 +80,87 @@ class TestEntityRelationshipDiagram:
                 diagram,
                 DiagramCommand("add_attribute", {"id": "x", "label": "x", "data_type": "int", "entity_id": "MISSING"}),
             )
+
+    @pytest.mark.parametrize("data_type", ("positive int", "", "0int", "PK", "PK-type", "int??", "int\n"))
+    def test_rejects_unrenderable_attribute_types_before_changing_the_snapshot(self, data_type: str) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("erDiagram")
+        application.apply(diagram, DiagramCommand("add_entity", {"id": "CUSTOMER", "label": "Customer"}))
+        before = application.snapshot(diagram).to_dict()
+
+        with pytest.raises(UnknownCommand, match="invalid arguments"):
+            application.apply(
+                diagram,
+                DiagramCommand(
+                    "add_attribute",
+                    {"id": "revision", "label": "revision", "data_type": data_type, "entity_id": "CUSTOMER"},
+                ),
+            )
+
+        assert application.snapshot(diagram).to_dict() == before
+
+    def test_rejects_an_unrenderable_attribute_type_update_without_changing_the_snapshot(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("erDiagram")
+        application.apply(diagram, DiagramCommand("add_entity", {"id": "CUSTOMER", "label": "Customer"}))
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_attribute",
+                {"id": "revision", "label": "revision", "data_type": "int", "entity_id": "CUSTOMER"},
+            ),
+        )
+        before = application.snapshot(diagram).to_dict()
+
+        with pytest.raises(UnknownCommand, match="invalid arguments"):
+            application.apply(
+                diagram,
+                DiagramCommand(
+                    "update_element",
+                    {
+                        "id": "revision",
+                        "kind": "entity_attribute",
+                        "changes": {"data_type": "positive int"},
+                    },
+                ),
+            )
+
+        assert application.snapshot(diagram).to_dict() == before
+
+    def test_rejects_a_persisted_unrenderable_attribute_type(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("erDiagram")
+        application.apply(diagram, DiagramCommand("add_entity", {"id": "CUSTOMER", "label": "Customer"}))
+        application.apply(
+            diagram,
+            DiagramCommand(
+                "add_attribute",
+                {"id": "revision", "label": "revision", "data_type": "int", "entity_id": "CUSTOMER"},
+            ),
+        )
+        payload = json.loads(json.dumps(application.snapshot(diagram).to_dict()))
+        entity = cast(dict[str, object], cast(list[object], payload["elements"])[0])
+        entity_fields = cast(dict[str, object], entity["fields"])
+        attribute = cast(dict[str, object], cast(list[object], entity_fields["elements"])[0])
+        cast(dict[str, object], attribute["fields"])["data_type"] = "positive int"
+
+        with pytest.raises(ValueError, match="data_type"):
+            application.restore(payload)
+
+    def test_publishes_the_same_attribute_type_restriction_for_add_update_and_persistence(self) -> None:
+        application = Application.create()
+        add_schema = application.command_payload("erDiagram", "add_attribute").model_json_schema()
+        update_schema = application.command_payload("erDiagram", "update_element").model_json_schema()
+        object_schema = application.diagram_description("erDiagram").elements["entity_attribute"]
+
+        add_type = add_schema["properties"]["data_type"]
+        update_changes = update_schema["$defs"]["EntityRelationshipDiagram_update_element_entity_attribute_changes"]
+        update_type = update_changes["properties"]["data_type"]
+        object_type = cast(Mapping[str, Mapping[str, object]], object_schema["properties"])["data_type"]
+
+        pattern = cast(str, add_type["pattern"])
+        assert pattern == update_type["pattern"] == object_type["pattern"]
+        assert re.search(pattern, "public.geometry(point,4326)?")
+        assert re.search(pattern, "positive~ int ~")
+        assert re.search(pattern, "`positive int`")
+        assert not re.search(pattern, "positive int")
