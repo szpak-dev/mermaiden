@@ -1,10 +1,14 @@
+from typing import Literal
+
 from ..domain import MermaidDiagramConfiguration
+
+type EntityRelationshipDirection = Literal["TB", "BT", "LR", "RL"]
 
 
 class EntityRelationshipDiagramConfiguration(MermaidDiagramConfiguration):
     title_top_margin: int = 25
     diagram_padding: int = 20
-    layout_direction: str = "TB"
+    layout_direction: EntityRelationshipDirection = "TB"
     min_entity_width: int = 100
     min_entity_height: int = 75
     entity_padding: int = 15

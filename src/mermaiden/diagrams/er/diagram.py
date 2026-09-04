@@ -5,8 +5,8 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
-from .configuration import EntityRelationshipDiagramConfiguration
+from ..domain import DiagramDefinition, DiagramModel, MermaidDiagramConfiguration
+from .configuration import EntityRelationshipDiagramConfiguration, EntityRelationshipDirection
 from .constraints import EntityRelationshipDiagramConstraint
 from .elements import Entity, EntityAttribute, EntityAttributeDataType
 from .relations import EntityRelationship
@@ -33,8 +33,14 @@ class EntityRelationshipDiagram(DiagramModel):
             return parent_type is None
         return element_type is EntityAttribute and parent_type is Entity
 
-    def set_direction(self, direction: str) -> None:
-        object.__setattr__(self, "direction", direction)
+    def configure(self, configuration: MermaidDiagramConfiguration) -> None:
+        DiagramModel.configure(self, configuration)
+        object.__setattr__(self, "direction", self.configuration.layout_direction)
+
+    def set_direction(self, direction: EntityRelationshipDirection) -> None:
+        values = self.configuration.model_dump()
+        values["layout_direction"] = direction
+        self.configure(EntityRelationshipDiagramConfiguration.model_validate(values))
 
     def add_entity(self, id: str, label: str) -> ChangeReport:
         return self._add_element(f"add entity '{id}'", Entity(id=id, label=label))
