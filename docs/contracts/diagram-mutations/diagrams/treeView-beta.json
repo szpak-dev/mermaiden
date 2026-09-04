@@ -9,7 +9,8 @@
       "update_command": "update_element",
       "fields": {
         "id": "immutable",
-        "label": "updateable"
+        "label": "updateable",
+        "item_type": "updateable"
       },
       "kind_classification": "immutable",
       "placement": {

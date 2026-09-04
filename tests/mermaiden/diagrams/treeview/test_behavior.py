@@ -12,9 +12,12 @@ class TestTreeView:
 
         commands = (
             DiagramCommand("configure", {"wrap": False}),
-            DiagramCommand("add_item", {"id": "root", "label": "root/"}),
+            DiagramCommand("add_directory", {"id": "root", "label": "root"}),
             DiagramCommand("add_item", {"id": "child", "label": 'child "one"'}),
+            DiagramCommand("classify_item", {"id": "child", "item_type": "file"}),
+            DiagramCommand("add_file", {"id": "readme", "label": "README.md"}),
             DiagramCommand("add_branch", {"id": "branch", "parent_id": "root", "child_id": "child"}),
+            DiagramCommand("add_branch", {"id": "readme_branch", "parent_id": "root", "child_id": "readme"}),
             DiagramCommand(
                 "add_annotation",
                 {
@@ -44,13 +47,15 @@ class TestTreeView:
             "update_annotation",
             "remove_annotation",
         }
+        assert "root/" in source
         assert '"child \\"one\\"" :::highlight icon(folder) ## Docs' in source
+        assert "  README.md" in source
         assert application.render(restored) == source
 
     def test_rejects_invalid_configuration_and_unknown_annotation_targets(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("treeView-beta")
-        application.apply(diagram, DiagramCommand("add_item", {"id": "root", "label": "root/"}))
+        application.apply(diagram, DiagramCommand("add_directory", {"id": "root", "label": "root"}))
 
         with pytest.raises(UnknownCommand):
             application.apply(diagram, DiagramCommand("configure", {"missing": True}))
@@ -64,3 +69,39 @@ class TestTreeView:
                     {"id": "annotation", "element_id": "missing", "description": "Missing"},
                 ),
             )
+
+    @pytest.mark.parametrize("operation", ["add_directory", "add_file"])
+    @pytest.mark.parametrize("label", ["src/package", r"src\package"])
+    def test_rejects_typed_paths_atomically(self, operation: str, label: str) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("treeView-beta")
+        before = application.snapshot(diagram).to_dict()
+
+        with pytest.raises(RuntimeError, match=r"basename without path separators"):
+            application.apply(diagram, DiagramCommand(operation, {"id": "nested", "label": label}))
+
+        assert application.snapshot(diagram).to_dict() == before
+
+    def test_rejects_file_parents_and_invalid_reclassification_atomically(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("treeView-beta")
+        application.apply(diagram, DiagramCommand("add_directory", {"id": "root", "label": "root"}))
+        application.apply(diagram, DiagramCommand("add_file", {"id": "leaf", "label": "leaf.txt"}))
+        application.apply(diagram, DiagramCommand("add_item", {"id": "child", "label": "child"}))
+
+        before_branch = application.snapshot(diagram).to_dict()
+        with pytest.raises(RuntimeError, match=r"File 'leaf' cannot be the parent"):
+            application.apply(
+                diagram,
+                DiagramCommand("add_branch", {"id": "invalid", "parent_id": "leaf", "child_id": "child"}),
+            )
+        assert application.snapshot(diagram).to_dict() == before_branch
+
+        application.apply(
+            diagram,
+            DiagramCommand("add_branch", {"id": "valid", "parent_id": "root", "child_id": "leaf"}),
+        )
+        before_classification = application.snapshot(diagram).to_dict()
+        with pytest.raises(RuntimeError, match=r"File 'root' cannot be the parent"):
+            application.apply(diagram, DiagramCommand("classify_item", {"id": "root", "item_type": "file"}))
+        assert application.snapshot(diagram).to_dict() == before_classification

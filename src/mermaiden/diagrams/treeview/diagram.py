@@ -9,7 +9,7 @@ from ..domain import DiagramDefinition, DiagramModel
 from .annotations import TreeAnnotations
 from .configuration import TreeViewDiagramConfiguration
 from .constraints.domain import TreeViewConstraint
-from .elements import TreeItem
+from .elements import TreeItem, TreeItemType
 from .relations import TreeBranch
 
 
@@ -40,6 +40,15 @@ class TreeView(DiagramModel):
     def add_item(self, id: str, label: str) -> ChangeReport:
         return self._add_element(f"add tree item '{id}'", TreeItem(id=id, label=label))
 
+    def add_directory(self, id: str, label: str) -> ChangeReport:
+        return self._add_typed_item(id, label, TreeItemType.DIRECTORY)
+
+    def add_file(self, id: str, label: str) -> ChangeReport:
+        return self._add_typed_item(id, label, TreeItemType.FILE)
+
+    def classify_item(self, id: str, item_type: TreeItemType) -> ChangeReport:
+        return self.update_element(id, TreeItem.kind_for(), {"item_type": item_type})
+
     def add_branch(self, id: str, parent_id: str, child_id: str) -> ChangeReport:
         return self._add_relation(f"add tree branch '{id}'", TreeBranch(id=id, element_ids=(parent_id, child_id)))
 
@@ -59,3 +68,11 @@ class TreeView(DiagramModel):
             {"highlight": highlight, "icon": icon, "description": description},
             (element_id,),
         )
+
+    def _add_typed_item(self, id: str, label: str, item_type: TreeItemType) -> ChangeReport:
+        operation = f"add tree {item_type.value} '{id}'"
+        if "/" in label or "\\" in label:
+            self._reject(
+                operation, f"{item_type.value.capitalize()} '{id}' label must be a basename without path separators."
+            )
+        return self._add_element(operation, TreeItem(id=id, label=label, item_type=item_type))
