@@ -9,6 +9,58 @@ from mermaiden.application import Application, DiagramCommand, UnknownCommand
 
 
 class TestEntityRelationshipDiagram:
+    @pytest.mark.parametrize(
+        "command",
+        (
+            DiagramCommand("configure", {"layoutDirection": "LR"}),
+            DiagramCommand("set_direction", {"direction": "LR"}),
+        ),
+        ids=("configure", "set_direction"),
+    )
+    def test_direction_commands_keep_configuration_body_and_restored_snapshot_in_sync(
+        self,
+        command: DiagramCommand,
+    ) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("erDiagram")
+        application.apply(diagram, DiagramCommand("add_entity", {"id": "CUSTOMER", "label": "Customer"}))
+
+        application.apply(diagram, command)
+        source = application.render(diagram)
+        snapshot = json.loads(json.dumps(application.snapshot(diagram).to_dict()))
+        restored = application.restore(snapshot)
+
+        assert '"layoutDirection": "LR"' in source
+        assert "\nerDiagram\ndirection LR\n" in source
+        assert snapshot["configuration"]["fields"]["layout_direction"] == "LR"
+        assert snapshot["properties"]["direction"] == "LR"
+        assert application.render(restored) == source
+        assert application.snapshot(restored).to_dict() == snapshot
+
+    @pytest.mark.parametrize(
+        ("operation", "arguments", "field"),
+        (
+            ("configure", {"layoutDirection": "SIDEWAYS"}, "layoutDirection"),
+            ("set_direction", {"direction": "SIDEWAYS"}, "direction"),
+        ),
+    )
+    def test_direction_commands_advertise_and_enforce_supported_values(
+        self,
+        operation: str,
+        arguments: dict[str, object],
+        field: str,
+    ) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("erDiagram")
+        schema = application.diagram_description("erDiagram").commands[operation]
+        properties = cast(dict[str, dict[str, object]], schema["properties"])
+        definitions = cast(dict[str, dict[str, object]], schema["$defs"])
+
+        assert properties[field]["$ref"] == "#/$defs/EntityRelationshipDirection"
+        assert definitions["EntityRelationshipDirection"]["enum"] == ["TB", "BT", "LR", "RL"]
+        with pytest.raises(UnknownCommand, match=rf"'{operation}' has invalid arguments"):
+            application.apply(diagram, DiagramCommand(operation, arguments))
+
     def test_exercises_every_public_command_and_restores_identical_mermaid(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("erDiagram")
