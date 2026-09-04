@@ -41,20 +41,17 @@ def build_structural_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
 
     treeview = registry.get_diagram("treeView-beta")
     assert isinstance(treeview, TreeView)
-    for id, label in (
-        ("root", "root/"),
-        ("source", "src/"),
-        ("package", "mermaiden/"),
-        ("tests", "tests/"),
-        ("readme", "README.md"),
-    ):
-        treeview.add_item(id, label)
+    for id, label in (("root", "root"), ("source", "src"), ("package", "mermaiden"), ("tests", "tests")):
+        treeview.add_directory(id, label)
+    treeview.add_file("readme", "README.md")
+    treeview.add_item("overview", "Overview")
     treeview.add_annotation("source_note", "source", icon="folder")
     treeview.add_branch("root_source", "root", "source")
     treeview.add_annotation("tests_note", "tests", icon="test")
     treeview.add_branch("root_tests", "root", "tests")
     treeview.add_branch("source_package", "source", "package")
     treeview.add_branch("root_readme", "root", "readme")
+    treeview.add_branch("root_overview", "root", "overview")
     treeview.add_annotation("readme_note", "readme", highlight=True, description="Documentation")
 
     classes = registry.get_diagram("classDiagram")

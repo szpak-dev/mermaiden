@@ -8,7 +8,7 @@ Root ordering: `reorder_elements` over the exact direct-member permutation.
 
 | Kind | Update command | Placement or retargeting | Fields |
 | --- | --- | --- | --- |
-| `tree_item` | `update_element` | parents: `$root`; move: `move_element` | updateable: `label`; immutable: `id` |
+| `tree_item` | `update_element` | parents: `$root`; move: `move_element` | updateable: `label`, `item_type`; immutable: `id` |
 
 ## Relations
 
