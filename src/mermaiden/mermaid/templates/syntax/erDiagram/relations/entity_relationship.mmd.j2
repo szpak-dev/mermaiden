@@ -1,1 +1,1 @@
-{{ relation.element_ids[0] }} {{ relation.notation }} {{ relation.element_ids[1] }} : {{ relation.label | mermaid_entity_quote }}{{ "\n" -}}
+{{ relation.element_ids[0] }} {{ {"zero_or_one": "|o", "exactly_one": "||", "zero_or_more": "}o", "one_or_more": "}|"}[relation.source_cardinality.value] }}{% if relation.identifying %}--{% else %}..{% endif %}{{ {"zero_or_one": "o|", "exactly_one": "||", "zero_or_more": "o{", "one_or_more": "|{"}[relation.target_cardinality.value] }} {{ relation.element_ids[1] }} : {{ relation.label | mermaid_entity_quote }}{{ "\n" -}}

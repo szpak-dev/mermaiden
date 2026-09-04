@@ -31,7 +31,7 @@ class TestClassDiagram:
                     "id": "inherits",
                     "source_id": "animal",
                     "target_id": "duck",
-                    "relation_kind": "<|--",
+                    "relation_kind": "inheritance",
                     "label": "extends",
                 },
             ),
@@ -70,6 +70,19 @@ class TestClassDiagram:
 
         with pytest.raises(UnknownCommand):
             application.apply(diagram, DiagramCommand("add_relation", {"id": "bad"}))
+        with pytest.raises(UnknownCommand):
+            application.apply(
+                diagram,
+                DiagramCommand(
+                    "add_relation",
+                    {
+                        "id": "syntax",
+                        "source_id": "one",
+                        "target_id": "one",
+                        "relation_kind": "<|--",
+                    },
+                ),
+            )
         with pytest.raises(RuntimeError, match=r"already exists"):
             application.apply(diagram, DiagramCommand("add_class", {"id": "one", "label": "Again"}))
         with pytest.raises(RuntimeError, match=r"unknown|does not exist"):

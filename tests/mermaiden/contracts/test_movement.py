@@ -19,7 +19,8 @@ class TestElementMovement:
                 {
                     "id": "task_example",
                     "label": "Task",
-                    "metadata": (),
+                    "start": {"kind": "automatic"},
+                    "finish": {"kind": "duration", "amount": 0},
                     "section_id": "section_example",
                 },
             ),
@@ -29,7 +30,13 @@ class TestElementMovement:
         rejected = (
             DiagramCommand(
                 "add_task",
-                {"id": "root_task", "label": "Root Task", "metadata": (), "section_id": ""},
+                {
+                    "id": "root_task",
+                    "label": "Root Task",
+                    "start": {"kind": "automatic"},
+                    "finish": {"kind": "duration", "amount": 0},
+                    "section_id": "",
+                },
             ),
             DiagramCommand(
                 "move_element",

@@ -8,7 +8,7 @@ from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import GanttConfiguration
 from .constraints import GanttConstraint
-from .elements import Marker, Milestone, Section, Task
+from .elements import GanttFinish, GanttStart, Marker, Milestone, Section, Task, TaskStatus
 
 
 @injectable(as_type=DiagramModel, qualifier="gantt", lifetime="scoped")
@@ -39,12 +39,38 @@ class Gantt(DiagramModel):
     def add_section(self, id: str, label: str) -> ChangeReport:
         return self._add_element(f"add section '{id}'", Section(id=id, label=label))
 
-    def add_task(self, id: str, label: str, metadata: tuple[str, ...], section_id: str) -> ChangeReport:
-        return self._add_element(f"add task '{id}'", Task(id=id, label=label, metadata=metadata), section_id)
-
-    def add_milestone(self, id: str, label: str, metadata: tuple[str, ...], section_id: str) -> ChangeReport:
+    def add_task(
+        self,
+        id: str,
+        label: str,
+        section_id: str,
+        *,
+        status: TaskStatus = TaskStatus.PLANNED,
+        critical: bool = False,
+        start: GanttStart,
+        finish: GanttFinish,
+    ) -> ChangeReport:
         return self._add_element(
-            f"add milestone '{id}'", Milestone(id=id, label=label, metadata=("milestone", *metadata)), section_id
+            f"add task '{id}'",
+            Task(id=id, label=label, status=status, critical=critical, start=start, finish=finish),
+            section_id,
+        )
+
+    def add_milestone(
+        self,
+        id: str,
+        label: str,
+        section_id: str,
+        *,
+        status: TaskStatus = TaskStatus.PLANNED,
+        critical: bool = False,
+        start: GanttStart,
+        finish: GanttFinish,
+    ) -> ChangeReport:
+        return self._add_element(
+            f"add milestone '{id}'",
+            Milestone(id=id, label=label, status=status, critical=critical, start=start, finish=finish),
+            section_id,
         )
 
     def add_marker(self, id: str, label: str, date: str) -> ChangeReport:

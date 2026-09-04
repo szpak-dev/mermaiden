@@ -1,1 +1,1 @@
-{% if element.anchor %}anchor{% else %}component{% endif %} {{ element.label | mermaid_quote }} [{{ element.visibility }}, {{ element.evolution }}]{% if element.decorator %} ({{ element.decorator }}){% endif %}{{ "\n" -}}
+{% if element.anchor %}anchor{% else %}component{% endif %} {{ element.label | mermaid_quote }} [{{ element.visibility }}, {{ element.evolution }}]{% if element.decorators %} ({{ element.decorators[0].value }}){% endif %}{{ "\n" -}}

@@ -211,6 +211,24 @@ class TestArchitecture:
                 ),
             )
 
+    def test_rejects_mermaid_port_tokens(self) -> None:
+        application, diagram = self._diagram_with_alignment_members()
+
+        with pytest.raises(UnknownCommand, match=r"'add_edge' has invalid arguments"):
+            application.apply(
+                diagram,
+                DiagramCommand(
+                    "add_edge",
+                    {
+                        "id": "syntax",
+                        "source_id": "client",
+                        "target_id": "api",
+                        "source_port": "R",
+                        "target_port": "L",
+                    },
+                ),
+            )
+
     def test_rejects_duplicate_alignment_ids(self) -> None:
         application, diagram = self._diagram_with_alignment_members()
         command = DiagramCommand(
@@ -232,8 +250,8 @@ class TestArchitecture:
                     "id": "api_client",
                     "source_id": "client",
                     "target_id": "api",
-                    "source_port": "L",
-                    "target_port": "R",
+                    "source_port": "left",
+                    "target_port": "right",
                 },
             ),
         )
@@ -272,8 +290,8 @@ class TestArchitecture:
                         "id": "client_api",
                         "source_id": "client",
                         "target_id": "api",
-                        "source_port": "B",
-                        "target_port": "T",
+                        "source_port": "bottom",
+                        "target_port": "top",
                     },
                 ),
             )
@@ -334,8 +352,8 @@ class TestArchitecture:
                         "id": "api_client",
                         "source_id": "client",
                         "target_id": "api",
-                        "source_port": "L",
-                        "target_port": "R",
+                        "source_port": "left",
+                        "target_port": "right",
                     },
                 ),
             )
@@ -362,8 +380,8 @@ class TestArchitecture:
             ),
         )
         payload = json.loads(json.dumps(application.snapshot(diagram).to_dict()))
-        payload["relations"][0]["fields"]["source_port"]["value"] = "L"
-        payload["relations"][0]["fields"]["target_port"]["value"] = "R"
+        payload["relations"][0]["fields"]["source_port"]["value"] = "left"
+        payload["relations"][0]["fields"]["target_port"]["value"] = "right"
 
         with pytest.raises(RuntimeError, match=r"Cannot restore invalid diagram 'architecture-beta':.*reverse order"):
             application.restore(payload)

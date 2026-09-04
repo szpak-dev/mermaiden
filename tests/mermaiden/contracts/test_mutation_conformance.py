@@ -301,7 +301,7 @@ class TestMutationConformance:
             return [self._example(root, item) for _ in range(count)]
         if schema_type == "object" or "properties" in schema:
             properties = self._mapping(schema.get("properties", {}))
-            required = self._strings(schema.get("required", ()))
+            required = self._strings(schema.get("required", []))
             return {name: self._example(root, self._mapping(properties[name])) for name in required}
         raise AssertionError(f"Cannot derive example from schema: {schema}")
 

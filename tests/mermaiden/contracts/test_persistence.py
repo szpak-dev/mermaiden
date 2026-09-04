@@ -12,5 +12,5 @@ class TestPersistence:
         payload["version"] = 1
         del payload["configuration"]
 
-        with pytest.raises(RuntimeError, match="version '1'; expected version '2'"):
+        with pytest.raises(RuntimeError, match="version '1'; expected version '3'"):
             application.restore(payload)

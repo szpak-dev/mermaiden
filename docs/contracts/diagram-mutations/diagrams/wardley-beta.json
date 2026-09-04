@@ -12,7 +12,7 @@
         "label": "updateable",
         "visibility": "updateable",
         "evolution": "updateable",
-        "decorator": "updateable",
+        "decorators": "updateable",
         "anchor": "updateable"
       },
       "kind_classification": "immutable",

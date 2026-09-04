@@ -1,5 +1,6 @@
 from importlib import import_module
-from typing import Any, cast
+from types import UnionType
+from typing import Any, cast, get_args, get_origin
 
 from wireup import injectable
 
@@ -18,6 +19,11 @@ class SnapshotTypeResolver:
                 item = getattr(item, name)
         except (AttributeError, ImportError) as error:
             raise SnapshotError(f"Snapshot type '{reference}' is not available.") from error
-        if not isinstance(item, type) or (expected is not object and not issubclass(item, expected)):
+        candidates = get_args(expected) if get_origin(expected) is UnionType else (expected,)
+        valid = isinstance(item, type) and (
+            expected is object
+            or any(isinstance(candidate, type) and issubclass(item, candidate) for candidate in candidates)
+        )
+        if not valid:
             raise SnapshotError(f"Snapshot type '{reference}' is not valid here.")
         return cast(type[Any], item)

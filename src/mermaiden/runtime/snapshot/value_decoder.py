@@ -2,7 +2,7 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from enum import Enum
 from types import UnionType
-from typing import Any, cast, get_args, get_origin, get_type_hints
+from typing import Annotated, Any, cast, get_args, get_origin, get_type_hints
 
 from wireup import injectable
 
@@ -18,6 +18,12 @@ class SnapshotValueDecoder:
     values: SnapshotValueValidator
 
     def decode(self, value: object, expected: Any = object) -> Any:
+        origin = get_origin(expected)
+        arguments = get_args(expected)
+        if origin is Annotated:
+            expected = arguments[0]
+            origin = get_origin(expected)
+            arguments = get_args(expected)
         if isinstance(value, Mapping) and "$enum" in value:
             enum_value = cast(Mapping[str, Any], value)
             enum = self.types.resolve(self.values.string(enum_value["$enum"], "$enum"), Enum)
@@ -26,18 +32,16 @@ class SnapshotValueDecoder:
             typed_value = cast(Mapping[str, Any], value)
             item_type = self.types.resolve(self.values.string(typed_value["$type"], "$type"), expected)
             values: dict[str, Any] = dict(self.values.mapping(typed_value.get("fields"), "fields"))
-            hints: dict[str, Any] = get_type_hints(item_type)
+            hints: dict[str, Any] = get_type_hints(item_type, include_extras=True)
             parameters = {name: self.decode(item, hints.get(name, object)) for name, item in values.items()}
             return item_type(**parameters)
-        origin = get_origin(expected)
-        arguments = get_args(expected)
         if origin in (tuple, list):
             if not isinstance(value, list):
                 raise SnapshotError("Snapshot collection is malformed.")
             item_type = arguments[0] if arguments else object
             items = [self.decode(item, item_type) for item in cast(list[Any], value)]
             return tuple(items) if origin is tuple else items
-        if origin is not None and issubclass(origin, Mapping):
+        if isinstance(origin, type) and issubclass(origin, Mapping):
             if not isinstance(value, Mapping):
                 raise SnapshotError("Snapshot mapping is malformed.")
             value_type = arguments[1] if len(arguments) > 1 else object

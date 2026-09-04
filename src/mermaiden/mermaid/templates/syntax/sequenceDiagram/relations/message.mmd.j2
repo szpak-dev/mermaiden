@@ -1,1 +1,1 @@
-{{ relation.source_id }}{{ relation.message_kind.value }}{% if relation.activate %}+{% endif %}{% if relation.deactivate %}-{% endif %}{{ relation.target_id }}: {{ relation.label }}{{ "\n" -}}
+{{ relation.source_id }}{{ {"solid": "->>", "dotted": "-->>", "open": "-)", "dotted_open": "--)"}[relation.message_kind.value] }}{% if relation.activate %}+{% endif %}{% if relation.deactivate %}-{% endif %}{{ relation.target_id }}: {{ relation.label }}{{ "\n" -}}

@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from mermaiden.application import Application, DiagramCommand
+from mermaiden.application import Application, DiagramCommand, UnknownCommand
 
 
 class TestWardley:
@@ -17,7 +17,13 @@ class TestWardley:
             ),
             DiagramCommand(
                 "add_component",
-                {"id": "tea", "label": "Cup of Tea", "visibility": 0.79, "evolution": 0.61, "decorator": "build"},
+                {
+                    "id": "tea",
+                    "label": "Cup of Tea",
+                    "visibility": 0.79,
+                    "evolution": 0.61,
+                    "decorators": ["build"],
+                },
             ),
             DiagramCommand(
                 "add_dependency", {"id": "needs", "source_id": "business", "target_id": "tea", "label": "needs"}
@@ -62,6 +68,21 @@ class TestWardley:
                 diagram,
                 DiagramCommand("add_component", {"id": "tea", "label": "Again", "visibility": 0.5, "evolution": 0.5}),
             )
+        for decorators in (["custom"], ["build", "buy"]):
+            with pytest.raises(UnknownCommand):
+                application.apply(
+                    diagram,
+                    DiagramCommand(
+                        "add_component",
+                        {
+                            "id": "invalid",
+                            "label": "Invalid",
+                            "visibility": 0.5,
+                            "evolution": 0.5,
+                            "decorators": decorators,
+                        },
+                    ),
+                )
         with pytest.raises(RuntimeError, match=r"unknown|does not exist"):
             application.apply(
                 diagram, DiagramCommand("add_evolution", {"id": "missing", "component_id": "missing", "target": 0.8})

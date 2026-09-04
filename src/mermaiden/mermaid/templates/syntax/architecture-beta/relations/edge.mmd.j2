@@ -1,1 +1,1 @@
-{{ relation.source_id }}:{{ relation.source_port.value }} {% if relation.label %}-[{{ relation.label | mermaid_quote }}]->{% else %}-->{% endif %} {{ relation.target_port.value }}:{{ relation.target_id }}{{ "\n" -}}
+{{ relation.source_id }}:{{ {"top": "T", "right": "R", "bottom": "B", "left": "L"}[relation.source_port.value] }} {% if relation.label %}-[{{ relation.label | mermaid_quote }}]->{% else %}-->{% endif %} {{ {"top": "T", "right": "R", "bottom": "B", "left": "L"}[relation.target_port.value] }}:{{ relation.target_id }}{{ "\n" -}}

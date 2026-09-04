@@ -15,7 +15,7 @@ Root ordering: `reorder_elements` over the exact direct-member permutation.
 
 | Kind | Update command | Placement or retargeting | Fields |
 | --- | --- | --- | --- |
-| `entity_relationship` | `update_relation` | `element_ids` via `update_relation`; ordered: `true` | updateable: `element_ids`, `label`, `notation`; immutable: `id` |
+| `entity_relationship` | `update_relation` | `element_ids` via `update_relation`; ordered: `true` | updateable: `element_ids`, `label`, `source_cardinality`, `target_cardinality`, `identifying`; immutable: `id` |
 
 ## Annotations
 
