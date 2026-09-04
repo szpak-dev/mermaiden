@@ -1,14 +1,15 @@
 from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import Annotated, ClassVar
 
+from pydantic import Field
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import DiagramDefinition, DiagramModel
 from .configuration import WardleyDiagramConfiguration
 from .constraints import WardleyDiagramConstraint
-from .elements import Component, Evolution, Pipeline
+from .elements import Component, ComponentDecorator, Evolution, Pipeline
 from .relations import Dependency
 
 
@@ -28,11 +29,16 @@ class WardleyDiagram(DiagramModel):
         return element_type in (Component, Evolution, Pipeline) and parent_type is None
 
     def add_component(
-        self, id: str, label: str, visibility: float, evolution: float, decorator: str = ""
+        self,
+        id: str,
+        label: str,
+        visibility: float,
+        evolution: float,
+        decorators: Annotated[tuple[ComponentDecorator, ...], Field(max_length=1)] = (),
     ) -> ChangeReport:
         return self._add_element(
             f"add component '{id}'",
-            Component(id=id, label=label, visibility=visibility, evolution=evolution, decorator=decorator),
+            Component(id=id, label=label, visibility=visibility, evolution=evolution, decorators=decorators),
         )
 
     def add_anchor(self, id: str, label: str, visibility: float, evolution: float) -> ChangeReport:

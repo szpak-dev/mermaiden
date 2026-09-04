@@ -22,7 +22,7 @@ class TestSequenceDiagram:
             DiagramCommand("activate", {"id": "activate_api", "participant_id": "api"}),
             DiagramCommand(
                 "add_message",
-                {"id": "request", "source_id": "user", "target_id": "api", "label": 'Call "API"', "kind": "-->>"},
+                {"id": "request", "source_id": "user", "target_id": "api", "label": 'Call "API"', "kind": "dotted"},
             ),
             DiagramCommand("control", {"id": "loop", "kind": "loop", "label": "retry"}),
             DiagramCommand(
@@ -87,6 +87,20 @@ class TestSequenceDiagram:
         with pytest.raises(UnknownCommand):
             application.apply(
                 diagram, DiagramCommand("add_note", {"id": "empty", "text": "Empty", "participant_ids": []})
+            )
+        with pytest.raises(UnknownCommand):
+            application.apply(
+                diagram,
+                DiagramCommand(
+                    "add_message",
+                    {
+                        "id": "syntax",
+                        "source_id": "user",
+                        "target_id": "user",
+                        "label": "syntax",
+                        "kind": "-->>",
+                    },
+                ),
             )
         with pytest.raises(UnknownCommand):
             application.apply(

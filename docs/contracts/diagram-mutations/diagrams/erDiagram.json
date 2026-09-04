@@ -49,7 +49,9 @@
         "id": "immutable",
         "element_ids": "updateable",
         "label": "updateable",
-        "notation": "updateable"
+        "source_cardinality": "updateable",
+        "target_cardinality": "updateable",
+        "identifying": "updateable"
       },
       "retargeting": {
         "field": "element_ids",

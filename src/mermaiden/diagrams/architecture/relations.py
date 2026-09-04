@@ -7,10 +7,10 @@ from ...core.domain import Relation
 
 
 class Port(StrEnum):
-    TOP = "T"
-    RIGHT = "R"
-    BOTTOM = "B"
-    LEFT = "L"
+    TOP = "top"
+    RIGHT = "right"
+    BOTTOM = "bottom"
+    LEFT = "left"
 
 
 class AlignmentAxis(StrEnum):

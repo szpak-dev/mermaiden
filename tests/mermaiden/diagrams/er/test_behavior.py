@@ -88,7 +88,9 @@ class TestEntityRelationshipDiagram:
                     "source_id": "CUSTOMER",
                     "target_id": "ORDER",
                     "label": 'references content; "protected" — while scoped: [v2] #1 & <trusted>',
-                    "notation": "||--o{",
+                    "source_cardinality": "exactly_one",
+                    "target_cardinality": "zero_or_more",
+                    "identifying": True,
                 },
             ),
         ):
@@ -125,6 +127,20 @@ class TestEntityRelationshipDiagram:
 
         with pytest.raises(UnknownCommand):
             application.apply(diagram, DiagramCommand("configure", {"entityPadding": "wide"}))
+        with pytest.raises(UnknownCommand):
+            application.apply(
+                diagram,
+                DiagramCommand(
+                    "add_relationship",
+                    {
+                        "id": "syntax",
+                        "source_id": "ONE",
+                        "target_id": "ONE",
+                        "label": "syntax",
+                        "notation": "||--||",
+                    },
+                ),
+            )
         with pytest.raises(RuntimeError, match=r"already exists"):
             application.apply(diagram, DiagramCommand("add_entity", {"id": "ONE", "label": "Again"}))
         with pytest.raises(RuntimeError, match=r"unknown|does not exist"):

@@ -20,8 +20,10 @@ class TestGantt:
                 {
                     "id": "design",
                     "label": "Design",
-                    "metadata": ["done", "design", "2026-08-01", "2d"],
                     "section_id": "delivery",
+                    "status": "done",
+                    "start": {"kind": "date", "date": "2026-08-01"},
+                    "finish": {"kind": "duration", "amount": 2, "unit": "days"},
                 },
             ),
             DiagramCommand(
@@ -29,8 +31,9 @@ class TestGantt:
                 {
                     "id": "release",
                     "label": "Release",
-                    "metadata": ["2026-08-03", "0d"],
                     "section_id": "delivery",
+                    "start": {"kind": "date", "date": "2026-08-03"},
+                    "finish": {"kind": "duration", "amount": 0},
                 },
             ),
             DiagramCommand("add_marker", {"id": "today", "label": "Today", "date": "2026-08-02"}),
@@ -52,7 +55,7 @@ class TestGantt:
             "dateFormat YYYY-MM-DD",
             "section Delivery",
             "Design : done, design, 2026-08-01, 2d",
-            "Release : milestone, 2026-08-03, 0d",
+            "Release : milestone, release, 2026-08-03, 0d",
             "vert 2026-08-02 : Today",
         ):
             assert fragment in source
@@ -72,6 +75,25 @@ class TestGantt:
                 diagram,
                 DiagramCommand(
                     "add_task",
-                    {"id": "task", "label": "Task", "metadata": ["2026-08-01", "1d"], "section_id": "missing"},
+                    {
+                        "id": "task",
+                        "label": "Task",
+                        "section_id": "missing",
+                        "start": {"kind": "date", "date": "2026-08-01"},
+                        "finish": {"kind": "duration", "amount": 1},
+                    },
                 ),
             )
+
+        for arguments in (
+            {"id": "old", "label": "Old", "section_id": "delivery", "metadata": ["2026-08-01", "1d"]},
+            {
+                "id": "bad",
+                "label": "Bad",
+                "section_id": "delivery",
+                "start": {"kind": "date", "date": ""},
+                "finish": {"kind": "duration", "amount": 1},
+            },
+        ):
+            with pytest.raises(UnknownCommand, match="invalid arguments"):
+                application.apply(diagram, DiagramCommand("add_task", arguments))

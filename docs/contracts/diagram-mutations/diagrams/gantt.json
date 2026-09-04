@@ -25,7 +25,10 @@
       "fields": {
         "id": "immutable",
         "label": "updateable",
-        "metadata": "updateable"
+        "status": "updateable",
+        "critical": "updateable",
+        "start": "updateable",
+        "finish": "updateable"
       },
       "kind_classification": "immutable",
       "placement": {
@@ -59,7 +62,10 @@
       "fields": {
         "id": "immutable",
         "label": "updateable",
-        "metadata": "updateable"
+        "status": "updateable",
+        "critical": "updateable",
+        "start": "updateable",
+        "finish": "updateable"
       },
       "kind_classification": "immutable",
       "placement": {

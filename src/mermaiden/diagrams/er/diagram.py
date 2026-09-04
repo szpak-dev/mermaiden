@@ -9,7 +9,7 @@ from ..domain import DiagramDefinition, DiagramModel, MermaidDiagramConfiguratio
 from .configuration import EntityRelationshipDiagramConfiguration, EntityRelationshipDirection
 from .constraints import EntityRelationshipDiagramConstraint
 from .elements import Entity, EntityAttribute, EntityAttributeDataType
-from .relations import EntityRelationship
+from .relations import Cardinality, EntityRelationship
 
 
 @injectable(as_type=DiagramModel, qualifier="er", lifetime="scoped")
@@ -66,9 +66,18 @@ class EntityRelationshipDiagram(DiagramModel):
         source_id: str,
         target_id: str,
         label: str,
-        notation: str = "||--||",
+        source_cardinality: Cardinality = Cardinality.EXACTLY_ONE,
+        target_cardinality: Cardinality = Cardinality.EXACTLY_ONE,
+        identifying: bool = True,
     ) -> ChangeReport:
         return self._add_relation(
-            f"add relationship '{id}",
-            EntityRelationship(id=id, element_ids=(source_id, target_id), label=label, notation=notation),
+            f"add relationship '{id}'",
+            EntityRelationship(
+                id=id,
+                element_ids=(source_id, target_id),
+                label=label,
+                source_cardinality=source_cardinality,
+                target_cardinality=target_cardinality,
+                identifying=identifying,
+            ),
         )

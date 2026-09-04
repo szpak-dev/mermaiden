@@ -4,10 +4,10 @@ from ...core.domain import Relation
 
 
 class MessageKind(StrEnum):
-    SOLID = "->>"
-    DOTTED = "-->>"
-    OPEN = "-)"
-    DOTTED_OPEN = "--)"
+    SOLID = "solid"
+    DOTTED = "dotted"
+    OPEN = "open"
+    DOTTED_OPEN = "dotted_open"
 
 
 class ControlKind(StrEnum):

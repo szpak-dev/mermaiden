@@ -6,11 +6,13 @@ from ...diagrams.cynefin.diagram import CynefinDiagram
 from ...diagrams.cynefin.elements import DomainKind
 from ...diagrams.domain import DiagramModel
 from ...diagrams.gantt.diagram import Gantt
+from ...diagrams.gantt.elements import DateStart, DurationFinish, TaskStatus
 from ...diagrams.gitgraph.diagram import GitGraphDiagram
 from ...diagrams.ishikawa.diagram import IshikawaDiagram
 from ...diagrams.kanban.diagram import KanbanDiagram
 from ...diagrams.railroad.diagram import RailroadDiagram
 from ...diagrams.wardley.diagram import WardleyDiagram
+from ...diagrams.wardley.elements import ComponentDecorator
 
 
 def build_specialized_fixtures(registry: DiagramsApplication) -> dict[str, DiagramModel]:
@@ -18,7 +20,14 @@ def build_specialized_fixtures(registry: DiagramsApplication) -> dict[str, Diagr
     assert isinstance(gantt, Gantt)
     gantt.set_title("Release plan")
     gantt.add_section("delivery", "Delivery")
-    gantt.add_task("design", "Design", ("done", "design", "2026-08-01", "2d"), "delivery")
+    gantt.add_task(
+        "design",
+        "Design",
+        "delivery",
+        status=TaskStatus.DONE,
+        start=DateStart(date="2026-08-01"),
+        finish=DurationFinish(amount=2),
+    )
 
     gitgraph = registry.get_diagram("gitGraph")
     assert isinstance(gitgraph, GitGraphDiagram)
@@ -91,7 +100,7 @@ def build_specialized_fixtures(registry: DiagramsApplication) -> dict[str, Diagr
     wardley = registry.get_diagram("wardley-beta")
     assert isinstance(wardley, WardleyDiagram)
     wardley.add_anchor("business", "Business", 0.95, 0.63)
-    wardley.add_component("tea", "Cup of Tea", 0.79, 0.61, "build")
+    wardley.add_component("tea", "Cup of Tea", 0.79, 0.61, (ComponentDecorator.BUILD,))
     wardley.add_component("water", "Hot Water", 0.52, 0.8)
     wardley.add_dependency("business_tea", "business", "tea")
     wardley.add_dependency("tea_water", "tea", "water")

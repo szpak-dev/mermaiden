@@ -1,6 +1,7 @@
 from ...diagrams.application import DiagramsApplication
 from ...diagrams.domain import DiagramModel
 from ...diagrams.er.diagram import EntityRelationshipDiagram
+from ...diagrams.er.relations import Cardinality
 from ...diagrams.mindmap.diagram import Mindmap
 from ...diagrams.packet.diagram import Packet
 from ...diagrams.pie.diagram import PieDiagram
@@ -140,7 +141,7 @@ def build_analytical_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
         "CUSTOMER",
         "ORDER",
         'references content; "protected" — while scoped: [v2] #1 & <trusted>',
-        "||--o{",
+        target_cardinality=Cardinality.ZERO_OR_MORE,
     )
 
     return {

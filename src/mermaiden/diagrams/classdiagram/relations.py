@@ -4,12 +4,12 @@ from ...core.domain import Relation
 
 
 class ClassRelationKind(StrEnum):
-    ASSOCIATION = "--"
-    INHERITANCE = "<|--"
-    COMPOSITION = "*--"
-    AGGREGATION = "o--"
-    DEPENDENCY = "<.."
-    REALIZATION = "<|.."
+    ASSOCIATION = "association"
+    INHERITANCE = "inheritance"
+    COMPOSITION = "composition"
+    AGGREGATION = "aggregation"
+    DEPENDENCY = "dependency"
+    REALIZATION = "realization"
 
 
 class ClassRelation(Relation):
