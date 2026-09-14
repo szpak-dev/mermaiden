@@ -5,7 +5,8 @@ from typing import cast
 
 import pytest
 
-from mermaiden.application import Application, DiagramCommand
+from mermaiden import Application
+from mermaiden.domain import DiagramCommand
 
 ROOT = Path(__file__).resolve().parents[3]
 CONTRACT_ROOT = ROOT / "docs" / "contracts" / "diagram-mutations"

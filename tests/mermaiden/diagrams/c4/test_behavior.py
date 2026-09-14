@@ -3,7 +3,8 @@ from typing import Any
 
 import pytest
 
-from mermaiden.application import Application, DiagramCommand, UnknownCommand
+from mermaiden import Application
+from mermaiden.domain import DiagramCommand, UnknownCommand
 
 
 class TestC4:

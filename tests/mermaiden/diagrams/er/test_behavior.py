@@ -5,7 +5,8 @@ from typing import cast
 
 import pytest
 
-from mermaiden.application import Application, DiagramCommand, UnknownCommand
+from mermaiden import Application
+from mermaiden.domain import DiagramCommand, UnknownCommand
 
 
 class TestEntityRelationshipDiagram:

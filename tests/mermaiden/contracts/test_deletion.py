@@ -3,7 +3,7 @@ from typing import Any, cast
 import pytest
 
 from mermaiden import Application
-from mermaiden.application import DiagramCommand
+from mermaiden.domain import DiagramCommand
 
 
 class TestDeletion:
