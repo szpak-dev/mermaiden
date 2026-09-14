@@ -1,10 +1,12 @@
+from collections.abc import Sequence
 from dataclasses import dataclass
 
 from wireup import injectable
 
-from ...core.domain import ChangeReport
+from ...core.domain import ChangeRejected, ChangeReport, ValidationReport
 from ...diagrams.catalog.service import DiagramCatalog
 from ...diagrams.domain import DiagramCommandFeature, DiagramModel, MermaidDiagramConfiguration
+from ...diagrams.services.persistence import DiagramPersistenceApplication
 from ...domain import DiagramCommand, UnknownCommand, ValidatedCommandPayload
 
 
@@ -12,6 +14,7 @@ from ...domain import DiagramCommand, UnknownCommand, ValidatedCommandPayload
 @dataclass(frozen=True, slots=True)
 class DiagramCommandApplication:
     catalog: DiagramCatalog
+    persistence: DiagramPersistenceApplication
 
     def apply(self, diagram: DiagramModel, command: DiagramCommand) -> ChangeReport | None:
         operation = getattr(diagram, command.operation, None)
@@ -25,6 +28,32 @@ class DiagramCommandApplication:
             diagram.configure(payload)
             return None
         return self._invoke(operation, payload, self.catalog.command_feature(diagram.kind, command.operation))
+
+    def apply_batch(
+        self,
+        diagram: DiagramModel,
+        commands: Sequence[DiagramCommand],
+    ) -> ValidationReport:
+        ordered = tuple(commands)
+        if not ordered:
+            return diagram.validate()
+
+        original = self.persistence.snapshot(diagram)
+        try:
+            transaction = diagram.runtime.transaction
+            transaction.begin_batch()
+            try:
+                for command in ordered:
+                    self.apply(diagram, command)
+            finally:
+                transaction.end_batch()
+            final_report = diagram.validate()
+            if not final_report.can_commit:
+                raise ChangeRejected("apply batch", final_report)
+        except Exception:
+            self.persistence.restore_into(diagram, original)
+            raise
+        return final_report
 
     def _invoke(
         self,

@@ -3,7 +3,9 @@ from typing import Any
 
 import pytest
 
-from mermaiden.application import Application, ChangeRejected, DiagramCommand, UnknownCommand
+from mermaiden import Application
+from mermaiden.core.domain import ChangeRejected
+from mermaiden.domain import DiagramCommand, UnknownCommand
 
 
 class TestArchitecture:

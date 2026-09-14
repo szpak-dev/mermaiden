@@ -1,26 +1,25 @@
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from types import TracebackType
+from typing import cast
 
 from wireup import ScopedSyncContainer
 
 from .bootstrap import process_scope
-from .core.domain import ChangeRejected, ChangeReport, Diagram
+from .core.domain import ChangeReport, Diagram, ValidationReport
 from .diagrams.application import DiagramsApplication
 from .diagrams.catalog.models import DiagramDescription
 from .diagrams.catalog.service import DiagramCatalog
 from .diagrams.domain import DiagramInfo, DiagramModel
 from .diagrams.services.diagram_factory import DiagramFactory
 from .diagrams.services.persistence import DiagramPersistenceApplication
-from .domain import CommandPayload, DiagramCommand, UnknownCommand
+from .domain import CommandPayload, DiagramCommand
 from .mermaid.application import MermaidApplication
 from .mermaid.schema import MermaidSchemaStore
 from .mermaid.services.preview import MermaidPreviewApplication
 from .mermaid.validation import MermaidRenderReport, MermaidRenderValidator
 from .mutations.commands.application import DiagramCommandApplication
 from .runtime.snapshot import DiagramSnapshot
-
-__all__ = ["Application", "ChangeRejected", "DiagramCommand", "UnknownCommand"]
 
 
 class Application:
@@ -51,6 +50,23 @@ class Application:
     def apply(self, diagram: DiagramModel, command: DiagramCommand) -> ChangeReport | None:
         self._ensure_open()
         return self._scope.get(DiagramCommandApplication).apply(diagram, command)
+
+    def apply_batch(
+        self,
+        diagram: DiagramModel,
+        commands: Sequence[Mapping[str, object]],
+    ) -> ValidationReport:
+        self._ensure_open()
+        ordered: list[DiagramCommand] = []
+        for index, command in enumerate(commands):
+            operation = command.get("operation")
+            arguments = command.get("arguments")
+            if not isinstance(operation, str):
+                raise ValueError(f"Batch command {index} must provide a string operation.")
+            if not isinstance(arguments, Mapping):
+                raise ValueError(f"Batch command {index} must provide mapping arguments.")
+            ordered.append(DiagramCommand(operation, cast(Mapping[str, object], arguments)))
+        return self._scope.get(DiagramCommandApplication).apply_batch(diagram, ordered)
 
     def execute(
         self,

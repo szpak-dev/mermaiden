@@ -50,11 +50,26 @@ Mermaid syntax id, apply a named domain command, and persist the JSON-safe snaps
 <!-- executable-example:application:start -->
 ```python
 from mermaiden import Application
-from mermaiden.application import DiagramCommand
 
 with Application.create() as application:
     diagram = application.create_diagram("sequenceDiagram")
-    application.apply(diagram, DiagramCommand("add_participant", {"id": "api", "label": "API"}))
+    change = application.apply_batch(
+        diagram,
+        (
+            {"operation": "add_participant", "arguments": {"id": "client", "label": "Client"}},
+            {"operation": "add_participant", "arguments": {"id": "api", "label": "API"}},
+            {
+                "operation": "add_message",
+                "arguments": {
+                    "id": "request",
+                    "source_id": "client",
+                    "target_id": "api",
+                    "label": "Request",
+                },
+            },
+        ),
+    )
+    assert change.can_commit
 
     payload = application.snapshot(diagram).to_dict()
     restored = application.restore(payload)
@@ -65,6 +80,11 @@ with Application.create() as application:
     svg = report.svg
 ```
 <!-- executable-example:application:end -->
+
+`apply_batch()` accepts an ordered sequence of `{"operation": str, "arguments": mapping}` objects. It validates command
+payloads as usual, defers whole-diagram constraint inspection until the batch is complete, and restores the exact
+pre-batch snapshot if any command or the final validation fails. An empty batch leaves the diagram unchanged and returns
+its current validation report.
 
 `validate_render()` is non-mutating and runs Mermaid's complete rendering and layout phase through `mmdc`; its report
 contains the compatible Mermaid version, SVG output, and structured diagnostics.

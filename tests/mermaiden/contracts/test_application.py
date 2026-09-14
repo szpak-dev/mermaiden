@@ -5,7 +5,7 @@ from typing import cast
 import pytest
 
 from mermaiden import Application
-from mermaiden.application import DiagramCommand, UnknownCommand
+from mermaiden.domain import DiagramCommand, UnknownCommand
 
 
 class TestApplication:

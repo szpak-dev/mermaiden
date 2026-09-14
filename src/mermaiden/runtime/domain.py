@@ -33,6 +33,17 @@ class StructureConstraint(BlockingConstraint):
 @dataclass(frozen=True, slots=True)
 class ChangeTransaction:
     state: DiagramState
+    _batching: list[None] = field(default_factory=lambda: list[None](), init=False)
+
+    def begin_batch(self) -> None:
+        if self._batching:
+            raise RuntimeError("A diagram batch is already in progress.")
+        self._batching.append(None)
+
+    def end_batch(self) -> None:
+        if not self._batching:
+            raise RuntimeError("No diagram batch is in progress.")
+        self._batching.pop()
 
     def apply(
         self,
@@ -63,6 +74,8 @@ class ChangeTransaction:
         removed: tuple[DiagramObjectReference, ...],
         require_valid_candidate: bool,
     ) -> ChangeReport:
+        if self._batching:
+            return self._apply_deferred(operation, candidate, removed)
         before = observer.inspect(diagram)
         self.state.stage(candidate)
         try:
@@ -82,6 +95,21 @@ class ChangeTransaction:
             self.state.rollback()
             raise
         return ChangeReport(operation, before, after, True, removed)
+
+    def _apply_deferred(
+        self,
+        operation: str,
+        candidate: DiagramData,
+        removed: tuple[DiagramObjectReference, ...],
+    ) -> ChangeReport:
+        report = ValidationReport()
+        try:
+            self.state.stage(candidate)
+            self.state.commit()
+        except Exception:
+            self.state.rollback()
+            raise
+        return ChangeReport(operation, report, report, True, removed)
 
     def reject(self, operation: str, message: str) -> Never:
         self.state.rollback()
