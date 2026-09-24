@@ -1,7 +1,7 @@
 from collections.abc import Iterator, Mapping
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import Any, Protocol, cast
+from typing import Any, cast
 
 from jsonschema import Draft201909Validator
 from jsonschema.exceptions import ValidationError
@@ -21,10 +21,6 @@ class DiagramConfigurationContract:
     config_key: str
     schema_definition: str
     values: Mapping[str, Any]
-
-
-class SchemaValidator(Protocol):
-    def iter_errors(self, instance: Any) -> Iterator[ValidationError]: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -53,8 +49,8 @@ class MermaidConfiguration:
         return DiagramConfigurationContract(config_key, schema_definition, self.extract(source))
 
     def validate(self, contract: DiagramConfigurationContract) -> tuple[ConfigurationViolation, ...]:
-        validator = cast(SchemaValidator, Draft201909Validator(self._partial_schema()))
-        errors = tuple(validator.iter_errors(contract.values))
+        validator = cast(Any, Draft201909Validator(self._partial_schema()))
+        errors = tuple(cast(Iterator[ValidationError], validator.iter_errors(contract.values)))
         return tuple(
             ConfigurationViolation(".".join(str(segment) for segment in error.absolute_path), error.message)
             for error in sorted(errors, key=lambda error: list(error.absolute_path))

@@ -6,14 +6,13 @@ from typing import cast
 from wireup import ScopedSyncContainer
 
 from .bootstrap import process_scope
-from .core.domain import ChangeReport, Diagram, ValidationReport
+from .core.domain import ChangeReport, CommandPayload, Diagram, DiagramCommand, ValidationReport
 from .diagrams.application import DiagramsApplication
 from .diagrams.catalog.models import DiagramDescription
 from .diagrams.catalog.service import DiagramCatalog
 from .diagrams.domain import DiagramInfo, DiagramModel
 from .diagrams.services.diagram_factory import DiagramFactory
 from .diagrams.services.persistence import DiagramPersistenceApplication
-from .domain import CommandPayload, DiagramCommand
 from .mermaid.application import MermaidApplication
 from .mermaid.schema import MermaidSchemaStore
 from .mermaid.services.preview import MermaidPreviewApplication

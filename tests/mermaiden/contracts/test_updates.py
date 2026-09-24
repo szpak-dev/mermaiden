@@ -154,7 +154,7 @@ class TestObjectUpdates:
                     assert command_name not in description.commands
                     continue
                 assert command_name in description.commands
-                schema = application.command_payload(info.id, command_name).model_json_schema()
+                schema = application.command_payload(info.id, command_name).schema()
                 for kind, contract_value in contracts.items():
                     contract = self._mapping(contract_value)
                     variant = self._variant(schema, kind)

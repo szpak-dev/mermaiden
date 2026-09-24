@@ -10,19 +10,20 @@ from mermaiden import Application
 class TestTreeViewPersistence:
     def test_uses_branches_as_the_only_public_nesting_operation(self) -> None:
         application = Application.create()
-        schema = application.command_payload("treeView-beta", "add_item").model_json_schema()
+        schema = application.command_payload("treeView-beta", "add_item").schema()
         description = application.diagram_description("treeView-beta")
         element_schema = description.elements["tree_item"]
         definitions = cast(Mapping[str, object], element_schema["$defs"])
         item_type_schema = cast(Mapping[str, object], definitions["TreeItemType"])
         properties = cast(Mapping[str, object], element_schema["properties"])
         item_type_property = cast(Mapping[str, object], properties["item_type"])
+        command_properties = cast(Mapping[str, object], schema["properties"])
 
-        assert "parent_id" not in schema["properties"]
+        assert "parent_id" not in command_properties
         assert item_type_schema["enum"] == ["item", "directory", "file"]
         assert item_type_property["default"] == "item"
 
-        removal_schema = application.command_payload("treeView-beta", "remove_element").model_json_schema()
+        removal_schema = application.command_payload("treeView-beta", "remove_element").schema()
         removal_description = cast(str, removal_schema["description"])
         assert "complete diagram-defined subtree" in removal_description
         assert "removed atomically" in removal_description

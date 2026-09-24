@@ -3,7 +3,7 @@ from collections.abc import Mapping, Sequence
 from pydantic import Field
 
 from ...core.characters import CharacterPolicy, OptionalText
-from ...core.domain import Annotation, OperationError, TargetKind, TargetRef
+from ...core.domain import Annotation, AnnotationFactory, OperationError, TargetKind, TargetRef
 
 
 class TreeIcon(CharacterPolicy):
@@ -18,7 +18,7 @@ class TreeAnnotation(Annotation):
     description: str = Field(default="", pattern=OptionalText.pattern, description=OptionalText.description)
 
 
-class TreeAnnotations:
+class TreeAnnotations(AnnotationFactory):
     def create(
         self,
         id: str,

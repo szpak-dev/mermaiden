@@ -17,7 +17,7 @@ from ..application import DiagramsApplication
 
 @injectable(as_type=SnapshotTypeRegistry, lifetime="scoped")
 @dataclass(frozen=True)
-class DiagramSnapshotRegistry:
+class DiagramSnapshotRegistry(SnapshotTypeRegistry):
     diagrams: DiagramsApplication
 
     def contract(self, owner: str) -> SnapshotContract:
@@ -100,8 +100,12 @@ class DiagramSnapshotRegistry:
             )
         return contracts
 
-    @cached_property
+    @property
     def fingerprint(self) -> str:
+        return self._fingerprint
+
+    @cached_property
+    def _fingerprint(self) -> str:
         document = {
             owner: {
                 "types": {

@@ -81,7 +81,7 @@ class TestMutationConformance:
                 if not objects:
                     continue
                 operation = self._operation(objects)
-                schema = application.command_payload(info.id, operation).model_json_schema()
+                schema = application.command_payload(info.id, operation).schema()
                 assert set(self._discriminator_mapping(schema)) == set(objects)
                 for kind, value in objects.items():
                     item = self._mapping(value)
@@ -108,10 +108,10 @@ class TestMutationConformance:
                     str,
                     self._mapping(self._mapping(next(iter(elements.values())))["placement"])["move_command"],
                 )
-                move_schema = application.command_payload(info.id, move_operation).model_json_schema()
+                move_schema = application.command_payload(info.id, move_operation).schema()
                 assert set(self._discriminator_mapping(move_schema)) == set(elements)
                 reorder_operation = cast(str, self._mapping(matrix["root_collection"])["reorder_command"])
-                reorder_schema = application.command_payload(info.id, reorder_operation).model_json_schema()
+                reorder_schema = application.command_payload(info.id, reorder_operation).schema()
                 assert reorder_schema["additionalProperties"] is False
                 assert reorder_schema["required"] == ["parent_id", "element_ids"]
 
@@ -128,7 +128,7 @@ class TestMutationConformance:
                     continue
                 operation = self._operation(objects)
                 payload = application.command_payload(diagram_id, operation)
-                schema = payload.model_json_schema()
+                schema = payload.schema()
                 for kind, value in objects.items():
                     item = self._mapping(value)
                     variant = self._variant(schema, kind)
@@ -142,7 +142,7 @@ class TestMutationConformance:
                             "kind": kind,
                             "changes": {field_name: self._example(schema, self._mapping(properties[field_name]))},
                         }
-                        validated = payload.model_validate(arguments).model_dump(mode="json", exclude_unset=True)
+                        validated = payload.validate(arguments).values
                         validated_changes = self._mapping(validated["changes"])
                         assert set(validated_changes) == {field_name}
                         covered_cases.add((diagram_id, category, kind, field_name))
@@ -154,9 +154,7 @@ class TestMutationConformance:
             move_operation = cast(str, self._mapping(first["placement"])["move_command"])
             move_payload = application.command_payload(diagram_id, move_operation)
             for kind in elements:
-                validated = move_payload.model_validate(
-                    {"id": "element_example", "kind": kind, "parent_id": ""}
-                ).model_dump(mode="json", exclude_unset=True)
+                validated = move_payload.validate({"id": "element_example", "kind": kind, "parent_id": ""}).values
                 assert validated == {"id": "element_example", "kind": kind, "parent_id": "", "position": None}
                 covered_cases.add((diagram_id, "elements", kind, "move"))
 
@@ -167,9 +165,7 @@ class TestMutationConformance:
                 f"{kind}_example" for kind, value in elements.items() if "child_collection" in self._mapping(value)
             )
             for owner in owners:
-                validated = reorder_payload.model_validate(
-                    {"parent_id": owner, "element_ids": ["element_example"]}
-                ).model_dump(mode="json", exclude_unset=True)
+                validated = reorder_payload.validate({"parent_id": owner, "element_ids": ["element_example"]}).values
                 assert validated == {"parent_id": owner, "element_ids": ["element_example"]}
                 kind = "$root" if not owner else owner.removesuffix("_example")
                 covered_cases.add((diagram_id, "elements", kind, "reorder"))

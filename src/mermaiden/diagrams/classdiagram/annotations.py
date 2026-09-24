@@ -3,7 +3,7 @@ from typing import Annotated
 
 from pydantic import Field, field_validator
 
-from ...core.domain import Annotation, OperationError, TargetKind, TargetRef
+from ...core.domain import Annotation, AnnotationFactory, OperationError, TargetKind, TargetRef
 from .values.text import ClassIdentifier, ClassText
 
 
@@ -23,7 +23,7 @@ class ClassNote(Annotation):
         return targets
 
 
-class ClassNotes:
+class ClassNotes(AnnotationFactory):
     def create(
         self,
         id: str,

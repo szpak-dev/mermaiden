@@ -13,7 +13,7 @@ from .domain import MermaidCliResult
 
 @injectable(as_type=MermaidCli)
 @dataclass(frozen=True, slots=True)
-class MermaidCliRenderer:
+class MermaidCliRenderer(MermaidCli):
     schemas: MermaidSchemaStore
     timeout_seconds: int = field(default=60, init=False)
 

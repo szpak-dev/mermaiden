@@ -1,13 +1,20 @@
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
+from typing import cast
 
 from wireup import injectable
 
-from ...core.domain import ChangeRejected, ChangeReport, ValidationReport
+from ...core.domain import (
+    ChangeRejected,
+    ChangeReport,
+    CommandArguments,
+    DiagramCommand,
+    UnknownCommand,
+    ValidationReport,
+)
 from ...diagrams.catalog.service import DiagramCatalog
 from ...diagrams.domain import DiagramCommandFeature, DiagramModel, MermaidDiagramConfiguration
 from ...diagrams.services.persistence import DiagramPersistenceApplication
-from ...domain import DiagramCommand, UnknownCommand, ValidatedCommandPayload
 
 
 @injectable(lifetime="scoped")
@@ -24,10 +31,14 @@ class DiagramCommandApplication:
             payload = self.catalog.validate_command(diagram, command.operation, command.arguments)
         except (KeyError, ValueError) as error:
             raise UnknownCommand(f"Command '{command.operation}' has invalid arguments: {error}") from error
-        if isinstance(payload, MermaidDiagramConfiguration):
-            diagram.configure(payload)
+        if command.operation == "configure":
+            diagram.configure(cast(MermaidDiagramConfiguration, payload.invocation["configuration"]))
             return None
-        return self._invoke(operation, payload, self.catalog.command_feature(diagram.kind, command.operation))
+        return self._invoke(
+            cast(Callable[..., ChangeReport], operation),
+            payload,
+            self.catalog.command_feature(diagram.kind, command.operation),
+        )
 
     def apply_batch(
         self,
@@ -57,22 +68,17 @@ class DiagramCommandApplication:
 
     def _invoke(
         self,
-        operation: object,
-        payload: ValidatedCommandPayload,
+        operation: Callable[..., ChangeReport],
+        payload: CommandArguments,
         command: DiagramCommandFeature,
-    ) -> ChangeReport | None:
-        values = payload.model_dump(exclude_unset=True)
+    ) -> ChangeReport:
+        values = dict(payload.invocation)
         positional = ()
         if command.variadic is not None:
             names = tuple(command.parameters)
             variadic_index = names.index(command.variadic)
             variadic_values = values.pop(command.variadic)
-            if not isinstance(variadic_values, tuple):
-                raise UnknownCommand("Variadic command arguments must be a tuple.")
-            positional = tuple(values.pop(name) for name in names[:variadic_index]) + variadic_values
-        if not callable(operation):
-            raise UnknownCommand("Command operation is not callable.")
-        result = operation(*positional, **values)
-        if result is not None and not isinstance(result, ChangeReport):
-            raise UnknownCommand("Command is not a mutation.")
-        return result
+            positional = tuple(values.pop(name) for name in names[:variadic_index]) + cast(
+                tuple[object, ...], variadic_values
+            )
+        return operation(*positional, **values)
