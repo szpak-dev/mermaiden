@@ -386,7 +386,7 @@ class TestElementMovement:
             description = application.diagram_description(info.id)
             assert "move_element" in description.commands
             assert "reorder_elements" in description.commands
-            move_schema = application.command_payload(info.id, "move_element").model_json_schema()
+            move_schema = application.command_payload(info.id, "move_element").schema()
             for kind in description.elements:
                 variant = self._variant(move_schema, kind)
                 assert variant["additionalProperties"] is False
@@ -395,7 +395,7 @@ class TestElementMovement:
                 assert set(properties) == {"id", "kind", "parent_id", "position"}
                 assert self._mapping(properties["kind"])["const"] == kind
                 assert self._mapping(properties["position"])["minimum"] == 0
-            reorder_schema = application.command_payload(info.id, "reorder_elements").model_json_schema()
+            reorder_schema = application.command_payload(info.id, "reorder_elements").schema()
             assert reorder_schema["additionalProperties"] is False
             assert reorder_schema["required"] == ["parent_id", "element_ids"]
             element_ids = self._mapping(self._mapping(reorder_schema["properties"])["element_ids"])

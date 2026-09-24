@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from collections.abc import Mapping
 
-from ...core.domain import Annotation, Element, Relation
-from ...domain import CommandPayload
+from ...core.domain import Annotation, CommandPayload, Element, Relation
 
 
 class MutationPayloadFactory(ABC):

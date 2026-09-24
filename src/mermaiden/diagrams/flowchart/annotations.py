@@ -3,14 +3,14 @@ from collections.abc import Mapping, Sequence
 from pydantic import Field
 
 from ...core.characters import Text
-from ...core.domain import Annotation, OperationError, TargetKind, TargetRef
+from ...core.domain import Annotation, AnnotationFactory, OperationError, TargetKind, TargetRef
 
 
 class Note(Annotation):
     text: str = Field(pattern=Text.pattern, description=Text.description)
 
 
-class Notes:
+class Notes(AnnotationFactory):
     def create(
         self,
         id: str,

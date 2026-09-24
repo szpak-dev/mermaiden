@@ -5,7 +5,7 @@ RUN := $(UV) run --no-sync
 PYTHON := $(RUN) python
 
 architecture:
-	@$(RUN) lint-imports
+	@$(RUN) lint-imports --cache-dir .dev/import_linter_cache
 
 compat:
 	@PYTHONPATH=src $(PYTHON) -m mermaiden.cli compat

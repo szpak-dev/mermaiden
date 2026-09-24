@@ -8,7 +8,8 @@ from pydantic_core import core_schema
 from wireup import injectable
 
 from ...core.characters import Identifier, OptionalIdentifier, OrderedIdentifiers
-from ...domain import CommandPayload, CommandPayloadSchema, ValidatedCommandPayload
+from ...core.domain import CommandArguments, CommandPayload
+from ...core.services.command_payload import PydanticCommandPayload, PydanticModelCommandPayload
 from ..application import DiagramsApplication
 from ..domain import CommandDefault, CommandVariadic, DiagramCommandFeature, DiagramInfo, DiagramModel
 from .domain import MutationPayloadFactory
@@ -90,7 +91,7 @@ class DiagramCommandCatalog:
     def _payload(self, info: DiagramInfo, command: DiagramCommandFeature) -> CommandPayload:
         diagram = self.registry.get_diagram(info.id)
         if command.name == "configure":
-            return cast(CommandPayload, diagram.feature.configuration)
+            return PydanticModelCommandPayload(diagram.feature.configuration, "configuration")
         if command.name == "update_element":
             return self.mutation_payloads.element(info.diagram_type.__name__, self.objects.elements(info))
         if command.name == "update_relation":
@@ -101,18 +102,24 @@ class DiagramCommandCatalog:
             return self.mutation_payloads.move_element(info.diagram_type.__name__, self.objects.elements(info))
         fields: dict[str, core_schema.TypedDictField] = {}
         for name, declaration in command.parameters.items():
-            default = declaration if isinstance(declaration, CommandDefault) else None
-            annotation = (
-                declaration.annotation if isinstance(declaration, CommandDefault | CommandVariadic) else declaration
-            )
-            field_schema = TypeAdapter[object](annotation).core_schema
-            if default is not None:
-                field_schema = core_schema.with_default_schema(
-                    field_schema,
-                    default=default.value,
-                    validate_default=True,
-                )
-            fields[name] = core_schema.typed_dict_field(field_schema, required=default is None)
+            match declaration:
+                case CommandDefault(annotation=annotation, value=default):
+                    field_schema = core_schema.with_default_schema(
+                        TypeAdapter[object](annotation).core_schema,
+                        default=default,
+                        validate_default=True,
+                    )
+                    fields[name] = core_schema.typed_dict_field(field_schema, required=False)
+                case CommandVariadic(annotation=annotation):
+                    fields[name] = core_schema.typed_dict_field(
+                        TypeAdapter[object](annotation).core_schema,
+                        required=True,
+                    )
+                case _:
+                    fields[name] = core_schema.typed_dict_field(
+                        TypeAdapter[object](declaration).core_schema,
+                        required=True,
+                    )
         schema = core_schema.typed_dict_schema(fields, extra_behavior="forbid")
         description = ""
         if command.name == "remove_element":
@@ -121,33 +128,31 @@ class DiagramCommandCatalog:
                 "With cascade, the complete diagram-defined subtree and all dependent relations and annotations "
                 "are removed atomically."
             )
-        return CommandPayloadSchema(schema, (), description)
+        return PydanticCommandPayload(schema, (), description)
 
     def validate(
         self,
         diagram: DiagramModel,
         command_name: str,
         payload: Mapping[str, object],
-    ) -> ValidatedCommandPayload:
+    ) -> CommandArguments:
         try:
-            return self.payload(diagram.kind, command_name).model_validate(payload)
+            return self.payload(diagram.kind, command_name).validate(payload)
         except ValidationError as error:
             diagnostics: list[str] = []
             for item in error.errors(include_url=False):
                 location = ".".join(str(part) for part in item["loc"])
-                received = item.get("input")
+                context = cast(dict[str, object], item.get("ctx") or {})
                 characters = ""
-                if isinstance(received, str):
+                rule = ""
+                if "pattern" in context:
+                    received = cast(str, item["input"])
                     characters = "; characters " + ", ".join(
                         f"{character!r} (U+{ord(character):04X})" for character in received
                     )
-                context = item.get("ctx")
-                rule = ""
-                if isinstance(context, dict):
-                    if "pattern" in context:
-                        rule = f"; rule pattern {context['pattern']!r}"
-                    elif "expected" in context:
-                        rule = f"; rule {context['expected']}"
+                    rule = f"; rule pattern {context['pattern']!r}"
+                elif "expected" in context:
+                    rule = f"; rule {context['expected']}"
                 diagnostics.append(f"{location}: {item['msg']}{characters}{rule}")
             details = "; ".join(diagnostics)
             raise ValueError(f"Command '{command_name}' has an invalid payload: {details}") from error

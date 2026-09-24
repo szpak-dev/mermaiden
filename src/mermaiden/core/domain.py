@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Annotated, Protocol, TypeVar
+from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -12,6 +12,34 @@ from .naming import ClassName
 
 class OperationError(Exception):
     pass
+
+
+class ApplicationError(RuntimeError):
+    pass
+
+
+class UnknownCommand(ApplicationError):
+    pass
+
+
+@dataclass(frozen=True, slots=True)
+class DiagramCommand:
+    operation: str
+    arguments: Mapping[str, object]
+
+
+@dataclass(frozen=True, slots=True)
+class CommandArguments:
+    values: Mapping[str, object]
+    invocation: Mapping[str, object]
+
+
+class CommandPayload(ABC):
+    @abstractmethod
+    def validate(self, arguments: Mapping[str, object]) -> CommandArguments: ...
+
+    @abstractmethod
+    def schema(self) -> Mapping[str, object]: ...
 
 
 class ValueModel(BaseModel):
@@ -41,6 +69,17 @@ class Annotation(ClassifiedValueModel):
 
 class DataAnnotation(Annotation):
     data: Mapping[str, object]
+
+
+class AnnotationFactory(ABC):
+    @abstractmethod
+    def create(
+        self,
+        id: str,
+        data: Mapping[str, object],
+        element_ids: Sequence[str],
+        relation_ids: Sequence[str],
+    ) -> Annotation: ...
 
 
 class Element(ClassifiedValueModel, ABC):
@@ -197,13 +236,6 @@ class BlockingConstraint(Constraint, ABC):
         return ConstraintLevel.BLOCKING
 
 
-Result = TypeVar("Result", covariant=True)
-
-
-class DiagramVisitor(Protocol[Result]):
-    def visit(self, diagram: "Diagram") -> Result: ...
-
-
 class DiagramView(ConstraintDiagram):
     @property
     @abstractmethod
@@ -237,5 +269,5 @@ class Diagram(DiagramView):
     @abstractmethod
     def remove_annotation(self, id: str) -> ChangeReport: ...
 
-    def accept(self, visitor: DiagramVisitor[Result]) -> Result:
+    def accept(self, visitor: Constraint) -> tuple[Violation, ...]:
         return visitor.visit(self)

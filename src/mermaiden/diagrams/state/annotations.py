@@ -4,7 +4,7 @@ from enum import StrEnum
 from pydantic import Field
 
 from ...core.characters import OptionalIdentifier, Text
-from ...core.domain import Annotation, OperationError, TargetKind, TargetRef
+from ...core.domain import Annotation, AnnotationFactory, OperationError, TargetKind, TargetRef
 
 
 class NotePosition(StrEnum):
@@ -18,7 +18,7 @@ class StateNote(Annotation):
     scope_id: str = Field(default="", pattern=OptionalIdentifier.pattern, description=OptionalIdentifier.description)
 
 
-class StateNotes:
+class StateNotes(AnnotationFactory):
     def create(
         self,
         id: str,

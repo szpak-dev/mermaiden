@@ -1,9 +1,10 @@
 import json
 import subprocess
 import sys
+from abc import ABC, abstractmethod
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Protocol, cast
+from typing import Any, cast
 
 from jsonschema import Draft202012Validator
 
@@ -27,7 +28,8 @@ UPDATE_COMMANDS = {
 }
 
 
-class SchemaValidator(Protocol):
+class SchemaValidator(ABC):
+    @abstractmethod
     def is_valid(self, instance: object) -> bool: ...
 
 

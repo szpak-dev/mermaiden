@@ -194,7 +194,13 @@ class DiagramCommandFeature:
 
     @property
     def variadic(self) -> str | None:
-        return next((name for name, value in self.parameters.items() if isinstance(value, CommandVariadic)), None)
+        for name, value in self.parameters.items():
+            match value:
+                case CommandVariadic():
+                    return name
+                case _:
+                    continue
+        return None
 
 
 @dataclass(frozen=True, slots=True)

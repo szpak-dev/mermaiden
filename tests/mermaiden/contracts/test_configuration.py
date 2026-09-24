@@ -225,12 +225,12 @@ class TestMermaidConfiguration:
 
         for info in application.available_diagrams():
             payload_type = application.command_payload(info.id, "configure")
-            schema = payload_type.model_json_schema()
-            configuration = payload_type.model_validate({})
+            schema = payload_type.schema()
+            configuration = payload_type.validate({})
 
             assert schema["additionalProperties"] is False
             assert not self._contains_json_null(schema)
-            assert not self._contains_json_null(configuration.model_dump(mode="json", by_alias=True))
+            assert not self._contains_json_null(configuration.values)
 
             with pytest.raises(ValidationError):
-                payload_type.model_validate({"unknown_configuration_field": True})
+                payload_type.validate({"unknown_configuration_field": True})

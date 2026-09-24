@@ -6,9 +6,9 @@ from pydantic_core import CoreSchema, core_schema
 from wireup import injectable
 
 from ...core.characters import OptionalIdentifier
-from ...core.domain import Annotation, ClassifiedValueModel, Element, Relation
+from ...core.domain import Annotation, ClassifiedValueModel, CommandPayload, Element, Relation
+from ...core.services.command_payload import PydanticCommandPayload
 from ...diagrams.catalog.domain import MutationPayloadFactory
-from ...domain import CommandPayload, CommandPayloadSchema
 
 
 @injectable(as_type=MutationPayloadFactory, lifetime="scoped")
@@ -65,7 +65,7 @@ class PydanticMutationPayloadFactory(MutationPayloadFactory):
         if not variants:
             raise ValueError(f"Command '{command_name}' has no object payloads.")
         schema = core_schema.tagged_union_schema(dict(variants), discriminator="kind")
-        return CommandPayloadSchema(schema, invocation_defaults)
+        return PydanticCommandPayload(schema, invocation_defaults)
 
     def _variant(
         self,
@@ -79,10 +79,10 @@ class PydanticMutationPayloadFactory(MutationPayloadFactory):
             if name == "id" or name == "elements":
                 continue
             field_schema = TypeAdapter[object](field.rebuild_annotation()).core_schema
-            json_schema_extra: object = field.json_schema_extra
-            if isinstance(json_schema_extra, dict):
+            json_schema_extra = cast(dict[str, object], field.json_schema_extra or {})
+            if json_schema_extra:
                 metadata = dict(field_schema.get("metadata", {}))
-                metadata["pydantic_js_extra"] = cast(dict[str, object], json_schema_extra)
+                metadata["pydantic_js_extra"] = json_schema_extra
                 field_schema = cast(CoreSchema, {**field_schema, "metadata": metadata})
             change_fields[name] = core_schema.typed_dict_field(field_schema, required=False)
         changes = core_schema.no_info_after_validator_function(
@@ -132,7 +132,7 @@ class PydanticMutationPayloadFactory(MutationPayloadFactory):
             ref=f"{diagram_name}_move_element_{kind}_payload",
         )
 
-    def _require_changes(self, value: object) -> object:
-        if not isinstance(value, dict) or not value:
+    def _require_changes(self, value: dict[str, object]) -> dict[str, object]:
+        if not value:
             raise ValueError("Changes must contain at least one field.")
-        return cast(dict[object, object], value)
+        return value

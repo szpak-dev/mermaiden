@@ -4,7 +4,7 @@ from enum import StrEnum
 from pydantic import Field
 
 from ...core.characters import Text
-from ...core.domain import Annotation, OperationError, TargetKind, TargetRef
+from ...core.domain import Annotation, AnnotationFactory, OperationError, TargetKind, TargetRef
 
 
 class NotePosition(StrEnum):
@@ -18,7 +18,7 @@ class SequenceNote(Annotation):
     position: NotePosition = NotePosition.OVER
 
 
-class SequenceNotes:
+class SequenceNotes(AnnotationFactory):
     def create(
         self, id: str, data: Mapping[str, object], element_ids: Sequence[str], relation_ids: Sequence[str]
     ) -> SequenceNote:

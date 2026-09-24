@@ -28,11 +28,11 @@ with Application.create() as application:
     sequence = application.diagram_info("sequenceDiagram")
     description = application.diagram_description(sequence.id)
     payload_type = application.command_payload(sequence.id, "add_participant")
-    payload = payload_type.model_validate({"id": "api", "label": "API", "kind": "control"})
+    payload = payload_type.validate({"id": "api", "label": "API", "kind": "control"})
 
     assert sequence in diagrams
     assert "add_participant" in description.commands
-    assert payload.model_dump(mode="json")["kind"] == "control"
+    assert payload.values["kind"] == "control"
 ```
 <!-- executable-example:discovery:end -->
 

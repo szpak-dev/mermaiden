@@ -4,7 +4,7 @@ from functools import cached_property
 
 from wireup import injectable
 
-from ...domain import CommandPayload, ValidatedCommandPayload
+from ...core.domain import CommandArguments, CommandPayload
 from ..application import DiagramsApplication
 from ..domain import DiagramCommandFeature, DiagramInfo, DiagramModel
 from .commands import DiagramCommandCatalog
@@ -37,9 +37,7 @@ class DiagramCatalog:
             relations=self.objects.schemas(self.objects.relations(info)),
             annotations=self.objects.schemas(self.objects.annotations(info)),
             placements=self.objects.placements(diagram, elements),
-            commands={
-                name: self.commands.payload(info.id, name).model_json_schema() for name in self.commands.names(info)
-            },
+            commands={name: self.commands.payload(info.id, name).schema() for name in self.commands.names(info)},
         )
 
     def validate(self) -> None:
@@ -60,5 +58,5 @@ class DiagramCatalog:
         diagram: DiagramModel,
         command_name: str,
         payload: Mapping[str, object],
-    ) -> ValidatedCommandPayload:
+    ) -> CommandArguments:
         return self.commands.validate(diagram, command_name, payload)

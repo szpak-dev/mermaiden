@@ -218,17 +218,21 @@ class TestEntityRelationshipDiagram:
 
     def test_publishes_the_same_attribute_type_restriction_for_add_update_and_persistence(self) -> None:
         application = Application.create()
-        add_schema = application.command_payload("erDiagram", "add_attribute").model_json_schema()
-        update_schema = application.command_payload("erDiagram", "update_element").model_json_schema()
+        add_schema = application.command_payload("erDiagram", "add_attribute").schema()
+        update_schema = application.command_payload("erDiagram", "update_element").schema()
         object_schema = application.diagram_description("erDiagram").elements["entity_attribute"]
 
-        add_type = add_schema["properties"]["data_type"]
-        update_changes = update_schema["$defs"]["EntityRelationshipDiagram_update_element_entity_attribute_changes"]
-        update_type = update_changes["properties"]["data_type"]
+        add_properties = cast(Mapping[str, Mapping[str, object]], add_schema["properties"])
+        add_definitions = cast(Mapping[str, Mapping[str, object]], add_schema["$defs"])
+        update_definitions = cast(Mapping[str, Mapping[str, object]], update_schema["$defs"])
+        add_type = add_properties["data_type"]
+        update_changes = update_definitions["EntityRelationshipDiagram_update_element_entity_attribute_changes"]
+        update_properties = cast(Mapping[str, Mapping[str, object]], update_changes["properties"])
+        update_type = update_properties["data_type"]
         object_type = cast(Mapping[str, Mapping[str, object]], object_schema["properties"])["data_type"]
 
         reference = cast(str, add_type["$ref"]).removeprefix("#/$defs/")
-        pattern = cast(str, add_schema["$defs"][reference]["pattern"])
+        pattern = cast(str, add_definitions[reference]["pattern"])
         assert pattern == update_type["pattern"] == object_type["pattern"]
         assert re.search(pattern, "public.geometry(point,4326)?")
         assert re.search(pattern, "positive~ int ~")

@@ -1,6 +1,7 @@
+from abc import ABC, abstractmethod
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any, Protocol
+from typing import Any
 
 SNAPSHOT_VERSION = 6
 
@@ -62,12 +63,16 @@ class SnapshotContract:
         )
 
 
-class SnapshotTypeRegistry(Protocol):
+class SnapshotTypeRegistry(ABC):
+    @abstractmethod
     def contract(self, owner: str) -> SnapshotContract: ...
 
+    @abstractmethod
     def reference(self, owner: str, value_type: type[object]) -> str: ...
 
+    @abstractmethod
     def resolve(self, owner: str, discriminator: str, expected: Any) -> type[Any]: ...
 
     @property
+    @abstractmethod
     def fingerprint(self) -> str: ...

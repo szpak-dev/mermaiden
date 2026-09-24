@@ -33,12 +33,12 @@ class StructureConstraint(BlockingConstraint):
 @dataclass(frozen=True, slots=True)
 class ChangeTransaction:
     state: DiagramState
-    _batching: list[None] = field(default_factory=lambda: list[None](), init=False)
+    _batching: list[bool]
 
     def begin_batch(self) -> None:
         if self._batching:
             raise RuntimeError("A diagram batch is already in progress.")
-        self._batching.append(None)
+        self._batching.append(True)
 
     def end_batch(self) -> None:
         if not self._batching:
@@ -141,4 +141,4 @@ class DiagramRuntime:
         object.__setattr__(self, "elements", Elements(self.state))
         object.__setattr__(self, "relations", Relations(self.state))
         object.__setattr__(self, "annotations", Annotations(self.state))
-        object.__setattr__(self, "transaction", ChangeTransaction(self.state))
+        object.__setattr__(self, "transaction", ChangeTransaction(self.state, []))

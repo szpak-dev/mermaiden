@@ -1,12 +1,13 @@
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
-from typing import Never, Protocol
+from typing import Never
 
 from pydantic import StrictBool
 from wireup import injectable
 
 from ...core.domain import (
     Annotation,
+    AnnotationFactory,
     ChangeReport,
     Diagram,
     DiagramObjectKind,
@@ -19,16 +20,6 @@ from ...core.domain import (
 )
 from ..domain import ConstraintInspection, DiagramRuntime
 from .state import DiagramData
-
-
-class AnnotationFactory(Protocol):
-    def create(
-        self,
-        id: str,
-        data: Mapping[str, object],
-        element_ids: Sequence[str],
-        relation_ids: Sequence[str],
-    ) -> Annotation: ...
 
 
 @injectable(as_type=Diagram, lifetime="scoped")

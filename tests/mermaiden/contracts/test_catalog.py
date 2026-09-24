@@ -20,8 +20,8 @@ class TestDiagramCatalog:
         assert description.placements["participant_box"].allowed_parents == ("$root",)
         assert {"message", "participant_event", "control", "directive"} == set(description.relations)
         assert "add_participant" in description.commands
-        validated = payload.model_validate({"id": "api", "label": "API", "kind": "actor"})
-        assert validated.model_dump(mode="json")["kind"] == "actor"
+        validated = payload.validate({"id": "api", "label": "API", "kind": "actor"})
+        assert validated.values["kind"] == "actor"
 
     def test_every_catalogued_element_has_one_public_placement_policy(self) -> None:
         application = Application.create()
@@ -38,8 +38,8 @@ class TestDiagramCatalog:
         for info in application.available_diagrams():
             payload_type = application.command_payload(info.id, "configure")
 
-            assert application.diagram_description(info.id).commands["configure"] == payload_type.model_json_schema()
-            payload_type.model_validate({})
+            assert application.diagram_description(info.id).commands["configure"] == payload_type.schema()
+            payload_type.validate({})
 
     def test_advertises_removal_commands_for_each_supported_object_category(self) -> None:
         application = Application.create()
@@ -58,10 +58,11 @@ class TestDiagramCatalog:
 
             assert set(description.commands).intersection(REMOVAL_COMMANDS) == expected
             for command in expected:
-                schema = application.command_payload(info.id, command).model_json_schema()
+                schema = application.command_payload(info.id, command).schema()
                 assert schema["required"] == ["id"]
                 if command != "remove_annotation":
-                    assert schema["properties"]["cascade"]["default"] is False
+                    properties = cast(dict[str, dict[str, object]], schema["properties"])
+                    assert properties["cascade"]["default"] is False
 
     @pytest.mark.parametrize(
         ("diagram_id", "command_name"),
@@ -74,9 +75,9 @@ class TestDiagramCatalog:
     )
     def test_requires_human_facing_labels(self, diagram_id: str, command_name: str) -> None:
         application = Application.create()
-        schema = application.command_payload(diagram_id, command_name).model_json_schema()
+        schema = application.command_payload(diagram_id, command_name).schema()
 
-        assert "label" in schema["required"]
+        assert "label" in cast(list[str], schema["required"])
 
     @pytest.mark.parametrize(
         ("diagram_id", "command_name"),
@@ -89,26 +90,29 @@ class TestDiagramCatalog:
         ),
     )
     def test_keeps_symbolic_and_relation_labels_optional(self, diagram_id: str, command_name: str) -> None:
-        schema = Application.create().command_payload(diagram_id, command_name).model_json_schema()
+        schema = Application.create().command_payload(diagram_id, command_name).schema()
 
-        assert "label" not in schema["required"]
-        assert schema["properties"]["label"]["default"] == ""
+        assert "label" not in cast(list[str], schema["required"])
+        properties = cast(dict[str, dict[str, object]], schema["properties"])
+        assert properties["label"]["default"] == ""
 
     def test_requires_one_or_two_sequence_note_targets(self) -> None:
         payload = Application.create().command_payload("sequenceDiagram", "add_note")
-        schema = payload.model_json_schema()
-        reference = cast(str, schema["properties"]["participant_ids"]["$ref"])
-        targets = schema["$defs"][reference.removeprefix("#/$defs/")]
+        schema = payload.schema()
+        properties = cast(dict[str, dict[str, object]], schema["properties"])
+        definitions = cast(dict[str, dict[str, object]], schema["$defs"])
+        reference = cast(str, properties["participant_ids"]["$ref"])
+        targets = definitions[reference.removeprefix("#/$defs/")]
 
-        assert "participant_ids" in schema["required"]
+        assert "participant_ids" in cast(list[str], schema["required"])
         assert targets["type"] == "array"
         assert targets["minItems"] == 1
         assert targets["maxItems"] == 2
-        one_target = payload.model_validate({"id": "note", "text": "One", "participant_ids": ["api"]})
+        one_target = payload.validate({"id": "note", "text": "One", "participant_ids": ["api"]})
 
-        assert one_target.model_dump(mode="json")["participant_ids"] == ["api"]
-        two_targets = payload.model_validate({"id": "note", "text": "Two", "participant_ids": ["api", "worker"]})
-        assert two_targets.model_dump(mode="json")["participant_ids"] == ["api", "worker"]
+        assert one_target.values["participant_ids"] == ["api"]
+        two_targets = payload.validate({"id": "note", "text": "Two", "participant_ids": ["api", "worker"]})
+        assert two_targets.values["participant_ids"] == ["api", "worker"]
         for participant_ids in ([], ["api", "worker", "queue"]):
             with pytest.raises(ValidationError):
-                payload.model_validate({"id": "note", "text": "Invalid", "participant_ids": participant_ids})
+                payload.validate({"id": "note", "text": "Invalid", "participant_ids": participant_ids})
