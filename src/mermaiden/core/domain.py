@@ -23,6 +23,13 @@ class UnknownCommand(ApplicationError):
 
 
 @dataclass(frozen=True, slots=True)
+class DiagramSnapshotContractIdentity:
+    kind: str
+    snapshot_version: int
+    registry_fingerprint: str
+
+
+@dataclass(frozen=True, slots=True)
 class DiagramCommand:
     operation: str
     arguments: Mapping[str, object]

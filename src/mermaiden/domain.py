@@ -3,6 +3,7 @@ from .core.domain import (
     CommandArguments,
     CommandPayload,
     DiagramCommand,
+    DiagramSnapshotContractIdentity,
     UnknownCommand,
 )
 
@@ -11,5 +12,6 @@ __all__ = [
     "CommandArguments",
     "CommandPayload",
     "DiagramCommand",
+    "DiagramSnapshotContractIdentity",
     "UnknownCommand",
 ]

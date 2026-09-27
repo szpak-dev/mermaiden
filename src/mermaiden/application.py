@@ -6,7 +6,14 @@ from typing import cast
 from wireup import ScopedSyncContainer
 
 from .bootstrap import process_scope
-from .core.domain import ChangeReport, CommandPayload, Diagram, DiagramCommand, ValidationReport
+from .core.domain import (
+    ChangeReport,
+    CommandPayload,
+    Diagram,
+    DiagramCommand,
+    DiagramSnapshotContractIdentity,
+    ValidationReport,
+)
 from .diagrams.application import DiagramsApplication
 from .diagrams.catalog.models import DiagramDescription
 from .diagrams.catalog.service import DiagramCatalog
@@ -19,6 +26,7 @@ from .mermaid.services.preview import MermaidPreviewApplication
 from .mermaid.validation import MermaidRenderReport, MermaidRenderValidator
 from .mutations.commands.application import DiagramCommandApplication
 from .runtime.snapshot import DiagramSnapshot
+from .runtime.snapshot.domain import SnapshotTypeRegistry
 
 
 class Application:
@@ -41,6 +49,10 @@ class Application:
     def command_payload(self, diagram_id: str, command_name: str) -> CommandPayload:
         self._ensure_open()
         return self._scope.get(DiagramCatalog).command_payload(diagram_id, command_name)
+
+    def snapshot_contract_identity(self, diagram_id: str) -> DiagramSnapshotContractIdentity:
+        self._ensure_open()
+        return self._scope.get(SnapshotTypeRegistry).identity(diagram_id)
 
     def create_diagram(self, diagram_id: str) -> DiagramModel:
         self._ensure_open()

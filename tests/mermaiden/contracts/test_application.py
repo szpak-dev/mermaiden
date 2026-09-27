@@ -5,7 +5,7 @@ from typing import cast
 import pytest
 
 from mermaiden import Application
-from mermaiden.domain import DiagramCommand, UnknownCommand
+from mermaiden.domain import DiagramCommand, DiagramSnapshotContractIdentity, UnknownCommand
 
 
 class TestApplication:
@@ -60,6 +60,40 @@ class TestApplication:
             assert first.command_payload("sequenceDiagram", "add_message") is second.command_payload(
                 "sequenceDiagram", "add_message"
             )
+
+    def test_exposes_the_complete_snapshot_contract_identity(self) -> None:
+        with Application.create() as application:
+            identity = application.snapshot_contract_identity("sequenceDiagram")
+
+        assert identity == DiagramSnapshotContractIdentity(
+            kind="sequenceDiagram",
+            snapshot_version=6,
+            registry_fingerprint="38d3ff340a880f0854042c4795db2eeab598c990ff244bfae7c4b035c48e3a1b",
+        )
+
+    def test_returns_the_same_snapshot_contract_identity_across_applications(self) -> None:
+        with Application.create() as first, Application.create() as second:
+            assert first.snapshot_contract_identity("sequenceDiagram") == second.snapshot_contract_identity(
+                "sequenceDiagram"
+            )
+
+    def test_exposes_snapshot_contract_identity_for_every_advertised_diagram(self) -> None:
+        with Application.create() as application:
+            advertised = application.available_diagrams()
+            identities = tuple(application.snapshot_contract_identity(info.id) for info in advertised)
+
+        assert tuple(identity.kind for identity in identities) == tuple(info.id for info in advertised)
+        assert {identity.snapshot_version for identity in identities} == {6}
+        assert {identity.registry_fingerprint for identity in identities} == {
+            "38d3ff340a880f0854042c4795db2eeab598c990ff244bfae7c4b035c48e3a1b"
+        }
+
+    def test_rejects_snapshot_contract_identity_for_an_unknown_diagram(self) -> None:
+        with (
+            Application.create() as application,
+            pytest.raises(RuntimeError, match="Snapshot diagram kind 'unknown' is not registered"),
+        ):
+            application.snapshot_contract_identity("unknown")
 
     def test_keeps_diagram_state_isolated_between_applications(self) -> None:
         with Application.create() as first, Application.create() as second:

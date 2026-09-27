@@ -3,6 +3,8 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
+from ...core.domain import DiagramSnapshotContractIdentity
+
 SNAPSHOT_VERSION = 6
 
 
@@ -66,6 +68,14 @@ class SnapshotContract:
 class SnapshotTypeRegistry(ABC):
     @abstractmethod
     def contract(self, owner: str) -> SnapshotContract: ...
+
+    def identity(self, owner: str) -> DiagramSnapshotContractIdentity:
+        contract = self.contract(owner)
+        return DiagramSnapshotContractIdentity(
+            kind=contract.owner,
+            snapshot_version=SNAPSHOT_VERSION,
+            registry_fingerprint=self.fingerprint,
+        )
 
     @abstractmethod
     def reference(self, owner: str, value_type: type[object]) -> str: ...
