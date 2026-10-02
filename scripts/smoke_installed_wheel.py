@@ -110,7 +110,52 @@ class InstalledWheelSmoke:
             raise RuntimeError("The installed package did not render the applied CRUD operations.")
 
         classes = application.create_diagram("classDiagram")
-        application.execute(classes, "add_class", {"id": "caller", "label": "Caller"})
+        application.execute(
+            classes,
+            "add_class",
+            {
+                "id": "caller",
+                "label": "Caller",
+                "attributes": [
+                    {
+                        "name": "items",
+                        "type": {"name": "Map", "arguments": [{"name": "Key"}, {"name": "Value"}]},
+                    }
+                ],
+                "methods": [
+                    {
+                        "name": "resolve",
+                        "parameters": [
+                            {
+                                "name": "items",
+                                "type": {
+                                    "name": "Map",
+                                    "arguments": [
+                                        {"name": "Key"},
+                                        {"name": "List", "arguments": [{"name": "Value"}]},
+                                    ],
+                                },
+                            }
+                        ],
+                        "return_type": {
+                            "name": "Map",
+                            "arguments": [
+                                {"name": "Key"},
+                                {
+                                    "name": "List",
+                                    "arguments": [
+                                        {
+                                            "name": "Pair",
+                                            "arguments": [{"name": "Left"}, {"name": "Right"}],
+                                        }
+                                    ],
+                                },
+                            ],
+                        },
+                    }
+                ],
+            },
+        )
         application.execute(classes, "add_class", {"id": "dependency", "label": "Dependency"})
         application.execute(
             classes,
@@ -123,8 +168,16 @@ class InstalledWheelSmoke:
             },
         )
         restored_classes = application.restore(application.snapshot(classes).to_dict())
-        if "c_v_caller ..> c_v_dependency" not in application.render(restored_classes):
+        class_source = application.render(restored_classes)
+        if "c_v_caller ..> c_v_dependency" not in class_source:
             raise RuntimeError("The installed package reversed class relation source and target endpoints.")
+        for rendered_type in (
+            "Map~Key, Value~ items",
+            "resolve(Map~Key, List&lt;Value&gt;~ items)",
+            "Map~Key, List&lt;Pair&lt;Left&comma; Right&gt;&gt;~",
+        ):
+            if rendered_type not in class_source:
+                raise RuntimeError(f"The installed package did not preserve class type '{rendered_type}'.")
 
     def verify_durable_draft_workflow(self) -> None:
         with Application.create() as application:

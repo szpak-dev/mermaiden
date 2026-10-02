@@ -89,9 +89,9 @@ its current validation report.
 `validate_render()` is non-mutating and runs Mermaid's complete rendering and layout phase through `mmdc`; its report
 contains the compatible Mermaid version, SVG output, and structured diagnostics.
 
-Snapshots have a versioned envelope and may be stored as JSON. Version 6 uses registry-owned discriminators such as
+Snapshots have a versioned envelope and may be stored as JSON. Version 7 uses registry-owned discriminators such as
 `mermaiden/element/classDiagram/class`; snapshots never contain importable Python module paths. Its closed envelope
-schema is published at `src/mermaiden/runtime/snapshot/schema.v6.json`. Earlier and unknown versions are rejected;
+schema is published at `src/mermaiden/runtime/snapshot/schema.v7.json`. Earlier and unknown versions are rejected;
 there is no implicit migration or compatibility reader. Newly created and incomplete diagrams are marked as drafts:
 callers may snapshot and restore them between accepted commands, but `Application.render()` rejects them until their
 blocking constraints are resolved. Snapshot parsing and typed hydration reject malformed persisted data, and
@@ -102,6 +102,33 @@ The caller can discover the REST contract without maintaining a manifest. `diagr
 for the diagram's elements, relations, annotations, and commands. `command_payload()` returns the generated Pydantic
 request model for one command. The generated [mutation contract](docs/contracts/diagram-mutations/README.md) records
 the supported update, move, reorder, and retarget behavior for every registered diagram.
+
+### Class diagram types
+
+Class attributes, method parameters, and method return types use the same language-neutral recursive value:
+
+```text
+ClassType := {"name": TypeName, "arguments": [ClassType, ...]}
+TypeName  := Identifier ("." Identifier)*
+Identifier := [A-Za-z_][A-Za-z0-9_]*
+```
+
+`arguments` is optional, defaults to an empty ordered list, and accepts zero or more complete `ClassType` values.
+This represents named types, unary containers, multi-argument generics, and arbitrary nesting without embedding
+source-language or Mermaid syntax in `name`. For example, `Map<Key, List<Value>>` is authored as:
+
+```json
+{
+  "name": "Map",
+  "arguments": [
+    {"name": "Key"},
+    {"name": "List", "arguments": [{"name": "Value"}]}
+  ]
+}
+```
+
+Argument order and nesting are preserved by command validation, updates, snapshots, restoration, and Mermaid
+rendering. Null arguments, raw type-expression strings, unknown fields, and malformed names are rejected.
 
 Element removal is conservative by default: `remove_element` rejects an element that still has descendants,
 relations, or annotations. Passing `cascade: true` removes the complete diagram-defined subtree and every dependent
