@@ -1,5 +1,5 @@
-{% macro type(value) -%}
-{{ value.name }}{% if value.arguments %}~{{ type(value.arguments[0]) }}~{% endif %}
+{% macro type(value, nested=false) -%}
+{{ value.name }}{% if value.arguments %}{% if nested %}&lt;{% else %}~{% endif %}{% for argument in value.arguments %}{{ type(argument, true) }}{% if not loop.last %}{% if nested %}&comma; {% else %}, {% endif %}{% endif %}{% endfor %}{% if nested %}&gt;{% else %}~{% endif %}{% endif %}
 {%- endmacro %}
 {% macro visibility(value) -%}
 {{ {"public": "+", "private": "-", "protected": "#", "package": "~"}[value.value] }}

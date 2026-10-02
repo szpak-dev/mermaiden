@@ -22,7 +22,10 @@ class MethodModifier(StrEnum):
 
 class ClassType(ValueModel):
     name: str = Field(pattern=TypeName.pattern, description=TypeName.description)
-    arguments: Annotated[tuple["ClassType", ...], Field(max_length=1)] = ()
+    arguments: Annotated[
+        tuple["ClassType", ...],
+        Field(description="Ordered recursive type arguments; empty for a named type."),
+    ] = ()
 
 
 class ClassAttribute(ValueModel):

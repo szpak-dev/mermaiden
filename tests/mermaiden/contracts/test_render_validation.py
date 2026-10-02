@@ -195,7 +195,7 @@ class TestRenderValidation:
                 "attributes": [
                     {
                         "name": "items",
-                        "type": {"name": "List", "arguments": [{"name": "Item"}]},
+                        "type": {"name": "Map", "arguments": [{"name": "Key"}, {"name": "Value"}]},
                         "visibility": "private",
                     },
                     {"name": "count", "type": {"name": "int"}, "visibility": "protected", "static": True},
@@ -203,10 +203,33 @@ class TestRenderValidation:
                 "methods": [
                     {
                         "name": "find",
-                        "return_type": {"name": "Item"},
+                        "return_type": {
+                            "name": "Map",
+                            "arguments": [
+                                {"name": "Key"},
+                                {
+                                    "name": "List",
+                                    "arguments": [
+                                        {
+                                            "name": "Pair",
+                                            "arguments": [{"name": "Left"}, {"name": "Right"}],
+                                        }
+                                    ],
+                                },
+                            ],
+                        },
                         "visibility": "public",
                         "parameters": [
-                            {"name": "key", "type": {"name": "str"}},
+                            {
+                                "name": "key",
+                                "type": {
+                                    "name": "Map",
+                                    "arguments": [
+                                        {"name": "Key"},
+                                        {"name": "List", "arguments": [{"name": "Value"}]},
+                                    ],
+                                },
+                            },
                             {"name": "limit", "type": {"name": "int"}},
                         ],
                     },
@@ -229,7 +252,14 @@ class TestRenderValidation:
             for element in svg.iter()
             if element.tag in {"{http://www.w3.org/2000/svg}text", "{http://www.w3.org/1999/xhtml}span"}
         )
-        for member in ("-List<Item> items", "#int count", "+find(str key, int limit)", "Item", "~refresh()", "void"):
+        for member in (
+            "-Map<Key, Value> items",
+            "#int count",
+            "+find(Map<Key, List<Value>> key, int limit)",
+            "Map<Key, List<Pair<Left, Right>>>",
+            "~refresh()",
+            "void",
+        ):
             assert member in text
         assert any(
             "".join(element.itertext()) == "#int count" and "underline" in element.attrib.get("style", "")

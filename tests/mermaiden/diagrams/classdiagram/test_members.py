@@ -119,7 +119,6 @@ class TestClassMembers:
             {"name": "List[str]"},
             {"name": "str | None"},
             {"name": "str\nclass Extra"},
-            {"name": "Map", "arguments": [{"name": "str"}, {"name": "int"}]},
             {"name": "List", "arguments": [None]},
             {"name": "List", "arguments": "str"},
             {"name": "str", "nullable": True},
@@ -143,19 +142,49 @@ class TestClassMembers:
         assert application.snapshot(diagram).to_dict() == before
 
     @pytest.mark.parametrize("visibility", ("public", "private", "protected", "package"))
-    def test_visibility_and_nested_types_survive_restore_and_edit(
+    def test_visibility_and_multi_argument_types_survive_restore_and_edit(
         self, application: Application, visibility: str
     ) -> None:
         diagram = application.create_diagram("classDiagram")
-        item_type: dict[str, object] = {
-            "name": "List",
-            "arguments": [{"name": "List", "arguments": [{"name": "sales.Item", "arguments": []}]}],
+        attribute_type: dict[str, object] = {
+            "name": "Map",
+            "arguments": [{"name": "Key", "arguments": []}, {"name": "Value", "arguments": []}],
         }
-        attribute: dict[str, object] = {"name": "items", "type": item_type, "visibility": visibility, "static": False}
+        parameter_type: dict[str, object] = {
+            "name": "Map",
+            "arguments": [
+                {"name": "Key", "arguments": []},
+                {"name": "List", "arguments": [{"name": "Value", "arguments": []}]},
+            ],
+        }
+        return_type: dict[str, object] = {
+            "name": "Map",
+            "arguments": [
+                {"name": "Key", "arguments": []},
+                {
+                    "name": "List",
+                    "arguments": [
+                        {
+                            "name": "Pair",
+                            "arguments": [
+                                {"name": "Left", "arguments": []},
+                                {"name": "Right", "arguments": []},
+                            ],
+                        }
+                    ],
+                },
+            ],
+        }
+        attribute: dict[str, object] = {
+            "name": "items",
+            "type": attribute_type,
+            "visibility": visibility,
+            "static": False,
+        }
         method: dict[str, object] = {
             "name": "find",
-            "parameters": [{"name": "key", "type": {"name": "str", "arguments": []}}],
-            "return_type": item_type,
+            "parameters": [{"name": "key", "type": parameter_type}],
+            "return_type": return_type,
             "visibility": visibility,
             "modifier": "instance",
         }
@@ -172,20 +201,72 @@ class TestClassMembers:
         assert application.snapshot(restored).to_dict() == before
         assert application.render(restored) == application.render(diagram)
 
-        changed: dict[str, object] = {
+        changed_attribute: dict[str, object] = {
+            **attribute,
+            "type": {
+                "name": "Result",
+                "arguments": [
+                    {"name": "Code", "arguments": []},
+                    {"name": "List", "arguments": [{"name": "Error", "arguments": []}]},
+                ],
+            },
+        }
+        changed_method: dict[str, object] = {
             **method,
             "name": "lookup",
-            "parameters": [{"name": "key", "type": {"name": "UUID", "arguments": []}}],
+            "parameters": [
+                {
+                    "name": "key",
+                    "type": {
+                        "name": "Mapping",
+                        "arguments": [
+                            {"name": "Key", "arguments": []},
+                            {"name": "Set", "arguments": [{"name": "Value", "arguments": []}]},
+                        ],
+                    },
+                }
+            ],
+            "return_type": {
+                "name": "Either",
+                "arguments": [
+                    {"name": "Failure", "arguments": []},
+                    {
+                        "name": "List",
+                        "arguments": [
+                            {
+                                "name": "Pair",
+                                "arguments": [
+                                    {"name": "Left", "arguments": []},
+                                    {"name": "Right", "arguments": []},
+                                ],
+                            }
+                        ],
+                    },
+                ],
+            },
         }
         application.execute(
-            restored, "update_element", {"id": "order", "kind": "class", "changes": {"methods": [changed]}}
+            restored,
+            "update_element",
+            {
+                "id": "order",
+                "kind": "class",
+                "changes": {"attributes": [changed_attribute], "methods": [changed_method]},
+            },
         )
-        edited = restored.find_element("order")
+        edited_snapshot = application.snapshot(restored).to_dict()
+        edited_diagram = application.restore(json.loads(json.dumps(edited_snapshot)))
+        edited = edited_diagram.find_element("order")
         assert edited is not None
-        assert edited.model_dump(mode="json")["attributes"] == [attribute]
-        assert edited.model_dump(mode="json")["methods"] == [changed]
-        assert "lookup(UUID key)" in application.render(restored)
-        assert "find(" not in application.render(restored)
+        assert edited.model_dump(mode="json")["attributes"] == [changed_attribute]
+        assert edited.model_dump(mode="json")["methods"] == [changed_method]
+        source = application.render(edited_diagram)
+        assert "Result~Code, List&lt;Error&gt;~ items" in source
+        assert (
+            "lookup(Mapping~Key, Set&lt;Value&gt;~ key) Either~Failure, List&lt;Pair&lt;Left&comma; Right&gt;&gt;~"
+            in source
+        )
+        assert "find(" not in source
 
     @pytest.mark.parametrize("visibility", ("+", "-", "#", "~", "Public", "", None))
     @pytest.mark.parametrize("collection,type_field", (("attributes", "type"), ("methods", "return_type")))

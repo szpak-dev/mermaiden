@@ -116,3 +116,63 @@ class TestDiagramCatalog:
         for participant_ids in ([], ["api", "worker", "queue"]):
             with pytest.raises(ValidationError):
                 payload.validate({"id": "note", "text": "Invalid", "participant_ids": participant_ids})
+
+    def test_class_types_publish_unbounded_ordered_recursive_arguments(self) -> None:
+        payload = Application.create().command_payload("classDiagram", "add_class")
+        schema = payload.schema()
+        definitions = cast(dict[str, dict[str, object]], schema["$defs"])
+        class_type = definitions["ClassType"]
+        properties = cast(dict[str, dict[str, object]], class_type["properties"])
+        arguments = properties["arguments"]
+
+        assert arguments["type"] == "array"
+        assert arguments["items"] == {"$ref": "#/$defs/ClassType"}
+        assert "maxItems" not in arguments
+
+        payload.validate(
+            {
+                "id": "catalog",
+                "label": "Catalog",
+                "attributes": [
+                    {
+                        "name": "items",
+                        "type": {
+                            "name": "Map",
+                            "arguments": [
+                                {"name": "Key"},
+                                {"name": "List", "arguments": [{"name": "Value"}]},
+                            ],
+                        },
+                    }
+                ],
+                "methods": [
+                    {
+                        "name": "find",
+                        "parameters": [
+                            {
+                                "name": "key",
+                                "type": {
+                                    "name": "Map",
+                                    "arguments": [{"name": "Key"}, {"name": "Value"}],
+                                },
+                            }
+                        ],
+                        "return_type": {
+                            "name": "Map",
+                            "arguments": [
+                                {"name": "Key"},
+                                {
+                                    "name": "List",
+                                    "arguments": [
+                                        {
+                                            "name": "Pair",
+                                            "arguments": [{"name": "Left"}, {"name": "Right"}],
+                                        }
+                                    ],
+                                },
+                            ],
+                        },
+                    }
+                ],
+            }
+        )

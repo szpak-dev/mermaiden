@@ -67,8 +67,8 @@ class TestApplication:
 
         assert identity == DiagramSnapshotContractIdentity(
             kind="sequenceDiagram",
-            snapshot_version=6,
-            registry_fingerprint="38d3ff340a880f0854042c4795db2eeab598c990ff244bfae7c4b035c48e3a1b",
+            snapshot_version=7,
+            registry_fingerprint="6e19987b9b38c43297098b7acc48149b5d684c055659ba460ae6a6273e6b9c30",
         )
 
     def test_returns_the_same_snapshot_contract_identity_across_applications(self) -> None:
@@ -83,9 +83,9 @@ class TestApplication:
             identities = tuple(application.snapshot_contract_identity(info.id) for info in advertised)
 
         assert tuple(identity.kind for identity in identities) == tuple(info.id for info in advertised)
-        assert {identity.snapshot_version for identity in identities} == {6}
+        assert {identity.snapshot_version for identity in identities} == {7}
         assert {identity.registry_fingerprint for identity in identities} == {
-            "38d3ff340a880f0854042c4795db2eeab598c990ff244bfae7c4b035c48e3a1b"
+            "6e19987b9b38c43297098b7acc48149b5d684c055659ba460ae6a6273e6b9c30"
         }
 
     def test_rejects_snapshot_contract_identity_for_an_unknown_diagram(self) -> None:
@@ -203,7 +203,7 @@ class TestApplication:
         payload = application.snapshot(diagram).to_dict()
         restored = application.restore(json.loads(json.dumps(payload)))
 
-        assert payload["version"] == 6
+        assert payload["version"] == 7
         assert "configuration" not in cast(Mapping[str, object], payload["properties"])
         assert not self._contains_none(payload["configuration"])
         assert application.snapshot(restored).to_dict() == payload
