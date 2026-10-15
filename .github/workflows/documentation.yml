@@ -1,0 +1,39 @@
+name: Documentation
+
+on:
+  pull_request:
+  push:
+    branches:
+      - "main"
+  schedule:
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@v10.0.1
+        with:
+          version: "0.12.11"
+          enable-cache: true
+          cache-dependency-glob: |
+            uv.lock
+            docs/requirements.lock
+      - run: uv lock --check
+      - run: uv sync --locked --group dev
+      - run: make documentation-check
+      - if: github.event_name == 'schedule'
+        run: make documentation-linkcheck
+      - uses: actions/upload-artifact@v4
+        with:
+          name: documentation-html
+          path: docs/_build/html
+          if-no-files-found: error

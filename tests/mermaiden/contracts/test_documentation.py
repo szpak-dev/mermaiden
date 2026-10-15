@@ -1,12 +1,29 @@
 import re
 import subprocess
+import sys
 import tomllib
+from dataclasses import fields
 from pathlib import Path
+
+import pytest
+
+from mermaiden import Application
 
 ROOT = Path(__file__).resolve().parents[3]
 
 
 class TestDocumentation:
+    def test_documentation_link_graph_script_succeeds(self) -> None:
+        result = subprocess.run(
+            (sys.executable, "scripts/check_docs_links.py"),
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+
+        assert result.stdout == "Documentation graph: 50 Markdown pages reachable from README.md.\n"
+
     def test_local_links_and_repository_paths_exist(self) -> None:
         documents = (ROOT / "README.md", ROOT / "CONTRIBUTING.md", *sorted((ROOT / "docs").rglob("*.md")))
 
@@ -34,19 +51,116 @@ class TestDocumentation:
 
         assert documented <= available, f"documented Make targets do not exist: {sorted(documented - available)}"
 
-    def test_python_examples_execute_without_drift(self, successful_mermaid_render: None) -> None:
+    def test_python_examples_execute_without_drift(
+        self,
+        successful_mermaid_render: None,
+        monkeypatch: pytest.MonkeyPatch,
+        tmp_path: Path,
+    ) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
-        examples = re.findall(
+        named_readme_examples = re.findall(
             r"<!-- executable-example:([a-z-]+):start -->\s*```python\n(.*?)```\s*"
             r"<!-- executable-example:\1:end -->",
             readme,
             flags=re.DOTALL,
         )
 
-        assert len(examples) == readme.count("```python")
-        assert {name for name, _source in examples} == {"application", "discovery", "mutations"}
-        for name, source in examples:
-            exec(compile(source, f"README.md:{name}", "exec"), {})
+        assert len(named_readme_examples) == readme.count("```python")
+        assert {name for name, _source in named_readme_examples} == {"application", "discovery", "mutations"}
+
+        documents = (ROOT / "README.md", *sorted((ROOT / "docs").rglob("*.md")))
+        examples = tuple(
+            (document, index, source)
+            for document in documents
+            for index, source in enumerate(
+                re.findall(r"```python\n(.*?)```", document.read_text(encoding="utf-8"), flags=re.DOTALL),
+                start=1,
+            )
+        )
+
+        assert len(examples) >= 10
+        monkeypatch.chdir(tmp_path)
+        for document, index, source in examples:
+            name = f"{document.relative_to(ROOT)}:python-example-{index}"
+            exec(compile(source, name, "exec"), {})
+
+    def test_returned_data_contract_reference_matches_public_observations(self) -> None:
+        reference = (ROOT / "docs/reference/api.md").read_text(encoding="utf-8")
+        lines = reference.splitlines()
+        names = (
+            "DiagramInfo",
+            "DiagramDescription",
+            "CommandArguments",
+            "Violation",
+            "ValidationReport",
+            "ChangeReport",
+            "DiagramObjectReference",
+            "DiagramSnapshot",
+            "DiagramSnapshotContractIdentity",
+            "MermaidRenderReport",
+            "MermaidRenderDiagnostic",
+        )
+        documented: dict[str, set[str]] = {}
+        for name in names:
+            index = lines.index(f"`{name}`")
+            definition: list[str] = []
+            for line in lines[index + 1 :]:
+                if line.startswith(": "):
+                    definition.append(line.removeprefix(": "))
+                elif line.startswith("  "):
+                    definition.append(line.strip())
+                else:
+                    break
+            documented[name] = set(re.findall(r"`([a-z_]+)(?:\(\))?`", " ".join(definition)))
+
+        with Application.create() as application:
+            info = application.diagram_info("sequenceDiagram")
+            description = application.diagram_description(info.id)
+            arguments = application.command_payload(info.id, "add_participant").validate(
+                {"id": "client", "label": "Client"}
+            )
+
+            draft = application.create_diagram(info.id)
+            validation = application.apply_batch(draft, ())
+            violation = validation.violations[0]
+            render_report = application.validate_render(draft)
+            render_diagnostic = render_report.diagnostics[0]
+
+            diagram = application.create_diagram(info.id)
+            change = application.execute(diagram, "add_participant", {"id": "client", "label": "Client"})
+            assert change is not None
+            application.execute(diagram, "add_participant", {"id": "api", "label": "API"})
+            removal = application.execute(diagram, "remove_element", {"id": "client"})
+            assert removal is not None
+            removed = removal.removed[0]
+            snapshot = application.snapshot(diagram)
+            identity = application.snapshot_contract_identity(info.id)
+
+        observed = {
+            "DiagramInfo": {item.name for item in fields(info)},
+            "DiagramDescription": set(description.model_dump()),
+            "CommandArguments": {item.name for item in fields(arguments)},
+            "Violation": {item.name for item in fields(violation)},
+            "ValidationReport": {item.name for item in fields(validation)}
+            | {"blocking", "advisory", "can_commit", "is_valid"},
+            "ChangeReport": {item.name for item in fields(change)} | {"introduced", "resolved", "current"},
+            "DiagramObjectReference": {item.name for item in fields(removed)},
+            "DiagramSnapshot": {item.name for item in fields(snapshot)} | {"to_dict"},
+            "DiagramSnapshotContractIdentity": {item.name for item in fields(identity)},
+            "MermaidRenderReport": {item.name for item in fields(render_report)} | {"success"},
+            "MermaidRenderDiagnostic": {item.name for item in fields(render_diagnostic)},
+        }
+
+        assert documented == observed
+
+    def test_rendering_guide_has_an_installed_package_setup_path(self) -> None:
+        guide = (ROOT / "docs/how-to/render-and-validate.md").read_text(encoding="utf-8")
+
+        assert "application.mermaid_version" in guide
+        assert "npm install --global" in guide
+        assert "mmdc --version" in guide
+        assert "PATH" in guide
+        assert "PUPPETEER_EXECUTABLE_PATH" in guide
 
     def test_sdist_include_paths_are_intentional_tracked_content(self) -> None:
         project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
