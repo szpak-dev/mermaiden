@@ -1,4 +1,4 @@
-.PHONY: architecture ci compat compatibility diagrams-preview diagrams-test diagrams-validate fast-check format integration mermaid-sync mutation-contract package-check pytest quality
+.PHONY: architecture ci compat compatibility diagrams-preview diagrams-test diagrams-validate documentation-check documentation-linkcheck documentation-links fast-check format integration mermaid-sync mutation-contract package-check pytest quality
 
 UV := uv
 RUN := $(UV) run --no-sync
@@ -9,6 +9,17 @@ architecture:
 
 compat:
 	@PYTHONPATH=src $(PYTHON) -m mermaiden.cli compat
+
+documentation-links:
+	@$(PYTHON) scripts/check_docs_links.py
+
+documentation-check: documentation-links
+	@$(UV) pip install --requirement docs/requirements.lock
+	@PYTHONPATH=src $(RUN) sphinx-build -W --keep-going -b html docs docs/_build/html
+
+documentation-linkcheck:
+	@$(UV) pip install --requirement docs/requirements.lock
+	@PYTHONPATH=src $(RUN) sphinx-build -W --keep-going -b linkcheck docs docs/_build/linkcheck
 
 mermaid-sync:
 	@mermaid_version="$$(PYTHONPATH=src $(PYTHON) -c 'from mermaiden import Application; print(Application.create().mermaid_version)')"; \
@@ -64,4 +75,4 @@ compatibility:
 ci:
 	@$(UV) lock --check
 	@$(UV) sync --locked --group dev
-	@$(MAKE) --jobs=4 quality pytest compatibility package-check
+	@$(MAKE) --jobs=5 quality pytest compatibility package-check documentation-check

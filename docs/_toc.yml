@@ -1,0 +1,29 @@
+format: jb-book
+root: index
+chapters:
+  - file: tutorials/index
+    sections:
+      - file: tutorials/create-a-sequence-diagram
+  - file: how-to/index
+    sections:
+      - file: how-to/discover-diagram-contracts
+      - file: how-to/mutate-diagrams
+      - file: how-to/persist-and-restore
+      - file: how-to/render-and-validate
+  - file: explanation/index
+    sections:
+      - file: explanation/typed-semantic-model
+      - file: explanation/transactions-and-drafts
+      - file: explanation/snapshot-identity
+      - file: explanation/mermaid-boundary
+  - file: architecture/index
+  - file: glossary/index
+  - file: reference/index
+    sections:
+      - file: reference/cli
+      - file: reference/contracts
+        sections:
+          - file: contracts/diagram-mutations/README
+            sections:
+              - file: contracts/diagram-mutations/characters/README
+      - file: reference/api

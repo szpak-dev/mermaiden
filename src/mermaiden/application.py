@@ -30,35 +30,44 @@ from .runtime.snapshot.domain import SnapshotTypeRegistry
 
 
 class Application:
+    """Operate on registered typed diagrams through Mermaiden's public boundary."""
+
     def __init__(self, scope: ScopedSyncContainer) -> None:
         self._scope = scope
         self._closed = False
 
     def available_diagrams(self) -> tuple[DiagramInfo, ...]:
+        """Return information about every registered diagram syntax."""
         self._ensure_open()
         return self._scope.get(DiagramsApplication).available()
 
     def diagram_info(self, diagram_id: str) -> DiagramInfo:
+        """Return the registered information for one diagram syntax."""
         self._ensure_open()
         return self._scope.get(DiagramsApplication).get(diagram_id)
 
     def diagram_description(self, diagram_id: str) -> DiagramDescription:
+        """Describe one diagram's objects, commands, and payload schemas."""
         self._ensure_open()
         return self._scope.get(DiagramCatalog).describe(diagram_id)
 
     def command_payload(self, diagram_id: str, command_name: str) -> CommandPayload:
+        """Return the validating payload type for one registered command."""
         self._ensure_open()
         return self._scope.get(DiagramCatalog).command_payload(diagram_id, command_name)
 
     def snapshot_contract_identity(self, diagram_id: str) -> DiagramSnapshotContractIdentity:
+        """Return the current persisted-contract identity for one diagram syntax."""
         self._ensure_open()
         return self._scope.get(SnapshotTypeRegistry).identity(diagram_id)
 
     def create_diagram(self, diagram_id: str) -> DiagramModel:
+        """Create empty typed state for one registered diagram syntax."""
         self._ensure_open()
         return self._scope.get(DiagramFactory).create(diagram_id)
 
     def apply(self, diagram: DiagramModel, command: DiagramCommand) -> ChangeReport | None:
+        """Apply one typed command to a diagram."""
         self._ensure_open()
         return self._scope.get(DiagramCommandApplication).apply(diagram, command)
 
@@ -67,6 +76,7 @@ class Application:
         diagram: DiagramModel,
         commands: Sequence[Mapping[str, object]],
     ) -> ValidationReport:
+        """Apply ordered JSON-shaped commands atomically and validate the final state."""
         self._ensure_open()
         ordered: list[DiagramCommand] = []
         for index, command in enumerate(commands):
@@ -85,17 +95,21 @@ class Application:
         operation: str,
         arguments: Mapping[str, object],
     ) -> ChangeReport | None:
+        """Validate and execute one named command with JSON-shaped arguments."""
         return self.apply(diagram, DiagramCommand(operation, arguments))
 
     def snapshot(self, diagram: DiagramModel) -> DiagramSnapshot:
+        """Return a versioned, JSON-safe snapshot of a diagram."""
         self._ensure_open()
         return self._scope.get(DiagramPersistenceApplication).snapshot(diagram)
 
     def restore(self, payload: Mapping[str, object]) -> DiagramModel:
+        """Restore typed diagram state from a supported snapshot envelope."""
         self._ensure_open()
         return self._scope.get(DiagramPersistenceApplication).restore(payload)
 
     def render(self, diagram: Diagram) -> str:
+        """Render a valid diagram as deterministic Mermaid source."""
         self._ensure_open()
         report = diagram.validate()
         if not report.can_commit:
@@ -104,19 +118,23 @@ class Application:
         return self._scope.get(MermaidApplication).render(diagram)
 
     def validate_render(self, diagram: Diagram) -> MermaidRenderReport:
+        """Render a diagram through the compatible Mermaid CLI and return its report."""
         self._ensure_open()
         return self._scope.get(MermaidRenderValidator).validate(diagram)
 
     @property
     def mermaid_version(self) -> str:
+        """Return the upstream Mermaid version supported by the checked-in schema."""
         self._ensure_open()
         return self._scope.get(MermaidSchemaStore).version
 
     def write_preview(self, sources: Mapping[str, str], output: Path) -> Path:
+        """Write an HTML preview for named Mermaid sources to the requested path."""
         self._ensure_open()
         return self._scope.get(MermaidPreviewApplication).write_sources(sources, output)
 
     def close(self) -> None:
+        """Invalidate this application handle."""
         if self._closed:
             return
         self._closed = True
@@ -139,4 +157,5 @@ class Application:
 
     @classmethod
     def create(cls) -> "Application":
+        """Create a handle backed by the process-owned dependency scope."""
         return cls(process_scope())
