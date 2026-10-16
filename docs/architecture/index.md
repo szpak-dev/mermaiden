@@ -1,17 +1,17 @@
 # Architecture and ownership
 
-## Public capability ownership
+## Public capability relationships
 
-A caller or agent enters through the `Application` facade. The facade coordinates focused application services rather
-than owning a second model: discovery derives contracts from registered diagram features, commands mutate typed diagram
-state, persistence encodes and hydrates that state, and the Mermaid boundary reads valid state for source generation and
-full rendering validation.
+A caller or agent enters through the `Application` facade. The operation routes below show the concrete owners behind
+that boundary: `DiagramCatalog` derives discovery contracts, `DiagramCommandApplication` validates and applies commands,
+`DiagramPersistenceApplication` snapshots and hydrates typed state, `MermaidApplication` generates source, and
+`MermaidRenderValidator` performs full rendering validation.
 
-![Mermaiden public capability ownership](public-capability-flow.svg)
+![Mermaiden public capability relationships](public-capability-flow.svg)
 
 [View the generated Mermaid source](public-capability-flow.mmd).
 
-<!-- enclosure-diagram: Wnr7HPDou8Hureu5xo3NYk revision: 1 -->
+<!-- enclosure-diagram: KvSDfVAjB2fEdgjv2yp2Ah revision: 1 -->
 
 ## Entry points and lifetimes
 

@@ -35,8 +35,8 @@ with Application.create() as application:
 
     try:
         application.apply_batch(diagram, rejected)
-    except RuntimeError:
-        pass
+    except RuntimeError as error:
+        assert "unknown element 'missing'" in str(error)
     else:
         raise AssertionError("invalid adapter request unexpectedly succeeded")
 
