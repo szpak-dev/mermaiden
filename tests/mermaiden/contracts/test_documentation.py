@@ -22,7 +22,7 @@ class TestDocumentation:
             text=True,
         )
 
-        assert result.stdout == "Documentation graph: 50 Markdown pages reachable from README.md.\n"
+        assert result.stdout == "Documentation graph: 51 Markdown pages reachable from README.md.\n"
 
     def test_local_links_and_repository_paths_exist(self) -> None:
         documents = (ROOT / "README.md", ROOT / "CONTRIBUTING.md", *sorted((ROOT / "docs").rglob("*.md")))

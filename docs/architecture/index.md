@@ -1,5 +1,18 @@
 # Architecture and ownership
 
+## Public capability relationships
+
+A caller or agent enters through the `Application` facade. The operation routes below show the concrete owners behind
+that boundary: `DiagramCatalog` derives discovery contracts, `DiagramCommandApplication` validates and applies commands,
+`DiagramPersistenceApplication` snapshots and hydrates typed state, `MermaidApplication` generates source, and
+`MermaidRenderValidator` performs full rendering validation.
+
+![Mermaiden public capability relationships](public-capability-flow.svg)
+
+[View the generated Mermaid source](public-capability-flow.mmd).
+
+<!-- enclosure-diagram: KvSDfVAjB2fEdgjv2yp2Ah revision: 1 -->
+
 ## Entry points and lifetimes
 
 Public callers enter through [`Application`](../../src/mermaiden/application.py). Command-line compatibility checks

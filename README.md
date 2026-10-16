@@ -1,7 +1,13 @@
 # Mermaiden
 
-Mermaiden generates deterministic Mermaid source from typed Python diagram models. It gives applications a discoverable
-diagram catalog, strict semantic commands, atomic mutations, versioned snapshots, and optional full SVG validation.
+> **Let the machine draw. Keep the meaning.**
+
+Software can generate a diagram in an instant. The harder problem is knowing whether that diagram still means what you
+intended after an agent, tool, or application changes it.
+
+Mermaiden turns diagrams into typed, discoverable state. It validates semantic commands, can apply related changes
+atomically, preserves versioned snapshots, and renders deterministic Mermaid source—so automation can move quickly
+without turning meaning into guesswork.
 
 The package produces Mermaid text rather than owning its presentation. Render that text in a Markdown viewer, a browser,
 or your own Mermaid CLI workflow.

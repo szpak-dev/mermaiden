@@ -1,0 +1,23 @@
+---
+config:
+  wrap: true
+---
+flowchart TD
+e_v_caller@{ shape: circle, label: "Caller or agent" }
+e_v_application@{ shape: rect, label: "Application<br/>public facade" }
+e_v_route@{ shape: f-circ, label: "Public operations" }
+e_v_discovery@{ shape: rect, label: "DISCOVERY<br/>DiagramCatalog" }
+e_v_mutation@{ shape: rect, label: "MUTATION<br/>DiagramCommandApplication" }
+e_v_persistence@{ shape: rect, label: "PERSISTENCE<br/>DiagramPersistenceApplication" }
+e_v_output@{ shape: rect, label: "OUTPUT<br/>MermaidApplication<br/>MermaidRenderValidator" }
+e_v_result@{ shape: dbl-circ, label: "Public result" }
+e_v_caller r_v_caller_application@--> e_v_application
+e_v_application r_v_application_route@--> e_v_route
+e_v_route r_v_route_discovery@--> e_v_discovery
+e_v_route r_v_route_mutation@--> e_v_mutation
+e_v_route r_v_route_persistence@--> e_v_persistence
+e_v_route r_v_route_output@--> e_v_output
+e_v_discovery r_v_discovery_result@--> e_v_result
+e_v_mutation r_v_mutation_result@--> e_v_result
+e_v_persistence r_v_persistence_result@--> e_v_result
+e_v_output r_v_output_result@--> e_v_result
