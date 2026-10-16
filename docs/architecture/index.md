@@ -1,5 +1,18 @@
 # Architecture and ownership
 
+## Public capability ownership
+
+A caller or agent enters through the `Application` facade. The facade coordinates focused application services rather
+than owning a second model: discovery derives contracts from registered diagram features, commands mutate typed diagram
+state, persistence encodes and hydrates that state, and the Mermaid boundary reads valid state for source generation and
+full rendering validation.
+
+![Mermaiden public capability ownership](public-capability-flow.svg)
+
+[View the generated Mermaid source](public-capability-flow.mmd).
+
+<!-- enclosure-diagram: Wnr7HPDou8Hureu5xo3NYk revision: 1 -->
+
 ## Entry points and lifetimes
 
 Public callers enter through [`Application`](../../src/mermaiden/application.py). Command-line compatibility checks
