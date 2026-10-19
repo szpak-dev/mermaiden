@@ -109,8 +109,8 @@ class MermaidDiagramConfiguration(MermaidConfigurationModel):
     wrap: bool = True
     use_width: Annotated[
         float | SkipJsonSchema[InstanceOf[Unconfigured]],
-        Field(alias="useWidth", default_factory=Unconfigured, exclude_if=Unconfigured().excludes),
-    ]
+        Field(alias="useWidth", exclude_if=Unconfigured().excludes),
+    ] = Field(default_factory=Unconfigured)
     use_max_width: Annotated[bool, Field(alias="useMaxWidth")] = True
 
     def document(self, source: str) -> MermaidConfiguration:
@@ -174,7 +174,7 @@ class Members(DiagramConstraint):
                 path=f"elements.{item.id}",
             )
             for item in diagram.walk_elements("")
-            if isinstance(item, RequiresChildren) and not cast(Container, item).elements
+            if isinstance(item, RequiresChildren) and not item.elements
         )
         return tuple(issues)
 

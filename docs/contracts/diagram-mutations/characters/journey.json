@@ -24,7 +24,38 @@
         "Identifier"
       ]
     },
-    "configure": {},
+    "configure": {
+      "$.actorColours[]": [
+        "Identifier"
+      ],
+      "$.messageAlign": [
+        "JourneyMessageAlignment values"
+      ],
+      "$.sectionColours[]": [
+        "Identifier"
+      ],
+      "$.sectionFills[]": [
+        "Identifier"
+      ],
+      "$.taskFontFamily": [
+        "Identifier"
+      ],
+      "$.taskFontSize": [
+        "Identifier"
+      ],
+      "$.textPlacement": [
+        "Identifier"
+      ],
+      "$.titleColor": [
+        "OptionalIdentifier"
+      ],
+      "$.titleFontFamily": [
+        "Identifier"
+      ],
+      "$.titleFontSize": [
+        "Identifier"
+      ]
+    },
     "move_element": {
       "$.id": [
         "Identifier"

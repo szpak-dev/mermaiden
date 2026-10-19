@@ -5,7 +5,7 @@ from enum import Enum
 from functools import cached_property
 from inspect import isabstract
 from types import UnionType
-from typing import Annotated, Any, get_args, get_origin
+from typing import Annotated, Any, Union, get_args, get_origin
 
 from pydantic import BaseModel, TypeAdapter
 from wireup import injectable
@@ -38,8 +38,18 @@ class DiagramSnapshotRegistry(SnapshotTypeRegistry):
         match = next((item.value_type for item in contract.types if item.discriminator == discriminator), None)
         if match is None:
             raise SnapshotError(f"Snapshot discriminator '{discriminator}' is not registered for '{owner}'.")
-        origin = get_origin(expected)
-        candidates = get_args(expected) if origin is UnionType else (expected,)
+        candidates: list[object] = []
+        pending = [expected]
+        while pending:
+            annotation = pending.pop()
+            origin = get_origin(annotation)
+            if origin is Annotated:
+                pending.append(get_args(annotation)[0])
+                continue
+            if origin in (UnionType, Union):
+                pending.extend(get_args(annotation))
+                continue
+            candidates.append(annotation)
         valid = expected is object or any(
             isinstance(candidate, type) and issubclass(match, candidate) for candidate in candidates
         )

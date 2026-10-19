@@ -1,3 +1,4 @@
+import json
 from collections.abc import Mapping
 from typing import cast
 
@@ -25,7 +26,7 @@ class TestMermaidConfiguration:
         application.execute(diagram, "add_block", {"id": "example", "label": "Example"})
 
         assert application.render(diagram).startswith(
-            '---\nconfig:\n  wrap: true\n  block: {"padding": 12.0}\n---\nblock\n'
+            '---\nconfig:\n  wrap: true\n  block: {"useMaxWidth": true, "padding": 12.0}\n---\nblock\n'
         )
 
     def test_diagram_configuration_validates_its_values_and_rejects_unknown_fields(self) -> None:
@@ -51,6 +52,21 @@ class TestMermaidConfiguration:
 
         assert '"nodeLabel": {"width": 75.0, "height": 100.0, "x": -25.0, "y": 0.0}' in application.render(git_graph)
         assert '"rectFill": "#f9f9f9"' in application.render(requirement)
+
+    def test_configuration_serialization_preserves_false_zero_and_empty_values(self) -> None:
+        application = Application.create()
+        architecture = application.create_diagram("architecture-beta")
+        pie = application.create_diagram("pie")
+        tree = application.create_diagram("treeView-beta")
+        application.execute(architecture, "add_service", {"id": "example_service", "label": "Example Service"})
+        application.execute(pie, "add_slice", {"id": "example_slice", "label": "Example Slice", "value": 1})
+        application.execute(tree, "add_directory", {"id": "example_root", "label": "Example Root"})
+
+        assert '"randomize": false' in application.render(architecture)
+        assert '"donutHole": 0.0' in application.render(pie)
+        tree_source = application.render(tree)
+        assert '"defaultIconPack": ""' in tree_source
+        assert '"filenameIcons": {}' in tree_source
 
     def test_architecture_configuration_uses_mermaids_concrete_defaults(self) -> None:
         application = Application.create()
@@ -229,6 +245,11 @@ class TestMermaidConfiguration:
             configuration = payload_type.validate({})
 
             assert schema["additionalProperties"] is False
+            assert "Unconfigured" not in json.dumps(schema)
+            properties = cast(Mapping[str, Mapping[str, object]], schema["properties"])
+            assert properties["useWidth"]["type"] == "number"
+            assert "default" not in properties["useWidth"]
+            assert "useWidth" not in configuration.values
             assert not self._contains_json_null(schema)
             assert not self._contains_json_null(configuration.values)
 

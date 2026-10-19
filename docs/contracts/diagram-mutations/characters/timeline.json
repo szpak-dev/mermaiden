@@ -32,7 +32,29 @@
         "Identifier"
       ]
     },
-    "configure": {},
+    "configure": {
+      "$.actorColours[]": [
+        "Identifier"
+      ],
+      "$.messageAlign": [
+        "TimelineMessageAlignment values"
+      ],
+      "$.sectionColours[]": [
+        "Identifier"
+      ],
+      "$.sectionFills[]": [
+        "Identifier"
+      ],
+      "$.taskFontFamily": [
+        "Identifier"
+      ],
+      "$.taskFontSize": [
+        "Identifier"
+      ],
+      "$.textPlacement": [
+        "Identifier"
+      ]
+    },
     "move_element": {
       "$.id": [
         "Identifier"

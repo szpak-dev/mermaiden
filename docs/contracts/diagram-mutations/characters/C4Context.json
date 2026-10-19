@@ -73,7 +73,322 @@
       ]
     },
     "configure": {
+      "$.boundaryFontFamily": [
+        "Identifier"
+      ],
+      "$.boundaryFontSize": [
+        "Identifier"
+      ],
+      "$.boundaryFontWeight": [
+        "Identifier"
+      ],
+      "$.componentFontFamily": [
+        "Identifier"
+      ],
+      "$.componentFontSize": [
+        "Identifier"
+      ],
+      "$.componentFontWeight": [
+        "Identifier"
+      ],
+      "$.component_bg_color": [
+        "Identifier"
+      ],
+      "$.component_border_color": [
+        "Identifier"
+      ],
+      "$.component_dbFontFamily": [
+        "Identifier"
+      ],
+      "$.component_dbFontSize": [
+        "Identifier"
+      ],
+      "$.component_dbFontWeight": [
+        "Identifier"
+      ],
+      "$.component_db_bg_color": [
+        "Identifier"
+      ],
+      "$.component_db_border_color": [
+        "Identifier"
+      ],
+      "$.component_queueFontFamily": [
+        "Identifier"
+      ],
+      "$.component_queueFontSize": [
+        "Identifier"
+      ],
+      "$.component_queueFontWeight": [
+        "Identifier"
+      ],
+      "$.component_queue_bg_color": [
+        "Identifier"
+      ],
+      "$.component_queue_border_color": [
+        "Identifier"
+      ],
+      "$.containerFontFamily": [
+        "Identifier"
+      ],
+      "$.containerFontSize": [
+        "Identifier"
+      ],
+      "$.containerFontWeight": [
+        "Identifier"
+      ],
+      "$.container_bg_color": [
+        "Identifier"
+      ],
+      "$.container_border_color": [
+        "Identifier"
+      ],
+      "$.container_dbFontFamily": [
+        "Identifier"
+      ],
+      "$.container_dbFontSize": [
+        "Identifier"
+      ],
+      "$.container_dbFontWeight": [
+        "Identifier"
+      ],
+      "$.container_db_bg_color": [
+        "Identifier"
+      ],
+      "$.container_db_border_color": [
+        "Identifier"
+      ],
+      "$.container_queueFontFamily": [
+        "Identifier"
+      ],
+      "$.container_queueFontSize": [
+        "Identifier"
+      ],
+      "$.container_queueFontWeight": [
+        "Identifier"
+      ],
+      "$.container_queue_bg_color": [
+        "Identifier"
+      ],
+      "$.container_queue_border_color": [
+        "Identifier"
+      ],
+      "$.external_componentFontFamily": [
+        "Identifier"
+      ],
+      "$.external_componentFontSize": [
+        "Identifier"
+      ],
+      "$.external_componentFontWeight": [
+        "Identifier"
+      ],
+      "$.external_component_bg_color": [
+        "Identifier"
+      ],
+      "$.external_component_border_color": [
+        "Identifier"
+      ],
+      "$.external_component_dbFontFamily": [
+        "Identifier"
+      ],
+      "$.external_component_dbFontSize": [
+        "Identifier"
+      ],
+      "$.external_component_dbFontWeight": [
+        "Identifier"
+      ],
+      "$.external_component_db_bg_color": [
+        "Identifier"
+      ],
+      "$.external_component_db_border_color": [
+        "Identifier"
+      ],
+      "$.external_component_queueFontFamily": [
+        "Identifier"
+      ],
+      "$.external_component_queueFontSize": [
+        "Identifier"
+      ],
+      "$.external_component_queueFontWeight": [
+        "Identifier"
+      ],
+      "$.external_component_queue_bg_color": [
+        "Identifier"
+      ],
+      "$.external_component_queue_border_color": [
+        "Identifier"
+      ],
+      "$.external_containerFontFamily": [
+        "Identifier"
+      ],
+      "$.external_containerFontSize": [
+        "Identifier"
+      ],
+      "$.external_containerFontWeight": [
+        "Identifier"
+      ],
+      "$.external_container_bg_color": [
+        "Identifier"
+      ],
+      "$.external_container_border_color": [
+        "Identifier"
+      ],
+      "$.external_container_dbFontFamily": [
+        "Identifier"
+      ],
+      "$.external_container_dbFontSize": [
+        "Identifier"
+      ],
+      "$.external_container_dbFontWeight": [
+        "Identifier"
+      ],
+      "$.external_container_db_bg_color": [
+        "Identifier"
+      ],
+      "$.external_container_db_border_color": [
+        "Identifier"
+      ],
+      "$.external_container_queueFontFamily": [
+        "Identifier"
+      ],
+      "$.external_container_queueFontSize": [
+        "Identifier"
+      ],
+      "$.external_container_queueFontWeight": [
+        "Identifier"
+      ],
+      "$.external_container_queue_bg_color": [
+        "Identifier"
+      ],
+      "$.external_container_queue_border_color": [
+        "Identifier"
+      ],
+      "$.external_personFontFamily": [
+        "Identifier"
+      ],
+      "$.external_personFontSize": [
+        "Identifier"
+      ],
+      "$.external_personFontWeight": [
+        "Identifier"
+      ],
+      "$.external_person_bg_color": [
+        "Identifier"
+      ],
+      "$.external_person_border_color": [
+        "Identifier"
+      ],
+      "$.external_systemFontFamily": [
+        "Identifier"
+      ],
+      "$.external_systemFontSize": [
+        "Identifier"
+      ],
+      "$.external_systemFontWeight": [
+        "Identifier"
+      ],
+      "$.external_system_bg_color": [
+        "Identifier"
+      ],
+      "$.external_system_border_color": [
+        "Identifier"
+      ],
+      "$.external_system_dbFontFamily": [
+        "Identifier"
+      ],
+      "$.external_system_dbFontSize": [
+        "Identifier"
+      ],
+      "$.external_system_dbFontWeight": [
+        "Identifier"
+      ],
+      "$.external_system_db_bg_color": [
+        "Identifier"
+      ],
+      "$.external_system_db_border_color": [
+        "Identifier"
+      ],
+      "$.external_system_queueFontFamily": [
+        "Identifier"
+      ],
+      "$.external_system_queueFontSize": [
+        "Identifier"
+      ],
+      "$.external_system_queueFontWeight": [
+        "Identifier"
+      ],
+      "$.external_system_queue_bg_color": [
+        "Identifier"
+      ],
+      "$.external_system_queue_border_color": [
+        "Identifier"
+      ],
+      "$.messageFontFamily": [
+        "Identifier"
+      ],
       "$.messageFontSize": [
+        "Identifier"
+      ],
+      "$.messageFontWeight": [
+        "Identifier"
+      ],
+      "$.personFontFamily": [
+        "Identifier"
+      ],
+      "$.personFontSize": [
+        "Identifier"
+      ],
+      "$.personFontWeight": [
+        "Identifier"
+      ],
+      "$.person_bg_color": [
+        "Identifier"
+      ],
+      "$.person_border_color": [
+        "Identifier"
+      ],
+      "$.systemFontFamily": [
+        "Identifier"
+      ],
+      "$.systemFontSize": [
+        "Identifier"
+      ],
+      "$.systemFontWeight": [
+        "Identifier"
+      ],
+      "$.system_bg_color": [
+        "Identifier"
+      ],
+      "$.system_border_color": [
+        "Identifier"
+      ],
+      "$.system_dbFontFamily": [
+        "Identifier"
+      ],
+      "$.system_dbFontSize": [
+        "Identifier"
+      ],
+      "$.system_dbFontWeight": [
+        "Identifier"
+      ],
+      "$.system_db_bg_color": [
+        "Identifier"
+      ],
+      "$.system_db_border_color": [
+        "Identifier"
+      ],
+      "$.system_queueFontFamily": [
+        "Identifier"
+      ],
+      "$.system_queueFontSize": [
+        "Identifier"
+      ],
+      "$.system_queueFontWeight": [
+        "Identifier"
+      ],
+      "$.system_queue_bg_color": [
+        "Identifier"
+      ],
+      "$.system_queue_border_color": [
         "Identifier"
       ]
     },

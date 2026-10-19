@@ -28,8 +28,8 @@ class TimelineDiagramConfiguration(MermaidDiagramConfiguration):
     height: Annotated[int, Field(alias="height", ge=0)] = 50
     padding: Annotated[
         float | SkipJsonSchema[InstanceOf[Unconfigured]],
-        Field(alias="padding", default_factory=Unconfigured, exclude_if=Unconfigured().excludes),
-    ]
+        Field(alias="padding", exclude_if=Unconfigured().excludes),
+    ] = Field(default_factory=Unconfigured)
     box_margin: Annotated[int, Field(alias="boxMargin", ge=0)] = 10
     box_text_margin: Annotated[int, Field(alias="boxTextMargin", ge=0)] = 5
     note_margin: Annotated[int, Field(alias="noteMargin", ge=0)] = 10

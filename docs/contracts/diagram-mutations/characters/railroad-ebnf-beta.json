@@ -76,7 +76,49 @@
       ]
     },
     "configure": {
+      "$.commentFill": [
+        "Identifier"
+      ],
+      "$.commentStroke": [
+        "Identifier"
+      ],
+      "$.commentTextColor": [
+        "Identifier"
+      ],
       "$.fontFamily": [
+        "Identifier"
+      ],
+      "$.lineColor": [
+        "Identifier"
+      ],
+      "$.markerFill": [
+        "Identifier"
+      ],
+      "$.nonTerminalFill": [
+        "Identifier"
+      ],
+      "$.nonTerminalStroke": [
+        "Identifier"
+      ],
+      "$.nonTerminalTextColor": [
+        "Identifier"
+      ],
+      "$.ruleNameColor": [
+        "Identifier"
+      ],
+      "$.specialFill": [
+        "Identifier"
+      ],
+      "$.specialStroke": [
+        "Identifier"
+      ],
+      "$.terminalFill": [
+        "Identifier"
+      ],
+      "$.terminalStroke": [
+        "Identifier"
+      ],
+      "$.terminalTextColor": [
         "Identifier"
       ]
     },

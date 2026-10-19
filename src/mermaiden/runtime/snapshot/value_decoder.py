@@ -57,6 +57,8 @@ class SnapshotValueDecoder:
                     raise SnapshotError(f"Invalid snapshot field '{name}': {error}") from error
                 except ValueError as error:
                     raise ValueError(f"Invalid snapshot field '{name}': {error}") from error
+            if item_type.__pydantic_root_model__:
+                return item_type.model_validate(parameters["root"])
             return item_type.model_validate(parameters)
         if origin in (tuple, list):
             if not isinstance(value, list):

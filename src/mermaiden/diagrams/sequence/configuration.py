@@ -23,8 +23,8 @@ class SequenceNoteAlignment(StrEnum):
 class SequenceDiagramConfiguration(MermaidDiagramConfiguration):
     arrow_marker_absolute: Annotated[
         bool | SkipJsonSchema[InstanceOf[Unconfigured]],
-        Field(alias="arrowMarkerAbsolute", default_factory=Unconfigured, exclude_if=Unconfigured().excludes),
-    ]
+        Field(alias="arrowMarkerAbsolute", exclude_if=Unconfigured().excludes),
+    ] = Field(default_factory=Unconfigured)
     hide_unused_participants: Annotated[bool, Field(alias="hideUnusedParticipants")] = False
     activation_width: Annotated[int, Field(alias="activationWidth", ge=0)] = 10
     diagram_margin_x: Annotated[int, Field(alias="diagramMarginX", ge=0)] = 50

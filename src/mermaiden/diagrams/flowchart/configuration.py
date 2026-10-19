@@ -10,12 +10,12 @@ from ..domain import MermaidConfigurationModel, MermaidDiagramConfiguration, Unc
 class FlowchartSubgraphTitleMargin(MermaidConfigurationModel):
     top: Annotated[
         Annotated[int, Field(ge=0)] | SkipJsonSchema[InstanceOf[Unconfigured]],
-        Field(alias="top", default_factory=Unconfigured, exclude_if=Unconfigured().excludes),
-    ]
+        Field(alias="top", exclude_if=Unconfigured().excludes),
+    ] = Field(default_factory=Unconfigured)
     bottom: Annotated[
         Annotated[int, Field(ge=0)] | SkipJsonSchema[InstanceOf[Unconfigured]],
-        Field(alias="bottom", default_factory=Unconfigured, exclude_if=Unconfigured().excludes),
-    ]
+        Field(alias="bottom", exclude_if=Unconfigured().excludes),
+    ] = Field(default_factory=Unconfigured)
 
 
 class FlowchartCurve(StrEnum):
@@ -47,8 +47,8 @@ class FlowchartDiagramConfiguration(MermaidDiagramConfiguration):
     )
     arrow_marker_absolute: Annotated[
         bool | SkipJsonSchema[InstanceOf[Unconfigured]],
-        Field(alias="arrowMarkerAbsolute", default_factory=Unconfigured, exclude_if=Unconfigured().excludes),
-    ]
+        Field(alias="arrowMarkerAbsolute", exclude_if=Unconfigured().excludes),
+    ] = Field(default_factory=Unconfigured)
     diagram_padding: Annotated[int, Field(alias="diagramPadding", ge=0)] = 8
     node_spacing: Annotated[int, Field(alias="nodeSpacing", ge=0)] = 50
     rank_spacing: Annotated[int, Field(alias="rankSpacing", ge=0)] = 50

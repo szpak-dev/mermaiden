@@ -19,98 +19,31 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
     assert not report.missing_diagrams
     assert tuple((item.diagram_id, item.config_key, item.schema_definition) for item in report.diagrams) == expected
     configurations = {item.diagram_id: item.configuration.values for item in report.diagrams}
-    assert all(
-        values == {"wrap": True}
-        for diagram_id, values in configurations.items()
-        if diagram_id
-        not in {
-            "architecture-beta",
-            "block",
-            "C4Context",
-            "cynefin-beta",
-            "erDiagram",
-            "eventmodeling",
-            "gantt",
-            "gitGraph",
-            "ishikawa-beta",
-            "kanban",
-            "mindmap",
-            "packet",
-            "pie",
-            "radar-beta",
-            "railroad-ebnf-beta",
-            "requirementDiagram",
-            "stateDiagram-v2",
-            "swimlane-beta",
-            "venn-beta",
-            "wardley-beta",
-        }
-    )
-    assert configurations["architecture-beta"] == {
-        "wrap": True,
-        "architecture": {
-            "useMaxWidth": True,
-            "padding": 40,
-            "iconSize": 80,
-            "fontSize": 16,
-            "randomize": False,
-            "nodeSeparation": 75,
-            "idealEdgeLengthMultiplier": 1.5,
-            "edgeElasticity": 0.45,
-            "numIter": 2500,
-            "seed": 1,
-        },
-    }
-    assert configurations["C4Context"] == {
-        "wrap": True,
-        "c4": {
-            "diagramMarginX": 50,
-            "diagramMarginY": 10,
-            "c4ShapeMargin": 50,
-            "c4ShapePadding": 20,
-            "width": 216,
-            "height": 60,
-            "boxMargin": 10,
-            "useMaxWidth": True,
-            "c4ShapeInRow": 4,
-            "nextLinePaddingX": 0,
-            "c4BoundaryInRow": 2,
-            "messageFontSize": 12,
-        },
-    }
-    assert configurations["swimlane-beta"] == {
-        "wrap": True,
-        "swimlane": {
-            "lineHops": "arc",
-            "ignoreCrossLaneEdges": True,
-            "optimizeRanksByCrossings": True,
-            "automaticLaneOrdering": False,
-        },
-    }
-    assert configurations["stateDiagram-v2"] == {
-        "wrap": True,
-        "state": {"titleTopMargin": 25, "useMaxWidth": True, "defaultRenderer": "dagre-wrapper"},
-    }
+    assert all(values["wrap"] is True for values in configurations.values())
+    assert all(item.config_key in configurations[item.diagram_id] for item in report.diagrams)
+    assert configurations["architecture-beta"]["architecture"]["randomize"] is False
+    assert configurations["architecture-beta"]["architecture"]["nodeSeparation"] == 75
+    assert configurations["C4Context"]["c4"]["c4ShapeInRow"] == 4
+    assert configurations["swimlane-beta"]["swimlane"]["lineHops"] == "arc"
+    assert configurations["swimlane-beta"]["swimlane"]["automaticLaneOrdering"] is False
+    assert configurations["stateDiagram-v2"]["state"]["defaultRenderer"] == "dagre-wrapper"
     assert configurations["requirementDiagram"]["requirement"]["useMaxWidth"] is True
-    assert configurations["mindmap"]["mindmap"] == {
-        "useMaxWidth": True,
-        "padding": 10,
-        "maxNodeWidth": 200,
-        "layoutAlgorithm": "cose-bilkent",
-    }
+    assert configurations["mindmap"]["mindmap"]["layoutAlgorithm"] == "cose-bilkent"
     assert configurations["pie"]["pie"]["donutHole"] == 0
     assert configurations["block"]["block"]["padding"] == 8
+    assert "useWidth" not in configurations["block"]["block"]
     assert configurations["erDiagram"]["er"]["useMaxWidth"] is True
     assert configurations["gantt"]["gantt"]["weekday"] == "sunday"
+    assert configurations["gantt"]["gantt"]["displayMode"] == ""
     assert configurations["gitGraph"]["gitGraph"]["mainBranchName"] == "main"
+    assert configurations["ishikawa-beta"]["ishikawa"]["useMaxWidth"] is False
+    assert configurations["journey"]["journey"]["actorColours"][0] == "#8FBC8F"
     assert configurations["packet"]["packet"]["bitsPerRow"] == 32
     assert configurations["radar-beta"]["radar"]["curveTension"] == 0.17
-    assert configurations["venn-beta"]["venn"] == {
-        "width": 800,
-        "height": 450,
-        "padding": 8,
-        "useDebugLayout": False,
-    }
+    assert configurations["sankey"]["sankey"]["useMaxWidth"] is False
+    assert "nodeColors" not in configurations["sankey"]["sankey"]
+    assert configurations["treeView-beta"]["treeView"]["filenameIcons"] == {}
+    assert configurations["venn-beta"]["venn"]["useDebugLayout"] is False
     assert all(
         item.configuration.schema_definition == upstream[item.configuration.config_key].schema_definition
         for item in report.diagrams

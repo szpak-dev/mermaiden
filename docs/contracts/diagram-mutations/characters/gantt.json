@@ -97,6 +97,12 @@
       "$.axisFormat": [
         "Identifier"
       ],
+      "$.displayMode": [
+        "GanttDisplayMode values"
+      ],
+      "$.tickInterval": [
+        "Identifier"
+      ],
       "$.weekday": [
         "GanttWeekday values"
       ]

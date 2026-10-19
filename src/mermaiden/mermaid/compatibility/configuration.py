@@ -5,6 +5,7 @@ from typing import Any, cast
 
 from jsonschema import Draft201909Validator
 from jsonschema.exceptions import ValidationError
+from pydantic import BaseModel, ConfigDict, Field, RootModel
 from yaml import safe_load
 
 from ..schema import MermaidConfigurationOverride, MermaidDiagramConfig
@@ -21,6 +22,53 @@ class DiagramConfigurationContract:
     config_key: str
     schema_definition: str
     values: Mapping[str, Any]
+
+
+class ConfigurationSchemaMapping(RootModel[Mapping[str, object]]):
+    model_config = ConfigDict(frozen=True)
+
+    def include(self, name: str, children: dict[str, Mapping[str, object]]) -> dict[str, Mapping[str, object]]:
+        return {**children, name: self.root}
+
+    @property
+    def allows_additional_properties(self) -> bool:
+        return False
+
+
+class ConfigurationSchemaBoolean(RootModel[bool]):
+    model_config = ConfigDict(frozen=True)
+
+    def include(self, name: str, children: dict[str, Mapping[str, object]]) -> dict[str, Mapping[str, object]]:
+        return children
+
+    @property
+    def allows_additional_properties(self) -> bool:
+        return self.root
+
+
+class ConfigurationSchemaContainer(BaseModel):
+    model_config = ConfigDict(extra="ignore", frozen=True, populate_by_name=True)
+
+    properties: Mapping[str, ConfigurationSchemaMapping] = Field(default_factory=dict)
+    items: ConfigurationSchemaMapping | ConfigurationSchemaBoolean | None = None
+    additional_properties: ConfigurationSchemaMapping | ConfigurationSchemaBoolean | None = Field(
+        default=None,
+        alias="additionalProperties",
+    )
+
+    def children(self) -> dict[str, Mapping[str, object]]:
+        children = {name: child.root for name, child in self.properties.items()}
+        if self.items is not None:
+            children = self.items.include("items", children)
+        if self.additional_properties is not None:
+            children = self.additional_properties.include("additionalProperties", children)
+        return children
+
+    @property
+    def allows_additional_properties(self) -> bool:
+        if self.additional_properties is None:
+            return False
+        return self.additional_properties.allows_additional_properties
 
 
 @dataclass(frozen=True, slots=True)
@@ -131,6 +179,8 @@ class MermaidConfiguration:
                 continue
             local_schema = self._resolve(local_root, local[name])
             upstream_schema = self._resolve(upstream_root, upstream[name])
+            local_container = ConfigurationSchemaContainer.model_validate(local_schema)
+            upstream_container = ConfigurationSchemaContainer.model_validate(upstream_schema)
             facets = frozenset(
                 facet
                 for facet in self.facets
@@ -138,8 +188,10 @@ class MermaidConfiguration:
             )
             if facets:
                 differences[path] = facets
-            local_children = self._properties(local_root, local_schema)
-            upstream_children = self._properties(upstream_root, upstream_schema)
+            if local_container.allows_additional_properties != upstream_container.allows_additional_properties:
+                differences[f"{path}.additionalProperties"] = frozenset({"policy"})
+            local_children = local_container.children()
+            upstream_children = upstream_container.children()
             if local_children or upstream_children:
                 differences.update(
                     self._compare_properties(
@@ -155,11 +207,7 @@ class MermaidConfiguration:
 
     def _properties(self, root: Mapping[str, Any], value: Mapping[str, Any]) -> dict[str, Any]:
         resolved = self._resolve(root, value)
-        properties = dict(cast(Mapping[str, Any], resolved.get("properties", {})))
-        for container in ("items", "additionalProperties"):
-            if container in resolved:
-                properties[container] = resolved[container]
-        return properties
+        return ConfigurationSchemaContainer.model_validate(resolved).children()
 
     def _resolve(self, root: Mapping[str, Any], value: Mapping[str, Any]) -> dict[str, Any]:
         resolved: dict[str, Any] = {}

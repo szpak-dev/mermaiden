@@ -91,7 +91,11 @@
         "OptionalIdentifier"
       ]
     },
-    "configure": {},
+    "configure": {
+      "$.defaultRenderer": [
+        "ClassRenderer values"
+      ]
+    },
     "move_element": {
       "$.id": [
         "Identifier"

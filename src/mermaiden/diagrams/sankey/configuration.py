@@ -47,5 +47,5 @@ class SankeyDiagramConfiguration(MermaidDiagramConfiguration):
     label_style: Annotated[SankeyLabelStyle, Field(alias="labelStyle")] = SankeyLabelStyle.LEGACY
     node_colors: Annotated[
         SankeyNodeColours | SkipJsonSchema[InstanceOf[Unconfigured]],
-        Field(alias="nodeColors", default_factory=Unconfigured, exclude_if=Unconfigured().excludes),
-    ]
+        Field(alias="nodeColors", exclude_if=Unconfigured().excludes),
+    ] = Field(default_factory=Unconfigured)

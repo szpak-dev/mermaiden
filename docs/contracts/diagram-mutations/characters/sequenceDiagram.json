@@ -71,7 +71,41 @@
         "Identifier"
       ]
     },
-    "configure": {},
+    "configure": {
+      "$.actorFontFamily": [
+        "Identifier"
+      ],
+      "$.actorFontSize": [
+        "Identifier"
+      ],
+      "$.actorFontWeight": [
+        "Identifier"
+      ],
+      "$.messageAlign": [
+        "SequenceMessageAlignment values"
+      ],
+      "$.messageFontFamily": [
+        "Identifier"
+      ],
+      "$.messageFontSize": [
+        "Identifier"
+      ],
+      "$.messageFontWeight": [
+        "Identifier"
+      ],
+      "$.noteAlign": [
+        "SequenceNoteAlignment values"
+      ],
+      "$.noteFontFamily": [
+        "Identifier"
+      ],
+      "$.noteFontSize": [
+        "Identifier"
+      ],
+      "$.noteFontWeight": [
+        "Identifier"
+      ]
+    },
     "control": {
       "$.id": [
         "Identifier"

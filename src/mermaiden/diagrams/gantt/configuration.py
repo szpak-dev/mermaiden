@@ -40,8 +40,8 @@ class GanttConfiguration(MermaidDiagramConfiguration):
     tick_interval: Annotated[
         Annotated[str, Field(pattern=Text.pattern, description=Text.description)]
         | SkipJsonSchema[InstanceOf[Unconfigured]],
-        Field(alias="tickInterval", default_factory=Unconfigured, exclude_if=Unconfigured().excludes),
-    ]
+        Field(alias="tickInterval", exclude_if=Unconfigured().excludes),
+    ] = Field(default_factory=Unconfigured)
     top_axis: Annotated[bool, Field(alias="topAxis")] = False
     display_mode: Annotated[GanttDisplayMode, Field(alias="displayMode")] = GanttDisplayMode.DEFAULT
     weekday: Annotated[GanttWeekday, Field(alias="weekday")] = GanttWeekday.SUNDAY
