@@ -1,12 +1,14 @@
+from typing import Annotated
+
 from pydantic import Field
 
 from ..domain import MermaidDiagramConfiguration
 
 
 class CynefinDiagramConfiguration(MermaidDiagramConfiguration):
-    width: float = Field(default=800, ge=1)
-    height: float = Field(default=600, ge=1)
-    padding: float = Field(default=40, ge=0)
-    show_domain_descriptions: bool = True
-    boundary_amplitude: float = Field(default=8, ge=0, le=50)
-    seed: float = 1
+    width: Annotated[float, Field(alias="width", ge=1)] = 800
+    height: Annotated[float, Field(alias="height", ge=1)] = 600
+    padding: Annotated[float, Field(alias="padding", ge=0)] = 40
+    show_domain_descriptions: Annotated[bool, Field(alias="showDomainDescriptions")] = True
+    boundary_amplitude: Annotated[float, Field(alias="boundaryAmplitude", ge=0, le=50)] = 8
+    seed: Annotated[float, Field(alias="seed")] = 1

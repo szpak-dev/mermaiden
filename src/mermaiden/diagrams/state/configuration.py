@@ -1,8 +1,11 @@
 from enum import StrEnum
+from typing import Annotated
 
-from pydantic import Field
+from pydantic import Field, InstanceOf
+from pydantic.json_schema import SkipJsonSchema
 
-from ..domain import MermaidDiagramConfiguration
+from ...core.characters import Text
+from ..domain import MermaidDiagramConfiguration, Unconfigured
 
 
 class StateRenderer(StrEnum):
@@ -12,6 +15,34 @@ class StateRenderer(StrEnum):
 
 
 class StateDiagramConfiguration(MermaidDiagramConfiguration):
-    title_top_margin: int = Field(default=25, ge=0)
-    use_max_width: bool = True
-    default_renderer: StateRenderer = StateRenderer.DAGRE_WRAPPER
+    title_top_margin: Annotated[int, Field(alias="titleTopMargin", ge=0)] = 25
+    arrow_marker_absolute: Annotated[
+        bool | SkipJsonSchema[InstanceOf[Unconfigured]],
+        Field(alias="arrowMarkerAbsolute", default_factory=Unconfigured, exclude_if=Unconfigured().excludes),
+    ]
+    divider_margin: Annotated[float, Field(alias="dividerMargin")] = 10
+    size_unit: Annotated[float, Field(alias="sizeUnit")] = 5
+    padding: Annotated[float, Field(alias="padding")] = 8
+    text_height: Annotated[float, Field(alias="textHeight")] = 10
+    title_shift: Annotated[float, Field(alias="titleShift")] = -15
+    note_margin: Annotated[float, Field(alias="noteMargin")] = 10
+    node_spacing: Annotated[
+        Annotated[int, Field(ge=0)] | SkipJsonSchema[InstanceOf[Unconfigured]],
+        Field(alias="nodeSpacing", default_factory=Unconfigured, exclude_if=Unconfigured().excludes),
+    ]
+    rank_spacing: Annotated[
+        Annotated[int, Field(ge=0)] | SkipJsonSchema[InstanceOf[Unconfigured]],
+        Field(alias="rankSpacing", default_factory=Unconfigured, exclude_if=Unconfigured().excludes),
+    ]
+    fork_width: Annotated[float, Field(alias="forkWidth")] = 70
+    fork_height: Annotated[float, Field(alias="forkHeight")] = 7
+    mini_padding: Annotated[float, Field(alias="miniPadding")] = 2
+    font_size_factor: Annotated[float, Field(alias="fontSizeFactor")] = 5.02
+    font_size: Annotated[float, Field(alias="fontSize")] = 24
+    label_height: Annotated[float, Field(alias="labelHeight")] = 16
+    edge_length_factor: Annotated[
+        str, Field(alias="edgeLengthFactor", pattern=Text.pattern, description=Text.description)
+    ] = "20"
+    composit_title_size: Annotated[float, Field(alias="compositTitleSize")] = 35
+    radius: Annotated[float, Field(alias="radius")] = 5
+    default_renderer: Annotated[StateRenderer, Field(alias="defaultRenderer")] = StateRenderer.DAGRE_WRAPPER

@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Annotated, ClassVar, cast
+from typing import Annotated, ClassVar
 
-from pydantic import BaseModel, ConfigDict, Field, SerializeAsAny
+from pydantic import BaseModel, ConfigDict, Field, InstanceOf, SerializeAsAny
+from pydantic.json_schema import SkipJsonSchema
 
 from ..core.domain import (
     Annotation,
@@ -87,6 +88,11 @@ class MermaidConfigurationModel(BaseModel):
     )
 
 
+class Unconfigured(MermaidConfigurationModel):
+    def excludes(self, value: object) -> bool:
+        return self == value
+
+
 class MermaidConfiguration(MermaidConfigurationModel):
     wrap: bool
     diagrams: Mapping[str, SerializeAsAny["MermaidDiagramConfiguration"]]
@@ -101,6 +107,11 @@ class MermaidConfiguration(MermaidConfigurationModel):
 
 class MermaidDiagramConfiguration(MermaidConfigurationModel):
     wrap: bool = True
+    use_width: Annotated[
+        float | SkipJsonSchema[InstanceOf[Unconfigured]],
+        Field(alias="useWidth", default_factory=Unconfigured, exclude_if=Unconfigured().excludes),
+    ]
+    use_max_width: Annotated[bool, Field(alias="useMaxWidth")] = True
 
     def document(self, source: str) -> MermaidConfiguration:
         return MermaidConfiguration(wrap=self.wrap, diagrams={source: self})

@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from pydantic import Field
 
 from ...core.characters import Text
@@ -5,20 +7,22 @@ from ..domain import MermaidConfigurationModel, MermaidDiagramConfiguration
 
 
 class GitGraphNodeLabel(MermaidConfigurationModel):
-    width: float = 75
-    height: float = 100
-    x: float = -25
-    y: float = 0
+    width: Annotated[float, Field(alias="width")] = 75
+    height: Annotated[float, Field(alias="height")] = 100
+    x: Annotated[float, Field(alias="x")] = -25
+    y: Annotated[float, Field(alias="y")] = 0
 
 
 class GitGraphDiagramConfiguration(MermaidDiagramConfiguration):
-    title_top_margin: int = Field(default=25, ge=0)
-    diagram_padding: float = 8
-    node_label: GitGraphNodeLabel = GitGraphNodeLabel()
-    main_branch_name: str = Field(default="main", pattern=Text.pattern, description=Text.description)
-    main_branch_order: float = 0
-    show_commit_label: bool = True
-    show_branches: bool = True
-    rotate_commit_label: bool = True
-    parallel_commits: bool = False
-    arrow_marker_absolute: bool = False
+    title_top_margin: Annotated[int, Field(alias="titleTopMargin", ge=0)] = 25
+    diagram_padding: Annotated[float, Field(alias="diagramPadding")] = 8
+    node_label: Annotated[GitGraphNodeLabel, Field(alias="nodeLabel")] = GitGraphNodeLabel()
+    main_branch_name: Annotated[
+        str, Field(alias="mainBranchName", pattern=Text.pattern, description=Text.description)
+    ] = "main"
+    main_branch_order: Annotated[float, Field(alias="mainBranchOrder")] = 0
+    show_commit_label: Annotated[bool, Field(alias="showCommitLabel")] = True
+    show_branches: Annotated[bool, Field(alias="showBranches")] = True
+    rotate_commit_label: Annotated[bool, Field(alias="rotateCommitLabel")] = True
+    parallel_commits: Annotated[bool, Field(alias="parallelCommits")] = False
+    arrow_marker_absolute: Annotated[bool, Field(alias="arrowMarkerAbsolute")] = False

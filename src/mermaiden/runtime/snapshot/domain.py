@@ -5,7 +5,7 @@ from typing import Any
 
 from ...core.domain import DiagramSnapshotContractIdentity
 
-SNAPSHOT_VERSION = 7
+SNAPSHOT_VERSION = 8
 
 
 class SnapshotError(RuntimeError):

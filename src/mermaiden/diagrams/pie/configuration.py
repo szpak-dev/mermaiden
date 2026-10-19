@@ -1,4 +1,5 @@
 from enum import StrEnum
+from typing import Annotated
 
 from pydantic import Field
 
@@ -15,7 +16,9 @@ class LegendPosition(StrEnum):
 
 
 class PieDiagramConfiguration(MermaidDiagramConfiguration):
-    text_position: float = Field(default=0.75, ge=0, le=1)
-    donut_hole: float = Field(default=0, ge=0, le=0.9)
-    legend_position: LegendPosition = LegendPosition.RIGHT
-    highlight_slice: str = Field(default="", pattern=OptionalText.pattern, description=OptionalText.description)
+    text_position: Annotated[float, Field(alias="textPosition", ge=0, le=1)] = 0.75
+    donut_hole: Annotated[float, Field(alias="donutHole", ge=0, le=0.9)] = 0
+    legend_position: Annotated[LegendPosition, Field(alias="legendPosition")] = LegendPosition.RIGHT
+    highlight_slice: Annotated[
+        str, Field(alias="highlightSlice", pattern=OptionalText.pattern, description=OptionalText.description)
+    ] = ""

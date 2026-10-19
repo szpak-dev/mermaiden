@@ -38,6 +38,7 @@ class MermaidConfiguration:
         "maximum",
         "exclusiveMaximum",
         "multipleOf",
+        "uniqueItems",
     )
 
     def local_contract(
@@ -154,7 +155,11 @@ class MermaidConfiguration:
 
     def _properties(self, root: Mapping[str, Any], value: Mapping[str, Any]) -> dict[str, Any]:
         resolved = self._resolve(root, value)
-        return dict(cast(Mapping[str, Any], resolved.get("properties", {})))
+        properties = dict(cast(Mapping[str, Any], resolved.get("properties", {})))
+        for container in ("items", "additionalProperties"):
+            if container in resolved:
+                properties[container] = resolved[container]
+        return properties
 
     def _resolve(self, root: Mapping[str, Any], value: Mapping[str, Any]) -> dict[str, Any]:
         resolved: dict[str, Any] = {}

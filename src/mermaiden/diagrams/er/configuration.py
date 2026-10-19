@@ -1,4 +1,5 @@
 from enum import StrEnum
+from typing import Annotated
 
 from pydantic import ConfigDict, Field
 
@@ -16,15 +17,16 @@ class EntityRelationshipDirection(StrEnum):
 class EntityRelationshipDiagramConfiguration(MermaidDiagramConfiguration):
     model_config = ConfigDict(use_enum_values=True)
 
-    title_top_margin: int = Field(default=25, ge=0)
-    diagram_padding: int = Field(default=20, ge=0)
-    layout_direction: EntityRelationshipDirection = Field(
-        default=EntityRelationshipDirection.TOP_BOTTOM,
-        validate_default=True,
+    title_top_margin: Annotated[int, Field(alias="titleTopMargin", ge=0)] = 25
+    diagram_padding: Annotated[int, Field(alias="diagramPadding", ge=0)] = 20
+    layout_direction: Annotated[EntityRelationshipDirection, Field(alias="layoutDirection")] = (
+        EntityRelationshipDirection.TOP_BOTTOM
     )
-    min_entity_width: int = Field(default=100, ge=0)
-    min_entity_height: int = Field(default=75, ge=0)
-    entity_padding: int = Field(default=15, ge=0)
-    stroke: str = Field(default="gray", pattern=Text.pattern, description=Text.description)
-    fill: str = Field(default="honeydew", pattern=Text.pattern, description=Text.description)
-    use_max_width: bool = True
+    min_entity_width: Annotated[int, Field(alias="minEntityWidth", ge=0)] = 100
+    min_entity_height: Annotated[int, Field(alias="minEntityHeight", ge=0)] = 75
+    entity_padding: Annotated[int, Field(alias="entityPadding", ge=0)] = 15
+    node_spacing: Annotated[int, Field(alias="nodeSpacing", ge=0)] = 140
+    rank_spacing: Annotated[int, Field(alias="rankSpacing", ge=0)] = 80
+    stroke: Annotated[str, Field(alias="stroke", pattern=Text.pattern, description=Text.description)] = "gray"
+    fill: Annotated[str, Field(alias="fill", pattern=Text.pattern, description=Text.description)] = "honeydew"
+    font_size: Annotated[int, Field(alias="fontSize", ge=0)] = 12
