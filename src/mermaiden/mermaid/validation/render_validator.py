@@ -1,5 +1,6 @@
 from collections.abc import Mapping
 from dataclasses import dataclass
+from xml.etree import ElementTree
 
 from wireup import injectable
 
@@ -104,12 +105,37 @@ class MermaidRenderValidator:
                 MermaidRenderDiagnosticCode.SVG_EMPTY,
                 "Mermaid produced an empty SVG.",
             )
-        if "Syntax error in text" in svg:
+        try:
+            document = ElementTree.fromstring(svg)
+        except ElementTree.ParseError as error:
             return self.failure(
                 diagram_id,
                 MermaidRenderDiagnosticCode.SVG_ERROR,
-                "Mermaid produced a syntax-error SVG.",
-                svg,
+                "Mermaid produced invalid SVG.",
+                str(error),
+            )
+        error_elements = tuple(
+            element
+            for element in document.iter()
+            if {"error-icon", "error-text"}.intersection(element.attrib.get("class", "").split())
+        )
+        error_messages = tuple(
+            message
+            for message in ("Syntax error in text", "Maximum text size in diagram exceeded")
+            if message in svg
+        )
+        if error_elements or error_messages:
+            details = " ".join(
+                text.strip()
+                for element in error_elements
+                for text in element.itertext()
+                if text.strip()
+            )
+            return self.failure(
+                diagram_id,
+                MermaidRenderDiagnosticCode.SVG_ERROR,
+                "Mermaid produced an error SVG.",
+                details or "; ".join(error_messages),
             )
         return MermaidRenderReport(diagram_id, self.mermaid_version, svg=svg)
 

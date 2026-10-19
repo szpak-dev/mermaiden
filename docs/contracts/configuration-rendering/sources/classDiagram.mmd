@@ -1,0 +1,24 @@
+---
+config:
+  wrap: true
+  class: {"useWidth": 0.0, "useMaxWidth": true, "titleTopMargin": 25, "arrowMarkerAbsolute": false, "dividerMargin": 10.0, "padding": 5.0, "textHeight": 10.0, "defaultRenderer": "dagre-wrapper", "nodeSpacing": 0, "rankSpacing": 0, "diagramPadding": 20, "htmlLabels": false, "hideEmptyMembersBox": false, "hierarchicalNamespaces": true}
+---
+classDiagram
+%% Domain types
+namespace c_v_domain["Domain"] {
+  class c_v_Animal["Animal species"] {
+    <<abstract>>
+    +String name
+    +sound() void
+  }
+  class c_v_Duck["Duck"] {
+  }
+  class c_v_Pond["Pond"] {
+  }
+}
+c_v_Duck --|> c_v_Animal : extends
+c_v_Pond "1" --o "#42;" c_v_Duck : hosts
+c_v_Duck ..> c_v_Pond : visits
+note for c_v_Animal "Base type"
+note for c_v_Duck "Concrete type"
+note for c_v_Pond "Aggregate"

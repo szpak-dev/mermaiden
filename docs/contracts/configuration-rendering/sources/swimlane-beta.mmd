@@ -1,0 +1,26 @@
+---
+config:
+  wrap: true
+  swimlane: {"useWidth": 0.0, "useMaxWidth": true, "lineHops": "arc", "ignoreCrossLaneEdges": true, "optimizeRanksByCrossings": true, "automaticLaneOrdering": false}
+---
+swimlane-beta TD
+subgraph e_v_customer ["Customer"]
+  e_v_request(["Request service"])
+  e_v_receive(["Receive update"])
+end
+subgraph e_v_support ["Support"]
+  e_v_triage["Triage request"]
+  e_v_known{"Known issue?"}
+  e_v_answer["Send answer"]
+end
+subgraph e_v_engineering ["Engineering"]
+  e_v_investigate["Investigate issue"]
+  e_v_handoff(("Handoff"))
+end
+e_v_request --> e_v_triage
+e_v_triage --> e_v_known
+e_v_known -->|"Yes"| e_v_answer
+e_v_known -->|"No"| e_v_investigate
+e_v_investigate --> e_v_handoff
+e_v_handoff --> e_v_answer
+e_v_answer --> e_v_receive

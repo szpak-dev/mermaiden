@@ -1,4 +1,4 @@
-.PHONY: architecture ci compat compatibility diagrams-preview diagrams-test diagrams-validate documentation-check documentation-linkcheck documentation-links fast-check format integration mermaid-sync mutation-contract package-check pytest quality
+.PHONY: architecture ci compat compatibility configuration-proofs diagrams-preview diagrams-test diagrams-validate documentation-check documentation-linkcheck documentation-links fast-check format integration mermaid-sync mutation-contract package-check pytest quality
 
 UV := uv
 RUN := $(UV) run --no-sync
@@ -71,6 +71,9 @@ compatibility:
 	@$(MAKE) compat
 	@$(MAKE) diagrams-preview
 	@$(MAKE) diagrams-validate
+
+configuration-proofs:
+	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" PYTHONPATH=. $(PYTHON) scripts/render_configuration_proofs.py
 
 ci:
 	@$(UV) lock --check

@@ -7,20 +7,23 @@ from ._analytical import build_analytical_fixtures
 from ._behavioral import build_behavioral_fixtures
 from ._specialized import build_specialized_fixtures
 from ._structural import build_structural_fixtures
-from .models import FixtureCoverageError, FixtureIssue, FixtureIssueKind, has_semantic_statement
+from .models import DiagramFixture, FixtureCoverageError, FixtureIssue, FixtureIssueKind, has_semantic_statement
 
 
 @dataclass(frozen=True, slots=True)
 class FixtureCatalog:
     application: Application
 
-    def inspect(self) -> tuple[dict[str, str], tuple[FixtureIssue, ...]]:
-        fixtures = (
+    def fixtures(self) -> tuple[DiagramFixture, ...]:
+        return (
             *build_structural_fixtures(self.application),
             *build_behavioral_fixtures(self.application),
             *build_analytical_fixtures(self.application),
             *build_specialized_fixtures(self.application),
         )
+
+    def inspect(self) -> tuple[dict[str, str], tuple[FixtureIssue, ...]]:
+        fixtures = self.fixtures()
         registered = {info.id for info in self.application.available_diagrams()}
         builders: dict[str, list[str]] = {}
         for fixture in fixtures:

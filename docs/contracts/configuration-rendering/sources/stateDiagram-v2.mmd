@@ -1,0 +1,36 @@
+---
+config:
+  wrap: true
+  state: {"useWidth": 0.0, "useMaxWidth": true, "titleTopMargin": 25, "arrowMarkerAbsolute": false, "dividerMargin": 10.0, "sizeUnit": 5.0, "padding": 8.0, "textHeight": 10.0, "titleShift": -15.0, "noteMargin": 10.0, "nodeSpacing": 0, "rankSpacing": 0, "forkWidth": 70.0, "forkHeight": 7.0, "miniPadding": 2.0, "fontSizeFactor": 5.02, "fontSize": 24.0, "labelHeight": 16.0, "edgeLengthFactor": "20", "compositTitleSize": 35.0, "radius": 5.0, "defaultRenderer": "dagre-wrapper"}
+---
+stateDiagram-v2
+direction TB
+state "Still" as s_v_still
+state "Moving" as s_v_moving
+state "Crash" as s_v_crash
+state s_v_decision <<choice>>
+state s_v_fork <<fork>>
+state s_v_join <<join>>
+s_v_active: "Active"
+state s_v_active {
+  state "Num lock off" as s_v_num_lock_off
+  state "Num lock on" as s_v_num_lock_on
+  state "Caps lock off" as s_v_caps_lock_off
+  [*] --> s_v_num_lock_off
+  s_v_num_lock_off --> s_v_num_lock_on: "toggle"
+  s_v_num_lock_on --> [*]
+  [*] --> s_v_caps_lock_off
+  s_v_caps_lock_off --> [*]
+}
+[*] --> s_v_still
+s_v_still --> s_v_moving: "accelerate"
+s_v_moving --> s_v_decision
+s_v_decision --> s_v_active: "continue"
+s_v_decision --> s_v_crash: "fail"
+s_v_active --> s_v_fork
+s_v_fork --> s_v_still
+s_v_fork --> s_v_crash
+s_v_still --> s_v_join
+s_v_crash --> s_v_join
+s_v_join --> [*]
+note right of s_v_moving : "A moving system"

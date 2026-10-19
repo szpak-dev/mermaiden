@@ -1,0 +1,21 @@
+---
+config:
+  wrap: true
+  architecture: {"useWidth": 0.0, "useMaxWidth": true, "padding": 40.0, "iconSize": 80.0, "fontSize": 16.0, "randomize": false, "nodeSeparation": 75.0, "idealEdgeLengthMultiplier": 1.5, "edgeElasticity": 0.45, "numIter": 2500.0, "seed": 1.0}
+---
+architecture-beta
+group clients[Clients]
+  service web[Web] in clients
+group platform[Platform]
+  service api[API] in platform
+  junction events in platform
+  align column api events
+group data[Data]
+  service database[Database] in data
+web:R -["HTTPS \"mTLS\""]-> L:api
+api:B --> T:events
+api:R --> L:database
+align row web api
+%% Client gateway
+%% Public API
+%% Persistent storage

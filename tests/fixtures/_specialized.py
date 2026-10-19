@@ -6,6 +6,7 @@ from mermaiden.diagrams.cynefin.diagram import CynefinDiagram
 from mermaiden.diagrams.cynefin.elements import DomainKind
 from mermaiden.diagrams.gantt.diagram import Gantt
 from mermaiden.diagrams.gantt.elements import DateStart, DurationFinish, TaskStatus
+from mermaiden.diagrams.gitgraph.configuration import GitGraphDiagramConfiguration
 from mermaiden.diagrams.gitgraph.diagram import GitGraphDiagram
 from mermaiden.diagrams.ishikawa.diagram import IshikawaDiagram
 from mermaiden.diagrams.kanban.diagram import KanbanDiagram
@@ -14,6 +15,19 @@ from mermaiden.diagrams.wardley.diagram import WardleyDiagram
 from mermaiden.diagrams.wardley.elements import ComponentDecorator
 
 from .models import DiagramFixture
+
+
+def build_gitgraph_fixture(application: Application, main_branch_name: str = "main") -> GitGraphDiagram:
+    diagram = application.create_diagram("gitGraph")
+    assert isinstance(diagram, GitGraphDiagram)
+    diagram.configure(GitGraphDiagramConfiguration(main_branch_name=main_branch_name))
+    diagram.add_commit("initial", "ZERO", tag="v1.0.0")
+    diagram.add_branch("develop", "develop", 1)
+    diagram.checkout("checkout_develop", "develop")
+    diagram.add_commit("feature", "FEATURE", "HIGHLIGHT")
+    diagram.checkout("checkout_main", main_branch_name)
+    diagram.add_commit("release", "RELEASE", tag="v1.1.0")
+    return diagram
 
 
 def build_specialized_fixtures(application: Application) -> tuple[DiagramFixture, ...]:
@@ -30,14 +44,7 @@ def build_specialized_fixtures(application: Application) -> tuple[DiagramFixture
         finish=DurationFinish(amount=2),
     )
 
-    gitgraph = application.create_diagram("gitGraph")
-    assert isinstance(gitgraph, GitGraphDiagram)
-    gitgraph.add_commit("initial", "ZERO", tag="v1.0.0")
-    gitgraph.add_branch("develop", "develop", 1)
-    gitgraph.checkout("checkout_develop", "develop")
-    gitgraph.add_commit("feature", "FEATURE", "HIGHLIGHT")
-    gitgraph.checkout("checkout_main", "main")
-    gitgraph.add_commit("release", "RELEASE", tag="v1.1.0")
+    gitgraph = build_gitgraph_fixture(application)
 
     c4 = application.create_diagram("C4Context")
     assert isinstance(c4, C4ContextDiagram)

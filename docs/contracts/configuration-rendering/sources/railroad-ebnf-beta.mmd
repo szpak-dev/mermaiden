@@ -1,0 +1,10 @@
+---
+config:
+  wrap: true
+  railroad: {"useWidth": 0.0, "useMaxWidth": true, "compactMode": false, "padding": 10.0, "verticalSeparation": 8.0, "horizontalSeparation": 10.0, "arcRadius": 10.0, "fontSize": 14.0, "fontFamily": "monospace", "terminalFill": "#FFFFC0", "terminalStroke": "#000000", "terminalTextColor": "#000000", "nonTerminalFill": "#FFFFFF", "nonTerminalStroke": "#000000", "nonTerminalTextColor": "#000000", "lineColor": "#000000", "strokeWidth": 2.0, "markerFill": "#000000", "commentFill": "#E8E8E8", "commentStroke": "#888888", "commentTextColor": "#666666", "specialFill": "#F0E0FF", "specialStroke": "#8800CC", "ruleNameColor": "#000066", "showMarkers": true, "markerRadius": 5.0}
+---
+railroad-ebnf-beta
+r_v_alternative = ? first ? | ? second ? ;
+r_v_optional = [ "value" ] ;
+r_v_repetition = { value } ;
+r_v_group = ( ? grouped ? ) ;

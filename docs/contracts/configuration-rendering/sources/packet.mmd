@@ -1,0 +1,11 @@
+---
+config:
+  wrap: true
+  packet: {"useWidth": 0.0, "useMaxWidth": true, "rowHeight": 32.0, "bitWidth": 32.0, "bitsPerRow": 32.0, "showBits": true, "paddingX": 5.0, "paddingY": 5.0}
+---
+packet
+title UDP packet
++16: "Source port"
++16: "Destination port"
+32-47: "Length"
+48-63: "Checksum"

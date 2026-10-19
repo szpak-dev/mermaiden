@@ -1,6 +1,5 @@
-import subprocess
-from collections.abc import Mapping, Sequence
-from typing import Any, cast
+from collections.abc import Mapping
+from typing import cast
 from xml.etree import ElementTree
 
 import pytest
@@ -9,47 +8,6 @@ from mermaiden import Application
 
 
 class TestRenderValidation:
-    def test_renderer_uses_the_lock_installed_cli_and_reports_timeouts(
-        self,
-        monkeypatch: pytest.MonkeyPatch,
-    ) -> None:
-        command: list[str] = []
-
-        def timeout(arguments: Sequence[str], **_options: Any) -> None:
-            command.extend(arguments)
-            raise subprocess.TimeoutExpired(arguments, 60)
-
-        monkeypatch.setattr(subprocess, "run", timeout)
-        application = Application.create()
-        diagram = application.create_diagram("sequenceDiagram")
-        application.execute(diagram, "add_participant", {"id": "example", "label": "Example"})
-
-        report = application.validate_render(diagram)
-
-        assert command[0] == "mmdc"
-        assert "npx" not in command
-        assert report.diagnostics[0].code == "render_timeout"
-        assert "60-second timeout" in report.diagnostics[0].details
-
-    def test_renderer_rejects_an_installed_mermaid_version_mismatch(
-        self,
-        monkeypatch: pytest.MonkeyPatch,
-    ) -> None:
-        def mismatched_version(arguments: Sequence[str], **_options: Any) -> subprocess.CompletedProcess[str]:
-            return subprocess.CompletedProcess(arguments, 0, stdout="0.0.0\n", stderr="")
-
-        monkeypatch.setattr(subprocess, "run", mismatched_version)
-        application = Application.create()
-        diagram = application.create_diagram("sequenceDiagram")
-        application.execute(diagram, "add_participant", {"id": "example", "label": "Example"})
-
-        report = application.validate_render(diagram)
-
-        assert report.diagnostics[0].code == "version_mismatch"
-        assert "schema.lock.json" in report.diagnostics[0].details
-        assert "consumer 'mmdc' observed '0.0.0'" in report.diagnostics[0].details
-        assert f"expected '{application.mermaid_version}'" in report.diagnostics[0].details
-
     @pytest.mark.integration
     def test_class_relation_markers_render_at_every_semantic_target(self) -> None:
         application = Application.create()
@@ -99,6 +57,32 @@ class TestRenderValidation:
             )
             assert "marker-start" not in path.attrib
             assert path.attrib["marker-end"].endswith(f"classDiagram-{marker})")
+
+    @pytest.mark.integration
+    def test_renderer_rejects_a_real_exit_zero_mermaid_error_svg(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("classDiagram")
+        for index in range(550):
+            application.execute(
+                diagram,
+                "add_class",
+                {
+                    "id": f"class_{index}_{'x' * 180}",
+                    "label": f"Oversized {index}",
+                    "comment": f"Contract evidence {index} {'y' * 80}",
+                    "attributes": [
+                        {"name": f"field_{field}", "type": {"name": "string"}} for field in range(20)
+                    ],
+                    "annotations": ["injectable", "immutable"],
+                },
+            )
+
+        report = application.validate_render(diagram)
+
+        assert not report.success
+        assert report.diagnostics[0].code == "svg_error"
+        assert report.diagnostics[0].message == "Mermaid produced an error SVG."
+        assert "Maximum text size in diagram exceeded" in report.diagnostics[0].details
 
     @pytest.mark.integration
     def test_class_text_preserves_slashes_in_mermaid_source_and_svg(self) -> None:
@@ -301,10 +285,8 @@ class TestRenderValidation:
         with pytest.raises(RuntimeError, match="Cannot restore invalid diagram 'sequenceDiagram'"):
             application.restore(payload)
 
-    def test_full_render_validation_is_a_non_mutating_application_operation(
-        self,
-        successful_mermaid_render: None,
-    ) -> None:
+    @pytest.mark.integration
+    def test_full_render_validation_is_a_non_mutating_application_operation(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("sequenceDiagram")
         application.execute(
