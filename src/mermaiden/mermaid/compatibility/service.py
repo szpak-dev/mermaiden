@@ -67,12 +67,12 @@ class MermaidCompatibilityService:
     templates: MermaidTemplateOwnership
 
     def inspect(self) -> CompatibilityReport:
-        return self._inspect({})
+        return self.inspect_sources({})
 
     def verify(self, sources: Mapping[str, str]) -> CompatibilityReport:
-        return self._inspect(sources)
+        return self.inspect_sources(sources)
 
-    def _inspect(self, sources: Mapping[str, str]) -> CompatibilityReport:
+    def inspect_sources(self, sources: Mapping[str, str]) -> CompatibilityReport:
         self.catalog.validate()
         self.templates.validate()
         lock = self.schemas.lock()

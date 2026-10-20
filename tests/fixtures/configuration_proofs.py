@@ -202,19 +202,23 @@ class ConfigurationProofCatalog:
         minimum = node.get("minimum", node.get("exclusiveMinimum"))
         maximum = node.get("maximum", node.get("exclusiveMaximum"))
         step = 1 if integral else 0.25
-        lower = minimum if isinstance(minimum, int | float) else 0
-        upper = maximum if isinstance(maximum, int | float) else lower + step * 4
-        if "exclusiveMinimum" in node:
+        lower = minimum if isinstance(minimum, int | float) else -1
+        upper = maximum if isinstance(maximum, int | float) else 1
+        if isinstance(minimum, int | float) and "exclusiveMinimum" in node:
             lower += step
-        if "exclusiveMaximum" in node:
+        if isinstance(maximum, int | float) and "exclusiveMaximum" in node:
             upper -= step
-        middle = lower + (upper - lower) / 2
+        values: list[object] = [lower]
+        if lower <= 0 <= upper:
+            values.append(0)
+        if isinstance(minimum, int | float) and isinstance(maximum, int | float):
+            values.append(lower + (upper - lower) / 2)
+        values.append(upper)
         if integral:
-            lower, middle, upper = round(lower), round(middle), round(upper)
-        values: list[object] = [lower, middle, upper]
+            values = [round(value) if isinstance(value, int | float) else value for value in values]
         if isinstance(default, int | float) and default not in values:
             values.append(default)
-        return tuple(values)
+        return tuple(dict.fromkeys(values))
 
     def string_candidates(self, field: str, default: object) -> tuple[object, ...]:
         lowered = field.lower()

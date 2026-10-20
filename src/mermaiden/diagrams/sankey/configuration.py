@@ -2,11 +2,10 @@ from collections.abc import Mapping
 from enum import StrEnum
 from typing import Annotated
 
-from pydantic import ConfigDict, Field, InstanceOf, RootModel
-from pydantic.json_schema import SkipJsonSchema
+from pydantic import ConfigDict, Field, RootModel
 
 from ...core.characters import OptionalText, Text
-from ..domain import MermaidDiagramConfiguration, Unconfigured
+from ..domain import MermaidDiagramConfiguration, OmittableConfigurationValue
 
 
 class SankeyNodeAlignment(StrEnum):
@@ -25,6 +24,10 @@ class SankeyNodeColours(
     RootModel[Mapping[str, Annotated[str, Field(pattern=Text.pattern, description=Text.description)]]]
 ):
     model_config = ConfigDict(frozen=True)
+
+
+class SankeyNodeColoursOrUnconfigured(OmittableConfigurationValue[SankeyNodeColours]):
+    pass
 
 
 class SankeyDiagramConfiguration(MermaidDiagramConfiguration):
@@ -46,6 +49,6 @@ class SankeyDiagramConfiguration(MermaidDiagramConfiguration):
     node_padding: Annotated[float, Field(alias="nodePadding")] = 12
     label_style: Annotated[SankeyLabelStyle, Field(alias="labelStyle")] = SankeyLabelStyle.LEGACY
     node_colors: Annotated[
-        SankeyNodeColours | SkipJsonSchema[InstanceOf[Unconfigured]],
-        Field(alias="nodeColors", exclude_if=Unconfigured().excludes),
-    ] = Field(default_factory=Unconfigured)
+        SankeyNodeColoursOrUnconfigured,
+        Field(alias="nodeColors", exclude_if=SankeyNodeColoursOrUnconfigured().excludes),
+    ] = Field(default_factory=SankeyNodeColoursOrUnconfigured)

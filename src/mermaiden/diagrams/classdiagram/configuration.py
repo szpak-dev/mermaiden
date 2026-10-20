@@ -1,10 +1,9 @@
 from enum import StrEnum
 from typing import Annotated
 
-from pydantic import Field, InstanceOf
-from pydantic.json_schema import SkipJsonSchema
+from pydantic import Field
 
-from ..domain import MermaidDiagramConfiguration, Unconfigured
+from ..domain import MermaidDiagramConfiguration, NonNegativeIntegerOrUnconfigured
 
 
 class ClassRenderer(StrEnum):
@@ -21,13 +20,13 @@ class ClassDiagramConfiguration(MermaidDiagramConfiguration):
     text_height: Annotated[float, Field(alias="textHeight")] = 10
     default_renderer: Annotated[ClassRenderer, Field(alias="defaultRenderer")] = ClassRenderer.DAGRE_WRAPPER
     node_spacing: Annotated[
-        Annotated[int, Field(ge=0)] | SkipJsonSchema[InstanceOf[Unconfigured]],
-        Field(alias="nodeSpacing", exclude_if=Unconfigured().excludes),
-    ] = Field(default_factory=Unconfigured)
+        NonNegativeIntegerOrUnconfigured,
+        Field(alias="nodeSpacing", exclude_if=NonNegativeIntegerOrUnconfigured().excludes),
+    ] = Field(default_factory=NonNegativeIntegerOrUnconfigured)
     rank_spacing: Annotated[
-        Annotated[int, Field(ge=0)] | SkipJsonSchema[InstanceOf[Unconfigured]],
-        Field(alias="rankSpacing", exclude_if=Unconfigured().excludes),
-    ] = Field(default_factory=Unconfigured)
+        NonNegativeIntegerOrUnconfigured,
+        Field(alias="rankSpacing", exclude_if=NonNegativeIntegerOrUnconfigured().excludes),
+    ] = Field(default_factory=NonNegativeIntegerOrUnconfigured)
     diagram_padding: Annotated[int, Field(alias="diagramPadding", ge=0)] = 20
     html_labels: Annotated[bool, Field(alias="htmlLabels")] = False
     hide_empty_members_box: Annotated[bool, Field(alias="hideEmptyMembersBox")] = False

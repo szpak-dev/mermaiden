@@ -84,7 +84,6 @@ class TestMermaidConfiguration:
         "values",
         (
             {"padding": -1},
-            {"icon_size": 0},
             {"font_size": 0},
             {"node_separation": -1},
             {"ideal_edge_length_multiplier": 0},
@@ -127,6 +126,10 @@ class TestMermaidConfiguration:
             {"c4_shape_in_row": -1},
             {"c4_boundary_in_row": -1},
             {"message_font_size": ""},
+            {"boundary_font_size": 0},
+            {"boundary_font_size": "0"},
+            {"message_font_size": 0},
+            {"message_font_size": "12px"},
         ),
     )
     def test_c4_configuration_rejects_invalid_layout_values(
@@ -138,6 +141,41 @@ class TestMermaidConfiguration:
 
         with pytest.raises(RuntimeError, match="'configure' has invalid arguments"):
             application.execute(diagram, "configure", values)
+
+    @pytest.mark.parametrize(
+        ("diagram_id", "field", "rejected", "recovery"),
+        (
+            ("C4Context", "boundaryFontSize", 0, 0.5),
+            ("C4Context", "messageFontSize", "proof", "12"),
+            ("architecture-beta", "iconSize", 0, 1),
+            ("flowchart", "defaultRenderer", "dagre-d3", "elk"),
+            ("gantt", "numberSectionStyles", 0, 1),
+            ("journey", "taskFontSize", "proof", "12"),
+            ("packet", "bitsPerRow", 1.5, 2),
+        ),
+    )
+    def test_renderer_unsafe_configuration_is_rejected_without_mutation_and_recovers(
+        self,
+        diagram_id: str,
+        field: str,
+        rejected: object,
+        recovery: object,
+    ) -> None:
+        application = Application.create()
+        diagram = application.create_diagram(diagram_id)
+        before_snapshot = application.snapshot(diagram).to_dict()
+        before_source = application.render(diagram)
+
+        with pytest.raises(RuntimeError, match="'configure' has invalid arguments"):
+            application.execute(diagram, "configure", {field: rejected})
+
+        assert application.snapshot(diagram).to_dict() == before_snapshot
+        assert application.render(diagram) == before_source
+
+        application.execute(diagram, "configure", {field: recovery})
+
+        assert application.snapshot(diagram).to_dict() != before_snapshot
+        assert application.render(diagram) != before_source
 
     @pytest.mark.parametrize(
         ("diagram_id", "field", "boundary", "outside"),

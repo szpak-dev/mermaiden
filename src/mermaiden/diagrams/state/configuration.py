@@ -1,11 +1,10 @@
 from enum import StrEnum
 from typing import Annotated
 
-from pydantic import Field, InstanceOf
-from pydantic.json_schema import SkipJsonSchema
+from pydantic import Field
 
 from ...core.characters import Text
-from ..domain import MermaidDiagramConfiguration, Unconfigured
+from ..domain import BooleanOrUnconfigured, MermaidDiagramConfiguration, NonNegativeIntegerOrUnconfigured
 
 
 class StateRenderer(StrEnum):
@@ -17,9 +16,9 @@ class StateRenderer(StrEnum):
 class StateDiagramConfiguration(MermaidDiagramConfiguration):
     title_top_margin: Annotated[int, Field(alias="titleTopMargin", ge=0)] = 25
     arrow_marker_absolute: Annotated[
-        bool | SkipJsonSchema[InstanceOf[Unconfigured]],
-        Field(alias="arrowMarkerAbsolute", exclude_if=Unconfigured().excludes),
-    ] = Field(default_factory=Unconfigured)
+        BooleanOrUnconfigured,
+        Field(alias="arrowMarkerAbsolute", exclude_if=BooleanOrUnconfigured().excludes),
+    ] = Field(default_factory=BooleanOrUnconfigured)
     divider_margin: Annotated[float, Field(alias="dividerMargin")] = 10
     size_unit: Annotated[float, Field(alias="sizeUnit")] = 5
     padding: Annotated[float, Field(alias="padding")] = 8
@@ -27,13 +26,13 @@ class StateDiagramConfiguration(MermaidDiagramConfiguration):
     title_shift: Annotated[float, Field(alias="titleShift")] = -15
     note_margin: Annotated[float, Field(alias="noteMargin")] = 10
     node_spacing: Annotated[
-        Annotated[int, Field(ge=0)] | SkipJsonSchema[InstanceOf[Unconfigured]],
-        Field(alias="nodeSpacing", exclude_if=Unconfigured().excludes),
-    ] = Field(default_factory=Unconfigured)
+        NonNegativeIntegerOrUnconfigured,
+        Field(alias="nodeSpacing", exclude_if=NonNegativeIntegerOrUnconfigured().excludes),
+    ] = Field(default_factory=NonNegativeIntegerOrUnconfigured)
     rank_spacing: Annotated[
-        Annotated[int, Field(ge=0)] | SkipJsonSchema[InstanceOf[Unconfigured]],
-        Field(alias="rankSpacing", exclude_if=Unconfigured().excludes),
-    ] = Field(default_factory=Unconfigured)
+        NonNegativeIntegerOrUnconfigured,
+        Field(alias="rankSpacing", exclude_if=NonNegativeIntegerOrUnconfigured().excludes),
+    ] = Field(default_factory=NonNegativeIntegerOrUnconfigured)
     fork_width: Annotated[float, Field(alias="forkWidth")] = 70
     fork_height: Annotated[float, Field(alias="forkHeight")] = 7
     mini_padding: Annotated[float, Field(alias="miniPadding")] = 2

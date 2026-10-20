@@ -1,11 +1,10 @@
 from enum import StrEnum
 from typing import Annotated
 
-from pydantic import ConfigDict, Field, InstanceOf, RootModel
-from pydantic.json_schema import SkipJsonSchema
+from pydantic import ConfigDict, Field, RootModel
 
-from ...core.characters import Text
-from ..domain import MermaidDiagramConfiguration, Unconfigured
+from ...core.characters import NumberOrText, Text
+from ..domain import MermaidDiagramConfiguration, NumberOrUnconfigured
 
 
 class TimelineColourPalette(
@@ -27,9 +26,9 @@ class TimelineDiagramConfiguration(MermaidDiagramConfiguration):
     width: Annotated[int, Field(alias="width", ge=0)] = 150
     height: Annotated[int, Field(alias="height", ge=0)] = 50
     padding: Annotated[
-        float | SkipJsonSchema[InstanceOf[Unconfigured]],
-        Field(alias="padding", exclude_if=Unconfigured().excludes),
-    ] = Field(default_factory=Unconfigured)
+        NumberOrUnconfigured,
+        Field(alias="padding", exclude_if=NumberOrUnconfigured().excludes),
+    ] = Field(default_factory=NumberOrUnconfigured)
     box_margin: Annotated[int, Field(alias="boxMargin", ge=0)] = 10
     box_text_margin: Annotated[int, Field(alias="boxTextMargin", ge=0)] = 5
     note_margin: Annotated[int, Field(alias="noteMargin", ge=0)] = 10
@@ -38,7 +37,7 @@ class TimelineDiagramConfiguration(MermaidDiagramConfiguration):
     bottom_margin_adj: Annotated[int, Field(alias="bottomMarginAdj", ge=0)] = 1
     right_angles: Annotated[bool, Field(alias="rightAngles")] = False
     task_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float, Field(alias="taskFontSize")
+        NumberOrText, Field(alias="taskFontSize")
     ] = 14
     task_font_family: Annotated[
         str, Field(alias="taskFontFamily", pattern=Text.pattern, description=Text.description)

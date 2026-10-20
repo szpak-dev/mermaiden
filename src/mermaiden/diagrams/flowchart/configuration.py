@@ -1,21 +1,25 @@
 from enum import StrEnum
 from typing import Annotated
 
-from pydantic import Field, InstanceOf
-from pydantic.json_schema import SkipJsonSchema
+from pydantic import Field
 
-from ..domain import MermaidConfigurationModel, MermaidDiagramConfiguration, Unconfigured
+from ..domain import (
+    BooleanOrUnconfigured,
+    MermaidConfigurationModel,
+    MermaidDiagramConfiguration,
+    NonNegativeIntegerOrUnconfigured,
+)
 
 
 class FlowchartSubgraphTitleMargin(MermaidConfigurationModel):
     top: Annotated[
-        Annotated[int, Field(ge=0)] | SkipJsonSchema[InstanceOf[Unconfigured]],
-        Field(alias="top", exclude_if=Unconfigured().excludes),
-    ] = Field(default_factory=Unconfigured)
+        NonNegativeIntegerOrUnconfigured,
+        Field(alias="top", exclude_if=NonNegativeIntegerOrUnconfigured().excludes),
+    ] = Field(default_factory=NonNegativeIntegerOrUnconfigured)
     bottom: Annotated[
-        Annotated[int, Field(ge=0)] | SkipJsonSchema[InstanceOf[Unconfigured]],
-        Field(alias="bottom", exclude_if=Unconfigured().excludes),
-    ] = Field(default_factory=Unconfigured)
+        NonNegativeIntegerOrUnconfigured,
+        Field(alias="bottom", exclude_if=NonNegativeIntegerOrUnconfigured().excludes),
+    ] = Field(default_factory=NonNegativeIntegerOrUnconfigured)
 
 
 class FlowchartCurve(StrEnum):
@@ -35,7 +39,6 @@ class FlowchartCurve(StrEnum):
 
 
 class FlowchartRenderer(StrEnum):
-    DAGRE_D3 = "dagre-d3"
     DAGRE_WRAPPER = "dagre-wrapper"
     ELK = "elk"
 
@@ -46,9 +49,9 @@ class FlowchartDiagramConfiguration(MermaidDiagramConfiguration):
         FlowchartSubgraphTitleMargin(top=0, bottom=0)
     )
     arrow_marker_absolute: Annotated[
-        bool | SkipJsonSchema[InstanceOf[Unconfigured]],
-        Field(alias="arrowMarkerAbsolute", exclude_if=Unconfigured().excludes),
-    ] = Field(default_factory=Unconfigured)
+        BooleanOrUnconfigured,
+        Field(alias="arrowMarkerAbsolute", exclude_if=BooleanOrUnconfigured().excludes),
+    ] = Field(default_factory=BooleanOrUnconfigured)
     diagram_padding: Annotated[int, Field(alias="diagramPadding", ge=0)] = 8
     node_spacing: Annotated[int, Field(alias="nodeSpacing", ge=0)] = 50
     rank_spacing: Annotated[int, Field(alias="rankSpacing", ge=0)] = 50

@@ -3,7 +3,7 @@ from typing import Annotated
 
 from pydantic import ConfigDict, Field, RootModel
 
-from ...core.characters import OptionalText, Text
+from ...core.characters import NumberOrNumericText, OptionalText, Text
 from ..domain import MermaidDiagramConfiguration
 
 
@@ -34,7 +34,8 @@ class JourneyDiagramConfiguration(MermaidDiagramConfiguration):
     bottom_margin_adj: Annotated[int, Field(alias="bottomMarginAdj", ge=0)] = 1
     right_angles: Annotated[bool, Field(alias="rightAngles")] = False
     task_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float, Field(alias="taskFontSize")
+        NumberOrNumericText,
+        Field(alias="taskFontSize"),
     ] = 14
     task_font_family: Annotated[
         str, Field(alias="taskFontFamily", pattern=Text.pattern, description=Text.description)

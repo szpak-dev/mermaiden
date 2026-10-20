@@ -2,7 +2,7 @@ from typing import Annotated
 
 from pydantic import Field
 
-from ...core.characters import Text
+from ...core.characters import NumberOrText, PositiveNumberOrNumericText, Text
 from ..domain import MermaidDiagramConfiguration
 
 
@@ -18,243 +18,241 @@ class C4ContextDiagramConfiguration(MermaidDiagramConfiguration):
     next_line_padding_x: Annotated[float, Field(alias="nextLinePaddingX")] = 0
     c4_boundary_in_row: Annotated[int, Field(alias="c4BoundaryInRow", ge=0)] = 2
     person_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float, Field(alias="personFontSize")
+        NumberOrText, Field(alias="personFontSize")
     ] = 14
     person_font_family: Annotated[
         str, Field(alias="personFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     person_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="personFontWeight"),
     ] = "normal"
     external_person_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="external_personFontSize"),
     ] = 14
     external_person_font_family: Annotated[
         str, Field(alias="external_personFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     external_person_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="external_personFontWeight"),
     ] = "normal"
     system_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float, Field(alias="systemFontSize")
+        NumberOrText, Field(alias="systemFontSize")
     ] = 14
     system_font_family: Annotated[
         str, Field(alias="systemFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     system_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="systemFontWeight"),
     ] = "normal"
     external_system_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="external_systemFontSize"),
     ] = 14
     external_system_font_family: Annotated[
         str, Field(alias="external_systemFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     external_system_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="external_systemFontWeight"),
     ] = "normal"
     system_db_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="system_dbFontSize"),
     ] = 14
     system_db_font_family: Annotated[
         str, Field(alias="system_dbFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     system_db_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="system_dbFontWeight"),
     ] = "normal"
     external_system_db_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="external_system_dbFontSize"),
     ] = 14
     external_system_db_font_family: Annotated[
         str, Field(alias="external_system_dbFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     external_system_db_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="external_system_dbFontWeight"),
     ] = "normal"
     system_queue_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="system_queueFontSize"),
     ] = 14
     system_queue_font_family: Annotated[
         str, Field(alias="system_queueFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     system_queue_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="system_queueFontWeight"),
     ] = "normal"
     external_system_queue_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="external_system_queueFontSize"),
     ] = 14
     external_system_queue_font_family: Annotated[
         str, Field(alias="external_system_queueFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     external_system_queue_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="external_system_queueFontWeight"),
     ] = "normal"
     boundary_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
-        Field(alias="boundaryFontSize"),
-    ] = 14
+        PositiveNumberOrNumericText, Field(alias="boundaryFontSize")
+    ] = PositiveNumberOrNumericText(root=14)
     boundary_font_family: Annotated[
         str, Field(alias="boundaryFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     boundary_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="boundaryFontWeight"),
     ] = "normal"
     message_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
-        Field(alias="messageFontSize"),
-    ] = 12
+        PositiveNumberOrNumericText, Field(alias="messageFontSize")
+    ] = PositiveNumberOrNumericText(root=12)
     message_font_family: Annotated[
         str, Field(alias="messageFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     message_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="messageFontWeight"),
     ] = "normal"
     container_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="containerFontSize"),
     ] = 14
     container_font_family: Annotated[
         str, Field(alias="containerFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     container_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="containerFontWeight"),
     ] = "normal"
     external_container_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="external_containerFontSize"),
     ] = 14
     external_container_font_family: Annotated[
         str, Field(alias="external_containerFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     external_container_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="external_containerFontWeight"),
     ] = "normal"
     container_db_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="container_dbFontSize"),
     ] = 14
     container_db_font_family: Annotated[
         str, Field(alias="container_dbFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     container_db_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="container_dbFontWeight"),
     ] = "normal"
     external_container_db_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="external_container_dbFontSize"),
     ] = 14
     external_container_db_font_family: Annotated[
         str, Field(alias="external_container_dbFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     external_container_db_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="external_container_dbFontWeight"),
     ] = "normal"
     container_queue_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="container_queueFontSize"),
     ] = 14
     container_queue_font_family: Annotated[
         str, Field(alias="container_queueFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     container_queue_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="container_queueFontWeight"),
     ] = "normal"
     external_container_queue_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="external_container_queueFontSize"),
     ] = 14
     external_container_queue_font_family: Annotated[
         str, Field(alias="external_container_queueFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     external_container_queue_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="external_container_queueFontWeight"),
     ] = "normal"
     component_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="componentFontSize"),
     ] = 14
     component_font_family: Annotated[
         str, Field(alias="componentFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     component_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="componentFontWeight"),
     ] = "normal"
     external_component_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="external_componentFontSize"),
     ] = 14
     external_component_font_family: Annotated[
         str, Field(alias="external_componentFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     external_component_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="external_componentFontWeight"),
     ] = "normal"
     component_db_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="component_dbFontSize"),
     ] = 14
     component_db_font_family: Annotated[
         str, Field(alias="component_dbFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     component_db_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="component_dbFontWeight"),
     ] = "normal"
     external_component_db_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="external_component_dbFontSize"),
     ] = 14
     external_component_db_font_family: Annotated[
         str, Field(alias="external_component_dbFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     external_component_db_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="external_component_dbFontWeight"),
     ] = "normal"
     component_queue_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="component_queueFontSize"),
     ] = 14
     component_queue_font_family: Annotated[
         str, Field(alias="component_queueFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     component_queue_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="component_queueFontWeight"),
     ] = "normal"
     external_component_queue_font_size: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="external_component_queueFontSize"),
     ] = 14
     external_component_queue_font_family: Annotated[
         str, Field(alias="external_component_queueFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     external_component_queue_font_weight: Annotated[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float,
+        NumberOrText,
         Field(alias="external_component_queueFontWeight"),
     ] = "normal"
     wrap_padding: Annotated[float, Field(alias="wrapPadding")] = 10

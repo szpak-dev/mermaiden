@@ -1,10 +1,7 @@
-from collections.abc import Iterator, Mapping
-from copy import deepcopy
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any, cast
 
 from jsonschema import Draft201909Validator
-from jsonschema.exceptions import ValidationError
 from pydantic import BaseModel, ConfigDict, Field, RootModel
 from yaml import safe_load
 
@@ -21,7 +18,7 @@ class ConfigurationViolation:
 class DiagramConfigurationContract:
     config_key: str
     schema_definition: str
-    values: Mapping[str, Any]
+    values: Mapping[str, object]
 
 
 class ConfigurationSchemaMapping(RootModel[Mapping[str, object]]):
@@ -35,6 +32,158 @@ class ConfigurationSchemaMapping(RootModel[Mapping[str, object]]):
         return False
 
 
+class ConfigurationSchemaMappings(RootModel[tuple[ConfigurationSchemaMapping, ...]]):
+    model_config = ConfigDict(frozen=True)
+
+
+class ConfigurationSchemaProperties(RootModel[Mapping[str, ConfigurationSchemaMapping]]):
+    model_config = ConfigDict(frozen=True)
+
+
+class ConfigurationSchemaStrings(RootModel[tuple[str, ...]]):
+    model_config = ConfigDict(frozen=True)
+
+
+class ConfigurationSchemaSingleType(RootModel[str]):
+    model_config = ConfigDict(frozen=True, strict=True)
+
+    @property
+    def values(self) -> tuple[str, ...]:
+        return (self.root,)
+
+
+class ConfigurationSchemaMultipleTypes(RootModel[tuple[str, ...]]):
+    model_config = ConfigDict(frozen=True)
+
+    @property
+    def values(self) -> tuple[str, ...]:
+        return self.root
+
+
+class ConfigurationSchemaAbsentType(RootModel[None]):
+    model_config = ConfigDict(frozen=True, strict=True)
+
+    @property
+    def values(self) -> tuple[str, ...]:
+        return ()
+
+
+class ConfigurationSchemaTypes(RootModel[object]):
+    model_config = ConfigDict(frozen=True, strict=True)
+
+    root: Annotated[
+        ConfigurationSchemaSingleType | ConfigurationSchemaMultipleTypes | ConfigurationSchemaAbsentType,
+        Field(union_mode="left_to_right"),
+    ]
+
+    @property
+    def values(self) -> tuple[str, ...]:
+        return self.root.values
+
+
+class ConfigurationSchemaEnumerationValues(RootModel[tuple[object, ...]]):
+    model_config = ConfigDict(frozen=True)
+
+    @property
+    def values(self) -> tuple[object, ...] | None:
+        return self.root
+
+
+class ConfigurationSchemaEnumerationAbsent(RootModel[None]):
+    model_config = ConfigDict(frozen=True, strict=True)
+
+    @property
+    def values(self) -> tuple[object, ...] | None:
+        return None
+
+
+class ConfigurationSchemaEnumeration(RootModel[object]):
+    model_config = ConfigDict(frozen=True, strict=True)
+
+    root: Annotated[
+        ConfigurationSchemaEnumerationValues | ConfigurationSchemaEnumerationAbsent,
+        Field(union_mode="left_to_right"),
+    ]
+
+    @property
+    def values(self) -> tuple[object, ...] | None:
+        return self.root.values
+
+
+class ConfigurationSchemaNodeMapping(RootModel[Mapping[str, "ConfigurationSchemaNode"]]):
+    model_config = ConfigDict(frozen=True, strict=True)
+
+    def without_required(self) -> object:
+        return {
+            key: child.without_required()
+            for key, child in self.root.items()
+            if key != "required"
+        }
+
+
+class ConfigurationSchemaNodeSequence(RootModel[tuple["ConfigurationSchemaNode", ...]]):
+    model_config = ConfigDict(frozen=True)
+
+    def without_required(self) -> object:
+        return [child.without_required() for child in self.root]
+
+
+class ConfigurationSchemaNodeScalar(RootModel[None | bool | int | float | str]):
+    model_config = ConfigDict(frozen=True, strict=True)
+
+    def without_required(self) -> object:
+        return self.root
+
+
+class ConfigurationSchemaNode(RootModel[object]):
+    model_config = ConfigDict(frozen=True, strict=True)
+
+    root: Annotated[
+        ConfigurationSchemaNodeMapping | ConfigurationSchemaNodeSequence | ConfigurationSchemaNodeScalar,
+        Field(union_mode="left_to_right"),
+    ]
+
+    def without_required(self) -> object:
+        return self.root.without_required()
+
+
+class ConfigurationSchemaReference(RootModel[str | None]):
+    model_config = ConfigDict(frozen=True)
+
+    @property
+    def internal(self) -> bool:
+        return self.root is not None and self.root.startswith("#/")
+
+    @property
+    def segments(self) -> tuple[str, ...]:
+        if self.root is None:
+            return ()
+        return tuple(
+            segment.replace("~1", "/").replace("~0", "~")
+            for segment in self.root.removeprefix("#/").split("/")
+        )
+
+
+class ConfigurationSchemaDocument(BaseModel):
+    model_config = ConfigDict(extra="ignore", frozen=True, populate_by_name=True)
+
+    properties: Mapping[str, ConfigurationSchemaMapping]
+    definitions: Mapping[str, ConfigurationSchemaMapping] = Field(alias="$defs")
+
+
+@dataclass(frozen=True, slots=True)
+class ConfigurationSchemaAlternativeFacet:
+    schema_type: "ConfigurationSchemaFacet"
+    constraint: "ConfigurationSchemaFacet"
+
+
+@dataclass(frozen=True, slots=True)
+class ConfigurationSchemaFacet:
+    present: bool
+    value: object
+    alternatives: tuple[ConfigurationSchemaAlternativeFacet, ...] = ()
+
+
 class ConfigurationSchemaBoolean(RootModel[bool]):
     model_config = ConfigDict(frozen=True)
 
@@ -46,34 +195,56 @@ class ConfigurationSchemaBoolean(RootModel[bool]):
         return self.root
 
 
+class ConfigurationSchemaAbsent(RootModel[None]):
+    model_config = ConfigDict(frozen=True, strict=True)
+
+    def include(self, name: str, children: dict[str, Mapping[str, object]]) -> dict[str, Mapping[str, object]]:
+        return children
+
+    @property
+    def allows_additional_properties(self) -> bool:
+        return False
+
+
+class ConfigurationSchemaChild(RootModel[object]):
+    model_config = ConfigDict(frozen=True, strict=True)
+
+    root: Annotated[
+        ConfigurationSchemaMapping | ConfigurationSchemaBoolean | ConfigurationSchemaAbsent,
+        Field(union_mode="left_to_right"),
+    ] = Field(default_factory=ConfigurationSchemaAbsent)
+
+    def include(self, name: str, children: dict[str, Mapping[str, object]]) -> dict[str, Mapping[str, object]]:
+        return self.root.include(name, children)
+
+    @property
+    def allows_additional_properties(self) -> bool:
+        return self.root.allows_additional_properties
+
+
 class ConfigurationSchemaContainer(BaseModel):
     model_config = ConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
     properties: Mapping[str, ConfigurationSchemaMapping] = Field(default_factory=dict)
-    items: ConfigurationSchemaMapping | ConfigurationSchemaBoolean | None = None
-    additional_properties: ConfigurationSchemaMapping | ConfigurationSchemaBoolean | None = Field(
-        default=None,
+    items: ConfigurationSchemaChild = Field(default_factory=ConfigurationSchemaChild)
+    additional_properties: ConfigurationSchemaChild = Field(
+        default_factory=ConfigurationSchemaChild,
         alias="additionalProperties",
     )
 
     def children(self) -> dict[str, Mapping[str, object]]:
         children = {name: child.root for name, child in self.properties.items()}
-        if self.items is not None:
-            children = self.items.include("items", children)
-        if self.additional_properties is not None:
-            children = self.additional_properties.include("additionalProperties", children)
-        return children
+        children = self.items.include("items", children)
+        return self.additional_properties.include("additionalProperties", children)
 
     @property
     def allows_additional_properties(self) -> bool:
-        if self.additional_properties is None:
-            return False
         return self.additional_properties.allows_additional_properties
 
 
 @dataclass(frozen=True, slots=True)
 class MermaidConfiguration:
-    schema: Mapping[str, Any]
+    schema: Mapping[str, object]
     overrides: Mapping[str, MermaidConfigurationOverride]
 
     facets = (
@@ -98,44 +269,43 @@ class MermaidConfiguration:
         return DiagramConfigurationContract(config_key, schema_definition, self.extract(source))
 
     def validate(self, contract: DiagramConfigurationContract) -> tuple[ConfigurationViolation, ...]:
-        validator = cast(Any, Draft201909Validator(self._partial_schema()))
-        errors = tuple(cast(Iterator[ValidationError], validator.iter_errors(contract.values)))
+        validator = Draft201909Validator(self.partial_schema())
+        errors = tuple(validator.iter_errors(contract.values))
         return tuple(
             ConfigurationViolation(".".join(str(segment) for segment in error.absolute_path), error.message)
             for error in sorted(errors, key=lambda error: list(error.absolute_path))
         )
 
-    def extract(self, source: str) -> Mapping[str, Any]:
+    def extract(self, source: str) -> Mapping[str, object]:
         if not source.startswith("---\n"):
             return {}
         _, frontmatter, _ = source.split("---\n", 2)
-        payload: object = safe_load(frontmatter)
-        if not isinstance(payload, Mapping):
-            raise ValueError("Mermaid frontmatter must be a mapping.")
-        config: object = cast(Mapping[str, object], payload).get("config", {})
-        if not isinstance(config, Mapping):
-            raise ValueError("Mermaid frontmatter config must be a mapping.")
-        return cast(Mapping[str, Any], config)
+        payload = ConfigurationSchemaMapping.model_validate(safe_load(frontmatter)).root
+        return ConfigurationSchemaMapping.model_validate(payload.get("config", {})).root
 
     def supports(self, contract: DiagramConfigurationContract, upstream: MermaidDiagramConfig) -> bool:
         if contract.config_key != upstream.config_key or contract.schema_definition != upstream.schema_definition:
             return False
-        properties = cast(Mapping[str, Any], self.schema["properties"])
-        definitions = cast(Mapping[str, Any], self.schema["$defs"])
+        document = ConfigurationSchemaDocument.model_validate(self.schema)
         expected = {"$ref": f"#/$defs/{upstream.schema_definition}"}
-        return properties.get(upstream.config_key) == expected and upstream.schema_definition in definitions
+        property_schema = document.properties.get(upstream.config_key)
+        return (
+            property_schema is not None
+            and property_schema.root == expected
+            and upstream.schema_definition in document.definitions
+        )
 
     def compare(
         self,
         config_key: str,
-        local: Mapping[str, Any],
+        local: Mapping[str, object],
         upstream: MermaidDiagramConfig,
     ) -> tuple[ConfigurationViolation, ...]:
-        root_properties = cast(Mapping[str, Any], self.schema["properties"])
-        expected = self._properties(self.schema, upstream.schema)
-        expected["wrap"] = cast(dict[str, Any], root_properties["wrap"])
-        actual = self._properties(local, local)
-        differences = self._compare_properties(config_key, "", local, actual, self.schema, expected)
+        document = ConfigurationSchemaDocument.model_validate(self.schema)
+        expected = self.properties(self.schema, upstream.schema)
+        expected["wrap"] = document.properties["wrap"].root
+        actual = self.properties(local, local)
+        differences = self.compare_properties(config_key, "", local, actual, self.schema, expected)
 
         violations: list[ConfigurationViolation] = []
         for path, facets in differences.items():
@@ -158,14 +328,14 @@ class MermaidConfiguration:
                 violations.append(ConfigurationViolation(path, "configuration override is stale"))
         return tuple(violations)
 
-    def _compare_properties(
+    def compare_properties(
         self,
         config_key: str,
         parent: str,
-        local_root: Mapping[str, Any],
-        local: Mapping[str, Any],
-        upstream_root: Mapping[str, Any],
-        upstream: Mapping[str, Any],
+        local_root: Mapping[str, object],
+        local: Mapping[str, object],
+        upstream_root: Mapping[str, object],
+        upstream: Mapping[str, object],
     ) -> dict[str, frozenset[str]]:
         differences: dict[str, frozenset[str]] = {}
         for name in sorted(local.keys() | upstream.keys()):
@@ -177,14 +347,17 @@ class MermaidConfiguration:
             if name not in upstream:
                 differences[path] = frozenset({"alias"})
                 continue
-            local_schema = self._resolve(local_root, local[name])
-            upstream_schema = self._resolve(upstream_root, upstream[name])
+            local_schema = self.resolve(local_root, ConfigurationSchemaMapping.model_validate(local[name]).root)
+            upstream_schema = self.resolve(
+                upstream_root,
+                ConfigurationSchemaMapping.model_validate(upstream[name]).root,
+            )
             local_container = ConfigurationSchemaContainer.model_validate(local_schema)
             upstream_container = ConfigurationSchemaContainer.model_validate(upstream_schema)
             facets = frozenset(
                 facet
                 for facet in self.facets
-                if self._facet(local_root, local_schema, facet) != self._facet(upstream_root, upstream_schema, facet)
+                if self.facet(local_root, local_schema, facet) != self.facet(upstream_root, upstream_schema, facet)
             )
             if facets:
                 differences[path] = facets
@@ -194,7 +367,7 @@ class MermaidConfiguration:
             upstream_children = upstream_container.children()
             if local_children or upstream_children:
                 differences.update(
-                    self._compare_properties(
+                    self.compare_properties(
                         config_key,
                         property_path,
                         local_root,
@@ -205,63 +378,92 @@ class MermaidConfiguration:
                 )
         return differences
 
-    def _properties(self, root: Mapping[str, Any], value: Mapping[str, Any]) -> dict[str, Any]:
-        resolved = self._resolve(root, value)
+    def properties(
+        self,
+        root: Mapping[str, object],
+        value: Mapping[str, object],
+    ) -> dict[str, object]:
+        resolved = self.resolve(root, value)
         return ConfigurationSchemaContainer.model_validate(resolved).children()
 
-    def _resolve(self, root: Mapping[str, Any], value: Mapping[str, Any]) -> dict[str, Any]:
-        resolved: dict[str, Any] = {}
-        reference = value.get("$ref")
-        if isinstance(reference, str) and reference.startswith("#/"):
-            target: Any = root
-            for segment in reference.removeprefix("#/").split("/"):
-                target = cast(Mapping[str, Any], target)[segment.replace("~1", "/").replace("~0", "~")]
-            resolved.update(self._resolve(root, cast(Mapping[str, Any], target)))
-        for item in cast(list[Mapping[str, Any]], value.get("allOf", [])):
-            inherited = self._resolve(root, item)
+    def resolve(
+        self,
+        root: Mapping[str, object],
+        value: Mapping[str, object],
+    ) -> dict[str, object]:
+        resolved: dict[str, object] = {}
+        reference = ConfigurationSchemaReference.model_validate(value.get("$ref")).root
+        reference_value = ConfigurationSchemaReference(root=reference)
+        if reference_value.internal:
+            target = ConfigurationSchemaMapping(root=root)
+            for segment in reference_value.segments:
+                target = ConfigurationSchemaMapping.model_validate(target.root[segment])
+            resolved.update(self.resolve(root, target.root))
+        all_of = ConfigurationSchemaMappings.model_validate(value.get("allOf", ())).root
+        for item in all_of:
+            inherited = self.resolve(root, item.root)
             resolved.update({key: child for key, child in inherited.items() if key != "properties"})
-            resolved.setdefault("properties", {}).update(inherited.get("properties", {}))
+            inherited_properties = ConfigurationSchemaProperties.model_validate(
+                inherited.get("properties", {})
+            ).root
+            properties = ConfigurationSchemaProperties.model_validate(
+                resolved.setdefault("properties", {})
+            ).root
+            resolved["properties"] = {
+                **{name: child.root for name, child in properties.items()},
+                **{name: child.root for name, child in inherited_properties.items()},
+            }
         for key, item in value.items():
             if key not in {"$ref", "allOf", "properties"}:
                 resolved[key] = item
         if "properties" in value:
-            resolved.setdefault("properties", {}).update(cast(Mapping[str, Any], value["properties"]))
+            properties = ConfigurationSchemaProperties.model_validate(
+                resolved.setdefault("properties", {})
+            ).root
+            local_properties = ConfigurationSchemaProperties.model_validate(value["properties"]).root
+            resolved["properties"] = {
+                **{name: child.root for name, child in properties.items()},
+                **{name: child.root for name, child in local_properties.items()},
+            }
         return resolved
 
-    def _facet(self, root: Mapping[str, Any], value: Mapping[str, Any], facet: str) -> Any:
-        resolved = self._resolve(root, value)
-        alternatives = cast(list[Mapping[str, Any]], resolved.get("anyOf", resolved.get("oneOf", [])))
+    def facet(
+        self,
+        root: Mapping[str, object],
+        value: Mapping[str, object],
+        facet: str,
+    ) -> ConfigurationSchemaFacet:
+        resolved = self.resolve(root, value)
+        alternatives = ConfigurationSchemaMappings.model_validate(
+            resolved.get("anyOf", resolved.get("oneOf", ()))
+        ).root
         if facet in {"type", "nullability"}:
-            types: set[str] = set()
-            item_type = resolved.get("type")
-            if isinstance(item_type, str):
-                types.add(item_type)
-            elif isinstance(item_type, list):
-                types.update(cast(list[str], item_type))
+            types = set(ConfigurationSchemaTypes.model_validate(resolved.get("type")).values)
             for alternative in alternatives:
-                alternative_type = self._facet(root, alternative, "type")
-                if isinstance(alternative_type, tuple):
-                    types.update(cast(tuple[str, ...], alternative_type))
+                alternative_type = self.facet(root, alternative.root, "type")
+                types.update(ConfigurationSchemaStrings.model_validate(alternative_type.value).root)
             if facet == "nullability":
-                return "null" in types
-            return tuple(sorted(types - {"null"}))
+                return ConfigurationSchemaFacet(True, "null" in types)
+            return ConfigurationSchemaFacet(True, tuple(sorted(types - {"null"})))
         if facet == "enum":
-            values = resolved.get("enum")
-            return tuple(cast(list[Any], values)) if isinstance(values, list) else None
-        return facet in resolved, resolved.get(facet)
+            return ConfigurationSchemaFacet(
+                "enum" in resolved,
+                ConfigurationSchemaEnumeration.model_validate(resolved.get("enum")).values,
+            )
+        value = ConfigurationSchemaFacet(facet in resolved, resolved.get(facet))
+        if facet not in {"minimum", "exclusiveMinimum", "maximum", "exclusiveMaximum", "multipleOf"}:
+            return value
+        nested = tuple(
+            ConfigurationSchemaAlternativeFacet(
+                self.facet(root, alternative.root, "type"),
+                candidate,
+            )
+            for alternative in alternatives
+            if (candidate := self.facet(root, alternative.root, facet)).present
+        )
+        return ConfigurationSchemaFacet(value.present, value.value, nested)
 
-    def _partial_schema(self) -> dict[str, Any]:
-        schema = deepcopy(dict(self.schema))
-        self._remove_required(schema)
-        return schema
-
-    def _remove_required(self, value: Any) -> None:
-        if isinstance(value, dict):
-            mapping = cast(dict[str, Any], value)
-            mapping.pop("required", None)
-            for child in mapping.values():
-                self._remove_required(child)
-        if isinstance(value, list):
-            items = cast(list[Any], value)
-            for child in items:
-                self._remove_required(child)
+    def partial_schema(self) -> dict[str, object]:
+        return ConfigurationSchemaMapping.model_validate(
+            ConfigurationSchemaNode.model_validate(dict(self.schema)).without_required()
+        ).root

@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any
+from enum import Enum
 
+from pydantic import BaseModel
 from ...core.domain import DiagramSnapshotContractIdentity
 
 SNAPSHOT_VERSION = 8
@@ -39,7 +40,7 @@ class DiagramSnapshot:
 @dataclass(frozen=True, slots=True)
 class SnapshotType:
     discriminator: str
-    value_type: type[Any]
+    value_type: type[object]
 
 
 @dataclass(frozen=True, slots=True)
@@ -81,7 +82,10 @@ class SnapshotTypeRegistry(ABC):
     def reference(self, owner: str, value_type: type[object]) -> str: ...
 
     @abstractmethod
-    def resolve(self, owner: str, discriminator: str, expected: Any) -> type[Any]: ...
+    def resolve_model(self, owner: str, discriminator: str) -> type[BaseModel]: ...
+
+    @abstractmethod
+    def resolve_enum(self, owner: str, discriminator: str) -> type[Enum]: ...
 
     @property
     @abstractmethod
