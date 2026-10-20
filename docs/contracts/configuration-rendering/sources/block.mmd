@@ -1,0 +1,21 @@
+---
+config:
+  wrap: true
+  block: {"useWidth": 960.0, "useMaxWidth": true, "padding": 8.0}
+---
+block
+columns 3
+frontend["Frontend"]
+space
+block:backend
+  columns 2
+  api["API"]
+  database["Database"]
+  worker["Worker"]
+  cache["Cache"]
+  queue["Queue"]
+  search["Search"]
+end
+metrics["Metrics"]
+audit["Audit"]
+notifications["Notifications"]

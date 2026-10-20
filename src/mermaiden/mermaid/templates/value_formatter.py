@@ -1,4 +1,4 @@
-import base64
+import hashlib
 import json
 import re
 from dataclasses import dataclass
@@ -17,7 +17,7 @@ class MermaidValueFormatter:
         token = (
             f"v_{text}"
             if self.identifier_pattern.fullmatch(text)
-            else f"b_{base64.b32encode(text.encode()).decode().rstrip('=').lower()}"
+            else f"h_{hashlib.blake2s(text.encode(), digest_size=16).hexdigest()}"
         )
         return f"{namespace}_{token}"
 
@@ -35,7 +35,7 @@ class MermaidValueFormatter:
         )
 
     def number(self, value: float | int) -> str:
-        return str(int(value)) if isinstance(value, float) and value.is_integer() else str(value)
+        return f"{value:g}"
 
     def tree_label(self, value: object) -> str:
         text = str(value)

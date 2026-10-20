@@ -1,0 +1,38 @@
+---
+config:
+  wrap: true
+  flowchart: {"useWidth": 960.0, "useMaxWidth": true, "titleTopMargin": 25, "subGraphTitleMargin": {"top": 0, "bottom": 0}, "arrowMarkerAbsolute": false, "diagramPadding": 8, "nodeSpacing": 50, "rankSpacing": 50, "curve": "basis", "padding": 15.0, "defaultRenderer": "dagre-wrapper", "wrappingWidth": 200.0, "inheritDir": false}
+---
+flowchart TD
+subgraph e_v_entry["Entry"]
+  e_v_start@{ shape: circle, label: "Start" }
+  e_v_ready@{ shape: diam, label: "Ready?" }
+end
+subgraph e_v_process["Process"]
+  e_v_work@{ shape: rect, label: "Work" }
+  e_v_node@{ shape: rect, label: "Node" }
+  e_v_input@{ shape: lean-r, label: "Input" }
+  e_v_data@{ shape: cyl, label: "Data" }
+  e_v_document@{ shape: doc, label: "Document" }
+  e_v_subprocess@{ shape: fr-rect, label: "Subprocess" }
+  e_v_junction@{ shape: f-circ, label: "Junction" }
+  e_v_end@{ shape: dbl-circ, label: "End" }
+  e_v_alternate_end@{ shape: dbl-circ, label: "Alternate end" }
+end
+e_v_start r_v_start_ready@--> e_v_ready
+e_v_ready r_v_ready_work@-->|"yes"| e_v_work
+e_v_ready r_v_ready_node@-->|"no"| e_v_node
+e_v_work r_v_work_node@--> e_v_node
+e_v_node r_v_node_input@--> e_v_input
+e_v_input r_v_input_data@--> e_v_data
+e_v_data r_v_data_document@--> e_v_document
+e_v_document r_v_document_subprocess@--> e_v_subprocess
+e_v_subprocess r_v_subprocess_junction@--> e_v_junction
+e_v_junction r_v_junction_end@--> e_v_end
+e_v_junction r_v_junction_alternate@--> e_v_alternate_end
+a_v_start_note@{ shape: comment, label: "Start process" }
+e_v_start -.-> a_v_start_note
+a_v_work_note@{ shape: comment, label: "Process work" }
+e_v_work -.-> a_v_work_note
+a_v_end_note@{ shape: comment, label: "Finish process" }
+e_v_end -.-> a_v_end_note

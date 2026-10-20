@@ -21,7 +21,23 @@
         "Identifier"
       ]
     },
-    "configure": {},
+    "configure": {
+      "$.labelStyle": [
+        "SankeyLabelStyle values"
+      ],
+      "$.linkColor": [
+        "Identifier"
+      ],
+      "$.nodeAlignment": [
+        "SankeyNodeAlignment values"
+      ],
+      "$.prefix": [
+        "OptionalIdentifier"
+      ],
+      "$.suffix": [
+        "OptionalIdentifier"
+      ]
+    },
     "move_element": {
       "$.id": [
         "Identifier"

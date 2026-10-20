@@ -79,7 +79,13 @@ class TestTreeViewPersistence:
             assert report is not None
             assert report.accepted
             assert persisted_ids == expected_ids
-            assert source.startswith("---\nconfig:\n  wrap: true\n---\ntreeView-beta\n")
+            assert source.startswith(
+                "---\nconfig:\n  wrap: true\n"
+                '  treeView: {"useMaxWidth": true, "rowIndent": 10.0, "paddingX": 5.0, '
+                '"paddingY": 5.0, "lineThickness": 1.0, "showIcons": false, "defaultIconPack": "", '
+                '"filenameIcons": {}, "extensionIcons": {}}\n'
+                "---\ntreeView-beta\n"
+            )
 
         assert source.endswith(
             "treeView-beta\nroot/\n  child-one/ icon(folder)\n    leaf.txt :::highlight\n  child-two/ ## Second child\n"

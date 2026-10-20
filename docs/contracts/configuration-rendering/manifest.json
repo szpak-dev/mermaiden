@@ -1,0 +1,5102 @@
+{
+  "mermaid_version": "11.16.0",
+  "diagram_count": 27,
+  "configuration_field_count": 466,
+  "probe_count": 1464,
+  "diagrams": [
+    {
+      "diagram_id": "C4Context",
+      "source": "sources/C4Context.mmd",
+      "source_sha256": "47e113b970e2a8cf41bc58277ce2d1cf36440247a0721806d0b5fdd17b93b28d",
+      "svg": "rendered/C4Context.svg",
+      "svg_sha256": "93236bd06a8b319274f73f98af143e54098705ec32809eb90ae7f9d9f416b6e2",
+      "semantic_object_count": 20,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "diagramMarginX",
+          "showcase_value": 40,
+          "probes": [
+            0,
+            1,
+            50
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "diagramMarginY",
+          "showcase_value": 40,
+          "probes": [
+            0,
+            1,
+            10
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "c4ShapeMargin",
+          "showcase_value": 25,
+          "probes": [
+            0,
+            1,
+            50
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "c4ShapePadding",
+          "showcase_value": 14,
+          "probes": [
+            0,
+            1,
+            20
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "width",
+          "showcase_value": 190,
+          "probes": [
+            0,
+            1,
+            216
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "height",
+          "showcase_value": 72,
+          "probes": [
+            0,
+            1,
+            60
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "boxMargin",
+          "showcase_value": 16,
+          "probes": [
+            0,
+            1,
+            10
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "c4ShapeInRow",
+          "showcase_value": 3,
+          "probes": [
+            0,
+            1,
+            4
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "nextLinePaddingX",
+          "showcase_value": 0.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "c4BoundaryInRow",
+          "showcase_value": 2,
+          "probes": [
+            0,
+            1,
+            2
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "personFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "personFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "personFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_personFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_personFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_personFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "systemFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "systemFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "systemFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_systemFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_systemFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_systemFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "system_dbFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "system_dbFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "system_dbFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_system_dbFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_system_dbFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_system_dbFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "system_queueFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "system_queueFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "system_queueFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_system_queueFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_system_queueFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_system_queueFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "boundaryFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            0.25,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "boundaryFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "boundaryFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "messageFontSize",
+          "showcase_value": 11.0,
+          "probes": [
+            "12",
+            "0.5",
+            0.25,
+            1.0,
+            12.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "messageFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "messageFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "containerFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "containerFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "containerFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_containerFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_containerFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_containerFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "container_dbFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "container_dbFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "container_dbFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_container_dbFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_container_dbFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_container_dbFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "container_queueFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "container_queueFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "container_queueFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_container_queueFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_container_queueFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_container_queueFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "componentFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "componentFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "componentFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_componentFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_componentFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_componentFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "component_dbFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "component_dbFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "component_dbFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_component_dbFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_component_dbFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_component_dbFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "component_queueFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "component_queueFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "component_queueFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_component_queueFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_component_queueFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_component_queueFontWeight",
+          "showcase_value": "normal",
+          "probes": [
+            "400",
+            "700",
+            "normal",
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "wrapPadding",
+          "showcase_value": 8.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            10.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "person_bg_color",
+          "showcase_value": "#08427B",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#08427B"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "person_border_color",
+          "showcase_value": "#073B6F",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#073B6F"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_person_bg_color",
+          "showcase_value": "#686868",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#686868"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_person_border_color",
+          "showcase_value": "#8A8A8A",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#8A8A8A"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "system_bg_color",
+          "showcase_value": "#1168BD",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#1168BD"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "system_border_color",
+          "showcase_value": "#3C7FC0",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#3C7FC0"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "system_db_bg_color",
+          "showcase_value": "#1168BD",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#1168BD"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "system_db_border_color",
+          "showcase_value": "#3C7FC0",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#3C7FC0"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "system_queue_bg_color",
+          "showcase_value": "#1168BD",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#1168BD"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "system_queue_border_color",
+          "showcase_value": "#3C7FC0",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#3C7FC0"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_system_bg_color",
+          "showcase_value": "#999999",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#999999"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_system_border_color",
+          "showcase_value": "#8A8A8A",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#8A8A8A"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_system_db_bg_color",
+          "showcase_value": "#999999",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#999999"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_system_db_border_color",
+          "showcase_value": "#8A8A8A",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#8A8A8A"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_system_queue_bg_color",
+          "showcase_value": "#999999",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#999999"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_system_queue_border_color",
+          "showcase_value": "#8A8A8A",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#8A8A8A"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "container_bg_color",
+          "showcase_value": "#438DD5",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#438DD5"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "container_border_color",
+          "showcase_value": "#3C7FC0",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#3C7FC0"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "container_db_bg_color",
+          "showcase_value": "#438DD5",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#438DD5"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "container_db_border_color",
+          "showcase_value": "#3C7FC0",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#3C7FC0"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "container_queue_bg_color",
+          "showcase_value": "#438DD5",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#438DD5"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "container_queue_border_color",
+          "showcase_value": "#3C7FC0",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#3C7FC0"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_container_bg_color",
+          "showcase_value": "#B3B3B3",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#B3B3B3"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_container_border_color",
+          "showcase_value": "#A6A6A6",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#A6A6A6"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_container_db_bg_color",
+          "showcase_value": "#B3B3B3",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#B3B3B3"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_container_db_border_color",
+          "showcase_value": "#A6A6A6",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#A6A6A6"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_container_queue_bg_color",
+          "showcase_value": "#B3B3B3",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#B3B3B3"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_container_queue_border_color",
+          "showcase_value": "#A6A6A6",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#A6A6A6"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "component_bg_color",
+          "showcase_value": "#85BBF0",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#85BBF0"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "component_border_color",
+          "showcase_value": "#78A8D8",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#78A8D8"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "component_db_bg_color",
+          "showcase_value": "#85BBF0",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#85BBF0"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "component_db_border_color",
+          "showcase_value": "#78A8D8",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#78A8D8"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "component_queue_bg_color",
+          "showcase_value": "#85BBF0",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#85BBF0"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "component_queue_border_color",
+          "showcase_value": "#78A8D8",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#78A8D8"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_component_bg_color",
+          "showcase_value": "#CCCCCC",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#CCCCCC"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_component_border_color",
+          "showcase_value": "#BFBFBF",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#BFBFBF"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_component_db_bg_color",
+          "showcase_value": "#CCCCCC",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#CCCCCC"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_component_db_border_color",
+          "showcase_value": "#BFBFBF",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#BFBFBF"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_component_queue_bg_color",
+          "showcase_value": "#CCCCCC",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#CCCCCC"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "external_component_queue_border_color",
+          "showcase_value": "#BFBFBF",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#BFBFBF"
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "architecture-beta",
+      "source": "sources/architecture-beta.mmd",
+      "source_sha256": "2816dbb0a94d9b8d5121da60912962af9fb3d51e98ee8e9915e9eff1aca9418e",
+      "svg": "rendered/architecture-beta.svg",
+      "svg_sha256": "9d319400bde225326881f3533d9baba275d4023cf974c3a89ddb5f6e8c7fefce",
+      "semantic_object_count": 28,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "padding",
+          "showcase_value": 40.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            40.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "iconSize",
+          "showcase_value": 80.0,
+          "probes": [
+            0.25,
+            1.0,
+            80.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "fontSize",
+          "showcase_value": 16.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            16.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "randomize",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "nodeSeparation",
+          "showcase_value": 96.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            75.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "idealEdgeLengthMultiplier",
+          "showcase_value": 1.8,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            1.5
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "edgeElasticity",
+          "showcase_value": 0.3,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            0.45
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "numIter",
+          "showcase_value": 5000.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            2500.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "seed",
+          "showcase_value": 7.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "block",
+      "source": "sources/block.mmd",
+      "source_sha256": "6f2c9f7b3a585745f183af6b119471adc35200e8d7522adedd5ae4d564053d2a",
+      "svg": "rendered/block.svg",
+      "svg_sha256": "31d71cfd945020824e0203ba0824242a111a1dedb3d55a9950f69c9a007a3981",
+      "semantic_object_count": 12,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "padding",
+          "showcase_value": 8.0,
+          "probes": [
+            0.0,
+            1.0,
+            8.0
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "classDiagram",
+      "source": "sources/classDiagram.mmd",
+      "source_sha256": "55b001005eab0b3b53c8eb8e9b0a91a7668bf7a129e218e7b7a680b03eaae768",
+      "svg": "rendered/classDiagram.svg",
+      "svg_sha256": "c1a12f415ffd2b4e04c12797e4b7a4660bfb90ca6afbfaf84d86f6539e0df23b",
+      "semantic_object_count": 20,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "titleTopMargin",
+          "showcase_value": 25,
+          "probes": [
+            0,
+            1,
+            25
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "arrowMarkerAbsolute",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "dividerMargin",
+          "showcase_value": 10.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            10.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "padding",
+          "showcase_value": 5.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            5.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "textHeight",
+          "showcase_value": 10.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            10.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "defaultRenderer",
+          "showcase_value": "dagre-wrapper",
+          "probes": [
+            "dagre-d3",
+            "dagre-wrapper",
+            "elk"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "nodeSpacing",
+          "showcase_value": 0,
+          "probes": [
+            0,
+            1
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "rankSpacing",
+          "showcase_value": 0,
+          "probes": [
+            0,
+            1
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "diagramPadding",
+          "showcase_value": 20,
+          "probes": [
+            0,
+            1,
+            20
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "htmlLabels",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "hideEmptyMembersBox",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "hierarchicalNamespaces",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "cynefin-beta",
+      "source": "sources/cynefin-beta.mmd",
+      "source_sha256": "b2414b9e24739f710ffb5f649c78830f9e7577e35483f91d4d483d2d99b3a154",
+      "svg": "rendered/cynefin-beta.svg",
+      "svg_sha256": "a59b80bb6f8ce748305eceb07c3f670816ba44444c5b33d8e5ca7beca4732279",
+      "semantic_object_count": 12,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "width",
+          "showcase_value": 800.0,
+          "probes": [
+            1.0,
+            800.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "height",
+          "showcase_value": 600.0,
+          "probes": [
+            1.0,
+            600.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "padding",
+          "showcase_value": 40.0,
+          "probes": [
+            0.0,
+            1.0,
+            40.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "showDomainDescriptions",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "boundaryAmplitude",
+          "showcase_value": 8.0,
+          "probes": [
+            0.0,
+            25.0,
+            50.0,
+            8.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "seed",
+          "showcase_value": 1.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "erDiagram",
+      "source": "sources/erDiagram.mmd",
+      "source_sha256": "e170a67c9f88d5c52ab629b1e4794c9890dfc1760f3c65c739fe7c6afc11c1a5",
+      "svg": "rendered/erDiagram.svg",
+      "svg_sha256": "9118b0acd1f9b27c54f54ceba8700b846ce36c4372d906c762af9a201010563c",
+      "semantic_object_count": 17,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "titleTopMargin",
+          "showcase_value": 25,
+          "probes": [
+            0,
+            1,
+            25
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "diagramPadding",
+          "showcase_value": 20,
+          "probes": [
+            0,
+            1,
+            20
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layoutDirection",
+          "showcase_value": "TB",
+          "probes": [
+            "TB",
+            "BT",
+            "LR",
+            "RL"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "minEntityWidth",
+          "showcase_value": 100,
+          "probes": [
+            0,
+            1,
+            100
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "minEntityHeight",
+          "showcase_value": 75,
+          "probes": [
+            0,
+            1,
+            75
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "entityPadding",
+          "showcase_value": 15,
+          "probes": [
+            0,
+            1,
+            15
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "nodeSpacing",
+          "showcase_value": 140,
+          "probes": [
+            0,
+            1,
+            140
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "rankSpacing",
+          "showcase_value": 80,
+          "probes": [
+            0,
+            1,
+            80
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "stroke",
+          "showcase_value": "gray",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "gray"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "fill",
+          "showcase_value": "honeydew",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "honeydew"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "fontSize",
+          "showcase_value": 12,
+          "probes": [
+            0,
+            1,
+            12
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "eventmodeling",
+      "source": "sources/eventmodeling.mmd",
+      "source_sha256": "37737726fae4e921685753b9b4e90ac1ad902c09709836c87686513f7358068e",
+      "svg": "rendered/eventmodeling.svg",
+      "svg_sha256": "c609a15d7448387e92f691925edd5e9626a6c15b3fc076916259e68c6ac6f69d",
+      "semantic_object_count": 16,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "padding",
+          "showcase_value": 30.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            30.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "rowHeight",
+          "showcase_value": 32.0,
+          "probes": [
+            1.0,
+            32.0
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "flowchart",
+      "source": "sources/flowchart.mmd",
+      "source_sha256": "24178868f759b12c618d70cc4a3cfadee3411579c167219a6b84b00bac5fda55",
+      "svg": "rendered/flowchart.svg",
+      "svg_sha256": "d43a999be4f550084a37e2df691ab0cca9bae81adb0f6debdfd3b148ead59c3c",
+      "semantic_object_count": 27,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "titleTopMargin",
+          "showcase_value": 25,
+          "probes": [
+            0,
+            1,
+            25
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "subGraphTitleMargin",
+          "showcase_value": {
+            "top": 0,
+            "bottom": 0
+          },
+          "probes": [
+            {},
+            {
+              "top": 1,
+              "bottom": 1
+            }
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "arrowMarkerAbsolute",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "diagramPadding",
+          "showcase_value": 8,
+          "probes": [
+            0,
+            1,
+            8
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "nodeSpacing",
+          "showcase_value": 50,
+          "probes": [
+            0,
+            1,
+            50
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "rankSpacing",
+          "showcase_value": 50,
+          "probes": [
+            0,
+            1,
+            50
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "curve",
+          "showcase_value": "basis",
+          "probes": [
+            "basis",
+            "bumpX",
+            "bumpY",
+            "cardinal",
+            "catmullRom",
+            "linear",
+            "monotoneX",
+            "monotoneY",
+            "natural",
+            "step",
+            "stepAfter",
+            "stepBefore",
+            "rounded"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "padding",
+          "showcase_value": 15.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            15.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "defaultRenderer",
+          "showcase_value": "dagre-wrapper",
+          "probes": [
+            "dagre-wrapper",
+            "elk"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "wrappingWidth",
+          "showcase_value": 200.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            200.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "inheritDir",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "gantt",
+      "source": "sources/gantt.mmd",
+      "source_sha256": "964cbc77c40f690e26610a87c7241eda4656f16399996d34a6c1ccc823020cc1",
+      "svg": "rendered/gantt.svg",
+      "svg_sha256": "81bf39073e5b33c9b2681b38dba1955180f6747e88a5d6d9f176e69ef828079a",
+      "semantic_object_count": 12,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "titleTopMargin",
+          "showcase_value": 25,
+          "probes": [
+            0,
+            1,
+            25
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "barHeight",
+          "showcase_value": 20,
+          "probes": [
+            0,
+            1,
+            20
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "barGap",
+          "showcase_value": 4,
+          "probes": [
+            0,
+            1,
+            4
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "topPadding",
+          "showcase_value": 50,
+          "probes": [
+            0,
+            1,
+            50
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "rightPadding",
+          "showcase_value": 75,
+          "probes": [
+            0,
+            1,
+            75
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "leftPadding",
+          "showcase_value": 75,
+          "probes": [
+            0,
+            1,
+            75
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "gridLineStartPadding",
+          "showcase_value": 35,
+          "probes": [
+            0,
+            1,
+            35
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "fontSize",
+          "showcase_value": 11,
+          "probes": [
+            0,
+            1,
+            11
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "sectionFontSize",
+          "showcase_value": 11,
+          "probes": [
+            0,
+            1,
+            11
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "numberSectionStyles",
+          "showcase_value": 4,
+          "probes": [
+            1,
+            4
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "axisFormat",
+          "showcase_value": "%Y-%m-%d",
+          "probes": [
+            "%Y-%m-%d",
+            "%d %b"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "tickInterval",
+          "showcase_value": "1day",
+          "probes": [
+            "1day",
+            "1week"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "topAxis",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "displayMode",
+          "showcase_value": "",
+          "probes": [
+            "",
+            "compact"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "weekday",
+          "showcase_value": "sunday",
+          "probes": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday"
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "gitGraph",
+      "source": "sources/gitGraph.mmd",
+      "source_sha256": "0010c4b3eeef80361a3b8198c89625dd6456a191689e1e5264e1f497347b0e89",
+      "svg": "rendered/gitGraph.svg",
+      "svg_sha256": "f5f6334b48039001a1594ece73e85be0fa6fd3647aed73e4bbb1146cfb4d7a37",
+      "semantic_object_count": 12,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "titleTopMargin",
+          "showcase_value": 25,
+          "probes": [
+            0,
+            1,
+            25
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "diagramPadding",
+          "showcase_value": 8.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            8.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "nodeLabel",
+          "showcase_value": {
+            "width": 75.0,
+            "height": 100.0,
+            "x": -25.0,
+            "y": 0.0
+          },
+          "probes": [
+            {
+              "width": 75.0,
+              "height": 100.0,
+              "x": -25.0,
+              "y": 0.0
+            },
+            {
+              "width": 1.0,
+              "height": 1.0,
+              "x": 1.0,
+              "y": 1.0
+            }
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "mainBranchName",
+          "showcase_value": "main",
+          "probes": [
+            "main",
+            "trunk"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "mainBranchOrder",
+          "showcase_value": 0.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "showCommitLabel",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "showBranches",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "rotateCommitLabel",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "parallelCommits",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "arrowMarkerAbsolute",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "ishikawa-beta",
+      "source": "sources/ishikawa-beta.mmd",
+      "source_sha256": "6c117ea24e1512d1fa0425da85cd005a4235ef80a498c135b18b52dfb5785135",
+      "svg": "rendered/ishikawa-beta.svg",
+      "svg_sha256": "08601f58e253673e8129d9a2416f16d17f083f2b64025c1795826d73b1ea929e",
+      "semantic_object_count": 13,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "diagramPadding",
+          "showcase_value": 20,
+          "probes": [
+            0,
+            1,
+            20
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "journey",
+      "source": "sources/journey.mmd",
+      "source_sha256": "e50c04a9e3ed9399951d0716436e5b0010e601bdc62842955ea4d44eb26509b2",
+      "svg": "rendered/journey.svg",
+      "svg_sha256": "7882deea2a47f049c02ecad6b4a7d3af6c3226389e29f2adb68a7842f146e547",
+      "semantic_object_count": 12,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "diagramMarginX",
+          "showcase_value": 50,
+          "probes": [
+            0,
+            1,
+            50
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "diagramMarginY",
+          "showcase_value": 10,
+          "probes": [
+            0,
+            1,
+            10
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "leftMargin",
+          "showcase_value": 150,
+          "probes": [
+            0,
+            1,
+            150
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "maxLabelWidth",
+          "showcase_value": 360,
+          "probes": [
+            -1,
+            0,
+            1,
+            360
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "width",
+          "showcase_value": 150,
+          "probes": [
+            0,
+            1,
+            150
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "height",
+          "showcase_value": 50,
+          "probes": [
+            0,
+            1,
+            50
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "boxMargin",
+          "showcase_value": 10,
+          "probes": [
+            0,
+            1,
+            10
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "boxTextMargin",
+          "showcase_value": 5,
+          "probes": [
+            0,
+            1,
+            5
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "noteMargin",
+          "showcase_value": 10,
+          "probes": [
+            0,
+            1,
+            10
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "messageMargin",
+          "showcase_value": 35,
+          "probes": [
+            0,
+            1,
+            35
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "messageAlign",
+          "showcase_value": "center",
+          "probes": [
+            "left",
+            "center",
+            "right"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "bottomMarginAdj",
+          "showcase_value": 1,
+          "probes": [
+            0,
+            1
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "rightAngles",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "taskFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "taskFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "taskMargin",
+          "showcase_value": 50.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            50.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "activationWidth",
+          "showcase_value": 10.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            10.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "textPlacement",
+          "showcase_value": "fo",
+          "probes": [
+            "proof",
+            "fo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "actorColours",
+          "showcase_value": [
+            "#8FBC8F",
+            "#7CFC00",
+            "#00FFFF",
+            "#20B2AA",
+            "#B0E0E6",
+            "#FFFFE0"
+          ],
+          "probes": [
+            [],
+            [
+              "proof"
+            ],
+            [
+              "proof",
+              "proof"
+            ]
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "sectionFills",
+          "showcase_value": [
+            "#191970",
+            "#8B008B",
+            "#4B0082",
+            "#2F4F4F",
+            "#800000",
+            "#8B4513",
+            "#00008B"
+          ],
+          "probes": [
+            [],
+            [
+              "#F2994A"
+            ],
+            [
+              "#F2994A",
+              "#F2994A"
+            ]
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "sectionColours",
+          "showcase_value": [
+            "#fff"
+          ],
+          "probes": [
+            [],
+            [
+              "proof"
+            ],
+            [
+              "proof",
+              "proof"
+            ]
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "titleColor",
+          "showcase_value": "",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            ""
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "titleFontFamily",
+          "showcase_value": "\"trebuchet ms\", verdana, arial, sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"trebuchet ms\", verdana, arial, sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "titleFontSize",
+          "showcase_value": "4ex",
+          "probes": [
+            "12",
+            "0.5",
+            "4ex"
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "kanban",
+      "source": "sources/kanban.mmd",
+      "source_sha256": "446f4dc9a3e9c68cd78e4a422f3db7f730ec6a8687be12b3d0f3350699722619",
+      "svg": "rendered/kanban.svg",
+      "svg_sha256": "1c2317070d440756a4c0baf3918d310c846b12ce85d0a575f77fbb287662fb7f",
+      "semantic_object_count": 12,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "padding",
+          "showcase_value": 8.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            8.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "sectionWidth",
+          "showcase_value": 200.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            200.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "ticketBaseUrl",
+          "showcase_value": "",
+          "probes": [
+            "",
+            "https://example.test/tickets/"
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "mindmap",
+      "source": "sources/mindmap.mmd",
+      "source_sha256": "432b5f3137368e827af9de74f565b9cd4ed39c07e65bb31fce4a3a83fa78d0e9",
+      "svg": "rendered/mindmap.svg",
+      "svg_sha256": "4201898a0690e74592bef8664e7756e2684fdb5229090bea652503cbbaf85c80",
+      "semantic_object_count": 12,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "padding",
+          "showcase_value": 10.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            10.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "maxNodeWidth",
+          "showcase_value": 200.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            200.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layoutAlgorithm",
+          "showcase_value": "cose-bilkent",
+          "probes": [
+            "proof",
+            "cose-bilkent"
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "packet",
+      "source": "sources/packet.mmd",
+      "source_sha256": "955234920effdc16c8e41fd7ce92d06b08306c2f185bf69775ba482688b90fc7",
+      "svg": "rendered/packet.svg",
+      "svg_sha256": "13b9ff28761ddc06cf445dd1d9951e2565717c5f82486e44265bc6e7821639f2",
+      "semantic_object_count": 12,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "rowHeight",
+          "showcase_value": 32.0,
+          "probes": [
+            1.0,
+            32.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "bitWidth",
+          "showcase_value": 32.0,
+          "probes": [
+            1.0,
+            32.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "bitsPerRow",
+          "showcase_value": 32,
+          "probes": [
+            1,
+            32
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "showBits",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "paddingX",
+          "showcase_value": 5.0,
+          "probes": [
+            0.0,
+            1.0,
+            5.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "paddingY",
+          "showcase_value": 5.0,
+          "probes": [
+            0.0,
+            1.0,
+            5.0
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "pie",
+      "source": "sources/pie.mmd",
+      "source_sha256": "d30dcd92df932b5cf044e083ba402adc45f8e01a99422c84e7d8ae0bd27ba329",
+      "svg": "rendered/pie.svg",
+      "svg_sha256": "df828105a63a48f52ed4c70ce662fd45f46427296743e8dd825c9cc4c45d8ea4",
+      "semantic_object_count": 12,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "textPosition",
+          "showcase_value": 0.75,
+          "probes": [
+            0.0,
+            0.5,
+            1.0,
+            0.75
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "donutHole",
+          "showcase_value": 0.0,
+          "probes": [
+            0.0,
+            0.45,
+            0.9
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "legendPosition",
+          "showcase_value": "right",
+          "probes": [
+            "top",
+            "bottom",
+            "left",
+            "right",
+            "center"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "highlightSlice",
+          "showcase_value": "",
+          "probes": [
+            "",
+            "proof"
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "radar-beta",
+      "source": "sources/radar-beta.mmd",
+      "source_sha256": "421fa9e64f405d195f697312bc3166d9566ef2d20774a2726258d12d2641d42c",
+      "svg": "rendered/radar-beta.svg",
+      "svg_sha256": "25a822dd998a23edc1c0d5a9054b81c8998bafe856f899f6c630a73c262e6366",
+      "semantic_object_count": 12,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "width",
+          "showcase_value": 600.0,
+          "probes": [
+            1.0,
+            600.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "height",
+          "showcase_value": 600.0,
+          "probes": [
+            1.0,
+            600.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "marginTop",
+          "showcase_value": 50.0,
+          "probes": [
+            0.0,
+            1.0,
+            50.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "marginRight",
+          "showcase_value": 50.0,
+          "probes": [
+            0.0,
+            1.0,
+            50.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "marginBottom",
+          "showcase_value": 50.0,
+          "probes": [
+            0.0,
+            1.0,
+            50.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "marginLeft",
+          "showcase_value": 50.0,
+          "probes": [
+            0.0,
+            1.0,
+            50.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "axisScaleFactor",
+          "showcase_value": 1.0,
+          "probes": [
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "axisLabelFactor",
+          "showcase_value": 1.05,
+          "probes": [
+            0.0,
+            1.0,
+            1.05
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "curveTension",
+          "showcase_value": 0.17,
+          "probes": [
+            0.0,
+            0.5,
+            1.0,
+            0.17
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "railroad-ebnf-beta",
+      "source": "sources/railroad-ebnf-beta.mmd",
+      "source_sha256": "28ae75fe42ab99430e1c6cfb0af63851353f56acfce93ffc8a1e5aabd9c40ecf",
+      "svg": "rendered/railroad-ebnf-beta.svg",
+      "svg_sha256": "59a98c2068fe59c2bc91228386cf28c248fe759d6843dd0216c0559eef6282c0",
+      "semantic_object_count": 13,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "compactMode",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "padding",
+          "showcase_value": 10.0,
+          "probes": [
+            0.0,
+            1.0,
+            10.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "verticalSeparation",
+          "showcase_value": 8.0,
+          "probes": [
+            0.0,
+            1.0,
+            8.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "horizontalSeparation",
+          "showcase_value": 10.0,
+          "probes": [
+            0.0,
+            1.0,
+            10.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "arcRadius",
+          "showcase_value": 10.0,
+          "probes": [
+            0.0,
+            1.0,
+            10.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "fontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "fontFamily",
+          "showcase_value": "monospace",
+          "probes": [
+            "Arial",
+            "monospace"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "terminalFill",
+          "showcase_value": "#FFFFC0",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#FFFFC0"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "terminalStroke",
+          "showcase_value": "#000000",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#000000"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "terminalTextColor",
+          "showcase_value": "#000000",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#000000"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "nonTerminalFill",
+          "showcase_value": "#FFFFFF",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#FFFFFF"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "nonTerminalStroke",
+          "showcase_value": "#000000",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#000000"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "nonTerminalTextColor",
+          "showcase_value": "#000000",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#000000"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "lineColor",
+          "showcase_value": "#000000",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#000000"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "strokeWidth",
+          "showcase_value": 2.0,
+          "probes": [
+            0.0,
+            1.0,
+            2.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "markerFill",
+          "showcase_value": "#000000",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#000000"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "commentFill",
+          "showcase_value": "#E8E8E8",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#E8E8E8"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "commentStroke",
+          "showcase_value": "#888888",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#888888"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "commentTextColor",
+          "showcase_value": "#666666",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#666666"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "specialFill",
+          "showcase_value": "#F0E0FF",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#F0E0FF"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "specialStroke",
+          "showcase_value": "#8800CC",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#8800CC"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "ruleNameColor",
+          "showcase_value": "#000066",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#000066"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "showMarkers",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "markerRadius",
+          "showcase_value": 5.0,
+          "probes": [
+            0.0,
+            1.0,
+            5.0
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "requirementDiagram",
+      "source": "sources/requirementDiagram.mmd",
+      "source_sha256": "2a859a61454ebf480c935663800ce98d4c71fb3da1e5d66b6a952bc27b1ca788",
+      "svg": "rendered/requirementDiagram.svg",
+      "svg_sha256": "c6489c6a7faa46f169061238683ea5f4f7478eb3e9550a19f105ff33ee82ff72",
+      "semantic_object_count": 15,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "rectFill",
+          "showcase_value": "#f9f9f9",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#f9f9f9"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "textColor",
+          "showcase_value": "#333",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#333"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "rectBorderSize",
+          "showcase_value": "0.5px",
+          "probes": [
+            "proof",
+            "0.5px"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "rectBorderColor",
+          "showcase_value": "#bbb",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "#bbb"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "rectMinWidth",
+          "showcase_value": 200.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            200.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "rectMinHeight",
+          "showcase_value": 200.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            200.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "fontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "rectPadding",
+          "showcase_value": 10.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            10.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "lineHeight",
+          "showcase_value": 20.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            20.0
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "sankey",
+      "source": "sources/sankey.mmd",
+      "source_sha256": "c74fac7ff79f6e8ca53f822c46c5746f62ea5edb8bff2636939140742a35c988",
+      "svg": "rendered/sankey.svg",
+      "svg_sha256": "cdf2059635c791db2a36a60952b8922620f7c67ee14dba924153381cf2be8b8e",
+      "semantic_object_count": 16,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "width",
+          "showcase_value": 600.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            600.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "height",
+          "showcase_value": 400.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            400.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "linkColor",
+          "showcase_value": "gradient",
+          "probes": [
+            "#2F80ED",
+            "#F2994A",
+            "gradient"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "nodeAlignment",
+          "showcase_value": "justify",
+          "probes": [
+            "left",
+            "right",
+            "center",
+            "justify"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "showValues",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "prefix",
+          "showcase_value": "",
+          "probes": [
+            "",
+            "proof"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "suffix",
+          "showcase_value": "",
+          "probes": [
+            "",
+            "proof"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "nodeWidth",
+          "showcase_value": 10.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            10.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "nodePadding",
+          "showcase_value": 12.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            12.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "labelStyle",
+          "showcase_value": "legacy",
+          "probes": [
+            "legacy",
+            "outlined"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "nodeColors",
+          "showcase_value": {},
+          "probes": [
+            {},
+            {
+              "proof": "#F2994A",
+              "second": "#F2994A"
+            }
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "sequenceDiagram",
+      "source": "sources/sequenceDiagram.mmd",
+      "source_sha256": "77daeaf8a30e61b5b17eb4263b69b185843dae72990d8e98ca911f96fdd17375",
+      "svg": "rendered/sequenceDiagram.svg",
+      "svg_sha256": "814b2752e26c013e2e7861cb70c32cc5966420224dc19a8a866e948522dc578a",
+      "semantic_object_count": 25,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "arrowMarkerAbsolute",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "hideUnusedParticipants",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "activationWidth",
+          "showcase_value": 10,
+          "probes": [
+            0,
+            1,
+            10
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "diagramMarginX",
+          "showcase_value": 50,
+          "probes": [
+            0,
+            1,
+            50
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "diagramMarginY",
+          "showcase_value": 10,
+          "probes": [
+            0,
+            1,
+            10
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "actorMargin",
+          "showcase_value": 50,
+          "probes": [
+            0,
+            1,
+            50
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "width",
+          "showcase_value": 150,
+          "probes": [
+            0,
+            1,
+            150
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "height",
+          "showcase_value": 65,
+          "probes": [
+            0,
+            1,
+            65
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "boxMargin",
+          "showcase_value": 10,
+          "probes": [
+            0,
+            1,
+            10
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "boxTextMargin",
+          "showcase_value": 5,
+          "probes": [
+            0,
+            1,
+            5
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "noteMargin",
+          "showcase_value": 10,
+          "probes": [
+            0,
+            1,
+            10
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "messageMargin",
+          "showcase_value": 35,
+          "probes": [
+            0,
+            1,
+            35
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "messageAlign",
+          "showcase_value": "center",
+          "probes": [
+            "left",
+            "center",
+            "right"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "mirrorActors",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "forceMenus",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "bottomMarginAdj",
+          "showcase_value": 1,
+          "probes": [
+            0,
+            1
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "rightAngles",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "showSequenceNumbers",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "actorFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "actorFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "actorFontWeight",
+          "showcase_value": 400.0,
+          "probes": [
+            "400",
+            "700",
+            -1.0,
+            0.0,
+            1.0,
+            400.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "noteFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "noteFontFamily",
+          "showcase_value": "\"trebuchet ms\", verdana, arial, sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"trebuchet ms\", verdana, arial, sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "noteFontWeight",
+          "showcase_value": 400.0,
+          "probes": [
+            "400",
+            "700",
+            -1.0,
+            0.0,
+            1.0,
+            400.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "noteAlign",
+          "showcase_value": "center",
+          "probes": [
+            "left",
+            "center",
+            "right"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "messageFontSize",
+          "showcase_value": 16.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            16.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "messageFontFamily",
+          "showcase_value": "\"trebuchet ms\", verdana, arial, sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"trebuchet ms\", verdana, arial, sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "messageFontWeight",
+          "showcase_value": 400.0,
+          "probes": [
+            "400",
+            "700",
+            -1.0,
+            0.0,
+            1.0,
+            400.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "wrapPadding",
+          "showcase_value": 10.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            10.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "labelBoxWidth",
+          "showcase_value": 50.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            50.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "labelBoxHeight",
+          "showcase_value": 20.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            20.0
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "stateDiagram-v2",
+      "source": "sources/stateDiagram-v2.mmd",
+      "source_sha256": "001f816f94c8657dc5d87c9cd5f976d7aaf31b9559c840dcf3ef9df8f0c32ac4",
+      "svg": "rendered/stateDiagram-v2.svg",
+      "svg_sha256": "88be98796d214ce1aeb6eabee28938303766981e47336c1896c6fbc4d62d9d65",
+      "semantic_object_count": 31,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "titleTopMargin",
+          "showcase_value": 25,
+          "probes": [
+            0,
+            1,
+            25
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "arrowMarkerAbsolute",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "dividerMargin",
+          "showcase_value": 10.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            10.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "sizeUnit",
+          "showcase_value": 5.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            5.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "padding",
+          "showcase_value": 8.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            8.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "textHeight",
+          "showcase_value": 10.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            10.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "titleShift",
+          "showcase_value": -15.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            -15.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "noteMargin",
+          "showcase_value": 10.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            10.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "nodeSpacing",
+          "showcase_value": 0,
+          "probes": [
+            0,
+            1
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "rankSpacing",
+          "showcase_value": 0,
+          "probes": [
+            0,
+            1
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "forkWidth",
+          "showcase_value": 70.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            70.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "forkHeight",
+          "showcase_value": 7.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            7.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "miniPadding",
+          "showcase_value": 2.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            2.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "fontSizeFactor",
+          "showcase_value": 5.02,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            5.02
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "fontSize",
+          "showcase_value": 24.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            24.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "labelHeight",
+          "showcase_value": 16.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            16.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "edgeLengthFactor",
+          "showcase_value": "20",
+          "probes": [
+            "proof",
+            "20"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "compositTitleSize",
+          "showcase_value": 35.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            35.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "radius",
+          "showcase_value": 5.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            5.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "defaultRenderer",
+          "showcase_value": "dagre-wrapper",
+          "probes": [
+            "dagre-d3",
+            "dagre-wrapper",
+            "elk"
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "swimlane-beta",
+      "source": "sources/swimlane-beta.mmd",
+      "source_sha256": "5a4e3a6a8548ab474f30394d19535ea7a0a1586539dd337ff78bb68d11d11f53",
+      "svg": "rendered/swimlane-beta.svg",
+      "svg_sha256": "b02f1438e13bfa90e63b65cc04812181a3f191d75f4ef7ab335c3c4dad4dd981",
+      "semantic_object_count": 17,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "lineHops",
+          "showcase_value": "arc",
+          "probes": [
+            false,
+            true,
+            "arc",
+            "gap"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "ignoreCrossLaneEdges",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "optimizeRanksByCrossings",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "automaticLaneOrdering",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "timeline",
+      "source": "sources/timeline.mmd",
+      "source_sha256": "b7546d397ba713b0d8c22768f5c9a9da7a9abef9f1a0498f1a90f58ee883ea09",
+      "svg": "rendered/timeline.svg",
+      "svg_sha256": "fefab0eeb323d428920191c4155f02d92c0e8c12d3733ee4b608fb525f41d8ac",
+      "semantic_object_count": 12,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "diagramMarginX",
+          "showcase_value": 50,
+          "probes": [
+            0,
+            1,
+            50
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "diagramMarginY",
+          "showcase_value": 10,
+          "probes": [
+            0,
+            1,
+            10
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "leftMargin",
+          "showcase_value": 150,
+          "probes": [
+            0,
+            1,
+            150
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "width",
+          "showcase_value": 150,
+          "probes": [
+            0,
+            1,
+            150
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "height",
+          "showcase_value": 50,
+          "probes": [
+            0,
+            1,
+            50
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "padding",
+          "showcase_value": -1.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "boxMargin",
+          "showcase_value": 10,
+          "probes": [
+            0,
+            1,
+            10
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "boxTextMargin",
+          "showcase_value": 5,
+          "probes": [
+            0,
+            1,
+            5
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "noteMargin",
+          "showcase_value": 10,
+          "probes": [
+            0,
+            1,
+            10
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "messageMargin",
+          "showcase_value": 35,
+          "probes": [
+            0,
+            1,
+            35
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "messageAlign",
+          "showcase_value": "center",
+          "probes": [
+            "left",
+            "center",
+            "right"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "bottomMarginAdj",
+          "showcase_value": 1,
+          "probes": [
+            0,
+            1
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "rightAngles",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "taskFontSize",
+          "showcase_value": 14.0,
+          "probes": [
+            "12",
+            "0.5",
+            -1.0,
+            0.0,
+            1.0,
+            14.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "taskFontFamily",
+          "showcase_value": "\"Open Sans\", sans-serif",
+          "probes": [
+            "Arial",
+            "monospace",
+            "\"Open Sans\", sans-serif"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "taskMargin",
+          "showcase_value": 50.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            50.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "activationWidth",
+          "showcase_value": 10.0,
+          "probes": [
+            -1.0,
+            0.0,
+            1.0,
+            10.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "textPlacement",
+          "showcase_value": "fo",
+          "probes": [
+            "proof",
+            "fo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "actorColours",
+          "showcase_value": [
+            "#8FBC8F",
+            "#7CFC00",
+            "#00FFFF",
+            "#20B2AA",
+            "#B0E0E6",
+            "#FFFFE0"
+          ],
+          "probes": [
+            [],
+            [
+              "proof"
+            ],
+            [
+              "proof",
+              "proof"
+            ]
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "sectionFills",
+          "showcase_value": [
+            "#191970",
+            "#8B008B",
+            "#4B0082",
+            "#2F4F4F",
+            "#800000",
+            "#8B4513",
+            "#00008B"
+          ],
+          "probes": [
+            [],
+            [
+              "#F2994A"
+            ],
+            [
+              "#F2994A",
+              "#F2994A"
+            ]
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "sectionColours",
+          "showcase_value": [
+            "#fff"
+          ],
+          "probes": [
+            [],
+            [
+              "proof"
+            ],
+            [
+              "proof",
+              "proof"
+            ]
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "disableMulticolor",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "treeView-beta",
+      "source": "sources/treeView-beta.mmd",
+      "source_sha256": "39e194f4f1ab00f7120412902b9daad7bb8dda5395ca9ca7282a12704ab5e92f",
+      "svg": "rendered/treeView-beta.svg",
+      "svg_sha256": "769b207e9521e5fdde8c0d0ef02480c823412cf1c52ef5454a9746ad39ecfd79",
+      "semantic_object_count": 38,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "rowIndent",
+          "showcase_value": 10.0,
+          "probes": [
+            0.0,
+            1.0,
+            10.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "paddingX",
+          "showcase_value": 5.0,
+          "probes": [
+            0.0,
+            1.0,
+            5.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "paddingY",
+          "showcase_value": 5.0,
+          "probes": [
+            0.0,
+            1.0,
+            5.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "lineThickness",
+          "showcase_value": 1.0,
+          "probes": [
+            0.0,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "showIcons",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "defaultIconPack",
+          "showcase_value": "",
+          "probes": [
+            "",
+            "proof"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "filenameIcons",
+          "showcase_value": {
+            "README.md": "file"
+          },
+          "probes": [
+            {},
+            {
+              "proof": "proof",
+              "second": "proof"
+            }
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "extensionIcons",
+          "showcase_value": {
+            "py": "file"
+          },
+          "probes": [
+            {},
+            {
+              "proof": "proof",
+              "second": "proof"
+            }
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "venn-beta",
+      "source": "sources/venn-beta.mmd",
+      "source_sha256": "36276d8e0e089860a74c3c4b0e0b00bdee07b875d54f86edeb054299abb93082",
+      "svg": "rendered/venn-beta.svg",
+      "svg_sha256": "fa3aceedf26c6f7bc8463d5e0c88c8d86a18ea0f3837959cdaf29ed993390ca7",
+      "semantic_object_count": 14,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "width",
+          "showcase_value": 800.0,
+          "probes": [
+            1.0,
+            800.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "height",
+          "showcase_value": 450.0,
+          "probes": [
+            1.0,
+            450.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "padding",
+          "showcase_value": 8.0,
+          "probes": [
+            0.0,
+            1.0,
+            8.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useDebugLayout",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    },
+    {
+      "diagram_id": "wardley-beta",
+      "source": "sources/wardley-beta.mmd",
+      "source_sha256": "078ed01be0f17ef30a5e154b92fddf3bfb01b23bead11663018b78f9374f6b2e",
+      "svg": "rendered/wardley-beta.svg",
+      "svg_sha256": "68ac71d5b2d2cf9d8816c648989b6a78f270ffcfe5f550437ca276dedcad3e8c",
+      "semantic_object_count": 14,
+      "configuration_fields": [
+        {
+          "name": "wrap",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useWidth",
+          "showcase_value": 960.0,
+          "probes": [
+            960.0,
+            1440.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "useMaxWidth",
+          "showcase_value": true,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "width",
+          "showcase_value": 900.0,
+          "probes": [
+            1.0,
+            900.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "height",
+          "showcase_value": 600.0,
+          "probes": [
+            1.0,
+            600.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "padding",
+          "showcase_value": 48.0,
+          "probes": [
+            0.0,
+            1.0,
+            48.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "nodeRadius",
+          "showcase_value": 6.0,
+          "probes": [
+            0.0,
+            1.0,
+            6.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "nodeLabelOffset",
+          "showcase_value": 8.0,
+          "probes": [
+            0.0,
+            1.0,
+            8.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "axisFontSize",
+          "showcase_value": 12.0,
+          "probes": [
+            0.0,
+            1.0,
+            12.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "labelFontSize",
+          "showcase_value": 10.0,
+          "probes": [
+            0.0,
+            1.0,
+            10.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "showGrid",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
+        }
+      ]
+    }
+  ]
+}

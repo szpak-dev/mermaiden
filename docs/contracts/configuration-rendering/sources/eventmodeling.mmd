@@ -1,0 +1,14 @@
+---
+config:
+  wrap: true
+  eventmodeling: {"useWidth": 960.0, "useMaxWidth": true, "padding": 30.0, "rowHeight": 32.0}
+---
+eventmodeling
+tf 01 ui cart_ui
+tf 02 cmd add_item
+tf 03 evt item_added
+tf 04 rmo cart_items
+tf 05 ui warehouse_ui
+tf 06 cmd pack_order
+tf 07 evt order_packed
+tf 08 rmo packing_queue

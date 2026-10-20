@@ -20,7 +20,7 @@ with Application.create() as application:
 ```
 
 The envelope contains a snapshot version and registry-owned discriminators. The current schema is checked in at
-[`src/mermaiden/runtime/snapshot/schema.v7.json`](../../src/mermaiden/runtime/snapshot/schema.v7.json). Earlier and
+[`src/mermaiden/runtime/snapshot/schema.v8.json`](../../src/mermaiden/runtime/snapshot/schema.v8.json). Earlier and
 unknown versions are rejected; Mermaiden does not guess a migration.
 
 Draft diagrams may be snapshotted and restored. A snapshot recorded as valid is checked again during restoration, while

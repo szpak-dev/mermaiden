@@ -110,6 +110,9 @@
     "configure": {
       "$.defaultRenderer": [
         "StateRenderer values"
+      ],
+      "$.edgeLengthFactor": [
+        "Identifier"
       ]
     },
     "move_element": {

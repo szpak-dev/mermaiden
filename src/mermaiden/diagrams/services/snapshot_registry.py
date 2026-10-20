@@ -4,15 +4,99 @@ from dataclasses import dataclass
 from enum import Enum
 from functools import cached_property
 from inspect import isabstract
-from types import UnionType
-from typing import Annotated, Any, get_args, get_origin
+from typing import Annotated, get_args, get_origin
 
-from pydantic import BaseModel, TypeAdapter
+from pydantic import BaseModel, ConfigDict, Field, RootModel, TypeAdapter
 from wireup import injectable
 
 from ...core.naming import ClassName
 from ...runtime.snapshot.domain import SnapshotContract, SnapshotError, SnapshotType, SnapshotTypeRegistry
 from ..application import DiagramsApplication
+
+
+class SnapshotEnumRegistration(BaseModel):
+    model_config = ConfigDict(frozen=True, strict=True)
+
+    value_type: type[Enum]
+
+    def register(
+        self,
+        owner: str,
+        registered: dict[type[object], SnapshotType],
+        expanded: set[type[object]],
+        pending: list[object],
+    ) -> None:
+        if self.value_type in expanded:
+            return
+        expanded.add(self.value_type)
+        registered.setdefault(
+            self.value_type,
+            SnapshotType(
+                f"mermaiden/enum/{owner}/{ClassName(self.value_type).snake_case}",
+                self.value_type,
+            ),
+        )
+
+
+class SnapshotModelRegistration(BaseModel):
+    model_config = ConfigDict(frozen=True, strict=True)
+
+    value_type: type[BaseModel]
+
+    def register(
+        self,
+        owner: str,
+        registered: dict[type[object], SnapshotType],
+        expanded: set[type[object]],
+        pending: list[object],
+    ) -> None:
+        if self.value_type in expanded:
+            return
+        expanded.add(self.value_type)
+        if isabstract(self.value_type):
+            return
+        registered.setdefault(
+            self.value_type,
+            SnapshotType(
+                f"mermaiden/value/{owner}/{ClassName(self.value_type).snake_case}",
+                self.value_type,
+            ),
+        )
+        pending.extend(field.annotation for field in self.value_type.model_fields.values())
+
+
+class SnapshotIgnoredRegistration(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    value_type: object
+
+    def register(
+        self,
+        owner: str,
+        registered: dict[type[object], SnapshotType],
+        expanded: set[type[object]],
+        pending: list[object],
+    ) -> None:
+        return None
+
+
+class SnapshotRegistration(
+    RootModel[
+        Annotated[
+            SnapshotEnumRegistration | SnapshotModelRegistration | SnapshotIgnoredRegistration,
+            Field(union_mode="left_to_right"),
+        ]
+    ]
+):
+    model_config = ConfigDict(frozen=True, strict=True)
+
+
+class SnapshotModelClass(RootModel[type[BaseModel]]):
+    model_config = ConfigDict(frozen=True, strict=True)
+
+
+class SnapshotEnumClass(RootModel[type[Enum]]):
+    model_config = ConfigDict(frozen=True, strict=True)
 
 
 @injectable(as_type=SnapshotTypeRegistry, lifetime="scoped")
@@ -33,19 +117,18 @@ class DiagramSnapshotRegistry(SnapshotTypeRegistry):
             raise SnapshotError(f"Snapshot type '{value_type.__name__}' is not registered for '{owner}'.")
         return match
 
-    def resolve(self, owner: str, discriminator: str, expected: Any) -> type[Any]:
+    def registered_type(self, owner: str, discriminator: str) -> type[object]:
         contract = self.contract(owner)
         match = next((item.value_type for item in contract.types if item.discriminator == discriminator), None)
         if match is None:
             raise SnapshotError(f"Snapshot discriminator '{discriminator}' is not registered for '{owner}'.")
-        origin = get_origin(expected)
-        candidates = get_args(expected) if origin is UnionType else (expected,)
-        valid = expected is object or any(
-            isinstance(candidate, type) and issubclass(match, candidate) for candidate in candidates
-        )
-        if not valid:
-            raise SnapshotError(f"Snapshot discriminator '{discriminator}' is not valid here.")
         return match
+
+    def resolve_model(self, owner: str, discriminator: str) -> type[BaseModel]:
+        return SnapshotModelClass.model_validate(self.registered_type(owner, discriminator)).root
+
+    def resolve_enum(self, owner: str, discriminator: str) -> type[Enum]:
+        return SnapshotEnumClass.model_validate(self.registered_type(owner, discriminator)).root
 
     @cached_property
     def contracts(self) -> dict[str, SnapshotContract]:
@@ -54,10 +137,10 @@ class DiagramSnapshotRegistry(SnapshotTypeRegistry):
             diagram = self.diagrams.get_diagram(info.id)
             feature = diagram.feature
             roots = (
-                self._type(info.id, "configuration", type(diagram.configuration)),
-                *(self._type(info.id, "element", item) for item in feature.elements),
-                *(self._type(info.id, "relation", item) for item in feature.relations),
-                *(self._type(info.id, "annotation", item) for item in feature.annotations),
+                self.snapshot_type(info.id, "configuration", type(diagram.configuration)),
+                *(self.snapshot_type(info.id, "element", item) for item in feature.elements),
+                *(self.snapshot_type(info.id, "relation", item) for item in feature.relations),
+                *(self.snapshot_type(info.id, "annotation", item) for item in feature.annotations),
             )
             registered = {item.value_type: item for item in roots}
             expanded: set[type[object]] = set()
@@ -72,18 +155,8 @@ class DiagramSnapshotRegistry(SnapshotTypeRegistry):
                 if origin is not None:
                     pending.extend(get_args(annotation))
                     continue
-                if not isinstance(annotation, type):
-                    continue
-                if annotation in expanded:
-                    continue
-                expanded.add(annotation)
-                if issubclass(annotation, Enum):
-                    registered.setdefault(annotation, self._type(info.id, "enum", annotation))
-                    continue
-                if not issubclass(annotation, BaseModel) or isabstract(annotation):
-                    continue
-                registered.setdefault(annotation, self._type(info.id, "value", annotation))
-                pending.extend(field.annotation for field in annotation.model_fields.values())
+                registration = SnapshotRegistration.model_validate({"value_type": annotation}).root
+                registration.register(info.id, registered, expanded, pending)
 
             discriminators = [item.discriminator for item in registered.values()]
             if len(discriminators) != len(set(discriminators)):
@@ -102,14 +175,14 @@ class DiagramSnapshotRegistry(SnapshotTypeRegistry):
 
     @property
     def fingerprint(self) -> str:
-        return self._fingerprint
+        return self.computed_fingerprint
 
     @cached_property
-    def _fingerprint(self) -> str:
+    def computed_fingerprint(self) -> str:
         document = {
             owner: {
                 "types": {
-                    item.discriminator: self._schema(item.value_type)
+                    item.discriminator: self.schema(item.value_type)
                     for item in sorted(contract.types, key=lambda candidate: candidate.discriminator)
                 },
                 "properties": {
@@ -122,12 +195,8 @@ class DiagramSnapshotRegistry(SnapshotTypeRegistry):
         encoded = json.dumps(document, ensure_ascii=True, separators=(",", ":"), sort_keys=True)
         return hashlib.sha256(encoded.encode()).hexdigest()
 
-    def _type(self, owner: str, category: str, value_type: type[Any]) -> SnapshotType:
+    def snapshot_type(self, owner: str, category: str, value_type: type[object]) -> SnapshotType:
         return SnapshotType(f"mermaiden/{category}/{owner}/{ClassName(value_type).snake_case}", value_type)
 
-    def _schema(self, value_type: type[Any]) -> object:
-        if issubclass(value_type, BaseModel):
-            return value_type.model_json_schema()
-        if issubclass(value_type, Enum):
-            return TypeAdapter(value_type).json_schema()
-        raise TypeError(f"Snapshot type '{value_type.__name__}' has no schema.")
+    def schema(self, value_type: type[object]) -> object:
+        return TypeAdapter(value_type).json_schema()

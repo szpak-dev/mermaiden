@@ -1,0 +1,36 @@
+---
+config:
+  wrap: true
+  c4: {"useMaxWidth": true, "diagramMarginX": 40, "diagramMarginY": 40, "c4ShapeMargin": 25, "c4ShapePadding": 14, "width": 190, "height": 72, "boxMargin": 16, "c4ShapeInRow": 3, "nextLinePaddingX": 0.0, "c4BoundaryInRow": 2, "personFontSize": 12.0, "personFontFamily": "\"Open Sans\", sans-serif", "personFontWeight": "normal", "external_personFontSize": 14.0, "external_personFontFamily": "\"Open Sans\", sans-serif", "external_personFontWeight": "normal", "systemFontSize": 12.0, "systemFontFamily": "\"Open Sans\", sans-serif", "systemFontWeight": "normal", "external_systemFontSize": 14.0, "external_systemFontFamily": "\"Open Sans\", sans-serif", "external_systemFontWeight": "normal", "system_dbFontSize": 12.0, "system_dbFontFamily": "\"Open Sans\", sans-serif", "system_dbFontWeight": "normal", "external_system_dbFontSize": 14.0, "external_system_dbFontFamily": "\"Open Sans\", sans-serif", "external_system_dbFontWeight": "normal", "system_queueFontSize": 12.0, "system_queueFontFamily": "\"Open Sans\", sans-serif", "system_queueFontWeight": "normal", "external_system_queueFontSize": 14.0, "external_system_queueFontFamily": "\"Open Sans\", sans-serif", "external_system_queueFontWeight": "normal", "boundaryFontSize": 14.0, "boundaryFontFamily": "\"Open Sans\", sans-serif", "boundaryFontWeight": "normal", "messageFontSize": 11.0, "messageFontFamily": "\"Open Sans\", sans-serif", "messageFontWeight": "normal", "containerFontSize": 12.0, "containerFontFamily": "\"Open Sans\", sans-serif", "containerFontWeight": "normal", "external_containerFontSize": 14.0, "external_containerFontFamily": "\"Open Sans\", sans-serif", "external_containerFontWeight": "normal", "container_dbFontSize": 12.0, "container_dbFontFamily": "\"Open Sans\", sans-serif", "container_dbFontWeight": "normal", "external_container_dbFontSize": 14.0, "external_container_dbFontFamily": "\"Open Sans\", sans-serif", "external_container_dbFontWeight": "normal", "container_queueFontSize": 12.0, "container_queueFontFamily": "\"Open Sans\", sans-serif", "container_queueFontWeight": "normal", "external_container_queueFontSize": 14.0, "external_container_queueFontFamily": "\"Open Sans\", sans-serif", "external_container_queueFontWeight": "normal", "componentFontSize": 12.0, "componentFontFamily": "\"Open Sans\", sans-serif", "componentFontWeight": "normal", "external_componentFontSize": 14.0, "external_componentFontFamily": "\"Open Sans\", sans-serif", "external_componentFontWeight": "normal", "component_dbFontSize": 12.0, "component_dbFontFamily": "\"Open Sans\", sans-serif", "component_dbFontWeight": "normal", "external_component_dbFontSize": 14.0, "external_component_dbFontFamily": "\"Open Sans\", sans-serif", "external_component_dbFontWeight": "normal", "component_queueFontSize": 12.0, "component_queueFontFamily": "\"Open Sans\", sans-serif", "component_queueFontWeight": "normal", "external_component_queueFontSize": 14.0, "external_component_queueFontFamily": "\"Open Sans\", sans-serif", "external_component_queueFontWeight": "normal", "wrapPadding": 8.0, "person_bg_color": "#08427B", "person_border_color": "#073B6F", "external_person_bg_color": "#686868", "external_person_border_color": "#8A8A8A", "system_bg_color": "#1168BD", "system_border_color": "#3C7FC0", "system_db_bg_color": "#1168BD", "system_db_border_color": "#3C7FC0", "system_queue_bg_color": "#1168BD", "system_queue_border_color": "#3C7FC0", "external_system_bg_color": "#999999", "external_system_border_color": "#8A8A8A", "external_system_db_bg_color": "#999999", "external_system_db_border_color": "#8A8A8A", "external_system_queue_bg_color": "#999999", "external_system_queue_border_color": "#8A8A8A", "container_bg_color": "#438DD5", "container_border_color": "#3C7FC0", "container_db_bg_color": "#438DD5", "container_db_border_color": "#3C7FC0", "container_queue_bg_color": "#438DD5", "container_queue_border_color": "#3C7FC0", "external_container_bg_color": "#B3B3B3", "external_container_border_color": "#A6A6A6", "external_container_db_bg_color": "#B3B3B3", "external_container_db_border_color": "#A6A6A6", "external_container_queue_bg_color": "#B3B3B3", "external_container_queue_border_color": "#A6A6A6", "component_bg_color": "#85BBF0", "component_border_color": "#78A8D8", "component_db_bg_color": "#85BBF0", "component_db_border_color": "#78A8D8", "component_queue_bg_color": "#85BBF0", "component_queue_border_color": "#78A8D8", "external_component_bg_color": "#CCCCCC", "external_component_border_color": "#BFBFBF", "external_component_db_bg_color": "#CCCCCC", "external_component_db_border_color": "#BFBFBF", "external_component_queue_bg_color": "#CCCCCC", "external_component_queue_border_color": "#BFBFBF"}
+---
+C4Component
+UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="2")
+Person(customer, "Customer", "Initiates payments")
+System_Ext(card_network, "Card Network", "External settlement")
+System_Boundary(banking, "Digital Banking Platform") {
+Container_Boundary(payments_api, "Payments API") {
+Component(http, "HTTP Controller", "FastAPI", "Receives payment requests")
+Component(authorizer, "Authorization Policy", "Python", "Checks permissions")
+Component(orchestrator, "Payment Orchestrator", "Python", "Coordinates payment flow")
+Component(risk_client, "Risk Client", "HTTP", "Requests risk decisions")
+Component(ledger, "Ledger Service", "Python", "Records accounting entries")
+Component(settlement, "Settlement Adapter", "ISO 8583", "Talks to card networks")
+Component(outbox, "Outbox Publisher", "Python", "Publishes committed events")
+Component(notifications, "Notification Adapter", "HTTP", "Sends customer updates")
+ComponentDb(payment_store, "Payment Store", "PostgreSQL", "Payment state")
+ComponentDb(ledger_store, "Ledger Store", "PostgreSQL", "Double-entry ledger")
+ComponentQueue(command_bus, "Command Bus", "Kafka", "Payment commands")
+ComponentQueue(event_bus, "Event Bus", "Kafka", "Payment events")
+}
+}
+Rel_Down(customer, http, "Pays")
+Rel_Down(http, orchestrator, "Dispatches")
+Rel_Down(authorizer, risk_client, "Checks")
+Rel_Down(orchestrator, ledger, "Posts")
+Rel_Down(risk_client, settlement, "Approves")
+Rel_Down(ledger, outbox, "Commits")
+Rel_Down(settlement, notifications, "Notifies")
+Rel_Down(outbox, payment_store, "Stores")
+Rel_Down(notifications, ledger_store, "Balances")
+Rel_Down(payment_store, command_bus, "Enqueues")
+Rel_Down(ledger_store, event_bus, "Publishes")

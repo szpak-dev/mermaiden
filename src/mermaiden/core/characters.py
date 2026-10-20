@@ -1,7 +1,7 @@
 import re
-from typing import ClassVar
+from typing import Annotated, ClassVar
 
-from pydantic import Field, RootModel
+from pydantic import ConfigDict, Field, RootModel
 
 
 class CharacterPolicy(RootModel[str]):
@@ -39,6 +39,39 @@ class OptionalText(CharacterPolicy):
         pattern=pattern,
         description=description,
         json_schema_extra={"x-character-policy": "OptionalText"},
+    )
+
+
+class NumberText(CharacterPolicy):
+    pattern = r"^(?:\d+(?:\.\d+)?|\.\d+)$"
+    description = "A non-negative decimal number written as text."
+    root: str = Field(pattern=pattern, description=description, json_schema_extra={"x-character-policy": "NumberText"})
+
+
+class PositiveNumberText(CharacterPolicy):
+    pattern = r"^(?:0*[1-9]\d*(?:\.\d+)?|0*\.\d*[1-9]\d*)$"
+    description = "A positive decimal number written as text."
+    root: str = Field(
+        pattern=pattern,
+        description=description,
+        json_schema_extra={"x-character-policy": "PositiveNumberText"},
+    )
+
+
+class NumberOrText(RootModel[str | float]):
+    model_config = ConfigDict(frozen=True)
+
+    root: Annotated[str, Field(pattern=Text.pattern, description=Text.description)] | float
+
+
+class NumberOrNumericText(NumberOrText):
+    root: Annotated[str, Field(pattern=NumberText.pattern, description=NumberText.description)] | float
+
+
+class PositiveNumberOrNumericText(NumberOrNumericText):
+    root: (
+        Annotated[str, Field(pattern=PositiveNumberText.pattern, description=PositiveNumberText.description)]
+        | Annotated[float, Field(gt=0)]
     )
 
 

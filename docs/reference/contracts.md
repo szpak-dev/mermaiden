@@ -11,6 +11,8 @@ Mermaiden publishes generated, repository-owned reference material for every reg
 - Its per-diagram matrices describe which elements, relations, and annotations support each public operation.
 - The [character-policy matrices](../contracts/diagram-mutations/characters/README.md) record the accepted character
   rules for command string fields.
+- The [configuration rendering proof](../contracts/configuration-rendering/README.md) binds every configuration field
+  to complex Mermaid source, pinned-renderer SVG evidence, and exhaustive finite or boundary-partition probes.
 
 These files are generated from public `Application` discovery and contract semantics. Regenerate them with
 `make mutation-contract`; do not maintain a second handwritten inventory here.

@@ -1,0 +1,57 @@
+---
+config:
+  wrap: true
+  requirement: {"useWidth": 960.0, "useMaxWidth": true, "rectFill": "#f9f9f9", "textColor": "#333", "rectBorderSize": "0.5px", "rectBorderColor": "#bbb", "rectMinWidth": 200.0, "rectMinHeight": 200.0, "fontSize": 14.0, "rectPadding": 10.0, "lineHeight": 20.0}
+---
+requirementDiagram
+requirement r_v_system {
+  id: "REQ-001"
+  text: "The system provides secure access."
+  risk: high
+  verifymethod: test
+}
+functionalRequirement r_v_login {
+  id: "REQ-002"
+  text: "Users can sign in."
+  risk: medium
+  verifymethod: demonstration
+}
+interfaceRequirement r_v_api {
+  id: "REQ-003"
+  text: "The API is documented."
+  risk: low
+  verifymethod: inspection
+}
+performanceRequirement r_v_latency {
+  id: "REQ-004"
+  text: "Responses complete within 100ms."
+  risk: high
+  verifymethod: analysis
+}
+physicalRequirement r_v_device {
+  id: "REQ-005"
+  text: "The device withstands heat."
+  risk: medium
+  verifymethod: test
+}
+designConstraint r_v_policy {
+  id: "REQ-006"
+  text: "Access follows policy."
+  risk: low
+  verifymethod: inspection
+}
+element r_v_service {
+  type: "software"
+  docref: "docs/service.md"
+}
+element r_v_test_suite {
+  type: "test"
+  docref: "tests/requirements.py"
+}
+r_v_system - contains -> r_v_login
+r_v_login - copies -> r_v_api
+r_v_api - derives -> r_v_latency
+r_v_service - satisfies -> r_v_system
+r_v_test_suite - verifies -> r_v_login
+r_v_policy - refines -> r_v_system
+r_v_device - traces -> r_v_policy

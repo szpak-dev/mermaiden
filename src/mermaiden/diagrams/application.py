@@ -12,8 +12,15 @@ class DiagramsApplication:
     diagrams: Mapping[Hashable, DiagramModel]
 
     def available(self) -> tuple[DiagramInfo, ...]:
-        return tuple(
-            sorted((DiagramInfo.from_diagram(diagram) for diagram in self.diagrams.values()), key=lambda item: item.id)
+        return tuple(sorted((self.describe(diagram) for diagram in self.diagrams.values()), key=lambda item: item.id))
+
+    def describe(self, diagram: DiagramModel) -> DiagramInfo:
+        return DiagramInfo(
+            id=diagram.definition.syntax,
+            name=diagram.definition.name,
+            diagram_type=type(diagram),
+            config_key=diagram.definition.config_key,
+            schema_definition=diagram.definition.schema_definition,
         )
 
     def get(self, diagram_id: str) -> DiagramInfo:

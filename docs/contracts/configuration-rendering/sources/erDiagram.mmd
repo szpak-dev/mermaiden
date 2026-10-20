@@ -1,0 +1,30 @@
+---
+config:
+  wrap: true
+  er: {"useWidth": 960.0, "useMaxWidth": true, "titleTopMargin": 25, "diagramPadding": 20, "layoutDirection": "TB", "minEntityWidth": 100, "minEntityHeight": 75, "entityPadding": 15, "nodeSpacing": 140, "rankSpacing": 80, "stroke": "gray", "fill": "honeydew", "fontSize": 12}
+---
+erDiagram
+direction TB
+e_v_CUSTOMER ||--o{ e_v_ORDER : "references content; #quot;protected#quot; — while scoped: [v2] #35;1 #38; #60;trusted#62;"
+e_v_ORDER ||--|{ e_v_PRODUCT : "contains"
+e_v_ORDER ||--o| e_v_PAYMENT : "paid by"
+e_v_ORDER ||--o| e_v_SHIPMENT : "ships as"
+e_v_ORDER ||--|| e_v_INVOICE : "invoiced as"
+e_v_CUSTOMER["Customer"] {
+  int id PK
+}
+e_v_ORDER["Order"] {
+  int id PK
+}
+e_v_PRODUCT["Product"] {
+  int id PK
+}
+e_v_PAYMENT["Payment"] {
+  int id PK
+}
+e_v_SHIPMENT["Shipment"] {
+  int id PK
+}
+e_v_INVOICE["Invoice"] {
+  int id PK
+}

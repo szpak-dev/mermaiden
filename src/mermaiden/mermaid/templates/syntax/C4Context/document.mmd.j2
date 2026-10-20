@@ -1,5 +1,6 @@
 {% import "templates/macros/document.mmd.j2" as mmd with context %}
 {{ diagram.kind }}{{ "\n" -}}
+UpdateLayoutConfig($c4ShapeInRow="{{ diagram.configuration.c4_shape_in_row }}", $c4BoundaryInRow="{{ diagram.configuration.c4_boundary_in_row }}"){{ "\n" -}}
 {{ mmd.elements(diagram.root_elements, 0) }}
 {{ mmd.relations(diagram.find_relations(), 0) }}
 {% for relation in diagram.find_relations() if relation.offset_x or relation.offset_y %}{% include template_prefix ~ "/relations/relationship_style.mmd.j2" %}{% endfor %}

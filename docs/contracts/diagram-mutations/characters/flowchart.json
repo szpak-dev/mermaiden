@@ -165,7 +165,14 @@
         "OptionalIdentifier"
       ]
     },
-    "configure": {},
+    "configure": {
+      "$.curve": [
+        "FlowchartCurve values"
+      ],
+      "$.defaultRenderer": [
+        "FlowchartRenderer values"
+      ]
+    },
     "move_element": {
       "$.id": [
         "Identifier"

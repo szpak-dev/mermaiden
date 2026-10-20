@@ -1,12 +1,14 @@
+from typing import Annotated
+
 from pydantic import Field
 
 from ..domain import MermaidDiagramConfiguration
 
 
 class PacketConfiguration(MermaidDiagramConfiguration):
-    row_height: float = Field(default=32, ge=1)
-    bit_width: float = Field(default=32, ge=1)
-    bits_per_row: float = Field(default=32, ge=1)
-    show_bits: bool = True
-    padding_x: float = Field(default=5, ge=0)
-    padding_y: float = Field(default=5, ge=0)
+    row_height: Annotated[float, Field(alias="rowHeight", ge=1)] = 32
+    bit_width: Annotated[float, Field(alias="bitWidth", ge=1)] = 32
+    bits_per_row: Annotated[int, Field(alias="bitsPerRow", ge=1)] = 32
+    show_bits: Annotated[bool, Field(alias="showBits")] = True
+    padding_x: Annotated[float, Field(alias="paddingX", ge=0)] = 5
+    padding_y: Annotated[float, Field(alias="paddingY", ge=0)] = 5

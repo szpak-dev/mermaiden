@@ -22,7 +22,7 @@ class TestDocumentation:
             text=True,
         )
 
-        assert result.stdout == "Documentation graph: 51 Markdown pages reachable from README.md.\n"
+        assert result.stdout == "Documentation graph: 52 Markdown pages reachable from README.md.\n"
 
     def test_local_links_and_repository_paths_exist(self) -> None:
         documents = (ROOT / "README.md", ROOT / "CONTRIBUTING.md", *sorted((ROOT / "docs").rglob("*.md")))
@@ -51,12 +51,8 @@ class TestDocumentation:
 
         assert documented <= available, f"documented Make targets do not exist: {sorted(documented - available)}"
 
-    def test_python_examples_execute_without_drift(
-        self,
-        successful_mermaid_render: None,
-        monkeypatch: pytest.MonkeyPatch,
-        tmp_path: Path,
-    ) -> None:
+    @pytest.mark.integration
+    def test_python_examples_execute_without_drift(self, tmp_path: Path) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         named_readme_examples = re.findall(
             r"<!-- executable-example:([a-z-]+):start -->\s*```python\n(.*?)```\s*"
@@ -79,10 +75,15 @@ class TestDocumentation:
         )
 
         assert len(examples) >= 10
-        monkeypatch.chdir(tmp_path)
         for document, index, source in examples:
             name = f"{document.relative_to(ROOT)}:python-example-{index}"
-            exec(compile(source, name, "exec"), {})
+            result = subprocess.run(
+                (sys.executable, "-c", source),
+                cwd=tmp_path,
+                capture_output=True,
+                text=True,
+            )
+            assert result.returncode == 0, f"{name}\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
 
     def test_returned_data_contract_reference_matches_public_observations(self) -> None:
         reference = (ROOT / "docs/reference/api.md").read_text(encoding="utf-8")

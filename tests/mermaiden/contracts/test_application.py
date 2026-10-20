@@ -67,8 +67,8 @@ class TestApplication:
 
         assert identity == DiagramSnapshotContractIdentity(
             kind="sequenceDiagram",
-            snapshot_version=7,
-            registry_fingerprint="6e19987b9b38c43297098b7acc48149b5d684c055659ba460ae6a6273e6b9c30",
+            snapshot_version=8,
+            registry_fingerprint="1caaf5e025e762a48fe86f7d098e66e950a474429442a7b07d4c1c4d4ebc0a51",
         )
 
     def test_returns_the_same_snapshot_contract_identity_across_applications(self) -> None:
@@ -83,9 +83,9 @@ class TestApplication:
             identities = tuple(application.snapshot_contract_identity(info.id) for info in advertised)
 
         assert tuple(identity.kind for identity in identities) == tuple(info.id for info in advertised)
-        assert {identity.snapshot_version for identity in identities} == {7}
+        assert {identity.snapshot_version for identity in identities} == {8}
         assert {identity.registry_fingerprint for identity in identities} == {
-            "6e19987b9b38c43297098b7acc48149b5d684c055659ba460ae6a6273e6b9c30"
+            "1caaf5e025e762a48fe86f7d098e66e950a474429442a7b07d4c1c4d4ebc0a51"
         }
 
     def test_rejects_snapshot_contract_identity_for_an_unknown_diagram(self) -> None:
@@ -149,11 +149,11 @@ class TestApplication:
 
         application.apply(diagram, DiagramCommand("configure", {"padding": 12}))
         application.apply(diagram, DiagramCommand("add_block", {"id": "example", "label": "Example"}))
-        assert 'block: {"padding": 12.0}' in application.render(diagram)
+        assert 'block: {"useMaxWidth": true, "padding": 12.0}' in application.render(diagram)
 
         application.apply(diagram, DiagramCommand("configure", {}))
 
-        assert 'block: {"padding": 8.0}' in application.render(diagram)
+        assert 'block: {"useMaxWidth": true, "padding": 8.0}' in application.render(diagram)
 
     def test_rejects_unknown_configuration_fields(self) -> None:
         application = Application.create()
@@ -165,7 +165,11 @@ class TestApplication:
     @pytest.mark.parametrize(
         ("diagram_id", "configuration", "setup"),
         (
-            ("block", {"padding": 12}, DiagramCommand("add_block", {"id": "example", "label": "Example"})),
+            (
+                "block",
+                {"padding": 12, "useWidth": 640},
+                DiagramCommand("add_block", {"id": "example", "label": "Example"}),
+            ),
             (
                 "architecture-beta",
                 {"nodeSeparation": 96, "seed": 7},
@@ -203,7 +207,7 @@ class TestApplication:
         payload = application.snapshot(diagram).to_dict()
         restored = application.restore(json.loads(json.dumps(payload)))
 
-        assert payload["version"] == 7
+        assert payload["version"] == 8
         assert "configuration" not in cast(Mapping[str, object], payload["properties"])
         assert not self._contains_none(payload["configuration"])
         assert application.snapshot(restored).to_dict() == payload
@@ -266,9 +270,19 @@ class TestApplication:
         )
         application.apply(diagram, DiagramCommand("add_person", {"id": "example", "label": "Example"}))
 
-        assert (
-            'c4: {"diagramMarginX": 64, "diagramMarginY": 24, "c4ShapeMargin": 56, '
-            '"c4ShapePadding": 28, "width": 240, "height": 72, "boxMargin": 16, '
-            '"useMaxWidth": false, "c4ShapeInRow": 3, "nextLinePaddingX": 12.0, '
-            '"c4BoundaryInRow": 1, "messageFontSize": 16.0}' in application.render(diagram)
-        )
+        source = application.render(diagram)
+        for expected in (
+            '"useMaxWidth": false',
+            '"diagramMarginX": 64',
+            '"diagramMarginY": 24',
+            '"c4ShapeMargin": 56',
+            '"c4ShapePadding": 28',
+            '"width": 240',
+            '"height": 72',
+            '"boxMargin": 16',
+            '"c4ShapeInRow": 3',
+            '"nextLinePaddingX": 12.0',
+            '"c4BoundaryInRow": 1',
+            '"messageFontSize": 16.0',
+        ):
+            assert expected in source

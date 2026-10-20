@@ -1,0 +1,44 @@
+---
+config:
+  wrap: true
+  architecture: {"useWidth": 960.0, "useMaxWidth": true, "padding": 40.0, "iconSize": 80.0, "fontSize": 16.0, "randomize": false, "nodeSeparation": 96.0, "idealEdgeLengthMultiplier": 1.8, "edgeElasticity": 0.3, "numIter": 5000.0, "seed": 7.0}
+---
+architecture-beta
+group clients[Clients]
+  service web[Web] in clients
+  service mobile[Mobile] in clients
+  service partner[Partner] in clients
+  align row web mobile partner
+group platform[Platform]
+  service api[API] in platform
+  service auth[Auth] in platform
+  service catalog[Catalog] in platform
+  service orders[Orders] in platform
+  service worker[Worker] in platform
+  service events[Events] in platform
+  align row api auth catalog
+  align row orders worker events
+  align column api orders
+  align column auth worker
+  align column catalog events
+group data[Data]
+  service data_bus[Data API] in data
+  service database[Database] in data
+  service cache[Cache] in data
+  service search[Search] in data
+  service warehouse[Warehouse] in data
+  align row data_bus database cache
+  align row search warehouse
+  align column data_bus search
+  align column database warehouse
+service gateway[Gateway]
+align column gateway web
+web:T -["mTLS"]-> B:gateway
+api:B --> T:orders
+auth:B --> T:worker
+catalog:B --> T:events
+data_bus:B --> T:search
+database:B --> T:warehouse
+%% Client gateway
+%% Public API
+%% Persistent storage

@@ -63,7 +63,34 @@ jobs:
       - run: uv sync --locked --group dev
       - run: make compat
       - run: make diagrams-preview
-      - run: make diagrams-validate
+      - run: make diagrams-validate-core
+        env:
+          PUPPETEER_EXECUTABLE_PATH: /usr/bin/google-chrome
+
+  configuration_render:
+    name: Configuration render (${{ matrix.shard }}/4)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@v10.0.1
+        with:
+          version: "0.12.11"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: uv lock --check
+      - run: uv sync --locked --group dev
+      - run: make configuration-render-shard SHARD=${{ matrix.shard }}
         env:
           PUPPETEER_EXECUTABLE_PATH: /usr/bin/google-chrome
 
@@ -87,7 +114,7 @@ jobs:
   ci:
     name: ci
     if: always()
-    needs: [quality, pytest, compatibility, package]
+    needs: [quality, pytest, compatibility, configuration_render, package]
     runs-on: ubuntu-latest
     steps:
       - name: Require every validation job
@@ -95,9 +122,11 @@ jobs:
           QUALITY: ${{ needs.quality.result }}
           PYTEST: ${{ needs.pytest.result }}
           COMPATIBILITY: ${{ needs.compatibility.result }}
+          CONFIGURATION_RENDER: ${{ needs.configuration_render.result }}
           PACKAGE: ${{ needs.package.result }}
         run: |
           test "$QUALITY" = success
           test "$PYTEST" = success
           test "$COMPATIBILITY" = success
+          test "$CONFIGURATION_RENDER" = success
           test "$PACKAGE" = success

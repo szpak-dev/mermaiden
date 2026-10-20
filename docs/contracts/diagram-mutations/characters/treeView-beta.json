@@ -59,7 +59,11 @@
         "TreeItemType values"
       ]
     },
-    "configure": {},
+    "configure": {
+      "$.defaultIconPack": [
+        "OptionalIdentifier"
+      ]
+    },
     "move_element": {
       "$.id": [
         "Identifier"

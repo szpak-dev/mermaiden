@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import cast
 
 from pydantic import TypeAdapter, ValidationError
 from wireup import injectable
@@ -21,14 +20,21 @@ class DiagramSnapshotHydrator:
     def hydrate(self, snapshot: DiagramSnapshot, diagram: Diagram) -> DiagramData:
         contract = self.types.contract(snapshot.kind)
         current_configuration = self.configurations.read(diagram)
-        configuration = self.values.decode(snapshot.configuration, contract, type(current_configuration))
-        if type(configuration) is not type(current_configuration):
-            raise SnapshotError(f"Snapshot configuration is not valid for diagram '{diagram.kind}'.")
+        configuration = TypeAdapter(type(current_configuration)).validate_python(
+            self.values.decode(snapshot.configuration, contract)
+        )
         object.__setattr__(diagram, "configuration", configuration)
         try:
-            elements = tuple(self.values.decode(item, contract, Element) for item in snapshot.elements)
-            relations = tuple(self.values.decode(item, contract, Relation) for item in snapshot.relations)
-            annotations = tuple(self.values.decode(item, contract, Annotation) for item in snapshot.annotations)
+            elements = tuple(
+                TypeAdapter(Element).validate_python(self.values.decode(item, contract)) for item in snapshot.elements
+            )
+            relations = tuple(
+                TypeAdapter(Relation).validate_python(self.values.decode(item, contract)) for item in snapshot.relations
+            )
+            annotations = tuple(
+                TypeAdapter(Annotation).validate_python(self.values.decode(item, contract))
+                for item in snapshot.annotations
+            )
         except SnapshotError as error:
             raise SnapshotError(f"Snapshot objects are invalid: {error}") from error
         expected_properties = set(contract.properties)
@@ -40,8 +46,8 @@ class DiagramSnapshotHydrator:
             raise SnapshotError(f"Snapshot properties are invalid: {', '.join(details)}.")
         for name, value in snapshot.properties.items():
             try:
-                decoded = self.values.decode(value, contract, contract.properties[name])
-                validated = cast(object, TypeAdapter(contract.properties[name]).validate_python(decoded))
+                decoded = self.values.decode(value, contract)
+                validated = TypeAdapter[object](contract.properties[name]).validate_python(decoded)
             except (TypeError, ValueError, SnapshotError, ValidationError) as error:
                 raise SnapshotError(f"Snapshot property '{name}' is invalid: {error}") from error
             object.__setattr__(diagram, name, validated)

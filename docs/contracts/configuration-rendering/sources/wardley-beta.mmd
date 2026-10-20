@@ -1,0 +1,20 @@
+---
+config:
+  wrap: true
+  wardley-beta: {"useWidth": 960.0, "useMaxWidth": true, "width": 900.0, "height": 600.0, "padding": 48.0, "nodeRadius": 6.0, "nodeLabelOffset": 8.0, "axisFontSize": 12.0, "labelFontSize": 10.0, "showGrid": false}
+---
+wardley-beta
+anchor "Example Business" [0.95, 0.63]
+component "Example Product" [0.79, 0.61] (build)
+component "Example Service" [0.52, 0.8]
+component "Example Identity" [0.72, 0.82] (buy)
+component "Example Data" [0.46, 0.58]
+component "Example Compute" [0.35, 0.91] (outsource)
+component "Example Network" [0.25, 0.97]
+component "Example Observability" [0.58, 0.76]
+"Example Business" -> "Example Product"
+"Example Product" -> "Example Identity"; authenticates
+"Example Product" -> "Example Data"; stores
+"Example Service" -> "Example Compute"; runs on
+"Example Compute" -> "Example Network"; connects
+"Example Service" -> "Example Observability"; emits

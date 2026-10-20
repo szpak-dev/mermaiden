@@ -98,10 +98,6 @@ class Entity(Element):
     pass
 
 
-class RequiresChildren:
-    elements: tuple[Element, ...]
-
-
 class Container(Element):
     elements: tuple[Element, ...] = ()
 

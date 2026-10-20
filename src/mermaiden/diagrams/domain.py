@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Annotated, ClassVar, cast
+from typing import Annotated, ClassVar
 
-from pydantic import BaseModel, ConfigDict, Field, SerializeAsAny
+from pydantic import BaseModel, ConfigDict, Field, InstanceOf, RootModel, SerializeAsAny
+from pydantic.json_schema import SkipJsonSchema
 
+from ..core.characters import Text
 from ..core.domain import (
     Annotation,
     BlockingConstraint,
@@ -15,7 +17,6 @@ from ..core.domain import (
     Diagram,
     Element,
     Relation,
-    RequiresChildren,
     ValidationReport,
     Violation,
 )
@@ -87,6 +88,37 @@ class MermaidConfigurationModel(BaseModel):
     )
 
 
+class Unconfigured(MermaidConfigurationModel):
+    pass
+
+
+class OmittableConfigurationValue[ConfiguredT](RootModel[ConfiguredT | SkipJsonSchema[InstanceOf[Unconfigured]]]):
+    model_config = ConfigDict(frozen=True)
+
+    root: ConfiguredT | SkipJsonSchema[InstanceOf[Unconfigured]] = Field(default_factory=Unconfigured)
+
+    def excludes(self, value: object) -> bool:
+        return self == value
+
+
+class OmittableNumber(OmittableConfigurationValue[float]):
+    pass
+
+
+class OmittableBoolean(OmittableConfigurationValue[bool]):
+    pass
+
+
+class OmittableNonNegativeInteger(OmittableConfigurationValue[Annotated[int, Field(ge=0)]]):
+    pass
+
+
+class OmittableText(
+    OmittableConfigurationValue[Annotated[str, Field(pattern=Text.pattern, description=Text.description)]]
+):
+    pass
+
+
 class MermaidConfiguration(MermaidConfigurationModel):
     wrap: bool
     diagrams: Mapping[str, SerializeAsAny["MermaidDiagramConfiguration"]]
@@ -101,6 +133,11 @@ class MermaidConfiguration(MermaidConfigurationModel):
 
 class MermaidDiagramConfiguration(MermaidConfigurationModel):
     wrap: bool = True
+    use_width: Annotated[
+        OmittableNumber,
+        Field(alias="useWidth", exclude_if=OmittableNumber().excludes),
+    ] = Field(default_factory=OmittableNumber)
+    use_max_width: Annotated[bool, Field(alias="useMaxWidth")] = True
 
     def document(self, source: str) -> MermaidConfiguration:
         return MermaidConfiguration(wrap=self.wrap, diagrams={source: self})
@@ -121,7 +158,7 @@ class DiagramObserver[ConstraintT: Constraint](ConstraintInspection):
 class DiagramConstraint(BlockingConstraint):
     @property
     def code(self) -> str:
-        package = getattr(self, "package", type(self).__module__)
+        package = type(self).__module__
         boundary = "constraints" if ".constraints." in package else package.rsplit(".", maxsplit=1)[-1]
         return f"{boundary}.{ClassName(type(self)).snake_case}"
 
@@ -156,14 +193,6 @@ class Members(DiagramConstraint):
             )
             for item in diagram.find_annotations("")
             if type(item) not in self.annotations
-        )
-        issues.extend(
-            self.violation(
-                f"Element '{item.id}' must contain at least one child.",
-                path=f"elements.{item.id}",
-            )
-            for item in diagram.walk_elements("")
-            if isinstance(item, RequiresChildren) and not cast(Container, item).elements
         )
         return tuple(issues)
 
@@ -308,13 +337,3 @@ class DiagramInfo:
     diagram_type: type[DiagramModel]
     config_key: str
     schema_definition: str
-
-    @classmethod
-    def from_diagram(cls, diagram: DiagramModel) -> "DiagramInfo":
-        return cls(
-            id=diagram.definition.syntax,
-            name=diagram.definition.name,
-            diagram_type=type(diagram),
-            config_key=diagram.definition.config_key,
-            schema_definition=diagram.definition.schema_definition,
-        )

@@ -1,17 +1,33 @@
+from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 
-from mermaiden.diagrams.domain import DiagramModel
+from mermaiden import Application
 
 
 @dataclass(frozen=True, slots=True)
 class DiagramFixture:
-    diagram: DiagramModel
+    id: str
+    snapshot: Mapping[str, object]
     builder: str
 
-    @property
-    def id(self) -> str:
-        return self.diagram.definition.syntax
+
+@dataclass(frozen=True, slots=True)
+class FixtureCommand:
+    operation: str
+    arguments: Mapping[str, object]
+
+
+@dataclass(frozen=True, slots=True)
+class FixtureDefinition:
+    diagram_id: str
+    commands: tuple[FixtureCommand, ...]
+
+    def build(self, application: Application, builder: str) -> DiagramFixture:
+        diagram = application.create_diagram(self.diagram_id)
+        for command in self.commands:
+            application.execute(diagram, command.operation, command.arguments)
+        return DiagramFixture(self.diagram_id, application.snapshot(diagram).to_dict(), builder)
 
 
 class FixtureIssueKind(StrEnum):
@@ -32,8 +48,3 @@ class FixtureCoverageError(RuntimeError):
     def __init__(self, issues: tuple[FixtureIssue, ...]) -> None:
         self.issues = issues
         super().__init__("; ".join(issue.message for issue in issues))
-
-
-def has_semantic_statement(source: str) -> bool:
-    body = source.split("---\n", 2)[-1]
-    return len(tuple(line for line in body.splitlines() if line.strip())) > 1
