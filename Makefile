@@ -1,8 +1,9 @@
-.PHONY: architecture ci compat compatibility configuration-proofs diagrams-preview diagrams-test diagrams-validate documentation-check documentation-linkcheck documentation-links fast-check format integration mermaid-sync mutation-contract package-check pytest quality
+.PHONY: architecture ci compat compatibility configuration-proofs configuration-render-shard diagrams-preview diagrams-test diagrams-validate diagrams-validate-core documentation-check documentation-linkcheck documentation-links fast-check format integration integration-core mermaid-sync mutation-contract package-check pytest quality
 
 UV := uv
 RUN := $(UV) run --no-sync
 PYTHON := $(RUN) python
+CONFIGURATION_RENDER_TEST := tests/fixtures/test_configuration_proofs.py::test_every_configuration_probe_produces_a_real_svg
 
 architecture:
 	@$(RUN) lint-imports --cache-dir .dev/import_linter_cache
@@ -59,7 +60,17 @@ integration:
 	@PUPPETEER_SKIP_DOWNLOAD=true npm ci
 	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" $(PYTHON) -m pytest -m integration
 
+integration-core:
+	@PUPPETEER_SKIP_DOWNLOAD=true npm ci
+	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" $(PYTHON) -m pytest -m integration -k "not test_every_configuration_probe_produces_a_real_svg"
+
+configuration-render-shard:
+	@PUPPETEER_SKIP_DOWNLOAD=true npm ci
+	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" $(PYTHON) -m pytest -m integration "$(CONFIGURATION_RENDER_TEST)[shard-$(SHARD)-of-4]"
+
 diagrams-validate: integration
+
+diagrams-validate-core: integration-core
 
 diagrams-preview:
 	@PYTHONPATH=. $(PYTHON) scripts/render_preview.py

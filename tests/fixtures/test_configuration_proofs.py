@@ -1,4 +1,5 @@
 import hashlib
+from dataclasses import dataclass
 from pathlib import Path
 from xml.etree import ElementTree
 
@@ -10,6 +11,32 @@ from tests.fixtures.configuration_proofs import ConfigurationProofCatalog, Confi
 
 ROOT = Path(__file__).resolve().parents[2]
 PROOF_ROOT = ROOT / "docs" / "contracts" / "configuration-rendering"
+CONFIGURATION_RENDER_SHARDS = (
+    pytest.param(0, 4, id="shard-1-of-4"),
+    pytest.param(1, 4, id="shard-2-of-4"),
+    pytest.param(2, 4, id="shard-3-of-4"),
+    pytest.param(3, 4, id="shard-4-of-4"),
+)
+
+
+@dataclass(frozen=True, slots=True)
+class ConfigurationRenderProofs:
+    mermaid_version: str
+    sources: tuple[tuple[str, str], ...]
+
+    def shard(self, shard_index: int, shard_count: int) -> dict[str, str]:
+        return dict(self.sources[shard_index::shard_count])
+
+
+@pytest.fixture(scope="session")
+def configuration_render_proofs() -> ConfigurationRenderProofs:
+    with Application.create() as application:
+        rendered = ConfigurationProofCatalog(application).rendered_probes()
+        version = application.mermaid_version
+    return ConfigurationRenderProofs(
+        mermaid_version=version,
+        sources=tuple((f"{index:04d}-{probe.id}", probe.source) for index, probe in enumerate(rendered)),
+    )
 
 
 def test_checked_in_mermaid_proofs_cover_every_configuration_field() -> None:
@@ -61,7 +88,7 @@ def test_manifest_hashes_bind_every_physical_proof() -> None:
     assert manifest["mermaid_version"] == "11.16.0"
     assert manifest["diagram_count"] == 27
     assert manifest["configuration_field_count"] == 466
-    assert manifest["probe_count"] >= 466
+    assert manifest["probe_count"] == 1464
     for diagram in manifest["diagrams"]:
         source = (PROOF_ROOT / diagram["source"]).read_text(encoding="utf-8")
         svg = (PROOF_ROOT / diagram["svg"]).read_text(encoding="utf-8")
@@ -77,7 +104,15 @@ def test_every_configuration_probe_serializes_exactly_and_survives_snapshot_rest
         config_keys = {info.id: info.config_key for info in application.available_diagrams()}
 
     assert len({probe.probe.id for probe in probes}) == 466
-    assert len(probes) >= 466
+    assert len(probes) == 1464
+    render_proofs = ConfigurationRenderProofs(
+        mermaid_version="11.16.0",
+        sources=tuple((f"{index:04d}-{probe.id}", probe.source) for index, probe in enumerate(probes)),
+    )
+    expected_keys = tuple(key for key, _source in render_proofs.sources)
+    partitioned_keys = tuple(key for shard_index in range(4) for key in render_proofs.shard(shard_index, 4))
+    assert len(set(partitioned_keys)) == len(expected_keys)
+    assert tuple(sorted(partitioned_keys)) == expected_keys
     for rendered in probes:
         document = yaml.safe_load(rendered.source.split("---\n", 2)[1])["config"]
         actual = (
@@ -89,12 +124,14 @@ def test_every_configuration_probe_serializes_exactly_and_survives_snapshot_rest
 
 
 @pytest.mark.integration
-def test_every_configuration_probe_produces_a_real_svg() -> None:
-    with Application.create() as application:
-        rendered = ConfigurationProofCatalog(application).rendered_probes()
-        version = application.mermaid_version
-    sources = {f"{index:04d}-{probe.id}": probe.source for index, probe in enumerate(rendered)}
+@pytest.mark.parametrize(("shard_index", "shard_count"), CONFIGURATION_RENDER_SHARDS)
+def test_every_configuration_probe_produces_a_real_svg(
+    configuration_render_proofs: ConfigurationRenderProofs,
+    shard_index: int,
+    shard_count: int,
+) -> None:
+    sources = configuration_render_proofs.shard(shard_index, shard_count)
 
-    svgs = ConfigurationProofRenderer(version).render(sources)
+    svgs = ConfigurationProofRenderer(configuration_render_proofs.mermaid_version).render(sources)
 
     assert tuple(svgs) == tuple(sources)
