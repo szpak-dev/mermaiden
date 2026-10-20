@@ -15,35 +15,30 @@ group platform[Platform]
   service catalog[Catalog] in platform
   service orders[Orders] in platform
   service worker[Worker] in platform
-  junction events in platform
-  align row api auth
-  align row catalog orders
-  align row worker events
-  align column api catalog worker
-  align column auth orders events
+  service events[Events] in platform
+  align row api auth catalog
+  align row orders worker events
+  align column api orders
+  align column auth worker
+  align column catalog events
 group data[Data]
-  junction data_bus in data
+  service data_bus[Data API] in data
   service database[Database] in data
   service cache[Cache] in data
   service search[Search] in data
   service warehouse[Warehouse] in data
-  align row data_bus database
-  align row cache search
-  align column data_bus cache warehouse
-  align column database search
-web:R -["mTLS"]-> L:api
-mobile:R --> L:api
-partner:R --> L:api
-api:R --> L:auth
-api:B --> T:catalog
-catalog:R --> L:orders
-orders:B --> T:events
-events:L --> R:worker
-events:R --> L:data_bus
-data_bus:R --> L:database
-data_bus:B --> T:cache
-cache:R --> L:search
-search:B --> T:warehouse
+  align row data_bus database cache
+  align row search warehouse
+  align column data_bus search
+  align column database warehouse
+service gateway[Gateway]
+align column gateway web
+web:T -["mTLS"]-> B:gateway
+api:B --> T:orders
+auth:B --> T:worker
+catalog:B --> T:events
+data_bus:B --> T:search
+database:B --> T:warehouse
 %% Client gateway
 %% Public API
 %% Persistent storage

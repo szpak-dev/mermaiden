@@ -63,21 +63,76 @@ class StructuralFixtureBuilder:
             FixtureDefinition(
                 "treeView-beta",
                 (
+                    FixtureCommand(
+                        "configure",
+                        {
+                            "showIcons": True,
+                            "filenameIcons": {"README.md": "file"},
+                            "extensionIcons": {"py": "file"},
+                        },
+                    ),
                     FixtureCommand("add_directory", {"id": "root", "label": "root"}),
                     FixtureCommand("add_directory", {"id": "source", "label": "src"}),
                     FixtureCommand("add_directory", {"id": "package", "label": "mermaiden"}),
+                    FixtureCommand("add_directory", {"id": "diagrams", "label": "diagrams"}),
+                    FixtureCommand("add_directory", {"id": "runtime", "label": "runtime"}),
                     FixtureCommand("add_directory", {"id": "tests", "label": "tests"}),
+                    FixtureCommand("add_directory", {"id": "unit", "label": "unit"}),
+                    FixtureCommand("add_directory", {"id": "integration", "label": "integration"}),
                     FixtureCommand("add_file", {"id": "readme", "label": "README.md"}),
-                    FixtureCommand("add_item", {"id": "overview", "label": "Overview"}),
+                    FixtureCommand("add_file", {"id": "pyproject", "label": "pyproject.toml"}),
+                    FixtureCommand("add_file", {"id": "application", "label": "application.py"}),
+                    FixtureCommand("add_file", {"id": "configuration", "label": "configuration.py"}),
+                    FixtureCommand("add_file", {"id": "snapshot", "label": "snapshot.py"}),
+                    FixtureCommand("add_file", {"id": "behavior", "label": "test_behavior.py"}),
+                    FixtureCommand("add_file", {"id": "render", "label": "test_rendering.py"}),
+                    FixtureCommand("add_item", {"id": "evidence", "label": "Release evidence"}),
+                    FixtureCommand(
+                        "add_annotation",
+                        {
+                            "id": "root_note",
+                            "element_id": "root",
+                            "highlight": True,
+                            "icon": "folder",
+                            "description": "Typed diagram toolkit",
+                        },
+                    ),
                     FixtureCommand("add_annotation", {"id": "source_note", "element_id": "source", "icon": "folder"}),
                     FixtureCommand("add_branch", {"id": "root_source", "parent_id": "root", "child_id": "source"}),
-                    FixtureCommand("add_annotation", {"id": "tests_note", "element_id": "tests", "icon": "test"}),
+                    FixtureCommand("add_annotation", {"id": "tests_note", "element_id": "tests", "icon": "folder"}),
                     FixtureCommand("add_branch", {"id": "root_tests", "parent_id": "root", "child_id": "tests"}),
                     FixtureCommand(
                         "add_branch", {"id": "source_package", "parent_id": "source", "child_id": "package"}
                     ),
+                    FixtureCommand(
+                        "add_branch", {"id": "package_diagrams", "parent_id": "package", "child_id": "diagrams"}
+                    ),
+                    FixtureCommand(
+                        "add_branch", {"id": "package_runtime", "parent_id": "package", "child_id": "runtime"}
+                    ),
+                    FixtureCommand(
+                        "add_branch", {"id": "package_application", "parent_id": "package", "child_id": "application"}
+                    ),
+                    FixtureCommand(
+                        "add_branch",
+                        {"id": "diagrams_configuration", "parent_id": "diagrams", "child_id": "configuration"},
+                    ),
+                    FixtureCommand(
+                        "add_branch", {"id": "runtime_snapshot", "parent_id": "runtime", "child_id": "snapshot"}
+                    ),
+                    FixtureCommand("add_branch", {"id": "tests_unit", "parent_id": "tests", "child_id": "unit"}),
+                    FixtureCommand(
+                        "add_branch", {"id": "tests_integration", "parent_id": "tests", "child_id": "integration"}
+                    ),
+                    FixtureCommand("add_branch", {"id": "unit_behavior", "parent_id": "unit", "child_id": "behavior"}),
+                    FixtureCommand(
+                        "add_branch", {"id": "integration_render", "parent_id": "integration", "child_id": "render"}
+                    ),
                     FixtureCommand("add_branch", {"id": "root_readme", "parent_id": "root", "child_id": "readme"}),
-                    FixtureCommand("add_branch", {"id": "root_overview", "parent_id": "root", "child_id": "overview"}),
+                    FixtureCommand(
+                        "add_branch", {"id": "root_pyproject", "parent_id": "root", "child_id": "pyproject"}
+                    ),
+                    FixtureCommand("add_branch", {"id": "root_evidence", "parent_id": "root", "child_id": "evidence"}),
                     FixtureCommand(
                         "add_annotation",
                         {
@@ -85,6 +140,35 @@ class StructuralFixtureBuilder:
                             "element_id": "readme",
                             "highlight": True,
                             "description": "Documentation",
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_annotation",
+                        {
+                            "id": "configuration_note",
+                            "element_id": "configuration",
+                            "highlight": True,
+                            "icon": "file",
+                            "description": "Typed configuration",
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_annotation",
+                        {
+                            "id": "render_note",
+                            "element_id": "render",
+                            "highlight": True,
+                            "icon": "file",
+                            "description": "Browser rendering",
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_annotation",
+                        {
+                            "id": "evidence_note",
+                            "element_id": "evidence",
+                            "highlight": True,
+                            "description": "Release evidence",
                         },
                     ),
                 ),
@@ -192,8 +276,8 @@ class StructuralFixtureBuilder:
                 (
                     FixtureCommand("configure", {"nodeSeparation": 96, "seed": 7}),
                     FixtureCommand("add_group", {"id": "clients", "label": "Clients", "columns": 3}),
-                    FixtureCommand("add_group", {"id": "platform", "label": "Platform", "columns": 2}),
-                    FixtureCommand("add_group", {"id": "data", "label": "Data", "columns": 2}),
+                    FixtureCommand("add_group", {"id": "platform", "label": "Platform", "columns": 3}),
+                    FixtureCommand("add_group", {"id": "data", "label": "Data", "columns": 3}),
                     FixtureCommand("add_service", {"id": "web", "label": "Web", "group_id": "clients"}),
                     FixtureCommand("add_service", {"id": "mobile", "label": "Mobile", "group_id": "clients"}),
                     FixtureCommand("add_service", {"id": "partner", "label": "Partner", "group_id": "clients"}),
@@ -202,59 +286,34 @@ class StructuralFixtureBuilder:
                     FixtureCommand("add_service", {"id": "catalog", "label": "Catalog", "group_id": "platform"}),
                     FixtureCommand("add_service", {"id": "orders", "label": "Orders", "group_id": "platform"}),
                     FixtureCommand("add_service", {"id": "worker", "label": "Worker", "group_id": "platform"}),
-                    FixtureCommand("add_junction", {"id": "events", "label": "Events", "group_id": "platform"}),
-                    FixtureCommand("add_junction", {"id": "data_bus", "label": "Data access", "group_id": "data"}),
+                    FixtureCommand("add_service", {"id": "events", "label": "Events", "group_id": "platform"}),
+                    FixtureCommand("add_service", {"id": "data_bus", "label": "Data API", "group_id": "data"}),
                     FixtureCommand("add_service", {"id": "database", "label": "Database", "group_id": "data"}),
                     FixtureCommand("add_service", {"id": "cache", "label": "Cache", "group_id": "data"}),
                     FixtureCommand("add_service", {"id": "search", "label": "Search", "group_id": "data"}),
                     FixtureCommand("add_service", {"id": "warehouse", "label": "Warehouse", "group_id": "data"}),
+                    FixtureCommand("add_service", {"id": "gateway", "label": "Gateway"}),
+                    FixtureCommand(
+                        "add_alignment",
+                        {"id": "client_gateway_column", "axis": "column", "member_ids": ["gateway", "web"]},
+                    ),
                     FixtureCommand(
                         "add_edge",
                         {
-                            "id": "web_api",
+                            "id": "web_gateway",
                             "source_id": "web",
-                            "target_id": "api",
-                            "source_port": "right",
-                            "target_port": "left",
+                            "target_id": "gateway",
+                            "source_port": "top",
+                            "target_port": "bottom",
                             "label": "mTLS",
                         },
                     ),
                     FixtureCommand(
                         "add_edge",
                         {
-                            "id": "mobile_api",
-                            "source_id": "mobile",
-                            "target_id": "api",
-                            "source_port": "right",
-                            "target_port": "left",
-                        },
-                    ),
-                    FixtureCommand(
-                        "add_edge",
-                        {
-                            "id": "partner_api",
-                            "source_id": "partner",
-                            "target_id": "api",
-                            "source_port": "right",
-                            "target_port": "left",
-                        },
-                    ),
-                    FixtureCommand(
-                        "add_edge",
-                        {
-                            "id": "api_auth",
+                            "id": "api_orders",
                             "source_id": "api",
-                            "target_id": "auth",
-                            "source_port": "right",
-                            "target_port": "left",
-                        },
-                    ),
-                    FixtureCommand(
-                        "add_edge",
-                        {
-                            "id": "api_catalog",
-                            "source_id": "api",
-                            "target_id": "catalog",
+                            "target_id": "orders",
                             "source_port": "bottom",
                             "target_port": "top",
                         },
@@ -262,18 +321,18 @@ class StructuralFixtureBuilder:
                     FixtureCommand(
                         "add_edge",
                         {
-                            "id": "catalog_orders",
-                            "source_id": "catalog",
-                            "target_id": "orders",
-                            "source_port": "right",
-                            "target_port": "left",
+                            "id": "auth_worker",
+                            "source_id": "auth",
+                            "target_id": "worker",
+                            "source_port": "bottom",
+                            "target_port": "top",
                         },
                     ),
                     FixtureCommand(
                         "add_edge",
                         {
-                            "id": "orders_events",
-                            "source_id": "orders",
+                            "id": "catalog_events",
+                            "source_id": "catalog",
                             "target_id": "events",
                             "source_port": "bottom",
                             "target_port": "top",
@@ -282,39 +341,9 @@ class StructuralFixtureBuilder:
                     FixtureCommand(
                         "add_edge",
                         {
-                            "id": "events_worker",
-                            "source_id": "events",
-                            "target_id": "worker",
-                            "source_port": "left",
-                            "target_port": "right",
-                        },
-                    ),
-                    FixtureCommand(
-                        "add_edge",
-                        {
-                            "id": "events_data",
-                            "source_id": "events",
-                            "target_id": "data_bus",
-                            "source_port": "right",
-                            "target_port": "left",
-                        },
-                    ),
-                    FixtureCommand(
-                        "add_edge",
-                        {
-                            "id": "data_database",
+                            "id": "data_search",
                             "source_id": "data_bus",
-                            "target_id": "database",
-                            "source_port": "right",
-                            "target_port": "left",
-                        },
-                    ),
-                    FixtureCommand(
-                        "add_edge",
-                        {
-                            "id": "data_cache",
-                            "source_id": "data_bus",
-                            "target_id": "cache",
+                            "target_id": "search",
                             "source_port": "bottom",
                             "target_port": "top",
                         },
@@ -322,18 +351,8 @@ class StructuralFixtureBuilder:
                     FixtureCommand(
                         "add_edge",
                         {
-                            "id": "cache_search",
-                            "source_id": "cache",
-                            "target_id": "search",
-                            "source_port": "right",
-                            "target_port": "left",
-                        },
-                    ),
-                    FixtureCommand(
-                        "add_edge",
-                        {
-                            "id": "search_warehouse",
-                            "source_id": "search",
+                            "id": "database_warehouse",
+                            "source_id": "database",
                             "target_id": "warehouse",
                             "source_port": "bottom",
                             "target_port": "top",

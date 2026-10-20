@@ -178,6 +178,11 @@ class ConfigurationProofCatalog:
                     "numIter": 5000,
                     "seed": 7,
                 },
+                "treeView-beta": {
+                    "showIcons": True,
+                    "filenameIcons": {"README.md": "file"},
+                    "extensionIcons": {"py": "file"},
+                },
             }.get(diagram_id, {})
         )
         validated = payload.validate(values).values

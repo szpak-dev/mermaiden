@@ -1,12 +1,22 @@
 ---
 config:
   wrap: true
-  treeView: {"useWidth": 960.0, "useMaxWidth": true, "rowIndent": 10.0, "paddingX": 5.0, "paddingY": 5.0, "lineThickness": 1.0, "showIcons": false, "defaultIconPack": "", "filenameIcons": {}, "extensionIcons": {}}
+  treeView: {"useWidth": 960.0, "useMaxWidth": true, "rowIndent": 10.0, "paddingX": 5.0, "paddingY": 5.0, "lineThickness": 1.0, "showIcons": true, "defaultIconPack": "", "filenameIcons": {"README.md": "file"}, "extensionIcons": {"py": "file"}}
 ---
 treeView-beta
-root/
+root/ :::highlight icon(folder) ## Typed diagram toolkit
   src/ icon(folder)
     mermaiden/
-  tests/ icon(test)
+      diagrams/
+        configuration.py :::highlight icon(file) ## Typed configuration
+      runtime/
+        snapshot.py
+      application.py
+  tests/ icon(folder)
+    unit/
+      test_behavior.py
+    integration/
+      test_rendering.py :::highlight icon(file) ## Browser rendering
   README.md :::highlight ## Documentation
-  Overview
+  pyproject.toml
+  Release evidence :::highlight ## Release evidence

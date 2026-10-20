@@ -1345,10 +1345,10 @@
     {
       "diagram_id": "architecture-beta",
       "source": "sources/architecture-beta.mmd",
-      "source_sha256": "cb41871013668c15bf65e1cf2083d5f8dd034b13a061ed0a3bc8459d469a03b0",
+      "source_sha256": "2816dbb0a94d9b8d5121da60912962af9fb3d51e98ee8e9915e9eff1aca9418e",
       "svg": "rendered/architecture-beta.svg",
-      "svg_sha256": "bd0fb4bf0bdc416795ff09a558ebecb41c89bf47a8050ac0ea62aa57f5f89660",
-      "semantic_object_count": 33,
+      "svg_sha256": "9d319400bde225326881f3533d9baba275d4023cf974c3a89ddb5f6e8c7fefce",
+      "semantic_object_count": 28,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -1526,7 +1526,7 @@
       "source": "sources/classDiagram.mmd",
       "source_sha256": "55b001005eab0b3b53c8eb8e9b0a91a7668bf7a129e218e7b7a680b03eaae768",
       "svg": "rendered/classDiagram.svg",
-      "svg_sha256": "c706c4b1e6f3eb5194ad03784e66937a76340bb033372adf8c468524b92ff384",
+      "svg_sha256": "c1a12f415ffd2b4e04c12797e4b7a4660bfb90ca6afbfaf84d86f6539e0df23b",
       "semantic_object_count": 20,
       "configuration_fields": [
         {
@@ -1775,7 +1775,7 @@
       "source": "sources/erDiagram.mmd",
       "source_sha256": "e170a67c9f88d5c52ab629b1e4794c9890dfc1760f3c65c739fe7c6afc11c1a5",
       "svg": "rendered/erDiagram.svg",
-      "svg_sha256": "192e747c147958d45e5ef9b3b7ecd0c17fb973cf8fe0415adc9620552b3aaf42",
+      "svg_sha256": "9118b0acd1f9b27c54f54ceba8700b846ce36c4372d906c762af9a201010563c",
       "semantic_object_count": 17,
       "configuration_fields": [
         {
@@ -1980,7 +1980,7 @@
       "source": "sources/flowchart.mmd",
       "source_sha256": "24178868f759b12c618d70cc4a3cfadee3411579c167219a6b84b00bac5fda55",
       "svg": "rendered/flowchart.svg",
-      "svg_sha256": "15781561a455129e2ae5432f92db244452ab9742e6374412112c357c98e515e8",
+      "svg_sha256": "d43a999be4f550084a37e2df691ab0cca9bae81adb0f6debdfd3b148ead59c3c",
       "semantic_object_count": 27,
       "configuration_fields": [
         {
@@ -2141,7 +2141,7 @@
       "source": "sources/gantt.mmd",
       "source_sha256": "964cbc77c40f690e26610a87c7241eda4656f16399996d34a6c1ccc823020cc1",
       "svg": "rendered/gantt.svg",
-      "svg_sha256": "0dda4e6a6efdcdaa0f6e04257cde9759e88e298712e565381474c0f787e776e4",
+      "svg_sha256": "81bf39073e5b33c9b2681b38dba1955180f6747e88a5d6d9f176e69ef828079a",
       "semantic_object_count": 12,
       "configuration_fields": [
         {
@@ -3539,7 +3539,7 @@
       "source": "sources/requirementDiagram.mmd",
       "source_sha256": "2a859a61454ebf480c935663800ce98d4c71fb3da1e5d66b6a952bc27b1ca788",
       "svg": "rendered/requirementDiagram.svg",
-      "svg_sha256": "a7d5020ca89c345e3f8caf575410f57f2fb057a5c39ece0093ac241d0af8145d",
+      "svg_sha256": "c6489c6a7faa46f169061238683ea5f4f7478eb3e9550a19f105ff33ee82ff72",
       "semantic_object_count": 15,
       "configuration_fields": [
         {
@@ -4181,7 +4181,7 @@
       "source": "sources/stateDiagram-v2.mmd",
       "source_sha256": "001f816f94c8657dc5d87c9cd5f976d7aaf31b9559c840dcf3ef9df8f0c32ac4",
       "svg": "rendered/stateDiagram-v2.svg",
-      "svg_sha256": "418e22b81b9ea96bf725c91028a945afebdad92ea1ee8a52a80543c7b90583af",
+      "svg_sha256": "88be98796d214ce1aeb6eabee28938303766981e47336c1896c6fbc4d62d9d65",
       "semantic_object_count": 31,
       "configuration_fields": [
         {
@@ -4428,7 +4428,7 @@
       "source": "sources/swimlane-beta.mmd",
       "source_sha256": "5a4e3a6a8548ab474f30394d19535ea7a0a1586539dd337ff78bb68d11d11f53",
       "svg": "rendered/swimlane-beta.svg",
-      "svg_sha256": "5e9bdc3f0496fe689efd2ff864958237a24fc66b56811edb91c3335b246a37f2",
+      "svg_sha256": "b02f1438e13bfa90e63b65cc04812181a3f191d75f4ef7ab335c3c4dad4dd981",
       "semantic_object_count": 17,
       "configuration_fields": [
         {
@@ -4791,10 +4791,10 @@
     {
       "diagram_id": "treeView-beta",
       "source": "sources/treeView-beta.mmd",
-      "source_sha256": "9970fedcb41ee93516f4d665c374ec5cf90639044b3bd1b5d36ea1dcd43ea680",
+      "source_sha256": "39e194f4f1ab00f7120412902b9daad7bb8dda5395ca9ca7282a12704ab5e92f",
       "svg": "rendered/treeView-beta.svg",
-      "svg_sha256": "0cd454e6ecea32b59896fc85223a65407cddc20af69a952b642cf772524f8db7",
-      "semantic_object_count": 14,
+      "svg_sha256": "769b207e9521e5fdde8c0d0ef02480c823412cf1c52ef5454a9746ad39ecfd79",
+      "semantic_object_count": 38,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -4864,7 +4864,7 @@
         },
         {
           "name": "showIcons",
-          "showcase_value": false,
+          "showcase_value": true,
           "probes": [
             false,
             true
@@ -4882,7 +4882,9 @@
         },
         {
           "name": "filenameIcons",
-          "showcase_value": {},
+          "showcase_value": {
+            "README.md": "file"
+          },
           "probes": [
             {},
             {
@@ -4894,7 +4896,9 @@
         },
         {
           "name": "extensionIcons",
-          "showcase_value": {},
+          "showcase_value": {
+            "py": "file"
+          },
           "probes": [
             {},
             {
