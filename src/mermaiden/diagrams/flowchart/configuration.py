@@ -4,22 +4,22 @@ from typing import Annotated
 from pydantic import Field
 
 from ..domain import (
-    BooleanOrUnconfigured,
     MermaidConfigurationModel,
     MermaidDiagramConfiguration,
-    NonNegativeIntegerOrUnconfigured,
+    OmittableBoolean,
+    OmittableNonNegativeInteger,
 )
 
 
 class FlowchartSubgraphTitleMargin(MermaidConfigurationModel):
     top: Annotated[
-        NonNegativeIntegerOrUnconfigured,
-        Field(alias="top", exclude_if=NonNegativeIntegerOrUnconfigured().excludes),
-    ] = Field(default_factory=NonNegativeIntegerOrUnconfigured)
+        OmittableNonNegativeInteger,
+        Field(alias="top", exclude_if=OmittableNonNegativeInteger().excludes),
+    ] = Field(default_factory=OmittableNonNegativeInteger)
     bottom: Annotated[
-        NonNegativeIntegerOrUnconfigured,
-        Field(alias="bottom", exclude_if=NonNegativeIntegerOrUnconfigured().excludes),
-    ] = Field(default_factory=NonNegativeIntegerOrUnconfigured)
+        OmittableNonNegativeInteger,
+        Field(alias="bottom", exclude_if=OmittableNonNegativeInteger().excludes),
+    ] = Field(default_factory=OmittableNonNegativeInteger)
 
 
 class FlowchartCurve(StrEnum):
@@ -46,12 +46,15 @@ class FlowchartRenderer(StrEnum):
 class FlowchartDiagramConfiguration(MermaidDiagramConfiguration):
     title_top_margin: Annotated[int, Field(alias="titleTopMargin", ge=0)] = 25
     sub_graph_title_margin: Annotated[FlowchartSubgraphTitleMargin, Field(alias="subGraphTitleMargin")] = (
-        FlowchartSubgraphTitleMargin(top=0, bottom=0)
+        FlowchartSubgraphTitleMargin(
+            top=OmittableNonNegativeInteger(root=0),
+            bottom=OmittableNonNegativeInteger(root=0),
+        )
     )
     arrow_marker_absolute: Annotated[
-        BooleanOrUnconfigured,
-        Field(alias="arrowMarkerAbsolute", exclude_if=BooleanOrUnconfigured().excludes),
-    ] = Field(default_factory=BooleanOrUnconfigured)
+        OmittableBoolean,
+        Field(alias="arrowMarkerAbsolute", exclude_if=OmittableBoolean().excludes),
+    ] = Field(default_factory=OmittableBoolean)
     diagram_padding: Annotated[int, Field(alias="diagramPadding", ge=0)] = 8
     node_spacing: Annotated[int, Field(alias="nodeSpacing", ge=0)] = 50
     rank_spacing: Annotated[int, Field(alias="rankSpacing", ge=0)] = 50

@@ -3,7 +3,7 @@ from typing import Annotated
 
 from pydantic import Field
 
-from ..domain import MermaidDiagramConfiguration, NonNegativeIntegerOrUnconfigured
+from ..domain import MermaidDiagramConfiguration, OmittableNonNegativeInteger
 
 
 class ClassRenderer(StrEnum):
@@ -20,13 +20,13 @@ class ClassDiagramConfiguration(MermaidDiagramConfiguration):
     text_height: Annotated[float, Field(alias="textHeight")] = 10
     default_renderer: Annotated[ClassRenderer, Field(alias="defaultRenderer")] = ClassRenderer.DAGRE_WRAPPER
     node_spacing: Annotated[
-        NonNegativeIntegerOrUnconfigured,
-        Field(alias="nodeSpacing", exclude_if=NonNegativeIntegerOrUnconfigured().excludes),
-    ] = Field(default_factory=NonNegativeIntegerOrUnconfigured)
+        OmittableNonNegativeInteger,
+        Field(alias="nodeSpacing", exclude_if=OmittableNonNegativeInteger().excludes),
+    ] = Field(default_factory=OmittableNonNegativeInteger)
     rank_spacing: Annotated[
-        NonNegativeIntegerOrUnconfigured,
-        Field(alias="rankSpacing", exclude_if=NonNegativeIntegerOrUnconfigured().excludes),
-    ] = Field(default_factory=NonNegativeIntegerOrUnconfigured)
+        OmittableNonNegativeInteger,
+        Field(alias="rankSpacing", exclude_if=OmittableNonNegativeInteger().excludes),
+    ] = Field(default_factory=OmittableNonNegativeInteger)
     diagram_padding: Annotated[int, Field(alias="diagramPadding", ge=0)] = 20
     html_labels: Annotated[bool, Field(alias="htmlLabels")] = False
     hide_empty_members_box: Annotated[bool, Field(alias="hideEmptyMembersBox")] = False

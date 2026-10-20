@@ -6,9 +6,12 @@ This directory contains executable evidence for Mermaiden's typed Mermaid config
   serializes every configuration field supported by that kind.
 - `rendered/` contains the corresponding SVG produced by the Mermaid CLI version pinned in
   `src/mermaiden/mermaid/compatibility/schema.lock.json`.
-- `manifest.json` binds each source and SVG by SHA-256 and records every configuration field and valid probe value.
+- `manifest.json` binds each source and SVG by SHA-256, records every configuration field and valid probe value,
+  and proves that each diagram kind contains at least 12 semantic objects.
+- `c4-human-layout/` proves the shared typed C4 configuration against complex Context, Container, Component,
+  Dynamic, and Deployment diagrams. Each physical Mermaid source contains at least 12 elements and its rendered SVG.
 - `enclosure-corpus-audit.json` records the revision-pinned audit of every diagram stored in Enclosure on
-  2026-10-19. Empty drafts are distinguished from renderer failures.
+  2026-10-20. Repaired drafts and former renderer failures retain explicit diagnostics.
 
 Regenerate the proof with:
 

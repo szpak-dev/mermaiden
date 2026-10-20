@@ -1,121 +1,581 @@
+from dataclasses import dataclass
+
 from mermaiden import Application
-from mermaiden.diagrams.c4.configuration import C4ContextDiagramConfiguration
-from mermaiden.diagrams.c4.diagram import C4ContextDiagram
-from mermaiden.diagrams.c4.relations import RelationshipDirection
-from mermaiden.diagrams.cynefin.diagram import CynefinDiagram
-from mermaiden.diagrams.cynefin.elements import DomainKind
-from mermaiden.diagrams.gantt.diagram import Gantt
-from mermaiden.diagrams.gantt.elements import DateStart, DurationFinish, TaskStatus
-from mermaiden.diagrams.gitgraph.configuration import GitGraphDiagramConfiguration
-from mermaiden.diagrams.gitgraph.diagram import GitGraphDiagram
-from mermaiden.diagrams.ishikawa.diagram import IshikawaDiagram
-from mermaiden.diagrams.kanban.diagram import KanbanDiagram
-from mermaiden.diagrams.railroad.diagram import RailroadDiagram
-from mermaiden.diagrams.wardley.diagram import WardleyDiagram
-from mermaiden.diagrams.wardley.elements import ComponentDecorator
 
-from .models import DiagramFixture
+from .models import DiagramFixture, FixtureCommand, FixtureDefinition
 
 
-def build_gitgraph_fixture(application: Application, main_branch_name: str = "main") -> GitGraphDiagram:
-    diagram = application.create_diagram("gitGraph")
-    assert isinstance(diagram, GitGraphDiagram)
-    diagram.configure(GitGraphDiagramConfiguration(main_branch_name=main_branch_name))
-    diagram.add_commit("initial", "ZERO", tag="v1.0.0")
-    diagram.add_branch("develop", "develop", 1)
-    diagram.checkout("checkout_develop", "develop")
-    diagram.add_commit("feature", "FEATURE", "HIGHLIGHT")
-    diagram.checkout("checkout_main", main_branch_name)
-    diagram.add_commit("release", "RELEASE", tag="v1.1.0")
-    return diagram
+@dataclass(frozen=True, slots=True)
+class GitGraphFixture:
+    main_branch_name: str = "main"
+
+    def build(self, application: Application, builder: str) -> DiagramFixture:
+        return FixtureDefinition(
+            "gitGraph",
+            (
+                FixtureCommand("configure", {"mainBranchName": self.main_branch_name}),
+                FixtureCommand("add_commit", {"id": "example_initial", "label": "ZERO", "tag": "v1.0.0"}),
+                FixtureCommand("add_branch", {"id": "example_develop", "label": "develop", "order": 1}),
+                FixtureCommand("checkout", {"id": "example_checkout", "branch": "develop"}),
+                FixtureCommand(
+                    "add_commit",
+                    {"id": "example_feature", "label": "FEATURE", "commit_type": "HIGHLIGHT"},
+                ),
+                FixtureCommand("add_commit", {"id": "example_tests", "label": "TESTS"}),
+                FixtureCommand("add_commit", {"id": "example_docs", "label": "DOCS"}),
+                FixtureCommand("add_commit", {"id": "example_review", "label": "REVIEW"}),
+                FixtureCommand("add_commit", {"id": "example_fix", "label": "FIX"}),
+                FixtureCommand("add_commit", {"id": "example_refine", "label": "REFINE"}),
+                FixtureCommand("add_commit", {"id": "example_verify", "label": "VERIFY"}),
+                FixtureCommand("add_commit", {"id": "example_release", "label": "RELEASE", "tag": "v1.1.0"}),
+                FixtureCommand("add_commit", {"id": "example_followup", "label": "FOLLOWUP"}),
+            ),
+        ).build(application, builder)
 
 
-def build_specialized_fixtures(application: Application) -> tuple[DiagramFixture, ...]:
-    gantt = application.create_diagram("gantt")
-    assert isinstance(gantt, Gantt)
-    gantt.set_title("Release plan")
-    gantt.add_section("delivery", "Delivery")
-    gantt.add_task(
-        "design",
-        "Design",
-        "delivery",
-        status=TaskStatus.DONE,
-        start=DateStart(date="2026-08-01"),
-        finish=DurationFinish(amount=2),
-    )
+@dataclass(frozen=True, slots=True)
+class SpecializedFixtureBuilder:
+    application: Application
 
-    gitgraph = build_gitgraph_fixture(application)
-
-    c4 = application.create_diagram("C4Context")
-    assert isinstance(c4, C4ContextDiagram)
-    c4.configure(C4ContextDiagramConfiguration(c4_shape_in_row=3, next_line_padding_x=12, message_font_size=16))
-    c4.add_person("customer", "Customer", "A personal banking customer")
-    c4.add_system("banking", "Internet Banking System", "Provides online banking", "Python")
-    c4.add_database("accounts", "Accounts Database", "Stores account balances", "PostgreSQL")
-    c4.add_queue("notifications", "Notifications", "Publishes account events", "Kafka")
-    c4.add_relationship("uses", "customer", "banking", "Uses")
-    c4.add_relationship("reads", "banking", "accounts", "Reads account data", RelationshipDirection.RIGHT)
-    c4.add_relationship("publishes", "banking", "notifications", "Publishes events")
-    c4.add_relationship("audits", "accounts", "notifications", "Audits events")
-    c4.set_relationship_label_offset("uses", 16, 8)
-    c4.set_relationship_label_offset("reads", -20, 12)
-    c4.set_relationship_label_offset("publishes", -12, -8)
-    c4.set_relationship_label_offset("audits", 4, 4)
-    c4.set_relationship_label_offset("audits", 0, 0)
-
-    ishikawa = application.create_diagram("ishikawa-beta")
-    assert isinstance(ishikawa, IshikawaDiagram)
-    ishikawa.add_effect("blurry_photo", "Blurry photo")
-    ishikawa.add_category("process", "Process")
-    ishikawa.add_cause("focus", "Out of focus", "process")
-    ishikawa.add_cause("shutter", "Shutter speed too slow", "process")
-    ishikawa.add_category("equipment", "Equipment")
-    ishikawa.add_category("lens", "Lens", "equipment")
-    ishikawa.add_cause("damaged_lens", "Damaged lens", "lens")
-
-    cynefin = application.create_diagram("cynefin-beta")
-    assert isinstance(cynefin, CynefinDiagram)
-    cynefin.add_item("investigate", "Investigate root cause", DomainKind.COMPLEX)
-    cynefin.add_item("analyze", "Analyze performance data", DomainKind.COMPLICATED)
-    cynefin.add_item("restart", "Restart service", DomainKind.CLEAR)
-    cynefin.add_item("contain", "Contain the incident", DomainKind.CHAOTIC)
-    cynefin.add_item("classify", "Classify the situation", DomainKind.CONFUSION)
-    cynefin.add_transition("pattern", "investigate", "analyze", "Pattern identified")
-
-    kanban = application.create_diagram("kanban")
-    assert isinstance(kanban, KanbanDiagram)
-    kanban.add_column("todo", "Todo")
-    kanban.add_column("doing", "In progress")
-    kanban.add_task("docs", "Create documentation", "todo", ticket="MC-2037", priority="High")
-    kanban.add_task("render", "Create renderer", "doing", assigned="knsv")
-
-    railroad = application.create_diagram("railroad-ebnf-beta")
-    assert isinstance(railroad, RailroadDiagram)
-    railroad.add_rule("alternative", "alternative")
-    railroad.add_alternative("choices", "alternative")
-    railroad.add_special("first_choice", "first", "choices")
-    railroad.add_special("second_choice", "second", "choices")
-    railroad.add_rule("optional", "optional")
-    railroad.add_optional("optional_value", "optional")
-    railroad.add_terminal("literal", "value", "optional_value")
-    railroad.add_rule("repetition", "repetition")
-    railroad.add_repetition("repeated_values", "repetition")
-    railroad.add_non_terminal("reference", "value", "repeated_values")
-    railroad.add_rule("group", "group")
-    railroad.add_group("grouped_value", "group")
-    railroad.add_special("group_member", "grouped", "grouped_value")
-
-    wardley = application.create_diagram("wardley-beta")
-    assert isinstance(wardley, WardleyDiagram)
-    wardley.add_anchor("business", "Business", 0.95, 0.63)
-    wardley.add_component("tea", "Cup of Tea", 0.79, 0.61, (ComponentDecorator.BUILD,))
-    wardley.add_component("water", "Hot Water", 0.52, 0.8)
-    wardley.add_dependency("business_tea", "business", "tea")
-    wardley.add_dependency("tea_water", "tea", "water")
-    wardley.add_evolution("water_evolve", "water", 0.89)
-
-    builder = build_specialized_fixtures.__name__
-    return tuple(
-        DiagramFixture(diagram, builder)
-        for diagram in (gantt, gitgraph, c4, ishikawa, cynefin, kanban, railroad, wardley)
-    )
+    def fixtures(self) -> tuple[DiagramFixture, ...]:
+        builder = type(self).__name__
+        definitions = (
+            FixtureDefinition(
+                "gantt",
+                (
+                    FixtureCommand("set_title", {"title": "Example release plan"}),
+                    FixtureCommand("add_section", {"id": "example_delivery", "label": "Example delivery"}),
+                    FixtureCommand(
+                        "add_task",
+                        {
+                            "id": "example_design",
+                            "label": "Example design",
+                            "section_id": "example_delivery",
+                            "status": "done",
+                            "start": {"kind": "date", "date": "2026-08-01"},
+                            "finish": {"kind": "duration", "amount": 2},
+                        },
+                    ),
+                    FixtureCommand("add_section", {"id": "example_build", "label": "Build"}),
+                    FixtureCommand(
+                        "add_task",
+                        {
+                            "id": "example_implementation",
+                            "label": "Implementation",
+                            "section_id": "example_build",
+                            "status": "active",
+                            "start": {"kind": "date", "date": "2026-08-03"},
+                            "finish": {"kind": "duration", "amount": 4},
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_task",
+                        {
+                            "id": "example_review",
+                            "label": "Review",
+                            "section_id": "example_build",
+                            "start": {"kind": "date", "date": "2026-08-07"},
+                            "finish": {"kind": "duration", "amount": 2},
+                        },
+                    ),
+                    FixtureCommand("add_section", {"id": "example_quality", "label": "Quality"}),
+                    FixtureCommand(
+                        "add_task",
+                        {
+                            "id": "example_unit_tests",
+                            "label": "Unit tests",
+                            "section_id": "example_quality",
+                            "start": {"kind": "date", "date": "2026-08-05"},
+                            "finish": {"kind": "duration", "amount": 3},
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_task",
+                        {
+                            "id": "example_integration_tests",
+                            "label": "Integration tests",
+                            "section_id": "example_quality",
+                            "start": {"kind": "date", "date": "2026-08-08"},
+                            "finish": {"kind": "duration", "amount": 2},
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_task",
+                        {
+                            "id": "example_visual_review",
+                            "label": "Visual review",
+                            "section_id": "example_quality",
+                            "start": {"kind": "date", "date": "2026-08-09"},
+                            "finish": {"kind": "duration", "amount": 1},
+                        },
+                    ),
+                    FixtureCommand("add_section", {"id": "example_release", "label": "Release"}),
+                    FixtureCommand(
+                        "add_task",
+                        {
+                            "id": "example_package",
+                            "label": "Package",
+                            "section_id": "example_release",
+                            "start": {"kind": "date", "date": "2026-08-10"},
+                            "finish": {"kind": "duration", "amount": 1},
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_milestone",
+                        {
+                            "id": "example_published",
+                            "label": "Published",
+                            "section_id": "example_release",
+                            "start": {"kind": "date", "date": "2026-08-11"},
+                            "finish": {"kind": "duration", "amount": 0},
+                        },
+                    ),
+                ),
+            ),
+            FixtureDefinition(
+                "C4Context",
+                (
+                    FixtureCommand(
+                        "configure",
+                        {"c4ShapeInRow": 3, "nextLinePaddingX": 12, "messageFontSize": 16},
+                    ),
+                    FixtureCommand(
+                        "add_person",
+                        {
+                            "id": "example_customer",
+                            "label": "Example Customer",
+                            "description": "Uses example banking",
+                        },
+                    ),
+                    FixtureCommand("add_person", {"id": "example_support", "label": "Support Agent"}),
+                    FixtureCommand("add_person", {"id": "example_auditor", "label": "Auditor"}),
+                    FixtureCommand(
+                        "add_system",
+                        {
+                            "id": "example_banking",
+                            "label": "Example Banking System",
+                            "description": "Provides example banking",
+                            "technology": "Python",
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_system",
+                        {"id": "example_auth", "label": "Identity System", "description": "Authenticates users"},
+                    ),
+                    FixtureCommand(
+                        "add_system",
+                        {"id": "example_reporting", "label": "Reporting System", "description": "Builds reports"},
+                    ),
+                    FixtureCommand(
+                        "add_database",
+                        {
+                            "id": "example_accounts",
+                            "label": "Example Accounts Database",
+                            "description": "Stores example balances",
+                            "technology": "PostgreSQL",
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_system",
+                        {"id": "example_payments", "label": "Payments System", "description": "Processes payments"},
+                    ),
+                    FixtureCommand(
+                        "add_database",
+                        {"id": "example_audit", "label": "Audit Database", "description": "Stores audit records"},
+                    ),
+                    FixtureCommand(
+                        "add_queue",
+                        {
+                            "id": "example_notifications",
+                            "label": "Example Notifications",
+                            "description": "Publishes example events",
+                            "technology": "Kafka",
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_system",
+                        {"id": "example_fraud", "label": "Fraud System", "description": "Scores transactions"},
+                    ),
+                    FixtureCommand(
+                        "add_queue",
+                        {"id": "example_billing", "label": "Billing Queue", "description": "Buffers billing work"},
+                    ),
+                    FixtureCommand(
+                        "add_relationship",
+                        {
+                            "id": "example_uses",
+                            "source_id": "example_customer",
+                            "target_id": "example_banking",
+                            "label": "Uses",
+                            "direction": "Rel_Down",
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_relationship",
+                        {
+                            "id": "support_uses",
+                            "source_id": "example_support",
+                            "target_id": "example_auth",
+                            "label": "Authenticates",
+                            "direction": "Rel_Down",
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_relationship",
+                        {
+                            "id": "auditor_reads",
+                            "source_id": "example_auditor",
+                            "target_id": "example_reporting",
+                            "label": "Reviews",
+                            "direction": "Rel_Down",
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_relationship",
+                        {
+                            "id": "banking_auth",
+                            "source_id": "example_banking",
+                            "target_id": "example_accounts",
+                            "label": "Reads",
+                            "direction": "Rel_Down",
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_relationship",
+                        {
+                            "id": "banking_payments",
+                            "source_id": "example_accounts",
+                            "target_id": "example_notifications",
+                            "label": "Publishes",
+                            "direction": "Rel_Down",
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_relationship",
+                        {
+                            "id": "payments_fraud",
+                            "source_id": "example_auth",
+                            "target_id": "example_payments",
+                            "label": "Authorizes",
+                            "direction": "Rel_Down",
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_relationship",
+                        {
+                            "id": "payments_billing",
+                            "source_id": "example_payments",
+                            "target_id": "example_fraud",
+                            "label": "Scores",
+                            "direction": "Rel_Down",
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_relationship",
+                        {
+                            "id": "reporting_accounts",
+                            "source_id": "example_reporting",
+                            "target_id": "example_audit",
+                            "label": "Writes",
+                            "direction": "Rel_Down",
+                        },
+                    ),
+                ),
+            ),
+            FixtureDefinition(
+                "ishikawa-beta",
+                (
+                    FixtureCommand("add_effect", {"id": "example_effect", "label": "Example blurry photo"}),
+                    FixtureCommand("add_category", {"id": "example_process", "label": "Example process"}),
+                    FixtureCommand(
+                        "add_cause",
+                        {
+                            "id": "example_focus",
+                            "label": "Example focus issue",
+                            "parent_id": "example_process",
+                        },
+                    ),
+                    FixtureCommand("add_category", {"id": "example_people", "label": "Example people"}),
+                    FixtureCommand(
+                        "add_cause",
+                        {"id": "example_training", "label": "Example training gap", "parent_id": "example_people"},
+                    ),
+                    FixtureCommand(
+                        "add_cause",
+                        {"id": "example_fatigue", "label": "Example fatigue", "parent_id": "example_people"},
+                    ),
+                    FixtureCommand("add_category", {"id": "example_equipment", "label": "Example equipment"}),
+                    FixtureCommand(
+                        "add_cause",
+                        {"id": "example_lens", "label": "Example dirty lens", "parent_id": "example_equipment"},
+                    ),
+                    FixtureCommand(
+                        "add_cause",
+                        {"id": "example_tripod", "label": "Example unstable tripod", "parent_id": "example_equipment"},
+                    ),
+                    FixtureCommand("add_category", {"id": "example_environment", "label": "Example environment"}),
+                    FixtureCommand(
+                        "add_cause",
+                        {"id": "example_light", "label": "Example low light", "parent_id": "example_environment"},
+                    ),
+                    FixtureCommand(
+                        "add_cause", {"id": "example_wind", "label": "Example wind", "parent_id": "example_environment"}
+                    ),
+                    FixtureCommand(
+                        "add_cause",
+                        {
+                            "id": "example_shutter",
+                            "label": "Example shutter issue",
+                            "parent_id": "example_process",
+                        },
+                    ),
+                ),
+            ),
+            FixtureDefinition(
+                "cynefin-beta",
+                (
+                    FixtureCommand(
+                        "add_item",
+                        {"id": "example_investigate", "label": "Example investigation", "domain": "complex"},
+                    ),
+                    FixtureCommand(
+                        "add_item",
+                        {"id": "example_analyze", "label": "Example analysis", "domain": "complicated"},
+                    ),
+                    FixtureCommand(
+                        "add_item",
+                        {"id": "example_restart", "label": "Example restart", "domain": "clear"},
+                    ),
+                    FixtureCommand(
+                        "add_transition",
+                        {
+                            "id": "example_pattern",
+                            "source_id": "example_investigate",
+                            "target_id": "example_analyze",
+                            "label": "Example pattern",
+                        },
+                    ),
+                    FixtureCommand("add_item", {"id": "example_probe", "label": "Example probe", "domain": "complex"}),
+                    FixtureCommand(
+                        "add_item", {"id": "example_model", "label": "Example model", "domain": "complicated"}
+                    ),
+                    FixtureCommand(
+                        "add_item", {"id": "example_standard", "label": "Example standard", "domain": "clear"}
+                    ),
+                    FixtureCommand(
+                        "add_item", {"id": "example_stabilize", "label": "Example stabilize", "domain": "chaotic"}
+                    ),
+                    FixtureCommand(
+                        "add_item", {"id": "example_triage", "label": "Example triage", "domain": "confusion"}
+                    ),
+                    FixtureCommand(
+                        "add_item", {"id": "example_experiment", "label": "Example experiment", "domain": "complex"}
+                    ),
+                    FixtureCommand(
+                        "add_item", {"id": "example_expert", "label": "Example expert review", "domain": "complicated"}
+                    ),
+                    FixtureCommand(
+                        "add_item", {"id": "example_runbook", "label": "Example runbook", "domain": "clear"}
+                    ),
+                ),
+            ),
+            FixtureDefinition(
+                "kanban",
+                (
+                    FixtureCommand("add_column", {"id": "example_todo", "label": "Example todo"}),
+                    FixtureCommand("add_column", {"id": "example_doing", "label": "Example in progress"}),
+                    FixtureCommand(
+                        "add_task",
+                        {
+                            "id": "example_docs",
+                            "label": "Example documentation",
+                            "column_id": "example_todo",
+                            "ticket": "EXAMPLE-1",
+                            "priority": "High",
+                        },
+                    ),
+                    FixtureCommand("add_column", {"id": "example_review", "label": "Example review"}),
+                    FixtureCommand("add_column", {"id": "example_done", "label": "Example done"}),
+                    FixtureCommand(
+                        "add_task", {"id": "example_design", "label": "Example design", "column_id": "example_todo"}
+                    ),
+                    FixtureCommand(
+                        "add_task", {"id": "example_code", "label": "Example code", "column_id": "example_doing"}
+                    ),
+                    FixtureCommand(
+                        "add_task", {"id": "example_tests", "label": "Example tests", "column_id": "example_doing"}
+                    ),
+                    FixtureCommand(
+                        "add_task", {"id": "example_audit", "label": "Example audit", "column_id": "example_review"}
+                    ),
+                    FixtureCommand(
+                        "add_task", {"id": "example_fix", "label": "Example fix", "column_id": "example_review"}
+                    ),
+                    FixtureCommand(
+                        "add_task", {"id": "example_release", "label": "Example release", "column_id": "example_done"}
+                    ),
+                    FixtureCommand(
+                        "add_task", {"id": "example_archive", "label": "Example archive", "column_id": "example_done"}
+                    ),
+                ),
+            ),
+            FixtureDefinition(
+                "railroad-ebnf-beta",
+                (
+                    FixtureCommand("add_rule", {"id": "example_rule", "label": "example"}),
+                    FixtureCommand("add_alternative", {"id": "example_choices", "parent_id": "example_rule"}),
+                    FixtureCommand(
+                        "add_special",
+                        {"id": "example_first", "label": "first", "parent_id": "example_choices"},
+                    ),
+                    FixtureCommand(
+                        "add_special",
+                        {"id": "example_second", "label": "second", "parent_id": "example_choices"},
+                    ),
+                    FixtureCommand("add_optional", {"id": "example_optional", "parent_id": "example_choices"}),
+                    FixtureCommand(
+                        "add_terminal",
+                        {"id": "example_optional_value", "label": "optional", "rule_id": "example_optional"},
+                    ),
+                    FixtureCommand("add_repetition", {"id": "example_repetition", "parent_id": "example_choices"}),
+                    FixtureCommand(
+                        "add_non_terminal", {"id": "example_repeated", "label": "item", "rule_id": "example_repetition"}
+                    ),
+                    FixtureCommand("add_group", {"id": "example_group", "parent_id": "example_choices"}),
+                    FixtureCommand(
+                        "add_terminal", {"id": "example_grouped", "label": "grouped", "rule_id": "example_group"}
+                    ),
+                    FixtureCommand("add_rule", {"id": "value_rule", "label": "value"}),
+                    FixtureCommand("add_terminal", {"id": "value_number", "label": "number", "rule_id": "value_rule"}),
+                    FixtureCommand("add_terminal", {"id": "value_string", "label": "string", "rule_id": "value_rule"}),
+                ),
+            ),
+            FixtureDefinition(
+                "wardley-beta",
+                (
+                    FixtureCommand(
+                        "add_anchor",
+                        {
+                            "id": "example_business",
+                            "label": "Example Business",
+                            "visibility": 0.95,
+                            "evolution": 0.63,
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_component",
+                        {
+                            "id": "example_product",
+                            "label": "Example Product",
+                            "visibility": 0.79,
+                            "evolution": 0.61,
+                            "decorators": ["build"],
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_component",
+                        {
+                            "id": "example_service",
+                            "label": "Example Service",
+                            "visibility": 0.52,
+                            "evolution": 0.8,
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_dependency",
+                        {
+                            "id": "example_business_product",
+                            "source_id": "example_business",
+                            "target_id": "example_product",
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_component",
+                        {
+                            "id": "example_identity",
+                            "label": "Example Identity",
+                            "visibility": 0.72,
+                            "evolution": 0.82,
+                            "decorators": ["buy"],
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_component",
+                        {"id": "example_data", "label": "Example Data", "visibility": 0.46, "evolution": 0.58},
+                    ),
+                    FixtureCommand(
+                        "add_component",
+                        {
+                            "id": "example_compute",
+                            "label": "Example Compute",
+                            "visibility": 0.35,
+                            "evolution": 0.91,
+                            "decorators": ["outsource"],
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_component",
+                        {"id": "example_network", "label": "Example Network", "visibility": 0.25, "evolution": 0.97},
+                    ),
+                    FixtureCommand(
+                        "add_component",
+                        {
+                            "id": "example_observability",
+                            "label": "Example Observability",
+                            "visibility": 0.58,
+                            "evolution": 0.76,
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_dependency",
+                        {
+                            "id": "example_product_identity",
+                            "source_id": "example_product",
+                            "target_id": "example_identity",
+                            "label": "authenticates",
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_dependency",
+                        {
+                            "id": "example_product_data",
+                            "source_id": "example_product",
+                            "target_id": "example_data",
+                            "label": "stores",
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_dependency",
+                        {
+                            "id": "example_service_compute",
+                            "source_id": "example_service",
+                            "target_id": "example_compute",
+                            "label": "runs on",
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_dependency",
+                        {
+                            "id": "example_compute_network",
+                            "source_id": "example_compute",
+                            "target_id": "example_network",
+                            "label": "connects",
+                        },
+                    ),
+                    FixtureCommand(
+                        "add_dependency",
+                        {
+                            "id": "example_service_observability",
+                            "source_id": "example_service",
+                            "target_id": "example_observability",
+                            "label": "emits",
+                        },
+                    ),
+                ),
+            ),
+        )
+        return (
+            definitions[0].build(self.application, builder),
+            GitGraphFixture().build(self.application, builder),
+            *(definition.build(self.application, builder) for definition in definitions[1:]),
+        )

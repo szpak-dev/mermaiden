@@ -1,10 +1,18 @@
 ---
 config:
   wrap: true
-  kanban: {"useWidth": 0.0, "useMaxWidth": true, "padding": 8.0, "sectionWidth": 200.0, "ticketBaseUrl": ""}
+  kanban: {"useWidth": 960.0, "useMaxWidth": true, "padding": 8.0, "sectionWidth": 200.0, "ticketBaseUrl": ""}
 ---
 kanban
-k_v_todo["Todo"]
-  k_v_docs["Create documentation"]@{ ticket: "MC-2037", priority: "High" }
-k_v_doing["In progress"]
-  k_v_render["Create renderer"]@{ assigned: "knsv" }
+k_v_example_todo["Example todo"]
+  k_v_example_docs["Example documentation"]@{ ticket: "EXAMPLE-1", priority: "High" }
+  k_v_example_design["Example design"]
+k_v_example_doing["Example in progress"]
+  k_v_example_code["Example code"]
+  k_v_example_tests["Example tests"]
+k_v_example_review["Example review"]
+  k_v_example_audit["Example audit"]
+  k_v_example_fix["Example fix"]
+k_v_example_done["Example done"]
+  k_v_example_release["Example release"]
+  k_v_example_archive["Example archive"]

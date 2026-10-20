@@ -1,5 +1,4 @@
-from collections.abc import Mapping
-from typing import cast
+import json
 from xml.etree import ElementTree
 
 import pytest
@@ -70,9 +69,7 @@ class TestRenderValidation:
                     "id": f"class_{index}_{'x' * 180}",
                     "label": f"Oversized {index}",
                     "comment": f"Contract evidence {index} {'y' * 80}",
-                    "attributes": [
-                        {"name": f"field_{field}", "type": {"name": "string"}} for field in range(20)
-                    ],
+                    "attributes": [{"name": f"field_{field}", "type": {"name": "string"}} for field in range(20)],
                     "annotations": ["injectable", "immutable"],
                 },
             )
@@ -93,16 +90,44 @@ class TestRenderValidation:
         snapshot = application.snapshot(diagram).to_dict()
         source = application.render(diagram)
         report = application.validate_render(diagram)
-        element = cast(Mapping[str, object], cast(list[object], snapshot["elements"])[0])
-        fields = cast(Mapping[str, object], element["fields"])
-
-        assert fields["id"] == "diagrams/api"
+        assert '"id": "diagrams/api"' in json.dumps(snapshot)
         assert '["diagrams/api"]' in source
         assert "#47;" not in source
         assert report.success, report.diagnostics
         svg = ElementTree.fromstring(report.svg)
         assert any("diagrams/api" in "".join(element.itertext()) for element in svg.iter())
         assert "&#47;" not in report.svg
+
+    @pytest.mark.integration
+    def test_er_source_path_identities_render_without_changing_snapshot_identity(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("erDiagram")
+        project_id = "src/enclosure/projects/models.py::class:enclosure.projects.models.Project"
+        publication_id = (
+            "src/enclosure/projects/models.py::class:enclosure.projects.models.ArchitectureContractPublication"
+        )
+        application.execute(diagram, "add_entity", {"id": project_id, "label": "PROJECT"})
+        application.execute(diagram, "add_entity", {"id": publication_id, "label": "PUBLICATION"})
+        application.execute(
+            diagram,
+            "add_relationship",
+            {
+                "id": "project_publications",
+                "source_id": project_id,
+                "target_id": publication_id,
+                "label": "publishes",
+                "target_cardinality": "zero_or_more",
+            },
+        )
+
+        snapshot = application.snapshot(diagram).to_dict()
+        source = application.render(diagram)
+        report = application.validate_render(application.restore(snapshot))
+
+        assert project_id in json.dumps(snapshot)
+        assert project_id not in source
+        assert "e_h_" in source
+        assert report.success, report.diagnostics
 
     @pytest.mark.integration
     def test_class_text_is_rendered_literally_in_labels_relations_and_notes(self) -> None:

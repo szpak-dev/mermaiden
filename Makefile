@@ -74,6 +74,7 @@ compatibility:
 
 configuration-proofs:
 	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" PYTHONPATH=. $(PYTHON) scripts/render_configuration_proofs.py
+	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" PYTHONPATH=. $(PYTHON) scripts/render_c4_human_proofs.py
 
 ci:
 	@$(UV) lock --check

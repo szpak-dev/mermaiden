@@ -54,6 +54,7 @@ def generate(enclosure_audit: Path | None) -> None:
                 "source_sha256": digest(source),
                 "svg": str(svg_path.relative_to(OUTPUT)),
                 "svg_sha256": digest(svg),
+                "semantic_object_count": proof.semantic_object_count,
                 "configuration_fields": fields,
             }
         )

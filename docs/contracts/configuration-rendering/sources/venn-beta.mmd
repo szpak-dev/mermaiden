@@ -1,12 +1,20 @@
 ---
 config:
   wrap: true
-  venn: {"useWidth": 0.0, "useMaxWidth": true, "width": 800.0, "height": 450.0, "padding": 8.0, "useDebugLayout": false}
+  venn: {"useWidth": 960.0, "useMaxWidth": true, "width": 800.0, "height": 450.0, "padding": 8.0, "useDebugLayout": false}
 ---
 venn-beta
 set frontend["Frontend"]:20
   text react["React"]
 set backend["Backend"]:12
   text api["API"]
+set operations["Operations"]:16
+  text platform["Platform"]
+set compliance["Compliance"]:10
+  text audit["Audit"]
 union frontend,backend["Shared"]:3
   text openapi["OpenAPI"]
+union frontend,operations["Delivery"]:4
+  text pipeline["Pipeline"]
+union backend,compliance["Governance"]:2
+  text policy["Policy"]

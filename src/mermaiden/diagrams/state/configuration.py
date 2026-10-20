@@ -4,7 +4,7 @@ from typing import Annotated
 from pydantic import Field
 
 from ...core.characters import Text
-from ..domain import BooleanOrUnconfigured, MermaidDiagramConfiguration, NonNegativeIntegerOrUnconfigured
+from ..domain import MermaidDiagramConfiguration, OmittableBoolean, OmittableNonNegativeInteger
 
 
 class StateRenderer(StrEnum):
@@ -16,9 +16,9 @@ class StateRenderer(StrEnum):
 class StateDiagramConfiguration(MermaidDiagramConfiguration):
     title_top_margin: Annotated[int, Field(alias="titleTopMargin", ge=0)] = 25
     arrow_marker_absolute: Annotated[
-        BooleanOrUnconfigured,
-        Field(alias="arrowMarkerAbsolute", exclude_if=BooleanOrUnconfigured().excludes),
-    ] = Field(default_factory=BooleanOrUnconfigured)
+        OmittableBoolean,
+        Field(alias="arrowMarkerAbsolute", exclude_if=OmittableBoolean().excludes),
+    ] = Field(default_factory=OmittableBoolean)
     divider_margin: Annotated[float, Field(alias="dividerMargin")] = 10
     size_unit: Annotated[float, Field(alias="sizeUnit")] = 5
     padding: Annotated[float, Field(alias="padding")] = 8
@@ -26,13 +26,13 @@ class StateDiagramConfiguration(MermaidDiagramConfiguration):
     title_shift: Annotated[float, Field(alias="titleShift")] = -15
     note_margin: Annotated[float, Field(alias="noteMargin")] = 10
     node_spacing: Annotated[
-        NonNegativeIntegerOrUnconfigured,
-        Field(alias="nodeSpacing", exclude_if=NonNegativeIntegerOrUnconfigured().excludes),
-    ] = Field(default_factory=NonNegativeIntegerOrUnconfigured)
+        OmittableNonNegativeInteger,
+        Field(alias="nodeSpacing", exclude_if=OmittableNonNegativeInteger().excludes),
+    ] = Field(default_factory=OmittableNonNegativeInteger)
     rank_spacing: Annotated[
-        NonNegativeIntegerOrUnconfigured,
-        Field(alias="rankSpacing", exclude_if=NonNegativeIntegerOrUnconfigured().excludes),
-    ] = Field(default_factory=NonNegativeIntegerOrUnconfigured)
+        OmittableNonNegativeInteger,
+        Field(alias="rankSpacing", exclude_if=OmittableNonNegativeInteger().excludes),
+    ] = Field(default_factory=OmittableNonNegativeInteger)
     fork_width: Annotated[float, Field(alias="forkWidth")] = 70
     fork_height: Annotated[float, Field(alias="forkHeight")] = 7
     mini_padding: Annotated[float, Field(alias="miniPadding")] = 2

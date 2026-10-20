@@ -22,14 +22,13 @@ def test_checked_in_mermaid_proofs_cover_every_configuration_field() -> None:
     assert len(proofs) == 27
     assert sum(len(proof.configuration) for proof in proofs) == 466
     for proof in proofs:
+        assert proof.semantic_object_count >= 12
         path = PROOF_ROOT / "sources" / f"{proof.diagram_id}.mmd"
         assert path.read_text(encoding="utf-8") == proof.source
         assert set(proof.configuration) == {
             *yaml.safe_load(proof.source.split("---\n", 2)[1])["config"].get(
                 next(
-                    info.config_key
-                    for info in Application.create().available_diagrams()
-                    if info.id == proof.diagram_id
+                    info.config_key for info in Application.create().available_diagrams() if info.id == proof.diagram_id
                 ),
                 {},
             ),
@@ -45,7 +44,9 @@ def test_checked_in_svg_proofs_are_nonempty_semantic_documents() -> None:
         svg = path.read_text(encoding="utf-8")
         document = ElementTree.fromstring(svg)
         assert document.tag == "{http://www.w3.org/2000/svg}svg"
-        assert document.attrib.get("viewBox")
+        view_box = tuple(float(value) for value in document.attrib["viewBox"].split())
+        assert view_box[2] > 0
+        assert view_box[3] > 0
         assert not any(token in svg for token in ("NaN", "Infinity"))
         assert not any("undefined" in text for element in document.iter() for text in element.itertext())
         assert not any(
@@ -64,6 +65,7 @@ def test_manifest_hashes_bind_every_physical_proof() -> None:
     for diagram in manifest["diagrams"]:
         source = (PROOF_ROOT / diagram["source"]).read_text(encoding="utf-8")
         svg = (PROOF_ROOT / diagram["svg"]).read_text(encoding="utf-8")
+        assert diagram["semantic_object_count"] >= 12
         assert hashlib.sha256(source.encode()).hexdigest() == diagram["source_sha256"]
         assert hashlib.sha256(svg.encode()).hexdigest() == diagram["svg_sha256"]
 
@@ -78,9 +80,11 @@ def test_every_configuration_probe_serializes_exactly_and_survives_snapshot_rest
     assert len(probes) >= 466
     for rendered in probes:
         document = yaml.safe_load(rendered.source.split("---\n", 2)[1])["config"]
-        actual = document[rendered.probe.field] if rendered.probe.field == "wrap" else document[
-            config_keys[rendered.probe.diagram_id]
-        ][rendered.probe.field]
+        actual = (
+            document[rendered.probe.field]
+            if rendered.probe.field == "wrap"
+            else document[config_keys[rendered.probe.diagram_id]][rendered.probe.field]
+        )
         assert actual == rendered.probe.value
 
 

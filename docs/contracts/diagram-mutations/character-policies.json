@@ -1,6 +1,12 @@
 {
   "generated_from": "Application.diagram_description().commands",
   "policies": {
+    "A non-negative decimal number written as text.": {
+      "pattern": "^(?:\\d+(?:\\.\\d+)?|\\.\\d+)$"
+    },
+    "A positive decimal number written as text.": {
+      "pattern": "^(?:0*[1-9]\\d*(?:\\.\\d+)?|0*\\.\\d*[1-9]\\d*)$"
+    },
     "AlignmentAxis values": {
       "enum": [
         "row",
@@ -131,7 +137,6 @@
     },
     "FlowchartRenderer values": {
       "enum": [
-        "dagre-d3",
         "dagre-wrapper",
         "elk"
       ]

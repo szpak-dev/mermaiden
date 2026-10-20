@@ -68,7 +68,7 @@ class TestApplication:
         assert identity == DiagramSnapshotContractIdentity(
             kind="sequenceDiagram",
             snapshot_version=8,
-            registry_fingerprint="7b4470798969e41a22f5f343049401fd7a3cb5f095276fb77e628724e851df40",
+            registry_fingerprint="1caaf5e025e762a48fe86f7d098e66e950a474429442a7b07d4c1c4d4ebc0a51",
         )
 
     def test_returns_the_same_snapshot_contract_identity_across_applications(self) -> None:
@@ -85,7 +85,7 @@ class TestApplication:
         assert tuple(identity.kind for identity in identities) == tuple(info.id for info in advertised)
         assert {identity.snapshot_version for identity in identities} == {8}
         assert {identity.registry_fingerprint for identity in identities} == {
-            "7b4470798969e41a22f5f343049401fd7a3cb5f095276fb77e628724e851df40"
+            "1caaf5e025e762a48fe86f7d098e66e950a474429442a7b07d4c1c4d4ebc0a51"
         }
 
     def test_rejects_snapshot_contract_identity_for_an_unknown_diagram(self) -> None:

@@ -4,7 +4,7 @@ from typing import Annotated
 from pydantic import Field
 
 from ...core.characters import NumberOrText, Text
-from ..domain import BooleanOrUnconfigured, MermaidDiagramConfiguration
+from ..domain import MermaidDiagramConfiguration, OmittableBoolean
 
 
 class SequenceMessageAlignment(StrEnum):
@@ -21,9 +21,9 @@ class SequenceNoteAlignment(StrEnum):
 
 class SequenceDiagramConfiguration(MermaidDiagramConfiguration):
     arrow_marker_absolute: Annotated[
-        BooleanOrUnconfigured,
-        Field(alias="arrowMarkerAbsolute", exclude_if=BooleanOrUnconfigured().excludes),
-    ] = Field(default_factory=BooleanOrUnconfigured)
+        OmittableBoolean,
+        Field(alias="arrowMarkerAbsolute", exclude_if=OmittableBoolean().excludes),
+    ] = Field(default_factory=OmittableBoolean)
     hide_unused_participants: Annotated[bool, Field(alias="hideUnusedParticipants")] = False
     activation_width: Annotated[int, Field(alias="activationWidth", ge=0)] = 10
     diagram_margin_x: Annotated[int, Field(alias="diagramMarginX", ge=0)] = 50
@@ -41,37 +41,31 @@ class SequenceDiagramConfiguration(MermaidDiagramConfiguration):
     bottom_margin_adj: Annotated[int, Field(alias="bottomMarginAdj", ge=0)] = 1
     right_angles: Annotated[bool, Field(alias="rightAngles")] = False
     show_sequence_numbers: Annotated[bool, Field(alias="showSequenceNumbers")] = False
-    actor_font_size: Annotated[
-        NumberOrText, Field(alias="actorFontSize")
-    ] = 14
+    actor_font_size: Annotated[NumberOrText, Field(alias="actorFontSize")] = NumberOrText(root=14)
     actor_font_family: Annotated[
         str, Field(alias="actorFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'
     actor_font_weight: Annotated[
         NumberOrText,
         Field(alias="actorFontWeight"),
-    ] = 400
-    note_font_size: Annotated[
-        NumberOrText, Field(alias="noteFontSize")
-    ] = 14
+    ] = NumberOrText(root=400)
+    note_font_size: Annotated[NumberOrText, Field(alias="noteFontSize")] = NumberOrText(root=14)
     note_font_family: Annotated[
         str, Field(alias="noteFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"trebuchet ms", verdana, arial, sans-serif'
-    note_font_weight: Annotated[
-        NumberOrText, Field(alias="noteFontWeight")
-    ] = 400
+    note_font_weight: Annotated[NumberOrText, Field(alias="noteFontWeight")] = NumberOrText(root=400)
     note_align: Annotated[SequenceNoteAlignment, Field(alias="noteAlign")] = SequenceNoteAlignment.CENTER
     message_font_size: Annotated[
         NumberOrText,
         Field(alias="messageFontSize"),
-    ] = 16
+    ] = NumberOrText(root=16)
     message_font_family: Annotated[
         str, Field(alias="messageFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"trebuchet ms", verdana, arial, sans-serif'
     message_font_weight: Annotated[
         NumberOrText,
         Field(alias="messageFontWeight"),
-    ] = 400
+    ] = NumberOrText(root=400)
     wrap_padding: Annotated[float, Field(alias="wrapPadding")] = 10
     label_box_width: Annotated[float, Field(alias="labelBoxWidth")] = 50
     label_box_height: Annotated[float, Field(alias="labelBoxHeight")] = 20

@@ -1,10 +1,20 @@
 ---
 config:
   wrap: true
-  gantt: {"useWidth": 0.0, "useMaxWidth": true, "titleTopMargin": 25, "barHeight": 20, "barGap": 4, "topPadding": 50, "rightPadding": 75, "leftPadding": 75, "gridLineStartPadding": 35, "fontSize": 11, "sectionFontSize": 11, "numberSectionStyles": 4, "axisFormat": "%Y-%m-%d", "tickInterval": "1day", "topAxis": false, "displayMode": "", "weekday": "sunday"}
+  gantt: {"useWidth": 960.0, "useMaxWidth": true, "titleTopMargin": 25, "barHeight": 20, "barGap": 4, "topPadding": 50, "rightPadding": 75, "leftPadding": 75, "gridLineStartPadding": 35, "fontSize": 11, "sectionFontSize": 11, "numberSectionStyles": 4, "axisFormat": "%Y-%m-%d", "tickInterval": "1day", "topAxis": false, "displayMode": "", "weekday": "sunday"}
 ---
 gantt
-title Release plan
+title Example release plan
 dateFormat YYYY-MM-DD
-section Delivery
-Design : done, design, 2026-08-01, 2d
+section Example delivery
+Example design : done, example_design, 2026-08-01, 2d
+section Build
+Implementation : active, example_implementation, 2026-08-03, 4d
+Review : example_review, 2026-08-07, 2d
+section Quality
+Unit tests : example_unit_tests, 2026-08-05, 3d
+Integration tests : example_integration_tests, 2026-08-08, 2d
+Visual review : example_visual_review, 2026-08-09, 1d
+section Release
+Package : example_package, 2026-08-10, 1d
+Published : milestone, example_published, 2026-08-11, 0d

@@ -3,11 +3,11 @@ from pathlib import Path
 
 from mermaiden import Application
 
-from ._analytical import build_analytical_fixtures
-from ._behavioral import build_behavioral_fixtures
-from ._specialized import build_specialized_fixtures
-from ._structural import build_structural_fixtures
-from .models import DiagramFixture, FixtureCoverageError, FixtureIssue, FixtureIssueKind, has_semantic_statement
+from ._analytical import AnalyticalFixtureBuilder
+from ._behavioral import BehavioralFixtureBuilder
+from ._specialized import SpecializedFixtureBuilder
+from ._structural import StructuralFixtureBuilder
+from .models import DiagramFixture, FixtureCoverageError, FixtureIssue, FixtureIssueKind
 
 
 @dataclass(frozen=True, slots=True)
@@ -16,10 +16,10 @@ class FixtureCatalog:
 
     def fixtures(self) -> tuple[DiagramFixture, ...]:
         return (
-            *build_structural_fixtures(self.application),
-            *build_behavioral_fixtures(self.application),
-            *build_analytical_fixtures(self.application),
-            *build_specialized_fixtures(self.application),
+            *StructuralFixtureBuilder(self.application).fixtures(),
+            *BehavioralFixtureBuilder(self.application).fixtures(),
+            *AnalyticalFixtureBuilder(self.application).fixtures(),
+            *SpecializedFixtureBuilder(self.application).fixtures(),
         )
 
     def inspect(self) -> tuple[dict[str, str], tuple[FixtureIssue, ...]]:
@@ -46,7 +46,9 @@ class FixtureCatalog:
             FixtureIssue(FixtureIssueKind.EXTRA, diagram_id, f"extra fixture '{diagram_id}'")
             for diagram_id in sorted(builders.keys() - registered)
         )
-        rendered = tuple((fixture, self.application.render(fixture.diagram)) for fixture in fixtures)
+        rendered = tuple(
+            (fixture, self.application.render(self.application.restore(fixture.snapshot))) for fixture in fixtures
+        )
         unpopulated = tuple(
             FixtureIssue(
                 FixtureIssueKind.UNPOPULATED,
@@ -54,7 +56,7 @@ class FixtureCatalog:
                 f"unpopulated fixture '{fixture.id}' from builder: {fixture.builder}",
             )
             for fixture, source in rendered
-            if not has_semantic_statement(source)
+            if not self.has_semantic_statement(source)
         )
         issues = (*missing, *duplicate, *extra, *unpopulated)
         if duplicate:
@@ -66,6 +68,19 @@ class FixtureCatalog:
         if issues:
             raise FixtureCoverageError(issues)
         return sources
+
+    def fixture(self, diagram_id: str) -> DiagramFixture:
+        fixtures = {fixture.id: fixture for fixture in self.fixtures()}
+        try:
+            return fixtures[diagram_id]
+        except KeyError:
+            raise FixtureCoverageError(
+                (FixtureIssue(FixtureIssueKind.MISSING, diagram_id, f"missing fixture '{diagram_id}'"),)
+            ) from None
+
+    def has_semantic_statement(self, source: str) -> bool:
+        body = source.split("---\n", 2)[-1]
+        return len(tuple(line for line in body.splitlines() if line.strip())) > 1
 
     def write(self, output: Path) -> tuple[Path, ...]:
         output.mkdir(parents=True, exist_ok=True)

@@ -1,8 +1,12 @@
 from collections.abc import Mapping
 from dataclasses import dataclass
+from typing import Annotated
 
 from jsonschema import Draft201909Validator
+from jsonschema.exceptions import ValidationError
+from jsonschema.protocols import Validator
 from pydantic import BaseModel, ConfigDict, Field, RootModel
+from referencing.jsonschema import ObjectSchema
 from yaml import safe_load
 
 from ..schema import MermaidConfigurationOverride, MermaidDiagramConfig
@@ -24,7 +28,7 @@ class DiagramConfigurationContract:
 class ConfigurationSchemaMapping(RootModel[Mapping[str, object]]):
     model_config = ConfigDict(frozen=True)
 
-    def include(self, name: str, children: dict[str, Mapping[str, object]]) -> dict[str, Mapping[str, object]]:
+    def include(self, name: str, children: dict[str, object]) -> dict[str, object]:
         return {**children, name: self.root}
 
     @property
@@ -68,13 +72,15 @@ class ConfigurationSchemaAbsentType(RootModel[None]):
         return ()
 
 
-class ConfigurationSchemaTypes(RootModel[object]):
-    model_config = ConfigDict(frozen=True, strict=True)
-
-    root: Annotated[
-        ConfigurationSchemaSingleType | ConfigurationSchemaMultipleTypes | ConfigurationSchemaAbsentType,
-        Field(union_mode="left_to_right"),
+class ConfigurationSchemaTypes(
+    RootModel[
+        Annotated[
+            ConfigurationSchemaSingleType | ConfigurationSchemaMultipleTypes | ConfigurationSchemaAbsentType,
+            Field(union_mode="left_to_right"),
+        ]
     ]
+):
+    model_config = ConfigDict(frozen=True, strict=True)
 
     @property
     def values(self) -> tuple[str, ...]:
@@ -97,13 +103,15 @@ class ConfigurationSchemaEnumerationAbsent(RootModel[None]):
         return None
 
 
-class ConfigurationSchemaEnumeration(RootModel[object]):
-    model_config = ConfigDict(frozen=True, strict=True)
-
-    root: Annotated[
-        ConfigurationSchemaEnumerationValues | ConfigurationSchemaEnumerationAbsent,
-        Field(union_mode="left_to_right"),
+class ConfigurationSchemaEnumeration(
+    RootModel[
+        Annotated[
+            ConfigurationSchemaEnumerationValues | ConfigurationSchemaEnumerationAbsent,
+            Field(union_mode="left_to_right"),
+        ]
     ]
+):
+    model_config = ConfigDict(frozen=True, strict=True)
 
     @property
     def values(self) -> tuple[object, ...] | None:
@@ -114,11 +122,7 @@ class ConfigurationSchemaNodeMapping(RootModel[Mapping[str, "ConfigurationSchema
     model_config = ConfigDict(frozen=True, strict=True)
 
     def without_required(self) -> object:
-        return {
-            key: child.without_required()
-            for key, child in self.root.items()
-            if key != "required"
-        }
+        return {key: child.without_required() for key, child in self.root.items() if key != "required"}
 
 
 class ConfigurationSchemaNodeSequence(RootModel[tuple["ConfigurationSchemaNode", ...]]):
@@ -135,13 +139,15 @@ class ConfigurationSchemaNodeScalar(RootModel[None | bool | int | float | str]):
         return self.root
 
 
-class ConfigurationSchemaNode(RootModel[object]):
-    model_config = ConfigDict(frozen=True, strict=True)
-
-    root: Annotated[
-        ConfigurationSchemaNodeMapping | ConfigurationSchemaNodeSequence | ConfigurationSchemaNodeScalar,
-        Field(union_mode="left_to_right"),
+class ConfigurationSchemaNode(
+    RootModel[
+        Annotated[
+            ConfigurationSchemaNodeMapping | ConfigurationSchemaNodeSequence | ConfigurationSchemaNodeScalar,
+            Field(union_mode="left_to_right"),
+        ]
     ]
+):
+    model_config = ConfigDict(frozen=True, strict=True)
 
     def without_required(self) -> object:
         return self.root.without_required()
@@ -159,8 +165,7 @@ class ConfigurationSchemaReference(RootModel[str | None]):
         if self.root is None:
             return ()
         return tuple(
-            segment.replace("~1", "/").replace("~0", "~")
-            for segment in self.root.removeprefix("#/").split("/")
+            segment.replace("~1", "/").replace("~0", "~") for segment in self.root.removeprefix("#/").split("/")
         )
 
 
@@ -187,7 +192,7 @@ class ConfigurationSchemaFacet:
 class ConfigurationSchemaBoolean(RootModel[bool]):
     model_config = ConfigDict(frozen=True)
 
-    def include(self, name: str, children: dict[str, Mapping[str, object]]) -> dict[str, Mapping[str, object]]:
+    def include(self, name: str, children: dict[str, object]) -> dict[str, object]:
         return children
 
     @property
@@ -198,7 +203,7 @@ class ConfigurationSchemaBoolean(RootModel[bool]):
 class ConfigurationSchemaAbsent(RootModel[None]):
     model_config = ConfigDict(frozen=True, strict=True)
 
-    def include(self, name: str, children: dict[str, Mapping[str, object]]) -> dict[str, Mapping[str, object]]:
+    def include(self, name: str, children: dict[str, object]) -> dict[str, object]:
         return children
 
     @property
@@ -206,15 +211,17 @@ class ConfigurationSchemaAbsent(RootModel[None]):
         return False
 
 
-class ConfigurationSchemaChild(RootModel[object]):
+class ConfigurationSchemaChild(
+    RootModel[
+        Annotated[
+            ConfigurationSchemaMapping | ConfigurationSchemaBoolean | ConfigurationSchemaAbsent,
+            Field(union_mode="left_to_right"),
+        ]
+    ]
+):
     model_config = ConfigDict(frozen=True, strict=True)
 
-    root: Annotated[
-        ConfigurationSchemaMapping | ConfigurationSchemaBoolean | ConfigurationSchemaAbsent,
-        Field(union_mode="left_to_right"),
-    ] = Field(default_factory=ConfigurationSchemaAbsent)
-
-    def include(self, name: str, children: dict[str, Mapping[str, object]]) -> dict[str, Mapping[str, object]]:
+    def include(self, name: str, children: dict[str, object]) -> dict[str, object]:
         return self.root.include(name, children)
 
     @property
@@ -226,14 +233,14 @@ class ConfigurationSchemaContainer(BaseModel):
     model_config = ConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
     properties: Mapping[str, ConfigurationSchemaMapping] = Field(default_factory=dict)
-    items: ConfigurationSchemaChild = Field(default_factory=ConfigurationSchemaChild)
+    items: ConfigurationSchemaChild = ConfigurationSchemaChild(root=ConfigurationSchemaAbsent(root=None))
     additional_properties: ConfigurationSchemaChild = Field(
-        default_factory=ConfigurationSchemaChild,
+        default=ConfigurationSchemaChild(root=ConfigurationSchemaAbsent(root=None)),
         alias="additionalProperties",
     )
 
-    def children(self) -> dict[str, Mapping[str, object]]:
-        children = {name: child.root for name, child in self.properties.items()}
+    def children(self) -> dict[str, object]:
+        children: dict[str, object] = {name: child.root for name, child in self.properties.items()}
         children = self.items.include("items", children)
         return self.additional_properties.include("additionalProperties", children)
 
@@ -269,12 +276,16 @@ class MermaidConfiguration:
         return DiagramConfigurationContract(config_key, schema_definition, self.extract(source))
 
     def validate(self, contract: DiagramConfigurationContract) -> tuple[ConfigurationViolation, ...]:
-        validator = Draft201909Validator(self.partial_schema())
-        errors = tuple(validator.iter_errors(contract.values))
+        validator: Validator = Draft201909Validator(self.partial_schema())
+        values = ConfigurationSchemaMapping.model_validate(contract.values).model_dump()
+        errors = self.validation_errors(validator, values)
         return tuple(
             ConfigurationViolation(".".join(str(segment) for segment in error.absolute_path), error.message)
             for error in sorted(errors, key=lambda error: list(error.absolute_path))
         )
+
+    def validation_errors(self, validator: Validator, values: ObjectSchema) -> tuple[ValidationError, ...]:
+        return tuple(validator.iter_errors(values))
 
     def extract(self, source: str) -> Mapping[str, object]:
         if not source.startswith("---\n"):
@@ -403,12 +414,8 @@ class MermaidConfiguration:
         for item in all_of:
             inherited = self.resolve(root, item.root)
             resolved.update({key: child for key, child in inherited.items() if key != "properties"})
-            inherited_properties = ConfigurationSchemaProperties.model_validate(
-                inherited.get("properties", {})
-            ).root
-            properties = ConfigurationSchemaProperties.model_validate(
-                resolved.setdefault("properties", {})
-            ).root
+            inherited_properties = ConfigurationSchemaProperties.model_validate(inherited.get("properties", {})).root
+            properties = ConfigurationSchemaProperties.model_validate(resolved.setdefault("properties", {})).root
             resolved["properties"] = {
                 **{name: child.root for name, child in properties.items()},
                 **{name: child.root for name, child in inherited_properties.items()},
@@ -417,9 +424,7 @@ class MermaidConfiguration:
             if key not in {"$ref", "allOf", "properties"}:
                 resolved[key] = item
         if "properties" in value:
-            properties = ConfigurationSchemaProperties.model_validate(
-                resolved.setdefault("properties", {})
-            ).root
+            properties = ConfigurationSchemaProperties.model_validate(resolved.setdefault("properties", {})).root
             local_properties = ConfigurationSchemaProperties.model_validate(value["properties"]).root
             resolved["properties"] = {
                 **{name: child.root for name, child in properties.items()},
@@ -434,9 +439,7 @@ class MermaidConfiguration:
         facet: str,
     ) -> ConfigurationSchemaFacet:
         resolved = self.resolve(root, value)
-        alternatives = ConfigurationSchemaMappings.model_validate(
-            resolved.get("anyOf", resolved.get("oneOf", ()))
-        ).root
+        alternatives = ConfigurationSchemaMappings.model_validate(resolved.get("anyOf", resolved.get("oneOf", ()))).root
         if facet in {"type", "nullability"}:
             types = set(ConfigurationSchemaTypes.model_validate(resolved.get("type")).values)
             for alternative in alternatives:
@@ -450,9 +453,9 @@ class MermaidConfiguration:
                 "enum" in resolved,
                 ConfigurationSchemaEnumeration.model_validate(resolved.get("enum")).values,
             )
-        value = ConfigurationSchemaFacet(facet in resolved, resolved.get(facet))
+        facet_value = ConfigurationSchemaFacet(facet in resolved, resolved.get(facet))
         if facet not in {"minimum", "exclusiveMinimum", "maximum", "exclusiveMaximum", "multipleOf"}:
-            return value
+            return facet_value
         nested = tuple(
             ConfigurationSchemaAlternativeFacet(
                 self.facet(root, alternative.root, "type"),
@@ -461,9 +464,11 @@ class MermaidConfiguration:
             for alternative in alternatives
             if (candidate := self.facet(root, alternative.root, facet)).present
         )
-        return ConfigurationSchemaFacet(value.present, value.value, nested)
+        return ConfigurationSchemaFacet(facet_value.present, facet_value.value, nested)
 
     def partial_schema(self) -> dict[str, object]:
-        return ConfigurationSchemaMapping.model_validate(
-            ConfigurationSchemaNode.model_validate(dict(self.schema)).without_required()
-        ).root
+        return dict(
+            ConfigurationSchemaMapping.model_validate(
+                ConfigurationSchemaNode.model_validate(dict(self.schema)).without_required()
+            ).root
+        )

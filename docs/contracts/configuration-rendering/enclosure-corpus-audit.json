@@ -7,6 +7,14 @@
     "cadence": "PqieUDqu9rh2Ge4yfw8hFv",
     "mermaiden": "WiAbY2KzjpwpLe2KmXombe"
   },
+  "audited_at": "2026-10-20",
+  "mermaid_version": "11.16.0",
+  "mermaiden_snapshot_version": 8,
+  "summary": {
+    "diagram_count": 245,
+    "passed": 245,
+    "failed": 0
+  },
   "association_note": "Diagram sets expose no project_id; association is inferred from established set prefixes [enc], [mer], [mod], [sir], plus the named Mermaiden documentation set. Personal runway is unscoped. Blog and cadence have no diagram sets.",
   "diagram_sets": [
     {
@@ -638,9 +646,9 @@
       "diagram_set_id": "bkmuDwxgeR9TBsYkBaimbG",
       "diagram_set_title": "[enc] Project Architecture Contract Publication",
       "association": "enclosure",
-      "source_characters": 2769,
-      "render_status": "failed",
-      "diagnostic": "Mermaid 11.16.0 parse error at ER line 3: source-path entity id begins with src/enclosure/...; expected valid ER entity name."
+      "source_characters": 2119,
+      "render_status": "passed",
+      "diagnostic": "Verified from the revision-pinned v7 snapshot after migration to the accepted v8 configuration envelope; semantic source-path identities render through compact Mermaid-safe identifiers."
     },
     {
       "offset": 31,
@@ -651,9 +659,9 @@
       "diagram_set_id": "bkmuDwxgeR9TBsYkBaimbG",
       "diagram_set_title": "[enc] Project Architecture Contract Publication",
       "association": "enclosure",
-      "source_characters": 2821,
-      "render_status": "failed",
-      "diagnostic": "Mermaid 11.16.0 parse error at ER line 3: source-path entity id begins with src/enclosure/...; expected valid ER entity name."
+      "source_characters": 2119,
+      "render_status": "passed",
+      "diagnostic": "Verified from the revision-pinned v7 snapshot after migration to the accepted v8 configuration envelope; semantic source-path identities render through compact Mermaid-safe identifiers."
     },
     {
       "offset": 32,
@@ -1258,26 +1266,26 @@
       "id": "rktUAJTKaZES3CsLBRUtAQ",
       "title": "constraints treeview",
       "kind": "treeView-beta",
-      "revision": 1,
+      "revision": 2,
       "diagram_set_id": "yUzsUyyVzJXVzXeoPrrBY8",
       "diagram_set_title": "[mer] Runtime",
       "association": "mermaiden",
-      "source_characters": 0,
-      "render_status": "unrenderable_empty_draft",
-      "diagnostic": "Canonical snapshot is draft=true with no elements or relations; Enclosure returns a zero-character Mermaid source, so there is nothing to render."
+      "source_characters": 211,
+      "render_status": "passed",
+      "diagnostic": "Populated from the runtime constraints module and rendered from the revision-pinned live source with Mermaid 11.16.0."
     },
     {
       "offset": 79,
       "id": "BTLugAqKFaGfT8hLRT2kmB",
       "title": "constraints UML",
       "kind": "classDiagram",
-      "revision": 1,
+      "revision": 2,
       "diagram_set_id": "yUzsUyyVzJXVzXeoPrrBY8",
       "diagram_set_title": "[mer] Runtime",
       "association": "mermaiden",
-      "source_characters": 0,
-      "render_status": "unrenderable_empty_draft",
-      "diagnostic": "Canonical snapshot is draft=true with no elements or relations; Enclosure returns a zero-character Mermaid source, so there is nothing to render."
+      "source_characters": 1283,
+      "render_status": "passed",
+      "diagnostic": "Populated from the runtime constraints module and rendered from the revision-pinned live source with Mermaid 11.16.0."
     },
     {
       "offset": 80,
@@ -1414,26 +1422,26 @@
       "id": "guuDiTBzSGj8QW3SdNzm26",
       "title": "diagrams treeview",
       "kind": "treeView-beta",
-      "revision": 1,
+      "revision": 2,
       "diagram_set_id": "yUzsUyyVzJXVzXeoPrrBY8",
       "diagram_set_title": "[mer] Runtime",
       "association": "mermaiden",
-      "source_characters": 0,
-      "render_status": "unrenderable_empty_draft",
-      "diagnostic": "Canonical snapshot is draft=true with no elements or relations; Enclosure returns a zero-character Mermaid source, so there is nothing to render."
+      "source_characters": 125,
+      "render_status": "passed",
+      "diagnostic": "Populated from the runtime diagrams module and rendered from the revision-pinned live source with Mermaid 11.16.0."
     },
     {
       "offset": 91,
       "id": "Vs7mZUi6PZjxrftx9Zmwpn",
       "title": "diagrams UML",
       "kind": "classDiagram",
-      "revision": 1,
+      "revision": 2,
       "diagram_set_id": "yUzsUyyVzJXVzXeoPrrBY8",
       "diagram_set_title": "[mer] Runtime",
       "association": "mermaiden",
-      "source_characters": 0,
-      "render_status": "unrenderable_empty_draft",
-      "diagnostic": "Canonical snapshot is draft=true with no elements or relations; Enclosure returns a zero-character Mermaid source, so there is nothing to render."
+      "source_characters": 1051,
+      "render_status": "passed",
+      "diagnostic": "Populated from the runtime diagrams module and rendered from the revision-pinned live source with Mermaid 11.16.0."
     },
     {
       "offset": 92,
@@ -2406,9 +2414,9 @@
       "diagram_set_id": "Pi2FX3KnCymEswa7rc8dbk",
       "diagram_set_title": "[enc] Project Architecture Conformance Health",
       "association": "enclosure",
-      "source_characters": null,
-      "render_status": "failed",
-      "diagnostic": "mmdc 11.16.0 exit 0 but SVG is a flowchart-v2 error placeholder containing Maximum text size in diagram exceeded."
+      "source_characters": 36744,
+      "render_status": "passed",
+      "diagnostic": "Verified from the revision-pinned v7 snapshot after migration to the accepted v8 configuration envelope; compact stable identifiers reduce source from 83395 to 36744 characters and Mermaid 11.16.0 renders a real SVG."
     },
     {
       "offset": 167,

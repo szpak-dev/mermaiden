@@ -26,12 +26,10 @@ class DiagramSnapshotHydrator:
         object.__setattr__(diagram, "configuration", configuration)
         try:
             elements = tuple(
-                TypeAdapter(Element).validate_python(self.values.decode(item, contract))
-                for item in snapshot.elements
+                TypeAdapter(Element).validate_python(self.values.decode(item, contract)) for item in snapshot.elements
             )
             relations = tuple(
-                TypeAdapter(Relation).validate_python(self.values.decode(item, contract))
-                for item in snapshot.relations
+                TypeAdapter(Relation).validate_python(self.values.decode(item, contract)) for item in snapshot.relations
             )
             annotations = tuple(
                 TypeAdapter(Annotation).validate_python(self.values.decode(item, contract))
@@ -49,7 +47,7 @@ class DiagramSnapshotHydrator:
         for name, value in snapshot.properties.items():
             try:
                 decoded = self.values.decode(value, contract)
-                validated = TypeAdapter(contract.properties[name]).validate_python(decoded)
+                validated = TypeAdapter[object](contract.properties[name]).validate_python(decoded)
             except (TypeError, ValueError, SnapshotError, ValidationError) as error:
                 raise SnapshotError(f"Snapshot property '{name}' is invalid: {error}") from error
             object.__setattr__(diagram, name, validated)

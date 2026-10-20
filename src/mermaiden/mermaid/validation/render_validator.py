@@ -120,16 +120,11 @@ class MermaidRenderValidator:
             if {"error-icon", "error-text"}.intersection(element.attrib.get("class", "").split())
         )
         error_messages = tuple(
-            message
-            for message in ("Syntax error in text", "Maximum text size in diagram exceeded")
-            if message in svg
+            message for message in ("Syntax error in text", "Maximum text size in diagram exceeded") if message in svg
         )
         if error_elements or error_messages:
             details = " ".join(
-                text.strip()
-                for element in error_elements
-                for text in element.itertext()
-                if text.strip()
+                text.strip() for element in error_elements for text in element.itertext() if text.strip()
             )
             return self.failure(
                 diagram_id,

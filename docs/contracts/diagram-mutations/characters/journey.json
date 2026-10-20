@@ -41,7 +41,7 @@
         "Identifier"
       ],
       "$.taskFontSize": [
-        "Identifier"
+        "A non-negative decimal number written as text."
       ],
       "$.textPlacement": [
         "Identifier"

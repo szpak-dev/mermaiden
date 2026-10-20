@@ -1,7 +1,7 @@
 ---
 config:
   wrap: true
-  packet: {"useWidth": 0.0, "useMaxWidth": true, "rowHeight": 32.0, "bitWidth": 32.0, "bitsPerRow": 32.0, "showBits": true, "paddingX": 5.0, "paddingY": 5.0}
+  packet: {"useWidth": 960.0, "useMaxWidth": true, "rowHeight": 32.0, "bitWidth": 32.0, "bitsPerRow": 32, "showBits": true, "paddingX": 5.0, "paddingY": 5.0}
 ---
 packet
 title UDP packet
@@ -9,3 +9,11 @@ title UDP packet
 +16: "Destination port"
 32-47: "Length"
 48-63: "Checksum"
+64-79: "Payload 1"
+80-95: "Payload 2"
+96-111: "Payload 3"
+112-127: "Payload 4"
+128-143: "Payload 5"
+144-159: "Payload 6"
+160-175: "Payload 7"
+176-191: "Payload 8"

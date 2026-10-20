@@ -2,14 +2,15 @@
   "mermaid_version": "11.16.0",
   "diagram_count": 27,
   "configuration_field_count": 466,
-  "probe_count": 1588,
+  "probe_count": 1464,
   "diagrams": [
     {
       "diagram_id": "C4Context",
       "source": "sources/C4Context.mmd",
-      "source_sha256": "3431a64001773b01a810c984cd2348ddc7c1e55f1d5b390582bd8dec2213c79f",
+      "source_sha256": "47e113b970e2a8cf41bc58277ce2d1cf36440247a0721806d0b5fdd17b93b28d",
       "svg": "rendered/C4Context.svg",
-      "svg_sha256": "f5918af4688c20cc79508c08d0f6128f3f4c7dc4deadd2a36ab9dd53a877e648",
+      "svg_sha256": "93236bd06a8b319274f73f98af143e54098705ec32809eb90ae7f9d9f416b6e2",
+      "semantic_object_count": 20,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -22,11 +23,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -41,87 +41,80 @@
         },
         {
           "name": "diagramMarginX",
-          "showcase_value": 50,
+          "showcase_value": 40,
           "probes": [
             0,
-            2,
-            4,
+            1,
             50
           ],
           "witness": "fresh_svg"
         },
         {
           "name": "diagramMarginY",
-          "showcase_value": 10,
+          "showcase_value": 40,
           "probes": [
             0,
-            2,
-            4,
+            1,
             10
           ],
           "witness": "fresh_svg"
         },
         {
           "name": "c4ShapeMargin",
-          "showcase_value": 50,
+          "showcase_value": 25,
           "probes": [
             0,
-            2,
-            4,
+            1,
             50
           ],
           "witness": "fresh_svg"
         },
         {
           "name": "c4ShapePadding",
-          "showcase_value": 20,
+          "showcase_value": 14,
           "probes": [
             0,
-            2,
-            4,
+            1,
             20
           ],
           "witness": "fresh_svg"
         },
         {
           "name": "width",
-          "showcase_value": 216,
+          "showcase_value": 190,
           "probes": [
             0,
-            2,
-            4,
+            1,
             216
           ],
           "witness": "fresh_svg"
         },
         {
           "name": "height",
-          "showcase_value": 60,
+          "showcase_value": 72,
           "probes": [
             0,
-            2,
-            4,
+            1,
             60
           ],
           "witness": "fresh_svg"
         },
         {
           "name": "boxMargin",
-          "showcase_value": 10,
+          "showcase_value": 16,
           "probes": [
             0,
-            2,
-            4,
+            1,
             10
           ],
           "witness": "fresh_svg"
         },
         {
           "name": "c4ShapeInRow",
-          "showcase_value": 4,
+          "showcase_value": 3,
           "probes": [
             0,
-            2,
+            1,
             4
           ],
           "witness": "fresh_svg"
@@ -130,8 +123,8 @@
           "name": "nextLinePaddingX",
           "showcase_value": 0.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -141,8 +134,8 @@
           "showcase_value": 2,
           "probes": [
             0,
-            2,
-            4
+            1,
+            2
           ],
           "witness": "fresh_svg"
         },
@@ -150,9 +143,10 @@
           "name": "personFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -175,8 +169,8 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -185,9 +179,10 @@
           "name": "external_personFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -210,8 +205,8 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -220,9 +215,10 @@
           "name": "systemFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -245,8 +241,8 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -255,9 +251,10 @@
           "name": "external_systemFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -280,8 +277,8 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -290,9 +287,10 @@
           "name": "system_dbFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -315,8 +313,8 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -325,9 +323,10 @@
           "name": "external_system_dbFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -350,8 +349,8 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -360,9 +359,10 @@
           "name": "system_queueFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -385,8 +385,8 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -395,9 +395,10 @@
           "name": "external_system_queueFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -420,8 +421,8 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -430,9 +431,9 @@
           "name": "boundaryFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
-            0.0,
-            0.5,
+            "12",
+            "0.5",
+            0.25,
             1.0,
             14.0
           ],
@@ -455,19 +456,19 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
         },
         {
           "name": "messageFontSize",
-          "showcase_value": 12.0,
+          "showcase_value": 11.0,
           "probes": [
-            "proof",
-            0.0,
-            0.5,
+            "12",
+            "0.5",
+            0.25,
             1.0,
             12.0
           ],
@@ -490,8 +491,8 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -500,9 +501,10 @@
           "name": "containerFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -525,8 +527,8 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -535,9 +537,10 @@
           "name": "external_containerFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -560,8 +563,8 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -570,9 +573,10 @@
           "name": "container_dbFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -595,8 +599,8 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -605,9 +609,10 @@
           "name": "external_container_dbFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -630,8 +635,8 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -640,9 +645,10 @@
           "name": "container_queueFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -665,8 +671,8 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -675,9 +681,10 @@
           "name": "external_container_queueFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -700,8 +707,8 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -710,9 +717,10 @@
           "name": "componentFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -735,8 +743,8 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -745,9 +753,10 @@
           "name": "external_componentFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -770,8 +779,8 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -780,9 +789,10 @@
           "name": "component_dbFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -805,8 +815,8 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -815,9 +825,10 @@
           "name": "external_component_dbFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -840,8 +851,8 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -850,9 +861,10 @@
           "name": "component_queueFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -875,8 +887,8 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -885,9 +897,10 @@
           "name": "external_component_queueFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -910,18 +923,18 @@
             "400",
             "700",
             "normal",
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
         },
         {
           "name": "wrapPadding",
-          "showcase_value": 10.0,
+          "showcase_value": 8.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             10.0
           ],
@@ -1332,9 +1345,10 @@
     {
       "diagram_id": "architecture-beta",
       "source": "sources/architecture-beta.mmd",
-      "source_sha256": "80a2b4bf012ccb1326ae3126b2f3f31e686194647257281a71e5d7b3e14332fb",
+      "source_sha256": "cb41871013668c15bf65e1cf2083d5f8dd034b13a061ed0a3bc8459d469a03b0",
       "svg": "rendered/architecture-beta.svg",
-      "svg_sha256": "c27add52618d2cf89e6765ac15beefd36620049d54ed33f2b3f73b8d2403ddeb",
+      "svg_sha256": "bd0fb4bf0bdc416795ff09a558ebecb41c89bf47a8050ac0ea62aa57f5f89660",
+      "semantic_object_count": 33,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -1347,11 +1361,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -1368,8 +1381,8 @@
           "name": "padding",
           "showcase_value": 40.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             40.0
           ],
@@ -1379,8 +1392,7 @@
           "name": "iconSize",
           "showcase_value": 80.0,
           "probes": [
-            0.0,
-            0.5,
+            0.25,
             1.0,
             80.0
           ],
@@ -1390,8 +1402,8 @@
           "name": "fontSize",
           "showcase_value": 16.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             16.0
           ],
@@ -1408,10 +1420,10 @@
         },
         {
           "name": "nodeSeparation",
-          "showcase_value": 75.0,
+          "showcase_value": 96.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             75.0
           ],
@@ -1419,10 +1431,10 @@
         },
         {
           "name": "idealEdgeLengthMultiplier",
-          "showcase_value": 1.5,
+          "showcase_value": 1.8,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             1.5
           ],
@@ -1430,10 +1442,10 @@
         },
         {
           "name": "edgeElasticity",
-          "showcase_value": 0.45,
+          "showcase_value": 0.3,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             0.45
           ],
@@ -1441,10 +1453,10 @@
         },
         {
           "name": "numIter",
-          "showcase_value": 2500.0,
+          "showcase_value": 5000.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             2500.0
           ],
@@ -1452,10 +1464,10 @@
         },
         {
           "name": "seed",
-          "showcase_value": 1.0,
+          "showcase_value": 7.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -1465,9 +1477,10 @@
     {
       "diagram_id": "block",
       "source": "sources/block.mmd",
-      "source_sha256": "6e5f35d6e99f65bdee9a8acd07a79da7387296ba90959ba2eff07bbc70ebb99b",
+      "source_sha256": "6f2c9f7b3a585745f183af6b119471adc35200e8d7522adedd5ae4d564053d2a",
       "svg": "rendered/block.svg",
-      "svg_sha256": "90c0fe9bcf97d6bbb8a37762255507a6a96cf6b38ae1edfe138e7d49bffd9bbe",
+      "svg_sha256": "31d71cfd945020824e0203ba0824242a111a1dedb3d55a9950f69c9a007a3981",
+      "semantic_object_count": 12,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -1480,11 +1493,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -1502,7 +1514,6 @@
           "showcase_value": 8.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             8.0
           ],
@@ -1513,9 +1524,10 @@
     {
       "diagram_id": "classDiagram",
       "source": "sources/classDiagram.mmd",
-      "source_sha256": "0be10b2b1926f63e9238b48f9315bd66cc947247f3a09d04d6ceaec7fdb1aa95",
+      "source_sha256": "55b001005eab0b3b53c8eb8e9b0a91a7668bf7a129e218e7b7a680b03eaae768",
       "svg": "rendered/classDiagram.svg",
-      "svg_sha256": "78a38ae346888eba1a7569e731a65298bb3ec417f404873a292717db109eacf4",
+      "svg_sha256": "c706c4b1e6f3eb5194ad03784e66937a76340bb033372adf8c468524b92ff384",
+      "semantic_object_count": 20,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -1528,11 +1540,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -1550,8 +1561,7 @@
           "showcase_value": 25,
           "probes": [
             0,
-            2,
-            4,
+            1,
             25
           ],
           "witness": "fresh_svg"
@@ -1569,8 +1579,8 @@
           "name": "dividerMargin",
           "showcase_value": 10.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             10.0
           ],
@@ -1580,8 +1590,8 @@
           "name": "padding",
           "showcase_value": 5.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             5.0
           ],
@@ -1591,8 +1601,8 @@
           "name": "textHeight",
           "showcase_value": 10.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             10.0
           ],
@@ -1613,8 +1623,7 @@
           "showcase_value": 0,
           "probes": [
             0,
-            2,
-            4
+            1
           ],
           "witness": "fresh_svg"
         },
@@ -1623,8 +1632,7 @@
           "showcase_value": 0,
           "probes": [
             0,
-            2,
-            4
+            1
           ],
           "witness": "fresh_svg"
         },
@@ -1633,8 +1641,7 @@
           "showcase_value": 20,
           "probes": [
             0,
-            2,
-            4,
+            1,
             20
           ],
           "witness": "fresh_svg"
@@ -1671,9 +1678,10 @@
     {
       "diagram_id": "cynefin-beta",
       "source": "sources/cynefin-beta.mmd",
-      "source_sha256": "c5287cf26cbcd045ab245c1a840af506cef30f51f2db18a38c018a52ac944a07",
+      "source_sha256": "b2414b9e24739f710ffb5f649c78830f9e7577e35483f91d4d483d2d99b3a154",
       "svg": "rendered/cynefin-beta.svg",
-      "svg_sha256": "2df1e3d395661f40f44de2036d6717e1fb531b3f2821b0283299548859693606",
+      "svg_sha256": "a59b80bb6f8ce748305eceb07c3f670816ba44444c5b33d8e5ca7beca4732279",
+      "semantic_object_count": 12,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -1686,11 +1694,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -1708,8 +1715,6 @@
           "showcase_value": 800.0,
           "probes": [
             1.0,
-            1.5,
-            2.0,
             800.0
           ],
           "witness": "fresh_svg"
@@ -1719,8 +1724,6 @@
           "showcase_value": 600.0,
           "probes": [
             1.0,
-            1.5,
-            2.0,
             600.0
           ],
           "witness": "fresh_svg"
@@ -1730,7 +1733,6 @@
           "showcase_value": 40.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             40.0
           ],
@@ -1760,8 +1762,8 @@
           "name": "seed",
           "showcase_value": 1.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -1771,9 +1773,10 @@
     {
       "diagram_id": "erDiagram",
       "source": "sources/erDiagram.mmd",
-      "source_sha256": "097dc640436321f17ef18328db78563bf8badc07cea03e01727717b196154e96",
+      "source_sha256": "e170a67c9f88d5c52ab629b1e4794c9890dfc1760f3c65c739fe7c6afc11c1a5",
       "svg": "rendered/erDiagram.svg",
-      "svg_sha256": "eaea31027e009bc4003a301cd7287976a354db634340b7a50eb8408d368595d4",
+      "svg_sha256": "192e747c147958d45e5ef9b3b7ecd0c17fb973cf8fe0415adc9620552b3aaf42",
+      "semantic_object_count": 17,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -1786,11 +1789,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -1808,8 +1810,7 @@
           "showcase_value": 25,
           "probes": [
             0,
-            2,
-            4,
+            1,
             25
           ],
           "witness": "fresh_svg"
@@ -1819,8 +1820,7 @@
           "showcase_value": 20,
           "probes": [
             0,
-            2,
-            4,
+            1,
             20
           ],
           "witness": "fresh_svg"
@@ -1841,8 +1841,7 @@
           "showcase_value": 100,
           "probes": [
             0,
-            2,
-            4,
+            1,
             100
           ],
           "witness": "fresh_svg"
@@ -1852,8 +1851,7 @@
           "showcase_value": 75,
           "probes": [
             0,
-            2,
-            4,
+            1,
             75
           ],
           "witness": "fresh_svg"
@@ -1863,8 +1861,7 @@
           "showcase_value": 15,
           "probes": [
             0,
-            2,
-            4,
+            1,
             15
           ],
           "witness": "fresh_svg"
@@ -1874,8 +1871,7 @@
           "showcase_value": 140,
           "probes": [
             0,
-            2,
-            4,
+            1,
             140
           ],
           "witness": "fresh_svg"
@@ -1885,8 +1881,7 @@
           "showcase_value": 80,
           "probes": [
             0,
-            2,
-            4,
+            1,
             80
           ],
           "witness": "fresh_svg"
@@ -1916,8 +1911,7 @@
           "showcase_value": 12,
           "probes": [
             0,
-            2,
-            4,
+            1,
             12
           ],
           "witness": "fresh_svg"
@@ -1927,9 +1921,10 @@
     {
       "diagram_id": "eventmodeling",
       "source": "sources/eventmodeling.mmd",
-      "source_sha256": "717325df8b5d3cab0999d1febc65d2e4cf6075977b986ce6bde27eca2fb9025e",
+      "source_sha256": "37737726fae4e921685753b9b4e90ac1ad902c09709836c87686513f7358068e",
       "svg": "rendered/eventmodeling.svg",
-      "svg_sha256": "de968b1b2789a73aec4d58b63e633e4ce66e5c83ccf41aafaa7392068048956a",
+      "svg_sha256": "c609a15d7448387e92f691925edd5e9626a6c15b3fc076916259e68c6ac6f69d",
+      "semantic_object_count": 16,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -1942,11 +1937,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -1963,8 +1957,8 @@
           "name": "padding",
           "showcase_value": 30.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             30.0
           ],
@@ -1975,8 +1969,6 @@
           "showcase_value": 32.0,
           "probes": [
             1.0,
-            1.5,
-            2.0,
             32.0
           ],
           "witness": "fresh_svg"
@@ -1986,9 +1978,10 @@
     {
       "diagram_id": "flowchart",
       "source": "sources/flowchart.mmd",
-      "source_sha256": "65d1ba62849849a38f25d8dc47b92847d8511e96ab85ddf2d2eb028517f4c3b6",
+      "source_sha256": "24178868f759b12c618d70cc4a3cfadee3411579c167219a6b84b00bac5fda55",
       "svg": "rendered/flowchart.svg",
-      "svg_sha256": "f81753058189d80a3cfd2b97c8917e5f56010a77bbf06ae42a2040b02abcf8cc",
+      "svg_sha256": "15781561a455129e2ae5432f92db244452ab9742e6374412112c357c98e515e8",
+      "semantic_object_count": 27,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -2001,11 +1994,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -2023,8 +2015,7 @@
           "showcase_value": 25,
           "probes": [
             0,
-            2,
-            4,
+            1,
             25
           ],
           "witness": "fresh_svg"
@@ -2038,8 +2029,8 @@
           "probes": [
             {},
             {
-              "top": 4,
-              "bottom": 4
+              "top": 1,
+              "bottom": 1
             }
           ],
           "witness": "fresh_svg"
@@ -2058,8 +2049,7 @@
           "showcase_value": 8,
           "probes": [
             0,
-            2,
-            4,
+            1,
             8
           ],
           "witness": "fresh_svg"
@@ -2069,8 +2059,7 @@
           "showcase_value": 50,
           "probes": [
             0,
-            2,
-            4,
+            1,
             50
           ],
           "witness": "fresh_svg"
@@ -2080,8 +2069,7 @@
           "showcase_value": 50,
           "probes": [
             0,
-            2,
-            4,
+            1,
             50
           ],
           "witness": "fresh_svg"
@@ -2110,8 +2098,8 @@
           "name": "padding",
           "showcase_value": 15.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             15.0
           ],
@@ -2121,7 +2109,6 @@
           "name": "defaultRenderer",
           "showcase_value": "dagre-wrapper",
           "probes": [
-            "dagre-d3",
             "dagre-wrapper",
             "elk"
           ],
@@ -2131,8 +2118,8 @@
           "name": "wrappingWidth",
           "showcase_value": 200.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             200.0
           ],
@@ -2152,9 +2139,10 @@
     {
       "diagram_id": "gantt",
       "source": "sources/gantt.mmd",
-      "source_sha256": "56319388176f5ca5e125ff0d2156b3c61dde89fd9bf58bd467e922ad95b87ef4",
+      "source_sha256": "964cbc77c40f690e26610a87c7241eda4656f16399996d34a6c1ccc823020cc1",
       "svg": "rendered/gantt.svg",
-      "svg_sha256": "2a86521490b608b2e44c605ec1dcacbbdd65f83ffe6dbfd8eabf3286eb1afdac",
+      "svg_sha256": "0dda4e6a6efdcdaa0f6e04257cde9759e88e298712e565381474c0f787e776e4",
+      "semantic_object_count": 12,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -2167,11 +2155,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -2189,8 +2176,7 @@
           "showcase_value": 25,
           "probes": [
             0,
-            2,
-            4,
+            1,
             25
           ],
           "witness": "fresh_svg"
@@ -2200,8 +2186,7 @@
           "showcase_value": 20,
           "probes": [
             0,
-            2,
-            4,
+            1,
             20
           ],
           "witness": "fresh_svg"
@@ -2211,7 +2196,7 @@
           "showcase_value": 4,
           "probes": [
             0,
-            2,
+            1,
             4
           ],
           "witness": "fresh_svg"
@@ -2221,8 +2206,7 @@
           "showcase_value": 50,
           "probes": [
             0,
-            2,
-            4,
+            1,
             50
           ],
           "witness": "fresh_svg"
@@ -2232,8 +2216,7 @@
           "showcase_value": 75,
           "probes": [
             0,
-            2,
-            4,
+            1,
             75
           ],
           "witness": "fresh_svg"
@@ -2243,8 +2226,7 @@
           "showcase_value": 75,
           "probes": [
             0,
-            2,
-            4,
+            1,
             75
           ],
           "witness": "fresh_svg"
@@ -2254,8 +2236,7 @@
           "showcase_value": 35,
           "probes": [
             0,
-            2,
-            4,
+            1,
             35
           ],
           "witness": "fresh_svg"
@@ -2265,8 +2246,7 @@
           "showcase_value": 11,
           "probes": [
             0,
-            2,
-            4,
+            1,
             11
           ],
           "witness": "fresh_svg"
@@ -2276,8 +2256,7 @@
           "showcase_value": 11,
           "probes": [
             0,
-            2,
-            4,
+            1,
             11
           ],
           "witness": "fresh_svg"
@@ -2286,8 +2265,7 @@
           "name": "numberSectionStyles",
           "showcase_value": 4,
           "probes": [
-            0,
-            2,
+            1,
             4
           ],
           "witness": "fresh_svg"
@@ -2347,9 +2325,10 @@
     {
       "diagram_id": "gitGraph",
       "source": "sources/gitGraph.mmd",
-      "source_sha256": "b54d563ee893c8972692613361f58f25829217e619c20a95760352440c990e40",
+      "source_sha256": "0010c4b3eeef80361a3b8198c89625dd6456a191689e1e5264e1f497347b0e89",
       "svg": "rendered/gitGraph.svg",
-      "svg_sha256": "5bff44a13016ff9b9e884d104c676ea24348bc63be92651aade341c87911cbfe",
+      "svg_sha256": "f5f6334b48039001a1594ece73e85be0fa6fd3647aed73e4bbb1146cfb4d7a37",
+      "semantic_object_count": 12,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -2362,11 +2341,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -2384,8 +2362,7 @@
           "showcase_value": 25,
           "probes": [
             0,
-            2,
-            4,
+            1,
             25
           ],
           "witness": "fresh_svg"
@@ -2394,8 +2371,8 @@
           "name": "diagramPadding",
           "showcase_value": 8.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             8.0
           ],
@@ -2438,8 +2415,8 @@
           "name": "mainBranchOrder",
           "showcase_value": 0.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -2494,9 +2471,10 @@
     {
       "diagram_id": "ishikawa-beta",
       "source": "sources/ishikawa-beta.mmd",
-      "source_sha256": "bf4ee5549baab1eb3a251bcc85164fd6b7360fe97e034d841cac56d06760d1ac",
+      "source_sha256": "6c117ea24e1512d1fa0425da85cd005a4235ef80a498c135b18b52dfb5785135",
       "svg": "rendered/ishikawa-beta.svg",
-      "svg_sha256": "3c158d3ccb8476f9e39cae89bdea0472a915128a03df3cc101d2aeee816e2782",
+      "svg_sha256": "08601f58e253673e8129d9a2416f16d17f083f2b64025c1795826d73b1ea929e",
+      "semantic_object_count": 13,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -2509,11 +2487,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -2531,8 +2508,7 @@
           "showcase_value": 20,
           "probes": [
             0,
-            2,
-            4,
+            1,
             20
           ],
           "witness": "fresh_svg"
@@ -2542,9 +2518,10 @@
     {
       "diagram_id": "journey",
       "source": "sources/journey.mmd",
-      "source_sha256": "ebe89d52a3ef91f097d31b48cd63c0f1344fecb452dadf1ec7cd73c06c5e8893",
+      "source_sha256": "e50c04a9e3ed9399951d0716436e5b0010e601bdc62842955ea4d44eb26509b2",
       "svg": "rendered/journey.svg",
-      "svg_sha256": "5f105fa4da562cf11f3295647b1caef3c7bc0c0ef5c36ff26c6eb4db4e233b85",
+      "svg_sha256": "7882deea2a47f049c02ecad6b4a7d3af6c3226389e29f2adb68a7842f146e547",
+      "semantic_object_count": 12,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -2557,11 +2534,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -2579,8 +2555,7 @@
           "showcase_value": 50,
           "probes": [
             0,
-            2,
-            4,
+            1,
             50
           ],
           "witness": "fresh_svg"
@@ -2590,8 +2565,7 @@
           "showcase_value": 10,
           "probes": [
             0,
-            2,
-            4,
+            1,
             10
           ],
           "witness": "fresh_svg"
@@ -2601,8 +2575,7 @@
           "showcase_value": 150,
           "probes": [
             0,
-            2,
-            4,
+            1,
             150
           ],
           "witness": "fresh_svg"
@@ -2611,9 +2584,9 @@
           "name": "maxLabelWidth",
           "showcase_value": 360,
           "probes": [
+            -1,
             0,
-            2,
-            4,
+            1,
             360
           ],
           "witness": "fresh_svg"
@@ -2623,8 +2596,7 @@
           "showcase_value": 150,
           "probes": [
             0,
-            2,
-            4,
+            1,
             150
           ],
           "witness": "fresh_svg"
@@ -2634,8 +2606,7 @@
           "showcase_value": 50,
           "probes": [
             0,
-            2,
-            4,
+            1,
             50
           ],
           "witness": "fresh_svg"
@@ -2645,8 +2616,7 @@
           "showcase_value": 10,
           "probes": [
             0,
-            2,
-            4,
+            1,
             10
           ],
           "witness": "fresh_svg"
@@ -2656,8 +2626,7 @@
           "showcase_value": 5,
           "probes": [
             0,
-            2,
-            4,
+            1,
             5
           ],
           "witness": "fresh_svg"
@@ -2667,8 +2636,7 @@
           "showcase_value": 10,
           "probes": [
             0,
-            2,
-            4,
+            1,
             10
           ],
           "witness": "fresh_svg"
@@ -2678,8 +2646,7 @@
           "showcase_value": 35,
           "probes": [
             0,
-            2,
-            4,
+            1,
             35
           ],
           "witness": "fresh_svg"
@@ -2699,8 +2666,6 @@
           "showcase_value": 1,
           "probes": [
             0,
-            2,
-            4,
             1
           ],
           "witness": "fresh_svg"
@@ -2718,9 +2683,10 @@
           "name": "taskFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -2740,8 +2706,8 @@
           "name": "taskMargin",
           "showcase_value": 50.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             50.0
           ],
@@ -2751,8 +2717,8 @@
           "name": "activationWidth",
           "showcase_value": 10.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             10.0
           ],
@@ -2853,7 +2819,8 @@
           "name": "titleFontSize",
           "showcase_value": "4ex",
           "probes": [
-            "proof",
+            "12",
+            "0.5",
             "4ex"
           ],
           "witness": "fresh_svg"
@@ -2863,9 +2830,10 @@
     {
       "diagram_id": "kanban",
       "source": "sources/kanban.mmd",
-      "source_sha256": "a359a0378b5f8008e9bd489c0f1f591c379d48f7e5ba135e3cd1105c68f40744",
+      "source_sha256": "446f4dc9a3e9c68cd78e4a422f3db7f730ec6a8687be12b3d0f3350699722619",
       "svg": "rendered/kanban.svg",
-      "svg_sha256": "54a686d9e4291a39ea6c23998409b36ea25def61aad1b845b9832ad8aae24eff",
+      "svg_sha256": "1c2317070d440756a4c0baf3918d310c846b12ce85d0a575f77fbb287662fb7f",
+      "semantic_object_count": 12,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -2878,11 +2846,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -2899,8 +2866,8 @@
           "name": "padding",
           "showcase_value": 8.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             8.0
           ],
@@ -2910,8 +2877,8 @@
           "name": "sectionWidth",
           "showcase_value": 200.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             200.0
           ],
@@ -2931,9 +2898,10 @@
     {
       "diagram_id": "mindmap",
       "source": "sources/mindmap.mmd",
-      "source_sha256": "cb6aa9025561edd1c91218e35ce6a84bf5c9a57c1297fde3c06bb71da6d165b2",
+      "source_sha256": "432b5f3137368e827af9de74f565b9cd4ed39c07e65bb31fce4a3a83fa78d0e9",
       "svg": "rendered/mindmap.svg",
-      "svg_sha256": "6220689b1c60b124b4ba845e5b5fc874f4aeccb2437839c9c01e03e3d13d093e",
+      "svg_sha256": "4201898a0690e74592bef8664e7756e2684fdb5229090bea652503cbbaf85c80",
+      "semantic_object_count": 12,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -2946,11 +2914,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -2967,8 +2934,8 @@
           "name": "padding",
           "showcase_value": 10.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             10.0
           ],
@@ -2978,8 +2945,8 @@
           "name": "maxNodeWidth",
           "showcase_value": 200.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             200.0
           ],
@@ -2999,9 +2966,10 @@
     {
       "diagram_id": "packet",
       "source": "sources/packet.mmd",
-      "source_sha256": "c59f7bd09b44fd15b7c6be6c8b15f1f3b751ebb576d28c87d21fe3c50be23cb0",
+      "source_sha256": "955234920effdc16c8e41fd7ce92d06b08306c2f185bf69775ba482688b90fc7",
       "svg": "rendered/packet.svg",
-      "svg_sha256": "ffae4551f3a9d1bdfb997edcd2497bb6a2d3b846ff82cfab73bafd15451701c3",
+      "svg_sha256": "13b9ff28761ddc06cf445dd1d9951e2565717c5f82486e44265bc6e7821639f2",
+      "semantic_object_count": 12,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -3014,11 +2982,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -3036,8 +3003,6 @@
           "showcase_value": 32.0,
           "probes": [
             1.0,
-            1.5,
-            2.0,
             32.0
           ],
           "witness": "fresh_svg"
@@ -3047,20 +3012,16 @@
           "showcase_value": 32.0,
           "probes": [
             1.0,
-            1.5,
-            2.0,
             32.0
           ],
           "witness": "fresh_svg"
         },
         {
           "name": "bitsPerRow",
-          "showcase_value": 32.0,
+          "showcase_value": 32,
           "probes": [
-            1.0,
-            1.5,
-            2.0,
-            32.0
+            1,
+            32
           ],
           "witness": "fresh_svg"
         },
@@ -3078,7 +3039,6 @@
           "showcase_value": 5.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             5.0
           ],
@@ -3089,7 +3049,6 @@
           "showcase_value": 5.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             5.0
           ],
@@ -3100,9 +3059,10 @@
     {
       "diagram_id": "pie",
       "source": "sources/pie.mmd",
-      "source_sha256": "f542a7910f9837c4735b0b2dd4d1c51717c7b8aa7ee4a63e4bb07dcf3cbe1e12",
+      "source_sha256": "d30dcd92df932b5cf044e083ba402adc45f8e01a99422c84e7d8ae0bd27ba329",
       "svg": "rendered/pie.svg",
-      "svg_sha256": "b572d073e345e49bf62038cd96f303a984c3c758a827ffbeadabf77be881975d",
+      "svg_sha256": "df828105a63a48f52ed4c70ce662fd45f46427296743e8dd825c9cc4c45d8ea4",
+      "semantic_object_count": 12,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -3115,11 +3075,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -3179,9 +3138,10 @@
     {
       "diagram_id": "radar-beta",
       "source": "sources/radar-beta.mmd",
-      "source_sha256": "50428e89bddbbc4b3f409d54a911479296fbd563d839483dc1d31832b36f4ef4",
+      "source_sha256": "421fa9e64f405d195f697312bc3166d9566ef2d20774a2726258d12d2641d42c",
       "svg": "rendered/radar-beta.svg",
-      "svg_sha256": "f2dbad495b8972b1941bfb1e7b5c7632a48740731ddc959fae71aaebddbc87f5",
+      "svg_sha256": "25a822dd998a23edc1c0d5a9054b81c8998bafe856f899f6c630a73c262e6366",
+      "semantic_object_count": 12,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -3194,11 +3154,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -3216,8 +3175,6 @@
           "showcase_value": 600.0,
           "probes": [
             1.0,
-            1.5,
-            2.0,
             600.0
           ],
           "witness": "fresh_svg"
@@ -3227,8 +3184,6 @@
           "showcase_value": 600.0,
           "probes": [
             1.0,
-            1.5,
-            2.0,
             600.0
           ],
           "witness": "fresh_svg"
@@ -3238,7 +3193,6 @@
           "showcase_value": 50.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             50.0
           ],
@@ -3249,7 +3203,6 @@
           "showcase_value": 50.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             50.0
           ],
@@ -3260,7 +3213,6 @@
           "showcase_value": 50.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             50.0
           ],
@@ -3271,7 +3223,6 @@
           "showcase_value": 50.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             50.0
           ],
@@ -3282,7 +3233,6 @@
           "showcase_value": 1.0,
           "probes": [
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -3292,7 +3242,6 @@
           "showcase_value": 1.05,
           "probes": [
             0.0,
-            0.5,
             1.0,
             1.05
           ],
@@ -3314,9 +3263,10 @@
     {
       "diagram_id": "railroad-ebnf-beta",
       "source": "sources/railroad-ebnf-beta.mmd",
-      "source_sha256": "aedaa3f1c9a1963bcedd312322df8f72ca7b3f1052ed57034016b50cbcfd268f",
+      "source_sha256": "28ae75fe42ab99430e1c6cfb0af63851353f56acfce93ffc8a1e5aabd9c40ecf",
       "svg": "rendered/railroad-ebnf-beta.svg",
-      "svg_sha256": "aa07e2254f64cd8468c0ecdf76f7760c47363e43de2aa2c4c2cdcf26c1fffd88",
+      "svg_sha256": "59a98c2068fe59c2bc91228386cf28c248fe759d6843dd0216c0559eef6282c0",
+      "semantic_object_count": 13,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -3329,11 +3279,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -3360,7 +3309,6 @@
           "showcase_value": 10.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             10.0
           ],
@@ -3371,7 +3319,6 @@
           "showcase_value": 8.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             8.0
           ],
@@ -3382,7 +3329,6 @@
           "showcase_value": 10.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             10.0
           ],
@@ -3393,7 +3339,6 @@
           "showcase_value": 10.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             10.0
           ],
@@ -3404,7 +3349,6 @@
           "showcase_value": 14.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -3494,7 +3438,6 @@
           "showcase_value": 2.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             2.0
           ],
@@ -3584,7 +3527,6 @@
           "showcase_value": 5.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             5.0
           ],
@@ -3595,9 +3537,10 @@
     {
       "diagram_id": "requirementDiagram",
       "source": "sources/requirementDiagram.mmd",
-      "source_sha256": "d9e78fd9f5993b8a3d99f512f95040ebef8916ff6288a5da6e57b73a0ee52a17",
+      "source_sha256": "2a859a61454ebf480c935663800ce98d4c71fb3da1e5d66b6a952bc27b1ca788",
       "svg": "rendered/requirementDiagram.svg",
-      "svg_sha256": "e5f764244b2f7385f1a160da9f4965f1b146d57e193bdfefb0d9938d6a6b1934",
+      "svg_sha256": "a7d5020ca89c345e3f8caf575410f57f2fb057a5c39ece0093ac241d0af8145d",
+      "semantic_object_count": 15,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -3610,11 +3553,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -3670,8 +3612,8 @@
           "name": "rectMinWidth",
           "showcase_value": 200.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             200.0
           ],
@@ -3681,8 +3623,8 @@
           "name": "rectMinHeight",
           "showcase_value": 200.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             200.0
           ],
@@ -3692,8 +3634,8 @@
           "name": "fontSize",
           "showcase_value": 14.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -3703,8 +3645,8 @@
           "name": "rectPadding",
           "showcase_value": 10.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             10.0
           ],
@@ -3714,8 +3656,8 @@
           "name": "lineHeight",
           "showcase_value": 20.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             20.0
           ],
@@ -3726,9 +3668,10 @@
     {
       "diagram_id": "sankey",
       "source": "sources/sankey.mmd",
-      "source_sha256": "47585e0047c04ec05b9ac0f9f665743172ddf8bbcff28540956b07e8552a52ef",
+      "source_sha256": "c74fac7ff79f6e8ca53f822c46c5746f62ea5edb8bff2636939140742a35c988",
       "svg": "rendered/sankey.svg",
-      "svg_sha256": "65be2e9144a7da0dcb7691425699f60d2542d71584caaf21f4c0a7f82b0129f7",
+      "svg_sha256": "cdf2059635c791db2a36a60952b8922620f7c67ee14dba924153381cf2be8b8e",
+      "semantic_object_count": 16,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -3741,11 +3684,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -3762,8 +3704,8 @@
           "name": "width",
           "showcase_value": 600.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             600.0
           ],
@@ -3773,8 +3715,8 @@
           "name": "height",
           "showcase_value": 400.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             400.0
           ],
@@ -3832,8 +3774,8 @@
           "name": "nodeWidth",
           "showcase_value": 10.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             10.0
           ],
@@ -3843,8 +3785,8 @@
           "name": "nodePadding",
           "showcase_value": 12.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             12.0
           ],
@@ -3876,9 +3818,10 @@
     {
       "diagram_id": "sequenceDiagram",
       "source": "sources/sequenceDiagram.mmd",
-      "source_sha256": "a1af3cf844d9bf0c8bcdc671e34310979de5ef6e9beb7be01d49b89d5f8ff37f",
+      "source_sha256": "77daeaf8a30e61b5b17eb4263b69b185843dae72990d8e98ca911f96fdd17375",
       "svg": "rendered/sequenceDiagram.svg",
       "svg_sha256": "814b2752e26c013e2e7861cb70c32cc5966420224dc19a8a866e948522dc578a",
+      "semantic_object_count": 25,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -3891,11 +3834,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -3931,8 +3873,7 @@
           "showcase_value": 10,
           "probes": [
             0,
-            2,
-            4,
+            1,
             10
           ],
           "witness": "fresh_svg"
@@ -3942,8 +3883,7 @@
           "showcase_value": 50,
           "probes": [
             0,
-            2,
-            4,
+            1,
             50
           ],
           "witness": "fresh_svg"
@@ -3953,8 +3893,7 @@
           "showcase_value": 10,
           "probes": [
             0,
-            2,
-            4,
+            1,
             10
           ],
           "witness": "fresh_svg"
@@ -3964,8 +3903,7 @@
           "showcase_value": 50,
           "probes": [
             0,
-            2,
-            4,
+            1,
             50
           ],
           "witness": "fresh_svg"
@@ -3975,8 +3913,7 @@
           "showcase_value": 150,
           "probes": [
             0,
-            2,
-            4,
+            1,
             150
           ],
           "witness": "fresh_svg"
@@ -3986,8 +3923,7 @@
           "showcase_value": 65,
           "probes": [
             0,
-            2,
-            4,
+            1,
             65
           ],
           "witness": "fresh_svg"
@@ -3997,8 +3933,7 @@
           "showcase_value": 10,
           "probes": [
             0,
-            2,
-            4,
+            1,
             10
           ],
           "witness": "fresh_svg"
@@ -4008,8 +3943,7 @@
           "showcase_value": 5,
           "probes": [
             0,
-            2,
-            4,
+            1,
             5
           ],
           "witness": "fresh_svg"
@@ -4019,8 +3953,7 @@
           "showcase_value": 10,
           "probes": [
             0,
-            2,
-            4,
+            1,
             10
           ],
           "witness": "fresh_svg"
@@ -4030,8 +3963,7 @@
           "showcase_value": 35,
           "probes": [
             0,
-            2,
-            4,
+            1,
             35
           ],
           "witness": "fresh_svg"
@@ -4069,8 +4001,6 @@
           "showcase_value": 1,
           "probes": [
             0,
-            2,
-            4,
             1
           ],
           "witness": "fresh_svg"
@@ -4097,9 +4027,10 @@
           "name": "actorFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -4121,8 +4052,8 @@
           "probes": [
             "400",
             "700",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             400.0
           ],
@@ -4132,9 +4063,10 @@
           "name": "noteFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -4156,8 +4088,8 @@
           "probes": [
             "400",
             "700",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             400.0
           ],
@@ -4177,9 +4109,10 @@
           "name": "messageFontSize",
           "showcase_value": 16.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             16.0
           ],
@@ -4201,8 +4134,8 @@
           "probes": [
             "400",
             "700",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             400.0
           ],
@@ -4212,8 +4145,8 @@
           "name": "wrapPadding",
           "showcase_value": 10.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             10.0
           ],
@@ -4223,8 +4156,8 @@
           "name": "labelBoxWidth",
           "showcase_value": 50.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             50.0
           ],
@@ -4234,8 +4167,8 @@
           "name": "labelBoxHeight",
           "showcase_value": 20.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             20.0
           ],
@@ -4246,9 +4179,10 @@
     {
       "diagram_id": "stateDiagram-v2",
       "source": "sources/stateDiagram-v2.mmd",
-      "source_sha256": "2423c163a3140a7783c61dd6f5f08351346fef130b5a5c9067eaef65441f2aa0",
+      "source_sha256": "001f816f94c8657dc5d87c9cd5f976d7aaf31b9559c840dcf3ef9df8f0c32ac4",
       "svg": "rendered/stateDiagram-v2.svg",
-      "svg_sha256": "0f4d0a1907915d2b510cebf5c39ad4cacf7282cfb696cd08130c60e8c1944893",
+      "svg_sha256": "418e22b81b9ea96bf725c91028a945afebdad92ea1ee8a52a80543c7b90583af",
+      "semantic_object_count": 31,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -4261,11 +4195,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -4283,8 +4216,7 @@
           "showcase_value": 25,
           "probes": [
             0,
-            2,
-            4,
+            1,
             25
           ],
           "witness": "fresh_svg"
@@ -4302,8 +4234,8 @@
           "name": "dividerMargin",
           "showcase_value": 10.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             10.0
           ],
@@ -4313,8 +4245,8 @@
           "name": "sizeUnit",
           "showcase_value": 5.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             5.0
           ],
@@ -4324,8 +4256,8 @@
           "name": "padding",
           "showcase_value": 8.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             8.0
           ],
@@ -4335,8 +4267,8 @@
           "name": "textHeight",
           "showcase_value": 10.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             10.0
           ],
@@ -4346,8 +4278,8 @@
           "name": "titleShift",
           "showcase_value": -15.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             -15.0
           ],
@@ -4357,8 +4289,8 @@
           "name": "noteMargin",
           "showcase_value": 10.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             10.0
           ],
@@ -4369,8 +4301,7 @@
           "showcase_value": 0,
           "probes": [
             0,
-            2,
-            4
+            1
           ],
           "witness": "fresh_svg"
         },
@@ -4379,8 +4310,7 @@
           "showcase_value": 0,
           "probes": [
             0,
-            2,
-            4
+            1
           ],
           "witness": "fresh_svg"
         },
@@ -4388,8 +4318,8 @@
           "name": "forkWidth",
           "showcase_value": 70.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             70.0
           ],
@@ -4399,8 +4329,8 @@
           "name": "forkHeight",
           "showcase_value": 7.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             7.0
           ],
@@ -4410,8 +4340,8 @@
           "name": "miniPadding",
           "showcase_value": 2.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             2.0
           ],
@@ -4421,8 +4351,8 @@
           "name": "fontSizeFactor",
           "showcase_value": 5.02,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             5.02
           ],
@@ -4432,8 +4362,8 @@
           "name": "fontSize",
           "showcase_value": 24.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             24.0
           ],
@@ -4443,8 +4373,8 @@
           "name": "labelHeight",
           "showcase_value": 16.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             16.0
           ],
@@ -4463,8 +4393,8 @@
           "name": "compositTitleSize",
           "showcase_value": 35.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             35.0
           ],
@@ -4474,8 +4404,8 @@
           "name": "radius",
           "showcase_value": 5.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             5.0
           ],
@@ -4496,9 +4426,10 @@
     {
       "diagram_id": "swimlane-beta",
       "source": "sources/swimlane-beta.mmd",
-      "source_sha256": "5b65343ec1694fd18e00335d0052076ed91427fb3c337077409d6cb0af8b88e5",
+      "source_sha256": "5a4e3a6a8548ab474f30394d19535ea7a0a1586539dd337ff78bb68d11d11f53",
       "svg": "rendered/swimlane-beta.svg",
-      "svg_sha256": "981d166db42c2d15cba8789d81672b019336409131c31b29f34b347c450f14c4",
+      "svg_sha256": "5e9bdc3f0496fe689efd2ff864958237a24fc66b56811edb91c3335b246a37f2",
+      "semantic_object_count": 17,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -4511,11 +4442,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -4534,7 +4464,8 @@
           "probes": [
             false,
             true,
-            "arc"
+            "arc",
+            "gap"
           ],
           "witness": "fresh_svg"
         },
@@ -4570,9 +4501,10 @@
     {
       "diagram_id": "timeline",
       "source": "sources/timeline.mmd",
-      "source_sha256": "63f12e5ad9926ddfe6a52798ad9715ef6b6738b98ed157f4747fb944b780c1f5",
+      "source_sha256": "b7546d397ba713b0d8c22768f5c9a9da7a9abef9f1a0498f1a90f58ee883ea09",
       "svg": "rendered/timeline.svg",
-      "svg_sha256": "8da12b1dfb921e529ee268cecf8d9f7d21da033740ebe69d7252b97db719dec1",
+      "svg_sha256": "fefab0eeb323d428920191c4155f02d92c0e8c12d3733ee4b608fb525f41d8ac",
+      "semantic_object_count": 12,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -4585,11 +4517,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -4607,8 +4538,7 @@
           "showcase_value": 50,
           "probes": [
             0,
-            2,
-            4,
+            1,
             50
           ],
           "witness": "fresh_svg"
@@ -4618,8 +4548,7 @@
           "showcase_value": 10,
           "probes": [
             0,
-            2,
-            4,
+            1,
             10
           ],
           "witness": "fresh_svg"
@@ -4629,8 +4558,7 @@
           "showcase_value": 150,
           "probes": [
             0,
-            2,
-            4,
+            1,
             150
           ],
           "witness": "fresh_svg"
@@ -4640,8 +4568,7 @@
           "showcase_value": 150,
           "probes": [
             0,
-            2,
-            4,
+            1,
             150
           ],
           "witness": "fresh_svg"
@@ -4651,18 +4578,17 @@
           "showcase_value": 50,
           "probes": [
             0,
-            2,
-            4,
+            1,
             50
           ],
           "witness": "fresh_svg"
         },
         {
           "name": "padding",
-          "showcase_value": 0.0,
+          "showcase_value": -1.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -4672,8 +4598,7 @@
           "showcase_value": 10,
           "probes": [
             0,
-            2,
-            4,
+            1,
             10
           ],
           "witness": "fresh_svg"
@@ -4683,8 +4608,7 @@
           "showcase_value": 5,
           "probes": [
             0,
-            2,
-            4,
+            1,
             5
           ],
           "witness": "fresh_svg"
@@ -4694,8 +4618,7 @@
           "showcase_value": 10,
           "probes": [
             0,
-            2,
-            4,
+            1,
             10
           ],
           "witness": "fresh_svg"
@@ -4705,8 +4628,7 @@
           "showcase_value": 35,
           "probes": [
             0,
-            2,
-            4,
+            1,
             35
           ],
           "witness": "fresh_svg"
@@ -4726,8 +4648,6 @@
           "showcase_value": 1,
           "probes": [
             0,
-            2,
-            4,
             1
           ],
           "witness": "fresh_svg"
@@ -4745,9 +4665,10 @@
           "name": "taskFontSize",
           "showcase_value": 14.0,
           "probes": [
-            "proof",
+            "12",
+            "0.5",
+            -1.0,
             0.0,
-            0.5,
             1.0,
             14.0
           ],
@@ -4767,8 +4688,8 @@
           "name": "taskMargin",
           "showcase_value": 50.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             50.0
           ],
@@ -4778,8 +4699,8 @@
           "name": "activationWidth",
           "showcase_value": 10.0,
           "probes": [
+            -1.0,
             0.0,
-            0.5,
             1.0,
             10.0
           ],
@@ -4870,9 +4791,10 @@
     {
       "diagram_id": "treeView-beta",
       "source": "sources/treeView-beta.mmd",
-      "source_sha256": "f6c7497abf291d5e631020cb69e58669a825c479b2339d983f2acdcf7eda3d11",
+      "source_sha256": "9970fedcb41ee93516f4d665c374ec5cf90639044b3bd1b5d36ea1dcd43ea680",
       "svg": "rendered/treeView-beta.svg",
       "svg_sha256": "0cd454e6ecea32b59896fc85223a65407cddc20af69a952b642cf772524f8db7",
+      "semantic_object_count": 14,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -4885,11 +4807,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -4907,7 +4828,6 @@
           "showcase_value": 10.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             10.0
           ],
@@ -4918,7 +4838,6 @@
           "showcase_value": 5.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             5.0
           ],
@@ -4929,7 +4848,6 @@
           "showcase_value": 5.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             5.0
           ],
@@ -4940,7 +4858,6 @@
           "showcase_value": 1.0,
           "probes": [
             0.0,
-            0.5,
             1.0
           ],
           "witness": "fresh_svg"
@@ -4992,9 +4909,10 @@
     {
       "diagram_id": "venn-beta",
       "source": "sources/venn-beta.mmd",
-      "source_sha256": "86fb5219835c16dbaac3c3622cf8dffe271877a71c13bcdcbc3c2c6492c34704",
+      "source_sha256": "36276d8e0e089860a74c3c4b0e0b00bdee07b875d54f86edeb054299abb93082",
       "svg": "rendered/venn-beta.svg",
-      "svg_sha256": "164b111d6dc789289cdb2c44ef644f518a1d17544ee4efa26c0cadd392c165a5",
+      "svg_sha256": "fa3aceedf26c6f7bc8463d5e0c88c8d86a18ea0f3837959cdaf29ed993390ca7",
+      "semantic_object_count": 14,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -5007,11 +4925,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -5029,8 +4946,6 @@
           "showcase_value": 800.0,
           "probes": [
             1.0,
-            1.5,
-            2.0,
             800.0
           ],
           "witness": "fresh_svg"
@@ -5040,8 +4955,6 @@
           "showcase_value": 450.0,
           "probes": [
             1.0,
-            1.5,
-            2.0,
             450.0
           ],
           "witness": "fresh_svg"
@@ -5051,7 +4964,6 @@
           "showcase_value": 8.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             8.0
           ],
@@ -5071,9 +4983,10 @@
     {
       "diagram_id": "wardley-beta",
       "source": "sources/wardley-beta.mmd",
-      "source_sha256": "378aaeff16c37c96a4fa9e1fad236a2ddf5c6c6a8891c222ea117835bc7a20f1",
+      "source_sha256": "078ed01be0f17ef30a5e154b92fddf3bfb01b23bead11663018b78f9374f6b2e",
       "svg": "rendered/wardley-beta.svg",
-      "svg_sha256": "7a6d3978f38730a624040f8f13c21b94ae08a5a81393b1752a51aeae406711c8",
+      "svg_sha256": "68ac71d5b2d2cf9d8816c648989b6a78f270ffcfe5f550437ca276dedcad3e8c",
+      "semantic_object_count": 14,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -5086,11 +4999,10 @@
         },
         {
           "name": "useWidth",
-          "showcase_value": 0.0,
+          "showcase_value": 960.0,
           "probes": [
-            0.0,
-            0.5,
-            1.0
+            960.0,
+            1440.0
           ],
           "witness": "fresh_svg"
         },
@@ -5108,8 +5020,6 @@
           "showcase_value": 900.0,
           "probes": [
             1.0,
-            1.5,
-            2.0,
             900.0
           ],
           "witness": "fresh_svg"
@@ -5119,8 +5029,6 @@
           "showcase_value": 600.0,
           "probes": [
             1.0,
-            1.5,
-            2.0,
             600.0
           ],
           "witness": "fresh_svg"
@@ -5130,7 +5038,6 @@
           "showcase_value": 48.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             48.0
           ],
@@ -5141,7 +5048,6 @@
           "showcase_value": 6.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             6.0
           ],
@@ -5152,7 +5058,6 @@
           "showcase_value": 8.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             8.0
           ],
@@ -5163,7 +5068,6 @@
           "showcase_value": 12.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             12.0
           ],
@@ -5174,7 +5078,6 @@
           "showcase_value": 10.0,
           "probes": [
             0.0,
-            0.5,
             1.0,
             10.0
           ],

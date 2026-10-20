@@ -1,0 +1,41 @@
+{
+  "mermaid_version": "11.16.0",
+  "diagram_count": 5,
+  "diagrams": [
+    {
+      "diagram_id": "C4Context-human",
+      "source": "sources/C4Context-human.mmd",
+      "source_sha256": "5322b8536070b1006b5d8f3fc0e1ccfc891569afeee9a3b91485169fc8077796",
+      "svg": "rendered/C4Context-human.svg",
+      "svg_sha256": "b7beb7debd7f4503dd35be62e861abcdf50e8acf2507e66ee75ccf64cf183b70"
+    },
+    {
+      "diagram_id": "C4Container-human",
+      "source": "sources/C4Container-human.mmd",
+      "source_sha256": "4f4cc5140a5a1ba83cb0e24396e06f61a59db76148ac9ab98fec4ae3e3ea960b",
+      "svg": "rendered/C4Container-human.svg",
+      "svg_sha256": "7d7b24935e1bd045e36a21defa5fcb2b3a2acb26d943c6653add2ab3cc8a3c95"
+    },
+    {
+      "diagram_id": "C4Component-human",
+      "source": "sources/C4Component-human.mmd",
+      "source_sha256": "ef93f8a768793ec843ccf113fa0006370d12ea8e537f7ed17b162e1fec70fa1a",
+      "svg": "rendered/C4Component-human.svg",
+      "svg_sha256": "956e113f7f7af66113de354abff6dfbd05022fd9d281781340b421a32ee116ca"
+    },
+    {
+      "diagram_id": "C4Dynamic-human",
+      "source": "sources/C4Dynamic-human.mmd",
+      "source_sha256": "cba85f0d5fb3dfbc8267d3e23cb7ad1f94f44b47f98b012167100e7898dbe882",
+      "svg": "rendered/C4Dynamic-human.svg",
+      "svg_sha256": "8f6789d503fbb30aba796b2b09e2e0c5e6a0ef351e7a8e1b8cd91f1770dfcfe4"
+    },
+    {
+      "diagram_id": "C4Deployment-human",
+      "source": "sources/C4Deployment-human.mmd",
+      "source_sha256": "d77537f6d9d1e7ddf0b22ee50ad9702572f731e7489d5d3bf799d407c18894b2",
+      "svg": "rendered/C4Deployment-human.svg",
+      "svg_sha256": "ae74792645c29af4d06f6cbc9b56961df9d8ed2d9fc06a1de944b264834988a1"
+    }
+  ]
+}

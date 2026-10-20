@@ -89,13 +89,10 @@ class MermaidConfigurationModel(BaseModel):
 
 
 class Unconfigured(MermaidConfigurationModel):
-    def excludes(self, value: object) -> bool:
-        return self == value
+    pass
 
 
-class OmittableConfigurationValue[ConfiguredT](
-    RootModel[ConfiguredT | SkipJsonSchema[InstanceOf[Unconfigured]]]
-):
+class OmittableConfigurationValue[ConfiguredT](RootModel[ConfiguredT | SkipJsonSchema[InstanceOf[Unconfigured]]]):
     model_config = ConfigDict(frozen=True)
 
     root: ConfiguredT | SkipJsonSchema[InstanceOf[Unconfigured]] = Field(default_factory=Unconfigured)
@@ -104,24 +101,20 @@ class OmittableConfigurationValue[ConfiguredT](
         return self == value
 
 
-class NumberOrUnconfigured(OmittableConfigurationValue[float]):
+class OmittableNumber(OmittableConfigurationValue[float]):
     pass
 
 
-class BooleanOrUnconfigured(OmittableConfigurationValue[bool]):
+class OmittableBoolean(OmittableConfigurationValue[bool]):
     pass
 
 
-class NonNegativeIntegerOrUnconfigured(
-    OmittableConfigurationValue[Annotated[int, Field(ge=0)]]
-):
+class OmittableNonNegativeInteger(OmittableConfigurationValue[Annotated[int, Field(ge=0)]]):
     pass
 
 
-class TextOrUnconfigured(
-    OmittableConfigurationValue[
-        Annotated[str, Field(pattern=Text.pattern, description=Text.description)]
-    ]
+class OmittableText(
+    OmittableConfigurationValue[Annotated[str, Field(pattern=Text.pattern, description=Text.description)]]
 ):
     pass
 
@@ -141,9 +134,9 @@ class MermaidConfiguration(MermaidConfigurationModel):
 class MermaidDiagramConfiguration(MermaidConfigurationModel):
     wrap: bool = True
     use_width: Annotated[
-        NumberOrUnconfigured,
-        Field(alias="useWidth", exclude_if=NumberOrUnconfigured().excludes),
-    ] = Field(default_factory=NumberOrUnconfigured)
+        OmittableNumber,
+        Field(alias="useWidth", exclude_if=OmittableNumber().excludes),
+    ] = Field(default_factory=OmittableNumber)
     use_max_width: Annotated[bool, Field(alias="useMaxWidth")] = True
 
     def document(self, source: str) -> MermaidConfiguration:

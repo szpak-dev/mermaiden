@@ -26,7 +26,7 @@ class SankeyNodeColours(
     model_config = ConfigDict(frozen=True)
 
 
-class SankeyNodeColoursOrUnconfigured(OmittableConfigurationValue[SankeyNodeColours]):
+class OmittableSankeyNodeColours(OmittableConfigurationValue[SankeyNodeColours]):
     pass
 
 
@@ -49,6 +49,6 @@ class SankeyDiagramConfiguration(MermaidDiagramConfiguration):
     node_padding: Annotated[float, Field(alias="nodePadding")] = 12
     label_style: Annotated[SankeyLabelStyle, Field(alias="labelStyle")] = SankeyLabelStyle.LEGACY
     node_colors: Annotated[
-        SankeyNodeColoursOrUnconfigured,
-        Field(alias="nodeColors", exclude_if=SankeyNodeColoursOrUnconfigured().excludes),
-    ] = Field(default_factory=SankeyNodeColoursOrUnconfigured)
+        OmittableSankeyNodeColours,
+        Field(alias="nodeColors", exclude_if=OmittableSankeyNodeColours().excludes),
+    ] = Field(default_factory=OmittableSankeyNodeColours)

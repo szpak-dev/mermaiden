@@ -4,7 +4,7 @@ from typing import Annotated
 from pydantic import Field
 
 from ...core.characters import Text
-from ..domain import MermaidDiagramConfiguration, TextOrUnconfigured
+from ..domain import MermaidDiagramConfiguration, OmittableText
 
 
 class GanttDisplayMode(StrEnum):
@@ -37,9 +37,9 @@ class GanttConfiguration(MermaidDiagramConfiguration):
         "%Y-%m-%d"
     )
     tick_interval: Annotated[
-        TextOrUnconfigured,
-        Field(alias="tickInterval", exclude_if=TextOrUnconfigured().excludes),
-    ] = Field(default_factory=TextOrUnconfigured)
+        OmittableText,
+        Field(alias="tickInterval", exclude_if=OmittableText().excludes),
+    ] = Field(default_factory=OmittableText)
     top_axis: Annotated[bool, Field(alias="topAxis")] = False
     display_mode: Annotated[GanttDisplayMode, Field(alias="displayMode")] = GanttDisplayMode.DEFAULT
     weekday: Annotated[GanttWeekday, Field(alias="weekday")] = GanttWeekday.SUNDAY

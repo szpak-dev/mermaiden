@@ -4,7 +4,7 @@ from typing import Annotated
 from pydantic import ConfigDict, Field, RootModel
 
 from ...core.characters import NumberOrText, Text
-from ..domain import MermaidDiagramConfiguration, NumberOrUnconfigured
+from ..domain import MermaidDiagramConfiguration, OmittableNumber
 
 
 class TimelineColourPalette(
@@ -26,9 +26,9 @@ class TimelineDiagramConfiguration(MermaidDiagramConfiguration):
     width: Annotated[int, Field(alias="width", ge=0)] = 150
     height: Annotated[int, Field(alias="height", ge=0)] = 50
     padding: Annotated[
-        NumberOrUnconfigured,
-        Field(alias="padding", exclude_if=NumberOrUnconfigured().excludes),
-    ] = Field(default_factory=NumberOrUnconfigured)
+        OmittableNumber,
+        Field(alias="padding", exclude_if=OmittableNumber().excludes),
+    ] = Field(default_factory=OmittableNumber)
     box_margin: Annotated[int, Field(alias="boxMargin", ge=0)] = 10
     box_text_margin: Annotated[int, Field(alias="boxTextMargin", ge=0)] = 5
     note_margin: Annotated[int, Field(alias="noteMargin", ge=0)] = 10
@@ -36,9 +36,7 @@ class TimelineDiagramConfiguration(MermaidDiagramConfiguration):
     message_align: Annotated[TimelineMessageAlignment, Field(alias="messageAlign")] = TimelineMessageAlignment.CENTER
     bottom_margin_adj: Annotated[int, Field(alias="bottomMarginAdj", ge=0)] = 1
     right_angles: Annotated[bool, Field(alias="rightAngles")] = False
-    task_font_size: Annotated[
-        NumberOrText, Field(alias="taskFontSize")
-    ] = 14
+    task_font_size: Annotated[NumberOrText, Field(alias="taskFontSize")] = NumberOrText(root=14)
     task_font_family: Annotated[
         str, Field(alias="taskFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'

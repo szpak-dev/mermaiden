@@ -116,7 +116,7 @@ class TestEntityRelationshipDiagram:
         assert "direction LR" in source
         assert "int id PK" in source
         assert (
-            'CUSTOMER ||--o{ ORDER : "references content; #quot;protected#quot; — while scoped: '
+            'e_v_CUSTOMER ||--o{ e_v_ORDER : "references content; #quot;protected#quot; — while scoped: '
             '[v2] #35;1 #38; #60;trusted#62;"'
         ) in source
         assert application.render(restored) == source

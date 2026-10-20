@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 from pydantic import BaseModel
+
 from ...core.domain import DiagramSnapshotContractIdentity
 
 SNAPSHOT_VERSION = 8

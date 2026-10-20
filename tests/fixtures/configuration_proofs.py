@@ -1,3 +1,4 @@
+import json
 import subprocess
 import tempfile
 from collections.abc import Mapping, Sequence
@@ -5,12 +6,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from xml.etree import ElementTree
 
-from pydantic import RootModel
+from pydantic import ConfigDict, RootModel, ValidationError
 
 from mermaiden import Application
-from mermaiden.core.domain import CommandPayload
 
-from ._specialized import build_gitgraph_fixture
+from ._specialized import GitGraphFixture
 from .catalog import FixtureCatalog
 
 
@@ -20,6 +20,14 @@ class SchemaMapping(RootModel[dict[str, object]]):
 
 class ObjectSequence(RootModel[list[object]]):
     pass
+
+
+class StrictNumber(RootModel[int | float]):
+    model_config = ConfigDict(strict=True)
+
+
+class StrictText(RootModel[str]):
+    model_config = ConfigDict(strict=True)
 
 
 @dataclass(frozen=True, slots=True)
@@ -38,6 +46,21 @@ class ConfigurationProof:
     diagram_id: str
     source: str
     configuration: Mapping[str, object]
+    semantic_object_count: int
+
+
+@dataclass(frozen=True, slots=True)
+class SnapshotSemanticCounter:
+    def count(self, snapshot: Mapping[str, object]) -> int:
+        encoded = json.dumps(snapshot, separators=(",", ":"))
+        return sum(
+            encoded.count(prefix)
+            for prefix in (
+                '"$type":"mermaiden/element/',
+                '"$type":"mermaiden/relation/',
+                '"$type":"mermaiden/annotation/',
+            )
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -56,16 +79,18 @@ class ConfigurationProofCatalog:
 
     def proofs(self) -> tuple[ConfigurationProof, ...]:
         proofs: list[ConfigurationProof] = []
+        counter = SnapshotSemanticCounter()
         for fixture in FixtureCatalog(self.application).fixtures():
             diagram_id = fixture.id
-            payload = self.application.command_payload(diagram_id, "configure")
-            configuration = self.complete_configuration(payload)
-            self.application.execute(fixture.diagram, "configure", configuration)
+            configuration = self.complete_configuration(diagram_id)
+            diagram = self.application.restore(fixture.snapshot)
+            self.application.execute(diagram, "configure", configuration)
             proofs.append(
                 ConfigurationProof(
                     diagram_id,
-                    self.application.render(fixture.diagram),
+                    self.application.render(diagram),
                     configuration,
+                    counter.count(fixture.snapshot),
                 )
             )
         return tuple(sorted(proofs, key=lambda proof: proof.diagram_id))
@@ -79,7 +104,7 @@ class ConfigurationProofCatalog:
             defaults = payload.validate({}).values
             for field, raw_node in properties.items():
                 node = self.mapping(raw_node, f"{info.id}.{field} schema")
-                candidates = self.candidates(field, self.resolve(schema, node), defaults.get(field))
+                candidates = self.candidates(field, schema, self.resolve(schema, node), defaults.get(field))
                 validated: list[object] = []
                 for candidate in candidates:
                     try:
@@ -94,16 +119,15 @@ class ConfigurationProofCatalog:
         return tuple(probes)
 
     def rendered_probes(self) -> tuple[RenderedConfigurationProbe, ...]:
-        snapshots = {
-            fixture.id: self.application.snapshot(fixture.diagram).to_dict()
-            for fixture in FixtureCatalog(self.application).fixtures()
-        }
+        snapshots = {fixture.id: fixture.snapshot for fixture in FixtureCatalog(self.application).fixtures()}
         rendered: list[RenderedConfigurationProbe] = []
         for probe in self.probes():
             if probe.diagram_id == "gitGraph" and probe.field == "mainBranchName":
-                if not isinstance(probe.value, str):
-                    raise ValueError("GitGraph mainBranchName probe must be text.")
-                diagram = build_gitgraph_fixture(self.application, probe.value)
+                fixture = GitGraphFixture(self.text(probe.value, "GitGraph mainBranchName probe")).build(
+                    self.application,
+                    type(self).__name__,
+                )
+                diagram = self.application.restore(fixture.snapshot)
             else:
                 diagram = self.application.restore(snapshots[probe.diagram_id])
             self.application.execute(diagram, "configure", {probe.field: probe.value})
@@ -114,7 +138,8 @@ class ConfigurationProofCatalog:
             rendered.append(RenderedConfigurationProbe(probe, source))
         return tuple(rendered)
 
-    def complete_configuration(self, payload: CommandPayload) -> Mapping[str, object]:
+    def complete_configuration(self, diagram_id: str) -> Mapping[str, object]:
+        payload = self.application.command_payload(diagram_id, "configure")
         schema = payload.schema()
         properties = self.mapping(schema.get("properties"), "configuration properties")
         values = dict(payload.validate({}).values)
@@ -122,7 +147,7 @@ class ConfigurationProofCatalog:
             if field in values:
                 continue
             node = self.mapping(raw_node, f"{field} schema")
-            candidates = self.candidates(field, self.resolve(schema, node), None)
+            candidates = self.candidates(field, schema, self.resolve(schema, node), None)
             for candidate in candidates:
                 try:
                     values[field] = payload.validate({field: candidate}).values[field]
@@ -131,13 +156,45 @@ class ConfigurationProofCatalog:
                 break
             else:
                 raise ValueError(f"No explicit configuration value for '{field}'.")
+        values.update(
+            {
+                "C4Context": {
+                    "diagramMarginX": 40,
+                    "diagramMarginY": 40,
+                    "c4ShapeMargin": 25,
+                    "c4ShapePadding": 14,
+                    "width": 190,
+                    "height": 72,
+                    "boxMargin": 16,
+                    "c4ShapeInRow": 3,
+                    "c4BoundaryInRow": 2,
+                    "messageFontSize": 11,
+                    "wrapPadding": 8,
+                },
+                "architecture-beta": {
+                    "nodeSeparation": 96,
+                    "idealEdgeLengthMultiplier": 1.8,
+                    "edgeElasticity": 0.3,
+                    "numIter": 5000,
+                    "seed": 7,
+                },
+            }.get(diagram_id, {})
+        )
         validated = payload.validate(values).values
         if set(validated) != set(properties):
             missing = ", ".join(sorted(set(properties) - set(validated)))
             raise ValueError(f"Configuration proof is missing fields: {missing}")
         return validated
 
-    def candidates(self, field: str, node: Mapping[str, object], default: object) -> tuple[object, ...]:
+    def candidates(
+        self,
+        field: str,
+        root: Mapping[str, object],
+        node: Mapping[str, object],
+        default: object,
+    ) -> tuple[object, ...]:
+        if field == "useWidth":
+            return (960, 1440)
         enum = node.get("enum")
         if enum is not None:
             return self.sequence(enum, f"{field} enum")
@@ -145,8 +202,8 @@ class ConfigurationProofCatalog:
         if alternatives is not None:
             values: list[object] = []
             for alternative in self.sequence(alternatives, f"{field} alternatives"):
-                resolved = self.mapping(alternative, f"{field} alternative")
-                values.extend(self.candidates(field, resolved, default))
+                resolved = self.resolve(root, self.mapping(alternative, f"{field} alternative"))
+                values.extend(self.candidates(field, root, resolved, default))
             return tuple(values)
         kind = node.get("type")
         if kind == "boolean":
@@ -158,8 +215,8 @@ class ConfigurationProofCatalog:
         if kind == "string":
             return self.string_candidates(field, default)
         if kind == "array":
-            item = self.mapping(node.get("items"), f"{field} items")
-            sample = self.candidates(field, item, None)[-1]
+            item = self.resolve(root, self.mapping(node.get("items"), f"{field} items"))
+            sample = self.candidates(field, root, item, None)[-1]
             return ([], [sample], [sample, sample])
         if kind == "object":
             properties = node.get("properties")
@@ -172,7 +229,8 @@ class ConfigurationProofCatalog:
                 complete: dict[str, object] = {
                     name: self.candidates(
                         name,
-                        self.resolve(node, self.mapping(child, f"{field}.{name} schema")),
+                        root,
+                        self.resolve(root, self.mapping(child, f"{field}.{name} schema")),
                         None,
                     )[-1]
                     for name, child in property_schemas.items()
@@ -185,7 +243,7 @@ class ConfigurationProofCatalog:
             except ValueError:
                 additional_schema = dict[str, object]()
             if additional_schema:
-                value = self.candidates(field, additional_schema, None)[-1]
+                value = self.candidates(field, root, self.resolve(root, additional_schema), None)[-1]
                 return (dict[str, object](), {"proof": value, "second": value})
             return (dict[str, object](),)
         if default is not None:
@@ -199,25 +257,26 @@ class ConfigurationProofCatalog:
         *,
         integral: bool,
     ) -> tuple[object, ...]:
-        minimum = node.get("minimum", node.get("exclusiveMinimum"))
-        maximum = node.get("maximum", node.get("exclusiveMaximum"))
+        minimum = self.optional_number(node.get("minimum", node.get("exclusiveMinimum")))
+        maximum = self.optional_number(node.get("maximum", node.get("exclusiveMaximum")))
         step = 1 if integral else 0.25
-        lower = minimum if isinstance(minimum, int | float) else -1
-        upper = maximum if isinstance(maximum, int | float) else 1
-        if isinstance(minimum, int | float) and "exclusiveMinimum" in node:
+        lower = minimum if minimum is not None else -1
+        upper = maximum if maximum is not None else 1
+        if minimum is not None and "exclusiveMinimum" in node:
             lower += step
-        if isinstance(maximum, int | float) and "exclusiveMaximum" in node:
+        if maximum is not None and "exclusiveMaximum" in node:
             upper -= step
-        values: list[object] = [lower]
+        values: list[int | float] = [lower]
         if lower <= 0 <= upper:
             values.append(0)
-        if isinstance(minimum, int | float) and isinstance(maximum, int | float):
+        if minimum is not None and maximum is not None:
             values.append(lower + (upper - lower) / 2)
         values.append(upper)
         if integral:
-            values = [round(value) if isinstance(value, int | float) else value for value in values]
-        if isinstance(default, int | float) and default not in values:
-            values.append(default)
+            values = [round(value) for value in values]
+        configured_default = self.optional_number(default)
+        if configured_default is not None and configured_default not in values:
+            values.append(configured_default)
         return tuple(dict.fromkeys(values))
 
     def string_candidates(self, field: str, default: object) -> tuple[object, ...]:
@@ -242,18 +301,38 @@ class ConfigurationProofCatalog:
             values = ["7", "proof-seed"]
         else:
             values = ["", "proof"]
-        if isinstance(default, str) and default not in values:
-            values.append(default)
+        configured_default = self.optional_text(default)
+        if configured_default is not None and configured_default not in values:
+            values.append(configured_default)
         return tuple(values)
 
     def resolve(self, root: Mapping[str, object], node: Mapping[str, object]) -> Mapping[str, object]:
         reference = node.get("$ref")
-        if not isinstance(reference, str):
+        reference_text = self.optional_text(reference)
+        if reference_text is None:
             return node
         resolved: object = root
-        for part in reference.removeprefix("#/").split("/"):
-            resolved = self.mapping(resolved, reference).get(part)
-        return self.resolve(root, self.mapping(resolved, reference))
+        for part in reference_text.removeprefix("#/").split("/"):
+            resolved = self.mapping(resolved, reference_text).get(part)
+        return self.resolve(root, self.mapping(resolved, reference_text))
+
+    def optional_number(self, value: object) -> int | float | None:
+        try:
+            return StrictNumber.model_validate(value).root
+        except ValidationError:
+            return None
+
+    def optional_text(self, value: object) -> str | None:
+        try:
+            return StrictText.model_validate(value).root
+        except ValidationError:
+            return None
+
+    def text(self, value: object, description: str) -> str:
+        try:
+            return StrictText.model_validate(value).root
+        except ValidationError as error:
+            raise ValueError(f"Expected {description} to be text.") from error
 
     def mapping(self, value: object, description: str) -> Mapping[str, object]:
         try:
@@ -278,9 +357,7 @@ class ConfigurationProofRenderer:
         version = subprocess.run(("mmdc", "--version"), capture_output=True, check=False, text=True, timeout=60)
         observed = version.stdout.strip()
         if version.returncode or observed != self.mermaid_version:
-            raise RuntimeError(
-                f"Expected mmdc {self.mermaid_version}, observed {observed or version.stderr.strip()}."
-            )
+            raise RuntimeError(f"Expected mmdc {self.mermaid_version}, observed {observed or version.stderr.strip()}.")
         items = tuple(sources.items())
         rendered: dict[str, str] = {}
         for start in range(0, len(items), self.batch_size):
@@ -325,8 +402,7 @@ class ConfigurationProofRenderer:
                     {"error-icon", "error-text"}.intersection(element.attrib.get("class", "").split())
                     for element in document.iter()
                 ) or any(
-                    message in svg
-                    for message in ("Syntax error in text", "Maximum text size in diagram exceeded")
+                    message in svg for message in ("Syntax error in text", "Maximum text size in diagram exceeded")
                 ):
                     raise RuntimeError(f"Mermaid created an error SVG for '{diagram_id}'.")
                 if any(token in svg for token in ("NaN", "Infinity")):

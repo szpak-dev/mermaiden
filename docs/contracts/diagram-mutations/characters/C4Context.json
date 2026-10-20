@@ -77,7 +77,7 @@
         "Identifier"
       ],
       "$.boundaryFontSize": [
-        "Identifier"
+        "A positive decimal number written as text."
       ],
       "$.boundaryFontWeight": [
         "Identifier"
@@ -326,7 +326,7 @@
         "Identifier"
       ],
       "$.messageFontSize": [
-        "Identifier"
+        "A positive decimal number written as text."
       ],
       "$.messageFontWeight": [
         "Identifier"

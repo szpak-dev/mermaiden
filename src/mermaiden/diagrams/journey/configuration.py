@@ -36,7 +36,7 @@ class JourneyDiagramConfiguration(MermaidDiagramConfiguration):
     task_font_size: Annotated[
         NumberOrNumericText,
         Field(alias="taskFontSize"),
-    ] = 14
+    ] = NumberOrNumericText(root=14)
     task_font_family: Annotated[
         str, Field(alias="taskFontFamily", pattern=Text.pattern, description=Text.description)
     ] = '"Open Sans", sans-serif'

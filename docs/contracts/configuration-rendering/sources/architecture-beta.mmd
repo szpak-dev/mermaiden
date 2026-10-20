@@ -1,21 +1,49 @@
 ---
 config:
   wrap: true
-  architecture: {"useWidth": 0.0, "useMaxWidth": true, "padding": 40.0, "iconSize": 80.0, "fontSize": 16.0, "randomize": false, "nodeSeparation": 75.0, "idealEdgeLengthMultiplier": 1.5, "edgeElasticity": 0.45, "numIter": 2500.0, "seed": 1.0}
+  architecture: {"useWidth": 960.0, "useMaxWidth": true, "padding": 40.0, "iconSize": 80.0, "fontSize": 16.0, "randomize": false, "nodeSeparation": 96.0, "idealEdgeLengthMultiplier": 1.8, "edgeElasticity": 0.3, "numIter": 5000.0, "seed": 7.0}
 ---
 architecture-beta
 group clients[Clients]
   service web[Web] in clients
+  service mobile[Mobile] in clients
+  service partner[Partner] in clients
+  align row web mobile partner
 group platform[Platform]
   service api[API] in platform
+  service auth[Auth] in platform
+  service catalog[Catalog] in platform
+  service orders[Orders] in platform
+  service worker[Worker] in platform
   junction events in platform
-  align column api events
+  align row api auth
+  align row catalog orders
+  align row worker events
+  align column api catalog worker
+  align column auth orders events
 group data[Data]
+  junction data_bus in data
   service database[Database] in data
-web:R -["HTTPS \"mTLS\""]-> L:api
-api:B --> T:events
-api:R --> L:database
-align row web api
+  service cache[Cache] in data
+  service search[Search] in data
+  service warehouse[Warehouse] in data
+  align row data_bus database
+  align row cache search
+  align column data_bus cache warehouse
+  align column database search
+web:R -["mTLS"]-> L:api
+mobile:R --> L:api
+partner:R --> L:api
+api:R --> L:auth
+api:B --> T:catalog
+catalog:R --> L:orders
+orders:B --> T:events
+events:L --> R:worker
+events:R --> L:data_bus
+data_bus:R --> L:database
+data_bus:B --> T:cache
+cache:R --> L:search
+search:B --> T:warehouse
 %% Client gateway
 %% Public API
 %% Persistent storage

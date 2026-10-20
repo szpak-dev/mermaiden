@@ -80,13 +80,15 @@ class SnapshotIgnoredRegistration(BaseModel):
         return None
 
 
-class SnapshotRegistration(RootModel[object]):
-    model_config = ConfigDict(frozen=True, strict=True)
-
-    root: Annotated[
-        SnapshotEnumRegistration | SnapshotModelRegistration | SnapshotIgnoredRegistration,
-        Field(union_mode="left_to_right"),
+class SnapshotRegistration(
+    RootModel[
+        Annotated[
+            SnapshotEnumRegistration | SnapshotModelRegistration | SnapshotIgnoredRegistration,
+            Field(union_mode="left_to_right"),
+        ]
     ]
+):
+    model_config = ConfigDict(frozen=True, strict=True)
 
 
 class SnapshotModelClass(RootModel[type[BaseModel]]):
@@ -171,8 +173,12 @@ class DiagramSnapshotRegistry(SnapshotTypeRegistry):
             )
         return contracts
 
-    @cached_property
+    @property
     def fingerprint(self) -> str:
+        return self.computed_fingerprint
+
+    @cached_property
+    def computed_fingerprint(self) -> str:
         document = {
             owner: {
                 "types": {
