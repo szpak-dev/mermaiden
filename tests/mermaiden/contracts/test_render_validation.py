@@ -6,6 +6,207 @@ import pytest
 from mermaiden import Application
 
 
+class TestSequenceAndStateTextRendering:
+    def test_sequence_text_survives_updates_source_projection_and_snapshot_restore(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("sequenceDiagram")
+        application.execute(diagram, "add_box", {"id": "box_example", "label": "Old Box Example"})
+        application.execute(
+            diagram,
+            "add_participant",
+            {
+                "id": "first_example",
+                "label": "Old First Example",
+                "kind": "actor",
+                "box_id": "box_example",
+            },
+        )
+        application.execute(
+            diagram,
+            "add_participant",
+            {"id": "second_example", "label": "Second Example", "kind": "control"},
+        )
+        application.execute(diagram, "control", {"id": "control_example", "kind": "loop", "label": "Old Loop"})
+        application.execute(
+            diagram,
+            "add_message",
+            {
+                "id": "message_example",
+                "source_id": "first_example",
+                "target_id": "second_example",
+                "label": "Old Message Example",
+            },
+        )
+        application.execute(diagram, "control", {"id": "end_example", "kind": "end"})
+        application.execute(
+            diagram,
+            "add_note",
+            {
+                "id": "note_example",
+                "participant_ids": ["first_example", "second_example"],
+                "position": "over",
+                "text": "Old Note Example",
+            },
+        )
+
+        application.execute(
+            diagram,
+            "update_element",
+            {
+                "id": "box_example",
+                "kind": "participant_box",
+                "changes": {"label": "Box; literal #59; example"},
+            },
+        )
+        application.execute(
+            diagram,
+            "update_element",
+            {
+                "id": "first_example",
+                "kind": "participant",
+                "changes": {"label": "Participant; literal #59; example"},
+            },
+        )
+        application.execute(
+            diagram,
+            "update_relation",
+            {
+                "id": "message_example",
+                "kind": "message",
+                "changes": {"label": "Message; literal #59; example"},
+            },
+        )
+        application.execute(
+            diagram,
+            "update_relation",
+            {
+                "id": "control_example",
+                "kind": "control",
+                "changes": {"label": "Loop; literal #59; example"},
+            },
+        )
+        application.execute(
+            diagram,
+            "update_annotation",
+            {
+                "id": "note_example",
+                "kind": "sequence_note",
+                "changes": {"text": "Note; literal #59; example"},
+            },
+        )
+
+        snapshot = application.snapshot(diagram).to_dict()
+        source = application.render(diagram)
+        restored = application.restore(json.loads(json.dumps(snapshot)))
+
+        for original, encoded in (
+            ("Box; literal #59; example", "box Box#59; literal #35;59#59; example"),
+            (
+                "Participant; literal #59; example",
+                "actor first_example as Participant#59; literal #35;59#59; example",
+            ),
+            ("Message; literal #59; example", ": Message#59; literal #35;59#59; example"),
+            ("Loop; literal #59; example", "loop Loop#59; literal #35;59#59; example"),
+            ("Note; literal #59; example", ": Note#59; literal #35;59#59; example"),
+        ):
+            assert original in json.dumps(snapshot)
+            assert encoded in source
+        assert application.snapshot(restored).to_dict() == snapshot
+        assert application.render(restored) == source
+
+    @pytest.mark.integration
+    def test_sequence_text_with_semicolons_and_literal_entities_is_visible_in_svg(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("sequenceDiagram")
+        expected = (
+            "Box; literal #59; example",
+            "Participant; literal #59; example",
+            "Message; literal #59; example",
+            "Loop; literal #59; example",
+            "Note; literal #59; example",
+        )
+        application.execute(diagram, "add_box", {"id": "box_example", "label": expected[0]})
+        application.execute(
+            diagram,
+            "add_participant",
+            {"id": "first_example", "label": expected[1], "kind": "actor", "box_id": "box_example"},
+        )
+        application.execute(
+            diagram,
+            "add_participant",
+            {"id": "second_example", "label": "Second Example", "kind": "control"},
+        )
+        application.execute(diagram, "control", {"id": "control_example", "kind": "loop", "label": expected[3]})
+        application.execute(
+            diagram,
+            "add_message",
+            {
+                "id": "message_example",
+                "source_id": "first_example",
+                "target_id": "second_example",
+                "label": expected[2],
+            },
+        )
+        application.execute(diagram, "control", {"id": "end_example", "kind": "end"})
+        application.execute(
+            diagram,
+            "add_note",
+            {
+                "id": "note_example",
+                "participant_ids": ["first_example", "second_example"],
+                "position": "over",
+                "text": expected[4],
+            },
+        )
+        before = application.snapshot(diagram).to_dict()
+
+        report = application.validate_render(diagram)
+
+        assert report.success, report.diagnostics
+        svg = ElementTree.fromstring(report.svg)
+        text = " ".join(
+            "".join(element.itertext())
+            for element in svg.iter()
+            if element.tag in {"{http://www.w3.org/2000/svg}text", "{http://www.w3.org/1999/xhtml}span"}
+        )
+        for value in expected:
+            assert value in text
+        assert application.snapshot(diagram).to_dict() == before
+
+    @pytest.mark.integration
+    def test_state_note_with_semicolons_remains_visible_without_snapshot_mutation(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("stateDiagram-v2")
+        application.execute(diagram, "add_state", {"id": "state_example", "label": "State Example"})
+        application.execute(
+            diagram,
+            "add_note",
+            {
+                "id": "note_example",
+                "state_id": "state_example",
+                "position": "left",
+                "text": "Annotation; proof",
+            },
+        )
+        before = application.snapshot(diagram).to_dict()
+
+        source = application.render(diagram)
+        report = application.validate_render(diagram)
+
+        assert '"Annotation; proof"' in source
+        assert report.success, report.diagnostics
+        svg = ElementTree.fromstring(report.svg)
+        text = " ".join(
+            "".join(element.itertext())
+            for element in svg.iter()
+            if element.tag in {"{http://www.w3.org/2000/svg}text", "{http://www.w3.org/1999/xhtml}span"}
+        )
+        assert "Annotation" in text
+        assert ";" in text
+        assert "proof" in text
+        assert application.snapshot(diagram).to_dict() == before
+
+
 class TestRenderValidation:
     @pytest.mark.integration
     def test_class_relation_markers_render_at_every_semantic_target(self) -> None:

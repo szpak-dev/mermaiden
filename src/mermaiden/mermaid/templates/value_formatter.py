@@ -37,6 +37,9 @@ class MermaidValueFormatter:
     def number(self, value: float | int) -> str:
         return f"{value:g}"
 
+    def sequence_text(self, value: str) -> str:
+        return "".join(f"#{ord(character)};" if character in "#;" else character for character in value)
+
     def tree_label(self, value: object) -> str:
         text = str(value)
         if not text or text != text.strip() or "  " in text or any(token in text for token in ('"', ":::", "##")):
