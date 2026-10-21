@@ -36,6 +36,12 @@
       "$.actorColours[]": [
         "Identifier"
       ],
+      "$.layout": [
+        "Supported Mermaid layout algorithm."
+      ],
+      "$.look": [
+        "MermaidLook values"
+      ],
       "$.messageAlign": [
         "TimelineMessageAlignment values"
       ],
@@ -53,6 +59,9 @@
       ],
       "$.textPlacement": [
         "Identifier"
+      ],
+      "$.theme": [
+        "MermaidTheme values"
       ]
     },
     "move_element": {

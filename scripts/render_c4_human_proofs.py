@@ -17,8 +17,9 @@ def digest(content: str) -> str:
 def main() -> None:
     with Application.create() as application:
         sources = C4HumanProofCatalog().sources(application)
-        rendered = ConfigurationProofRenderer(application.mermaid_version).render(sources)
+        rendered = ConfigurationProofRenderer(application.mermaid_cli_version).render(sources)
         version = application.mermaid_version
+        cli_version = application.mermaid_cli_version
     source_root = OUTPUT / "sources"
     svg_root = OUTPUT / "rendered"
     source_root.mkdir(parents=True, exist_ok=True)
@@ -39,7 +40,12 @@ def main() -> None:
                 "svg_sha256": digest(svg),
             }
         )
-    manifest = {"mermaid_version": version, "diagram_count": len(diagrams), "diagrams": diagrams}
+    manifest = {
+        "mermaid_version": version,
+        "mermaid_cli_version": cli_version,
+        "diagram_count": len(diagrams),
+        "diagrams": diagrams,
+    }
     OUTPUT.mkdir(parents=True, exist_ok=True)
     (OUTPUT / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 

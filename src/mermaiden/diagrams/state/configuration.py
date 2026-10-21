@@ -1,19 +1,29 @@
-from enum import StrEnum
 from typing import Annotated
 
 from pydantic import Field
 
 from ...core.characters import Text
-from ..domain import MermaidDiagramConfiguration, OmittableBoolean, OmittableNonNegativeInteger
-
-
-class StateRenderer(StrEnum):
-    DAGRE_D3 = "dagre-d3"
-    DAGRE_WRAPPER = "dagre-wrapper"
-    ELK = "elk"
+from ..domain import (
+    MermaidDiagramConfiguration,
+    MermaidLayoutField,
+    MermaidLook,
+    MermaidLookField,
+    MermaidTheme,
+    MermaidThemeField,
+    OmittableBoolean,
+    OmittableLayout,
+    OmittableLook,
+    OmittableNonNegativeInteger,
+    OmittableTheme,
+)
 
 
 class StateDiagramConfiguration(MermaidDiagramConfiguration):
+    theme: MermaidThemeField = OmittableTheme(root=MermaidTheme.REDUX_COLOR)
+    look: MermaidLookField = OmittableLook(root=MermaidLook.NEO)
+    layout: MermaidLayoutField = OmittableLayout(root="elk")
+    wrapping_width: Annotated[float, Field(alias="wrappingWidth", gt=0)] = 120
+    min_node_width: Annotated[float, Field(alias="minNodeWidth", gt=0)] = 120
     title_top_margin: Annotated[int, Field(alias="titleTopMargin", ge=0)] = 25
     arrow_marker_absolute: Annotated[
         OmittableBoolean,
@@ -44,4 +54,3 @@ class StateDiagramConfiguration(MermaidDiagramConfiguration):
     ] = "20"
     composit_title_size: Annotated[float, Field(alias="compositTitleSize")] = 35
     radius: Annotated[float, Field(alias="radius")] = 5
-    default_renderer: Annotated[StateRenderer, Field(alias="defaultRenderer")] = StateRenderer.DAGRE_WRAPPER

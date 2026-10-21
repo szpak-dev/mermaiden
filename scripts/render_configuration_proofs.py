@@ -21,8 +21,9 @@ def generate(enclosure_audit: Path | None) -> None:
         proofs = catalog.proofs()
         probes = catalog.probes()
         version = application.mermaid_version
+        cli_version = application.mermaid_cli_version
     sources = {proof.diagram_id: proof.source for proof in proofs}
-    svgs = ConfigurationProofRenderer(version).render(sources)
+    svgs = ConfigurationProofRenderer(cli_version).render(sources)
     source_root = OUTPUT / "sources"
     svg_root = OUTPUT / "rendered"
     source_root.mkdir(parents=True, exist_ok=True)
@@ -60,6 +61,7 @@ def generate(enclosure_audit: Path | None) -> None:
         )
     manifest = {
         "mermaid_version": version,
+        "mermaid_cli_version": cli_version,
         "diagram_count": len(proofs),
         "configuration_field_count": sum(len(proof.configuration) for proof in proofs),
         "probe_count": len(probes),

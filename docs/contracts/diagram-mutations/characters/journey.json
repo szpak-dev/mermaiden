@@ -28,6 +28,12 @@
       "$.actorColours[]": [
         "Identifier"
       ],
+      "$.layout": [
+        "Supported Mermaid layout algorithm."
+      ],
+      "$.look": [
+        "MermaidLook values"
+      ],
       "$.messageAlign": [
         "JourneyMessageAlignment values"
       ],
@@ -45,6 +51,9 @@
       ],
       "$.textPlacement": [
         "Identifier"
+      ],
+      "$.theme": [
+        "MermaidTheme values"
       ],
       "$.titleColor": [
         "OptionalIdentifier"

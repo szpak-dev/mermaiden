@@ -126,7 +126,13 @@ class Application:
     def mermaid_version(self) -> str:
         """Return the upstream Mermaid version supported by the checked-in schema."""
         self._ensure_open()
-        return self._scope.get(MermaidSchemaStore).version
+        return self._scope.get(MermaidSchemaStore).mermaid_version
+
+    @property
+    def mermaid_cli_version(self) -> str:
+        """Return the Mermaid CLI version required for render validation."""
+        self._ensure_open()
+        return self._scope.get(MermaidSchemaStore).mermaid_cli_version
 
     def write_preview(self, sources: Mapping[str, str], output: Path) -> Path:
         """Write an HTML preview for named Mermaid sources to the requested path."""

@@ -35,11 +35,12 @@ with Application.create() as application:
     svg = report.svg
 ```
 
-`validate_render()` invokes `mmdc` from `PATH`. Read `application.mermaid_version`, then install that exact CLI version:
+`validate_render()` invokes `mmdc` from `PATH`. The Mermaid engine and Mermaid CLI have independent release numbers.
+Read `application.mermaid_cli_version`, then install that exact CLI version:
 
 ```sh
-MMD_VERSION="$(python -c 'from mermaiden import Application as A; print(A.create().mermaid_version)')"
-npm install --global "@mermaid-js/mermaid-cli@${MMD_VERSION}"
+MMD_CLI_VERSION="$(python -c 'from mermaiden import Application as A; print(A.create().mermaid_cli_version)')"
+npm install --global "@mermaid-js/mermaid-cli@${MMD_CLI_VERSION}"
 mmdc --version
 ```
 
@@ -47,8 +48,21 @@ The final command must print the same version. Mermaid CLI installs its Puppetee
 was disabled or the environment supplies its own compatible Chrome or Chromium executable, set
 `PUPPETEER_EXECUTABLE_PATH` before calling `validate_render()`.
 
-The report keeps SVG output, the expected Mermaid version, and structured diagnostics together. Missing executables,
-version mismatches, timeouts, Mermaid failures, and invalid SVG output each produce a distinct diagnostic.
+The report keeps SVG output, the expected Mermaid engine and CLI versions, and structured diagnostics together. Missing
+executables, CLI version mismatches, timeouts, Mermaid failures, and invalid SVG output each produce a distinct
+diagnostic.
+
+## Supported Mermaid 12 line
+
+| Authority | Supported version |
+| --- | --- |
+| Mermaid engine and configuration schema | `12.2.0` |
+| `@mermaid-js/mermaid-cli` / `mmdc` | `12.0.0` |
+| Node.js | `>=22.13.0`; this checkout pins `24.17.0` |
+| Mermaiden snapshot contract | `v9`; earlier snapshots are rejected without migration |
+
+Run `make mermaid-freshness` to compare both configured authorities with the newest stable releases in the Mermaid
+`12.x` line. Prereleases and versions from other major lines are intentionally ignored.
 
 In a development checkout, install the Node lock and run the complete integration tier:
 

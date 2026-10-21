@@ -4,7 +4,15 @@ from typing import Annotated
 from pydantic import ConfigDict, Field
 
 from ...core.characters import Text
-from ..domain import MermaidDiagramConfiguration
+from ..domain import (
+    MermaidDiagramConfiguration,
+    MermaidLook,
+    MermaidLookField,
+    MermaidTheme,
+    MermaidThemeField,
+    OmittableLook,
+    OmittableTheme,
+)
 
 
 class EntityRelationshipDirection(StrEnum):
@@ -17,6 +25,8 @@ class EntityRelationshipDirection(StrEnum):
 class EntityRelationshipDiagramConfiguration(MermaidDiagramConfiguration):
     model_config = ConfigDict(use_enum_values=True)
 
+    theme: MermaidThemeField = OmittableTheme(root=MermaidTheme.REDUX_COLOR)
+    look: MermaidLookField = OmittableLook(root=MermaidLook.NEO)
     title_top_margin: Annotated[int, Field(alias="titleTopMargin", ge=0)] = 25
     diagram_padding: Annotated[int, Field(alias="diagramPadding", ge=0)] = 20
     layout_direction: Annotated[EntityRelationshipDirection, Field(alias="layoutDirection")] = (

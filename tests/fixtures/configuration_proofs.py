@@ -1,4 +1,5 @@
 import json
+import re
 import subprocess
 import tempfile
 from collections.abc import Mapping, Sequence
@@ -12,6 +13,12 @@ from mermaiden import Application
 
 from ._specialized import GitGraphFixture
 from .catalog import FixtureCatalog
+
+INVALID_GEOMETRY = re.compile(r"(?<![A-Za-z0-9+/])(?:NaN|Infinity)(?![A-Za-z0-9+/])")
+
+
+def has_invalid_geometry(svg: str) -> bool:
+    return INVALID_GEOMETRY.search(svg) is not None
 
 
 class SchemaMapping(RootModel[dict[str, object]]):
@@ -302,6 +309,8 @@ class ConfigurationProofCatalog:
             values = ["", "https://example.test/tickets/"]
         elif field == "mainBranchName":
             values = ["main", "trunk"]
+        elif field == "layout":
+            values = ["dagre", "elk"]
         elif field == "seed":
             values = ["7", "proof-seed"]
         else:
@@ -354,15 +363,17 @@ class ConfigurationProofCatalog:
 
 @dataclass(frozen=True, slots=True)
 class ConfigurationProofRenderer:
-    mermaid_version: str
-    timeout_seconds: int = 180
+    mermaid_cli_version: str
+    timeout_seconds: int = 600
     batch_size: int = 80
 
     def render(self, sources: Mapping[str, str]) -> Mapping[str, str]:
         version = subprocess.run(("mmdc", "--version"), capture_output=True, check=False, text=True, timeout=60)
         observed = version.stdout.strip()
-        if version.returncode or observed != self.mermaid_version:
-            raise RuntimeError(f"Expected mmdc {self.mermaid_version}, observed {observed or version.stderr.strip()}.")
+        if version.returncode or observed != self.mermaid_cli_version:
+            raise RuntimeError(
+                f"Expected mmdc {self.mermaid_cli_version}, observed {observed or version.stderr.strip()}."
+            )
         items = tuple(sources.items())
         rendered: dict[str, str] = {}
         for start in range(0, len(items), self.batch_size):
@@ -379,20 +390,24 @@ class ConfigurationProofRenderer:
                 "\n".join(f"## {diagram_id}\n```mermaid\n{source}```" for diagram_id, source in sources),
                 encoding="utf-8",
             )
-            process = subprocess.run(
-                ("mmdc", "-i", str(input_path), "-o", str(output_path)),
-                capture_output=True,
-                check=False,
-                text=True,
-                timeout=self.timeout_seconds,
-            )
+            try:
+                process = subprocess.run(
+                    ("mmdc", "-i", str(input_path), "-o", str(output_path)),
+                    capture_output=True,
+                    check=False,
+                    text=True,
+                    timeout=self.timeout_seconds,
+                )
+            except subprocess.TimeoutExpired as error:
+                if len(sources) > 1:
+                    return self.render_split(sources)
+                diagram_id = sources[0][0]
+                raise RuntimeError(
+                    f"Mermaid timed out after {self.timeout_seconds} seconds rendering '{diagram_id}'."
+                ) from error
             if process.returncode:
                 if len(sources) > 1:
-                    midpoint = len(sources) // 2
-                    return {
-                        **self.render_batch(sources[:midpoint]),
-                        **self.render_batch(sources[midpoint:]),
-                    }
+                    return self.render_split(sources)
                 diagram_id = sources[0][0]
                 details = process.stderr.strip() or process.stdout.strip()
                 raise RuntimeError(f"Mermaid failed to render '{diagram_id}': {details}")
@@ -410,7 +425,14 @@ class ConfigurationProofRenderer:
                     message in svg for message in ("Syntax error in text", "Maximum text size in diagram exceeded")
                 ):
                     raise RuntimeError(f"Mermaid created an error SVG for '{diagram_id}'.")
-                if any(token in svg for token in ("NaN", "Infinity")):
+                if has_invalid_geometry(svg):
                     raise RuntimeError(f"Mermaid created invalid geometry for '{diagram_id}'.")
                 rendered[diagram_id] = svg
             return rendered
+
+    def render_split(self, sources: Sequence[tuple[str, str]]) -> Mapping[str, str]:
+        midpoint = len(sources) // 2
+        return {
+            **self.render_batch(sources[:midpoint]),
+            **self.render_batch(sources[midpoint:]),
+        }

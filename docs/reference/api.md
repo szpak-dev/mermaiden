@@ -78,7 +78,7 @@ command returns a `ChangeReport`, including accepted no-ops that preserve the sn
 ### Full render validation
 
 `MermaidRenderReport`
-: `diagram_id`, `mermaid_version`, `svg`, `diagnostics`, and computed `success`.
+: `diagram_id`, `mermaid_version`, `mermaid_cli_version`, `svg`, `diagnostics`, and computed `success`.
 
 `MermaidRenderDiagnostic`
 : `code`, `message`, and `details` describe one renderer failure.

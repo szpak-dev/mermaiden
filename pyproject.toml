@@ -50,10 +50,13 @@ include = ["docs", "scripts", "src", "tests", ".node-version", "README.md", "pyp
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = ["-ra", "--strict-config", "--strict-markers", "-m", "not integration"]
+addopts = ["-ra", "--strict-config", "--strict-markers", "-m", "not integration and not freshness"]
 cache_dir = ".dev/.pytest_cache"
 filterwarnings = ["error"]
-markers = ["integration: requires the lock-installed Mermaid CLI and a compatible browser"]
+markers = [
+    "freshness: requires the live npm registry",
+    "integration: requires the lock-installed Mermaid CLI and a compatible browser",
+]
 
 [tool.ruff]
 cache-dir = ".dev/.ruff_cache"

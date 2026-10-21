@@ -81,6 +81,12 @@
       "$.actorFontWeight": [
         "Identifier"
       ],
+      "$.layout": [
+        "Supported Mermaid layout algorithm."
+      ],
+      "$.look": [
+        "MermaidLook values"
+      ],
       "$.messageAlign": [
         "SequenceMessageAlignment values"
       ],
@@ -104,6 +110,9 @@
       ],
       "$.noteFontWeight": [
         "Identifier"
+      ],
+      "$.theme": [
+        "MermaidTheme values"
       ]
     },
     "control": {

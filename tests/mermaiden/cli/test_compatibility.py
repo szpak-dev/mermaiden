@@ -18,8 +18,10 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         )
         upstream = {item.config_key: item for item in cli.mermaid_diagram_configs()}
         mermaid_version = application.mermaid_version
+        mermaid_cli_version = application.mermaid_cli_version
 
     assert report.lock.mermaid_version == mermaid_version
+    assert report.lock.mermaid_cli_version == mermaid_cli_version
     assert report.valid
     assert not report.missing_diagrams
     assert tuple((item.diagram_id, item.config_key, item.schema_definition) for item in report.diagrams) == expected
@@ -50,9 +52,15 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
     assert c4["c4ShapeInRow"] == 4
     assert swimlane["lineHops"] == "arc"
     assert swimlane["automaticLaneOrdering"] is False
-    assert state["defaultRenderer"] == "dagre-wrapper"
+    assert state["theme"] == "redux-color"
+    assert state["look"] == "neo"
+    assert state["layout"] == "elk"
+    assert state["wrappingWidth"] == 120
+    assert state["minNodeWidth"] == 120
     assert requirement["useMaxWidth"] is True
+    assert requirement["rect_fill"] == "#f9f9f9"
     assert mindmap["layoutAlgorithm"] == "cose-bilkent"
+    assert mindmap["colorBy"] == "branch"
     assert pie["donutHole"] == 0
     assert block["padding"] == 8
     assert "useWidth" not in block
@@ -63,6 +71,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
     assert ishikawa["useMaxWidth"] is False
     assert journey_colours[0] == "#8FBC8F"
     assert packet["bitsPerRow"] == 32
+    assert packet["bitOrder"] == "ascending"
     assert radar["curveTension"] == 0.17
     assert sankey["useMaxWidth"] is False
     assert "nodeColors" not in sankey
@@ -72,6 +81,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         item.configuration.schema_definition == upstream[item.configuration.config_key].schema_definition
         for item in report.diagrams
     )
+    assert {"agentflow", "usecase"}.isdisjoint(upstream)
 
 
 @pytest.mark.integration

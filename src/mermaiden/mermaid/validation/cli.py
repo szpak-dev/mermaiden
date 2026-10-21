@@ -7,6 +7,10 @@ from .domain import MermaidCliResult
 class MermaidCli(ABC):
     @property
     @abstractmethod
+    def mermaid_version(self) -> str: ...
+
+    @property
+    @abstractmethod
     def version(self) -> str: ...
 
     @abstractmethod

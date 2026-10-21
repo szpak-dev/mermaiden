@@ -3,7 +3,17 @@ from typing import Annotated
 
 from pydantic import ConfigDict, Field, RootModel
 
-from ..domain import MermaidDiagramConfiguration
+from ..domain import (
+    MermaidDiagramConfiguration,
+    MermaidLayoutField,
+    MermaidLook,
+    MermaidLookField,
+    MermaidTheme,
+    MermaidThemeField,
+    OmittableLayout,
+    OmittableLook,
+    OmittableTheme,
+)
 
 
 class LineHops(StrEnum):
@@ -16,6 +26,9 @@ class LineHopsValue(RootModel[bool | LineHops]):
 
 
 class SwimlaneConfiguration(MermaidDiagramConfiguration):
+    theme: MermaidThemeField = OmittableTheme(root=MermaidTheme.REDUX_COLOR)
+    look: MermaidLookField = OmittableLook(root=MermaidLook.NEO)
+    layout: MermaidLayoutField = OmittableLayout(root="swimlane")
     line_hops: Annotated[LineHopsValue, Field(alias="lineHops")] = LineHopsValue(root=LineHops.ARC)
     ignore_cross_lane_edges: Annotated[bool, Field(alias="ignoreCrossLaneEdges")] = True
     optimize_ranks_by_crossings: Annotated[bool, Field(alias="optimizeRanksByCrossings")] = True

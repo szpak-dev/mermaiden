@@ -10,9 +10,6 @@ This directory contains executable evidence for Mermaiden's typed Mermaid config
   and proves that each diagram kind contains at least 12 semantic objects.
 - `c4-human-layout/` proves the shared typed C4 configuration against complex Context, Container, Component,
   Dynamic, and Deployment diagrams. Each physical Mermaid source contains at least 12 elements and its rendered SVG.
-- `enclosure-corpus-audit.json` records the revision-pinned audit of every diagram stored in Enclosure on
-  2026-10-20. Repaired drafts and former renderer failures retain explicit diagnostics.
-
 Regenerate the proof with:
 
 ```console

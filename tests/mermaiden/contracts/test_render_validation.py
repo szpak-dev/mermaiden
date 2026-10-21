@@ -256,7 +256,7 @@ class TestRenderValidation:
                 if f"c_v_{relation_kind}_source_c_v_{relation_kind}_target" in element.attrib["id"]
             )
             assert "marker-start" not in path.attrib
-            assert path.attrib["marker-end"].endswith(f"classDiagram-{marker})")
+            assert path.attrib["marker-end"].endswith(f"classDiagram-{marker}-margin)")
 
     @pytest.mark.integration
     def test_renderer_rejects_a_real_exit_zero_mermaid_error_svg(self) -> None:
@@ -492,6 +492,7 @@ class TestRenderValidation:
         assert not report.success
         assert report.diagram_id == "sequenceDiagram"
         assert report.mermaid_version == application.mermaid_version
+        assert report.mermaid_cli_version == application.mermaid_cli_version
         assert report.diagnostics[0].code == "diagram_invalid"
         assert "Diagram requires at least one element" in report.diagnostics[0].details
         with pytest.raises(RuntimeError, match="Cannot render invalid diagram 'sequenceDiagram'"):
@@ -527,6 +528,7 @@ class TestRenderValidation:
         assert report.success
         assert report.diagram_id == "sequenceDiagram"
         assert report.mermaid_version == application.mermaid_version
+        assert report.mermaid_cli_version == application.mermaid_cli_version
         assert report.svg.startswith("<svg")
         assert not report.diagnostics
         assert application.snapshot(diagram).to_dict() == before
