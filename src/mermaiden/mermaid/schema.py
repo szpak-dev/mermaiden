@@ -4,12 +4,14 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, cast
 
+from pydantic import TypeAdapter
 from wireup import injectable
 
 
 @dataclass(frozen=True, slots=True)
 class MermaidSchemaLock:
     mermaid_version: str
+    mermaid_cli_version: str
     schema_url: str
     sha256: str
 
@@ -31,14 +33,21 @@ class MermaidConfigurationOverride:
 @dataclass(frozen=True, slots=True)
 class MermaidSchemaStore:
     root: Path = field(default=Path(__file__).parent / "compatibility", init=False)
+    excluded_diagram_config_keys: frozenset[str] = field(
+        default=frozenset({"agentflow", "usecase"}),
+        init=False,
+    )
 
     @property
-    def version(self) -> str:
+    def mermaid_version(self) -> str:
         return self.lock().mermaid_version
 
+    @property
+    def mermaid_cli_version(self) -> str:
+        return self.lock().mermaid_cli_version
+
     def lock(self) -> MermaidSchemaLock:
-        payload = cast(dict[str, str], json.loads((self.root / "schema.lock.json").read_text(encoding="utf-8")))
-        return MermaidSchemaLock(**payload)
+        return TypeAdapter(MermaidSchemaLock).validate_json((self.root / "schema.lock.json").read_bytes())
 
     def load(self) -> dict[str, Any]:
         path = self.root / "schemas" / "config.schema.json"
@@ -76,6 +85,8 @@ class MermaidSchemaStore:
         definitions = cast(dict[str, dict[str, Any]], schema["$defs"])
         diagrams: list[MermaidDiagramConfig] = []
         for config_key, property_schema in properties.items():
+            if config_key in self.excluded_diagram_config_keys:
+                continue
             reference = property_schema.get("$ref", "")
             prefix = "#/$defs/"
             if not reference.startswith(prefix):

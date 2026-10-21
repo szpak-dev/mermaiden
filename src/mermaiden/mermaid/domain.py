@@ -31,7 +31,7 @@ class MermaidPreview:
 <body>
 {sections}
 <script type="module">
-import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@{self.schemas.version}/dist/mermaid.esm.min.mjs";
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@{self.schemas.mermaid_version}/dist/mermaid.esm.min.mjs";
 mermaid.initialize({{ startOnLoad: true }});
 </script>
 </body>

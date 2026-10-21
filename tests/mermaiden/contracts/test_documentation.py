@@ -157,7 +157,8 @@ class TestDocumentation:
     def test_rendering_guide_has_an_installed_package_setup_path(self) -> None:
         guide = (ROOT / "docs/how-to/render-and-validate.md").read_text(encoding="utf-8")
 
-        assert "application.mermaid_version" in guide
+        assert "application.mermaid_cli_version" in guide
+        assert "Mermaid engine and Mermaid CLI have independent release numbers" in guide
         assert "npm install --global" in guide
         assert "mmdc --version" in guide
         assert "PATH" in guide

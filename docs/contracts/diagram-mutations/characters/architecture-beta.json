@@ -77,7 +77,17 @@
         "Identifier"
       ]
     },
-    "configure": {},
+    "configure": {
+      "$.layout": [
+        "Supported Mermaid layout algorithm."
+      ],
+      "$.look": [
+        "MermaidLook values"
+      ],
+      "$.theme": [
+        "MermaidTheme values"
+      ]
+    },
     "move_element": {
       "$.id": [
         "Identifier"

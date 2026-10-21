@@ -4,7 +4,16 @@ from typing import Annotated
 from pydantic import Field
 
 from ...core.characters import NumberOrText, Text
-from ..domain import MermaidDiagramConfiguration, OmittableBoolean
+from ..domain import (
+    MermaidDiagramConfiguration,
+    MermaidLook,
+    MermaidLookField,
+    MermaidTheme,
+    MermaidThemeField,
+    OmittableBoolean,
+    OmittableLook,
+    OmittableTheme,
+)
 
 
 class SequenceMessageAlignment(StrEnum):
@@ -20,6 +29,8 @@ class SequenceNoteAlignment(StrEnum):
 
 
 class SequenceDiagramConfiguration(MermaidDiagramConfiguration):
+    theme: MermaidThemeField = OmittableTheme(root=MermaidTheme.REDUX_COLOR)
+    look: MermaidLookField = OmittableLook(root=MermaidLook.NEO)
     arrow_marker_absolute: Annotated[
         OmittableBoolean,
         Field(alias="arrowMarkerAbsolute", exclude_if=OmittableBoolean().excludes),

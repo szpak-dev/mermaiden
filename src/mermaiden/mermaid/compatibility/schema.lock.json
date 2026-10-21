@@ -1,5 +1,6 @@
 {
-  "mermaid_version": "11.16.0",
+  "mermaid_version": "12.2.0",
+  "mermaid_cli_version": "12.0.0",
   "schema_url": "https://mermaid.js.org/schemas/config.schema.json",
-  "sha256": "08d03627416cefe3bc27b379e2502db4c0541f9fc1fdbb729e1839120781cbfe"
+  "sha256": "108f64145c02b2974e66ec97d6a66e1e8e3864d3b0fab602388ec5e1c9d97b27"
 }

@@ -33,29 +33,12 @@
     "look",
     "eventmodeling",
     "radar",
+    "usecase",
     "venn"
   ],
   "properties": {
     "theme": {
-      "description": "Theme, the CSS style sheet.\nYou may also use `themeCSS` to override this value.\n",
-      "type": "string",
-      "enum": [
-        "default",
-        "base",
-        "dark",
-        "forest",
-        "neutral",
-        "neo",
-        "neo-dark",
-        "redux",
-        "redux-dark",
-        "redux-color",
-        "redux-dark-color",
-        "null"
-      ],
-      "meta:enum": {
-        "null": "Can be set to disable any pre-defined mermaid theme"
-      },
+      "$ref": "#/$defs/BaseDiagramConfig/properties/theme",
       "default": "default"
     },
     "themeVariables": {
@@ -65,13 +48,7 @@
       "type": "string"
     },
     "look": {
-      "description": "Defines which main look to use for the diagram.\n",
-      "type": "string",
-      "enum": [
-        "classic",
-        "handDrawn",
-        "neo"
-      ],
+      "$ref": "#/$defs/BaseDiagramConfig/properties/look",
       "default": "classic"
     },
     "handDrawnSeed": {
@@ -80,9 +57,9 @@
       "default": 0
     },
     "layout": {
-      "description": "Defines which layout algorithm to use for rendering the diagram.\n",
-      "type": "string",
-      "default": "dagre"
+      "$ref": "#/$defs/BaseDiagramConfig/properties/layout",
+      "description": "Defines which layout algorithm to use for rendering the diagram.\n\nDefaults to `elk`, which is bundled with mermaid. The `tiny` build omits\nELK to stay small and falls back to `dagre`.\n",
+      "default": "elk"
     },
     "maxTextSize": {
       "description": "The maximum allowed size of the users text diagram",
@@ -111,8 +88,69 @@
             "NETWORK_SIMPLEX",
             "LINEAR_SEGMENTS",
             "BRANDES_KOEPF"
+          ]
+        },
+        "nodePlacementAlignment": {
+          "description": "Elk specific option affecting Brandes-Koepf node placement alignment.\nBALANCED combines the four directional alignments; NONE picks the\nsmallest result. Defaults to BALANCED for the default preset and NONE\nfor named non-default presets.\n",
+          "type": "string",
+          "enum": [
+            "NONE",
+            "LEFTUP",
+            "LEFTDOWN",
+            "RIGHTUP",
+            "RIGHTDOWN",
+            "BALANCED"
+          ]
+        },
+        "preset": {
+          "description": "Named combination of layering, node placement, placement alignment\nand cycle breaking options. Explicit options override the preset for\nthat option; the remaining preset values still apply.\n\n`default` — network simplex layering, balanced Brandes-Koepf placement\nat the top level and inside subgraphs, and depth-first cycle breaking.\nBalanced placement favors centered branches and composite-state entries,\nsometimes at the cost of a wider or taller drawing. It does not\nguarantee that every edge attaches to the center of its target.\n\n`legacy` — Brandes-Koepf placement with NONE alignment and ELK's own\ngreedy cycle breaking. Reproduces the rendering before presets existed.\n\n`modelOrder` — network simplex layering and top-level placement,\nBrandes-Koepf placement inside subgraphs, NONE alignment, and greedy\nmodel-order cycle breaking, which favors declaration order.\n\n`depthFirst` — the previous default: network simplex layering and\ntop-level placement, Brandes-Koepf placement inside subgraphs, NONE\nalignment, and depth-first cycle breaking.\n\nSetting `layeringStrategy`, `nodePlacementStrategy`,\n`nodePlacementAlignment` or `cycleBreakingStrategy` explicitly overrides\nthe preset for that option, including an explicit NONE alignment.\n",
+          "type": "string",
+          "enum": [
+            "default",
+            "legacy",
+            "modelOrder",
+            "depthFirst"
           ],
-          "default": "BRANDES_KOEPF"
+          "default": "default"
+        },
+        "straightenEdges": {
+          "description": "Straightens an edge that leaves or enters a node with a tiny step.\n\nELK spreads an edge's port evenly along a node's side but routes the\nedge down a channel whose row rarely lines up with that port exactly,\nleaving a staircase of a few pixels right at the border. With rounded\ncorners the two micro-bends land on top of each other and read as a\nkink. Enabling this moves the channel onto the port's row and drops\nthe step, so the edge draws as one straight line and both ports stay\nexactly where the layout put them.\n\nOnly the step next to a node is touched, and only when the edge\ncontinues the same way afterwards, so a real turn is never collapsed.\nAn edge is left alone entirely when moving its run would drag the far\nport, or would introduce a crossing.\n",
+          "type": "boolean",
+          "default": true
+        },
+        "lineHops": {
+          "description": "Renders edge crossings as small arcs (\"hops\") or visible gaps, so that\nit is clear which line passes over which where two edges meet.\n\nThe edge that gives way loses its corner rounding for the segment\ncarrying the hop, which is the trade for a readable crossing. Curved\nedges are skipped rather than rewritten, to avoid corrupting their\ngeometry. Set to `false` to draw plain crossings.\n",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string",
+              "enum": [
+                "arc",
+                "gap"
+              ]
+            }
+          ],
+          "default": true
+        },
+        "layeringStrategy": {
+          "description": "Elk specific option deciding which layer each node is assigned to — the\ncolumn in a left-to-right diagram, the row in a top-down one. This is\nthe coarsest of the three placement decisions, so changing it moves\nnodes further than anything else short of altering spacing.\n\nNETWORK_SIMPLEX aims for the fewest long edges. LONGEST_PATH pushes\nevery node as late as it can go. COFFMAN_GRAHAM bounds how many nodes\nshare a layer, giving a more even, block-like shape on wide graphs.\nMIN_WIDTH and STRETCH_WIDTH trade edge length for a narrower or wider\ndrawing. INTERACTIVE honours positions already on the nodes.\n",
+          "type": "string",
+          "enum": [
+            "NETWORK_SIMPLEX",
+            "LONGEST_PATH",
+            "LONGEST_PATH_SOURCE",
+            "COFFMAN_GRAHAM",
+            "MIN_WIDTH",
+            "STRETCH_WIDTH",
+            "INTERACTIVE"
+          ]
+        },
+        "layeringLayerBound": {
+          "description": "Elk specific option capping how many nodes COFFMAN_GRAHAM will put in\none layer. Ignored by every other layering strategy. Lower values give\na taller, narrower drawing.\n",
+          "type": "number",
+          "default": 4
         },
         "cycleBreakingStrategy": {
           "description": "This strategy decides how to find cycles in the graph and deciding which edges need adjustment to break loops.\n",
@@ -123,8 +161,7 @@
             "INTERACTIVE",
             "MODEL_ORDER",
             "GREEDY_MODEL_ORDER"
-          ],
-          "default": "GREEDY_MODEL_ORDER"
+          ]
         },
         "forceNodeModelOrder": {
           "description": "The node order given by the model does not change to produce a better layout. E.g. if node A is before node B in the model this is not changed during crossing minimization. This assumes that the node model order is already respected before crossing minimization. This can be achieved by setting considerModelOrder.strategy to NODES_AND_EDGES.\n",
@@ -141,6 +178,16 @@
             "PREFER_NODES"
           ],
           "default": "NODES_AND_EDGES"
+        },
+        "keepEntryNodeOnTop": {
+          "description": "Elk specific option that keeps the entry node of a recursive flow at the top of the layout.\n\nWhen a flow loops back on itself (a back-edge to an earlier node), ELK's degree-based cycle-breaking has no notion of an \"entry point\" and may rank the first-declared node in the middle, scrambling the reading order. When enabled, the entry node of each cyclic component is pinned to the first layer so the diagram still reads from its entry. Acyclic flows always have a natural source, so this has no effect on them.\n\nOnly applies when the cyclic flow has no node without incoming edges: if the loop is fed from outside (e.g. a start node pointing into it), that component already has a natural source and nothing is pinned. Detection is also scoped per container, so cycles that cross a subgraph boundary are not detected.\n",
+          "type": "boolean",
+          "default": false
+        },
+        "orientFeedbackEdges": {
+          "description": "Routes an edge that re-enters a subgraph downstream instead of around the subgraph.\n\nELK lays out a subgraph as one node of its parent graph. A node outside a subgraph that both receives an edge from it and sends one back into it therefore closes a cycle there, even when the nodes inside do not. ELK breaks that cycle by reversing one of the edges and routes it into the subgraph's input side, around the outside of the subgraph.\n\nWhen enabled, such edges are found before layout, on the graph with each subgraph collapsed, and handed to ELK in the other direction. The edge is drawn with its arrowhead at its real target. Cycles between plain nodes are left to `cycleBreakingStrategy`.\n",
+          "type": "boolean",
+          "default": true
         }
       }
     },
@@ -258,6 +305,9 @@
     "swimlane": {
       "$ref": "#/$defs/SwimlaneDiagramConfig"
     },
+    "agentflow": {
+      "$ref": "#/$defs/AgentflowDiagramConfig"
+    },
     "sequence": {
       "$ref": "#/$defs/SequenceDiagramConfig"
     },
@@ -327,6 +377,9 @@
     "radar": {
       "$ref": "#/$defs/RadarDiagramConfig"
     },
+    "usecase": {
+      "$ref": "#/$defs/UsecaseDiagramConfig"
+    },
     "venn": {
       "$ref": "#/$defs/VennDiagramConfig"
     },
@@ -374,6 +427,40 @@
           "description": "When this flag is set to `true`, the height and width is set to 100%\nand is then scaled with the available space.\nIf set to `false`, the absolute space required is used.\n",
           "type": "boolean",
           "default": true
+        },
+        "theme": {
+          "description": "Theme, the CSS style sheet.\nYou may also use `themeCSS` to override this value.\n",
+          "type": "string",
+          "enum": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "meta:enum": {
+            "null": "Can be set to disable any pre-defined mermaid theme"
+          }
+        },
+        "look": {
+          "description": "Defines which main look to use for the diagram.\n",
+          "type": "string",
+          "enum": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ]
+        },
+        "layout": {
+          "description": "Defines which layout algorithm to use for rendering the diagram.\n",
+          "type": "string"
         }
       }
     },
@@ -1258,27 +1345,35 @@
         "useMaxWidth"
       ],
       "properties": {
-        "rectFill": {
+        "theme": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/theme",
+          "default": "redux-color"
+        },
+        "look": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/look",
+          "default": "neo"
+        },
+        "rect_fill": {
           "type": "string",
           "default": "#f9f9f9"
         },
-        "textColor": {
+        "text_color": {
           "type": "string",
           "default": "#333"
         },
-        "rectBorderSize": {
+        "rect_border_size": {
           "type": "string",
           "default": "0.5px"
         },
-        "rectBorderColor": {
+        "rect_border_color": {
           "type": "string",
           "default": "#bbb"
         },
-        "rectMinWidth": {
+        "rect_min_width": {
           "type": "number",
           "default": 200
         },
-        "rectMinHeight": {
+        "rect_min_height": {
           "type": "number",
           "default": 200
         },
@@ -1286,11 +1381,11 @@
           "type": "number",
           "default": 14
         },
-        "rectPadding": {
+        "rect_padding": {
           "type": "number",
           "default": 10
         },
-        "lineHeight": {
+        "line_height": {
           "type": "number",
           "default": 20
         }
@@ -1375,11 +1470,25 @@
       "unevaluatedProperties": false,
       "required": [
         "useMaxWidth",
+        "colorBy",
         "padding",
         "maxNodeWidth",
         "layoutAlgorithm"
       ],
       "properties": {
+        "colorBy": {
+          "description": "Color nodes by their top-level branch or by their depth in the tree.\nDepth is counted from the root, independently of indentation width.\n",
+          "type": "string",
+          "enum": [
+            "branch",
+            "depth"
+          ],
+          "meta:enum": {
+            "branch": "Descendants inherit the color of their top-level branch.",
+            "depth": "Nodes at the same distance from the root share a color across branches."
+          },
+          "default": "branch"
+        },
         "padding": {
           "type": "number",
           "default": 10
@@ -1784,6 +1893,23 @@
           "type": "boolean",
           "default": true
         },
+        "showLegend": {
+          "description": "Should show a legend for named plots",
+          "type": "boolean",
+          "default": true
+        },
+        "legendFontSize": {
+          "description": "Font size of the legend text",
+          "type": "number",
+          "default": 14,
+          "minimum": 1
+        },
+        "legendPadding": {
+          "description": "Padding around the legend",
+          "type": "number",
+          "default": 10,
+          "minimum": 0
+        },
         "xAxis": {
           "$ref": "#/$defs/XYChartAxisConfig",
           "default": {
@@ -1831,6 +1957,14 @@
         "useMaxWidth"
       ],
       "properties": {
+        "theme": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/theme",
+          "default": "redux-color"
+        },
+        "look": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/look",
+          "default": "neo"
+        },
         "titleTopMargin": {
           "$ref": "#/$defs/GitGraphDiagramConfig/properties/titleTopMargin",
           "default": 25
@@ -1917,9 +2051,32 @@
       "required": [
         "titleTopMargin",
         "useMaxWidth",
-        "defaultRenderer"
+        "wrappingWidth",
+        "minNodeWidth"
       ],
       "properties": {
+        "theme": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/theme",
+          "default": "redux-color"
+        },
+        "look": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/look",
+          "default": "neo"
+        },
+        "layout": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/layout",
+          "default": "elk"
+        },
+        "wrappingWidth": {
+          "description": "Width of nodes where text is wrapped.\n\nWhen using markdown strings the text is wrapped automatically, this\nvalue sets the max width of a text before it continues on a new line.\n",
+          "type": "number",
+          "default": 120
+        },
+        "minNodeWidth": {
+          "description": "Minimum width of the label area of a node.\n\nLabels narrower than this are widened to it, so nodes with short text\nget a uniform width; the node's own padding is added on top, the same\nway it is for `wrappingWidth`. Nodes with an explicit width are not\naffected.\n",
+          "type": "number",
+          "default": 120
+        },
         "titleTopMargin": {
           "$ref": "#/$defs/GitGraphDiagramConfig/properties/titleTopMargin",
           "default": 25
@@ -1995,21 +2152,6 @@
         "radius": {
           "type": "number",
           "default": 5
-        },
-        "defaultRenderer": {
-          "description": "Decides which rendering engine that is to be used for the rendering.\n",
-          "type": "string",
-          "enum": [
-            "dagre-d3",
-            "dagre-wrapper",
-            "elk"
-          ],
-          "default": "dagre-wrapper",
-          "meta:enum": {
-            "dagre-d3": "The [dagre-d3-es](https://www.npmjs.com/package/dagre-d3-es) library.",
-            "dagre-wrapper": "wrapper for dagre implemented in mermaid",
-            "elk": "Layout using [elkjs](https://github.com/kieler/elkjs)"
-          }
         }
       }
     },
@@ -2024,10 +2166,17 @@
       "unevaluatedProperties": false,
       "required": [
         "titleTopMargin",
-        "useMaxWidth",
-        "defaultRenderer"
+        "useMaxWidth"
       ],
       "properties": {
+        "theme": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/theme",
+          "default": "redux-color"
+        },
+        "look": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/look",
+          "default": "neo"
+        },
         "titleTopMargin": {
           "$ref": "#/$defs/GitGraphDiagramConfig/properties/titleTopMargin",
           "default": 25
@@ -2048,10 +2197,6 @@
         "textHeight": {
           "type": "number",
           "default": 10
-        },
-        "defaultRenderer": {
-          "$ref": "#/$defs/StateDiagramConfig/properties/defaultRenderer",
-          "default": "dagre-wrapper"
         },
         "nodeSpacing": {
           "type": "integer",
@@ -2599,6 +2744,14 @@
         "messageFontWeight"
       ],
       "properties": {
+        "theme": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/theme",
+          "default": "redux-color"
+        },
+        "look": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/look",
+          "default": "neo"
+        },
         "arrowMarkerAbsolute": {
           "type": "boolean"
         },
@@ -2795,6 +2948,18 @@
       "type": "object",
       "unevaluatedProperties": false,
       "properties": {
+        "theme": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/theme",
+          "default": "redux-color"
+        },
+        "look": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/look",
+          "default": "neo"
+        },
+        "layout": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/layout",
+          "default": "swimlane"
+        },
         "lineHops": {
           "description": "Renders edge crossings as small arcs (\"hops\") or visible gaps so that\noverlapping edges are easier to read. Set to `false` to disable. Edges\nrendered as curves are skipped to avoid corrupting the geometry.\n",
           "oneOf": [
@@ -2828,6 +2993,61 @@
         }
       }
     },
+    "AgentflowDiagramConfig": {
+      "title": "Agentflow Diagram Config",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseDiagramConfig"
+        }
+      ],
+      "description": "The object containing configurations specific for the agentflow diagram type.\n\nAgentflow renders through the shared unified renderer, so it owns the same\nspacing and padding knobs a flowchart does. They live in their own block so\nthat agentflow can be tuned without moving every flowchart on the page.\n",
+      "type": "object",
+      "unevaluatedProperties": false,
+      "properties": {
+        "theme": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/theme",
+          "default": "redux-color"
+        },
+        "look": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/look",
+          "default": "neo"
+        },
+        "titleTopMargin": {
+          "description": "Margin top for the text over the diagram",
+          "type": "integer",
+          "minimum": 0,
+          "default": 25
+        },
+        "diagramPadding": {
+          "description": "The amount of padding around the diagram as a whole so that embedded\ndiagrams have margins, expressed in pixels.\n",
+          "type": "integer",
+          "minimum": 0,
+          "default": 8
+        },
+        "nodeSpacing": {
+          "description": "Defines the spacing between nodes on the same level.\n\nPertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs,\nand the vertical spacing for LR as well as RL graphs.\n",
+          "type": "integer",
+          "minimum": 0,
+          "default": 50
+        },
+        "rankSpacing": {
+          "description": "Defines the spacing between nodes on different levels.\n\nPertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the\nhorizontal spacing for LR as well as RL graphs.\n",
+          "type": "integer",
+          "minimum": 0,
+          "default": 50
+        },
+        "wrappingWidth": {
+          "description": "Width of nodes where text is wrapped.\n\nWhen using markdown strings the text is wrapped automatically, this\nvalue sets the max width of a text before it continues on a new line.\n",
+          "type": "number",
+          "default": 120
+        },
+        "minNodeWidth": {
+          "description": "Minimum width of the label area of a node.\n\nLabels narrower than this are widened to it, so nodes with short text\nget a uniform width; the node's own padding is added on top, the same\nway it is for `wrappingWidth`. Nodes with an explicit width are not\naffected.\n",
+          "type": "number",
+          "default": 120
+        }
+      }
+    },
     "FlowchartDiagramConfig": {
       "title": "Flowchart Diagram Config",
       "allOf": [
@@ -2846,10 +3066,18 @@
         "rankSpacing",
         "curve",
         "useMaxWidth",
-        "defaultRenderer",
-        "wrappingWidth"
+        "wrappingWidth",
+        "minNodeWidth"
       ],
       "properties": {
+        "theme": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/theme",
+          "default": "redux-color"
+        },
+        "look": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/look",
+          "default": "neo"
+        },
         "titleTopMargin": {
           "$ref": "#/$defs/GitGraphDiagramConfig/properties/titleTopMargin",
           "default": 25
@@ -2925,14 +3153,15 @@
           "type": "number",
           "default": 15
         },
-        "defaultRenderer": {
-          "$ref": "#/$defs/StateDiagramConfig/properties/defaultRenderer",
-          "default": "dagre-wrapper"
-        },
         "wrappingWidth": {
           "description": "Width of nodes where text is wrapped.\n\nWhen using markdown strings the text is wrapped automatically, this\nvalue sets the max width of a text before it continues on a new line.\n",
           "type": "number",
-          "default": 200
+          "default": 120
+        },
+        "minNodeWidth": {
+          "description": "Minimum width of the label area of a node.\n\nLabels narrower than this are widened to it, so nodes with short text\nget a uniform width; the node's own padding is added on top, the same\nway it is for `wrappingWidth`. Nodes with an explicit width are not\naffected.\n",
+          "type": "number",
+          "default": 120
         },
         "inheritDir": {
           "type": "boolean",
@@ -3098,6 +3327,19 @@
           "description": "Toggle to display or hide bit numbers.",
           "type": "boolean",
           "default": true
+        },
+        "bitOrder": {
+          "description": "The direction each row is numbered in. `descending` mirrors every row so it reads from\nthat row's highest bit on the left down to its lowest bit on the right, the convention\nused for hardware registers. Fields are still declared lowest bit first, and keep their\nwidth.\n",
+          "type": "string",
+          "enum": [
+            "ascending",
+            "descending"
+          ],
+          "meta:enum": {
+            "ascending": "Number each row from its lowest bit on the left up to its highest bit on the right.",
+            "descending": "Number each row from its highest bit on the left down to its lowest bit on the right."
+          },
+          "default": "ascending"
         },
         "paddingX": {
           "description": "The horizontal padding between the blocks in a row.",
@@ -3286,6 +3528,103 @@
         }
       }
     },
+    "UsecaseDiagramConfig": {
+      "title": "Usecase Diagram Config",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseDiagramConfig"
+        }
+      ],
+      "description": "The object containing configurations specific for usecase diagrams.",
+      "type": "object",
+      "unevaluatedProperties": false,
+      "required": [
+        "useMaxWidth",
+        "wrappingWidth",
+        "minNodeWidth"
+      ],
+      "properties": {
+        "theme": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/theme",
+          "default": "redux-color"
+        },
+        "look": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/look",
+          "default": "neo"
+        },
+        "wrappingWidth": {
+          "$ref": "#/$defs/FlowchartDiagramConfig/properties/wrappingWidth",
+          "default": 120
+        },
+        "minNodeWidth": {
+          "$ref": "#/$defs/FlowchartDiagramConfig/properties/minNodeWidth",
+          "default": 120
+        },
+        "actorFontSize": {
+          "description": "Font size for actor labels",
+          "type": "number",
+          "minimum": 1,
+          "default": 14
+        },
+        "actorFontFamily": {
+          "description": "Font family for actor labels.\n\nWritten verbatim into an inline CSS custom property, so the characters that could\nterminate a declaration or open a new one are excluded: `;`, `<`, `>`, `(`, `)`,\n`{`, `}`, and `\\`. Quotes, commas, and spaces stay allowed for font stacks such as\n`\"Open Sans\", sans-serif`.\n",
+          "type": "string",
+          "pattern": "^[^;<>(){}\\\\]*$",
+          "default": "\"Open Sans\", sans-serif"
+        },
+        "actorFontWeight": {
+          "description": "Font weight for actor labels.\n\nRestricted to the CSS `font-weight` keywords and numeric weights, since this value\nis written verbatim into an inline CSS custom property.\n",
+          "type": "string",
+          "pattern": "^(normal|bold|bolder|lighter|inherit|initial|revert|unset|[1-9][0-9]{0,3})$",
+          "default": "normal"
+        },
+        "usecaseFontSize": {
+          "description": "Font size for usecase labels",
+          "type": "number",
+          "minimum": 1,
+          "default": 12
+        },
+        "usecaseFontFamily": {
+          "description": "Font family for usecase labels.\n\nConstrained the same way as `actorFontFamily`.\n",
+          "type": "string",
+          "pattern": "^[^;<>(){}\\\\]*$",
+          "default": "\"Open Sans\", sans-serif"
+        },
+        "usecaseFontWeight": {
+          "description": "Font weight for usecase labels.\n\nConstrained the same way as `actorFontWeight`.\n",
+          "type": "string",
+          "pattern": "^(normal|bold|bolder|lighter|inherit|initial|revert|unset|[1-9][0-9]{0,3})$",
+          "default": "normal"
+        },
+        "nodeSpacing": {
+          "description": "Spacing between nodes on the same level",
+          "type": "number",
+          "minimum": 0,
+          "default": 50
+        },
+        "rankSpacing": {
+          "description": "Spacing between nodes on different levels",
+          "type": "number",
+          "minimum": 0,
+          "default": 50
+        },
+        "diagramPadding": {
+          "description": "Padding around the entire diagram",
+          "type": "number",
+          "minimum": 0,
+          "default": 20
+        },
+        "colorScheme": {
+          "description": "How a use case diagram takes its colours from the active theme.\n\n`role` (the default) gives every element of a kind one colour, read from the\n`usecaseActorBkg` / `usecaseActorBorder`, `usecaseBkg` / `usecaseBorder`, and\n`usecaseBoundaryBkg` / `usecaseBoundaryBorder` theme variables. Colour then says\nwhat an element *is*, and it is invariant under insertion, reordering, and\nrenaming -- adding one use case in the middle does not recolour the ones after it,\nso diffs, documentation screenshots, and visual baselines stay stable.\n\n`rotate` instead gives each actor, use case, and system boundary its own slot from\nthe theme's categorical palette (`borderColorArray` / `bkgColorArray`), the way ER\nentities and class boxes are coloured. Actors and use cases share one cycle, and\nsystem boundaries run a second one from zero, so a boundary is never forced to\nmatch an element inside it. Within the shared cycle the actors are numbered first\nand the use cases after them, each in declaration order -- an interleaved\n`actor A`, `usecase U`, `actor B` is therefore numbered A, B, U rather than\nA, U, B. This buys per-instance variety at the cost of the stability `role` has:\ninserting an element shifts the colour of every later element of its own kind, and\ninserting an actor shifts the use cases too. Only the colour themes\n(`redux-color`, `redux-dark-color`) carry a palette, so on every other theme the\ntwo settings render identically.\n\n`classDef` and `style` keep overriding both, whichever is set.\n",
+          "type": "string",
+          "enum": [
+            "role",
+            "rotate"
+          ],
+          "default": "role"
+        }
+      }
+    },
     "VennDiagramConfig": {
       "title": "Venn Diagram Config",
       "allOf": [
@@ -3297,6 +3636,14 @@
       "type": "object",
       "unevaluatedProperties": false,
       "properties": {
+        "theme": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/theme",
+          "default": "redux-color"
+        },
+        "look": {
+          "$ref": "#/$defs/BaseDiagramConfig/properties/look",
+          "default": "neo"
+        },
         "width": {
           "description": "The width of the Venn diagram.",
           "type": "number",

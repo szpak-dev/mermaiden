@@ -12,7 +12,7 @@ class TestRequirementDiagram:
         diagram = application.create_diagram("requirementDiagram")
 
         commands = (
-            DiagramCommand("configure", {"rectMinWidth": 240, "fontSize": 16}),
+            DiagramCommand("configure", {"rect_min_width": 240, "fontSize": 16}),
             DiagramCommand(
                 "add_requirement",
                 {

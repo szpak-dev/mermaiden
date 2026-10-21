@@ -12,7 +12,7 @@ class TestStateDiagram:
         diagram = application.create_diagram("stateDiagram-v2")
 
         commands = (
-            DiagramCommand("configure", {"defaultRenderer": "elk", "titleTopMargin": 30}),
+            DiagramCommand("configure", {"layout": "elk", "titleTopMargin": 30}),
             DiagramCommand("add_initial", {"id": "initial"}),
             DiagramCommand("add_state", {"id": "idle", "label": 'Idle "state"'}),
             DiagramCommand("add_choice", {"id": "choice", "label": "Route"}),

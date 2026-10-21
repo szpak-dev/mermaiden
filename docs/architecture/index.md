@@ -54,7 +54,7 @@ Feature configuration
 
 Snapshot envelope and type identities
 : `SNAPSHOT_VERSION` in [`runtime/snapshot/domain.py`](../../src/mermaiden/runtime/snapshot/domain.py), the matching
-  [`schema.v8.json`](../../src/mermaiden/runtime/snapshot/schema.v8.json), and registry-derived discriminators in
+  [`schema.v9.json`](../../src/mermaiden/runtime/snapshot/schema.v9.json), and registry-derived discriminators in
   [`DiagramSnapshotRegistry`](../../src/mermaiden/diagrams/services/snapshot_registry.py).
 
 Dependency composition and lifetime

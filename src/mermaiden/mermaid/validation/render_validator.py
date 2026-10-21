@@ -23,6 +23,10 @@ class MermaidRenderValidator:
 
     @property
     def mermaid_version(self) -> str:
+        return self.cli.mermaid_version
+
+    @property
+    def mermaid_cli_version(self) -> str:
         return self.cli.version
 
     def validate(self, diagram: DiagramView) -> MermaidRenderReport:
@@ -31,6 +35,7 @@ class MermaidRenderValidator:
             return MermaidRenderReport(
                 diagram.kind,
                 self.mermaid_version,
+                self.mermaid_cli_version,
                 diagnostics=(
                     MermaidRenderDiagnostic(
                         MermaidRenderDiagnosticCode.DIAGRAM_INVALID,
@@ -48,6 +53,7 @@ class MermaidRenderValidator:
             return MermaidRenderReport(
                 diagram.kind,
                 self.mermaid_version,
+                self.mermaid_cli_version,
                 diagnostics=(
                     MermaidRenderDiagnostic(
                         MermaidRenderDiagnosticCode.SOURCE_GENERATION_FAILED,
@@ -63,13 +69,14 @@ class MermaidRenderValidator:
         return tuple(self.report(diagram_id, result) for diagram_id in sources)
 
     def report(self, diagram_id: str, result: MermaidCliResult) -> MermaidRenderReport:
-        if result.observed_version and result.observed_version != self.mermaid_version:
+        if result.observed_cli_version and result.observed_cli_version != self.mermaid_cli_version:
             return self.failure(
                 diagram_id,
                 MermaidRenderDiagnosticCode.VERSION_MISMATCH,
-                "Mermaid version mismatch.",
+                "Mermaid CLI version mismatch.",
                 "Authority 'schema.lock.json' "
-                f"expected '{self.mermaid_version}'; consumer 'mmdc' observed '{result.observed_version}'.",
+                f"expected '{self.mermaid_cli_version}'; consumer 'mmdc' observed "
+                f"'{result.observed_cli_version}'.",
             )
         if result.timed_out:
             return self.failure(
@@ -132,7 +139,12 @@ class MermaidRenderValidator:
                 "Mermaid produced an error SVG.",
                 details or "; ".join(error_messages),
             )
-        return MermaidRenderReport(diagram_id, self.mermaid_version, svg=svg)
+        return MermaidRenderReport(
+            diagram_id,
+            self.mermaid_version,
+            self.mermaid_cli_version,
+            svg=svg,
+        )
 
     def failure(
         self,
@@ -144,6 +156,7 @@ class MermaidRenderValidator:
         return MermaidRenderReport(
             diagram_id,
             self.mermaid_version,
+            self.mermaid_cli_version,
             diagnostics=(MermaidRenderDiagnostic(code, message, details),),
         )
 

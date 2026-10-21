@@ -1,15 +1,16 @@
 {
-  "mermaid_version": "11.16.0",
+  "mermaid_version": "12.2.0",
+  "mermaid_cli_version": "12.0.0",
   "diagram_count": 27,
-  "configuration_field_count": 466,
-  "probe_count": 1464,
+  "configuration_field_count": 549,
+  "probe_count": 1929,
   "diagrams": [
     {
       "diagram_id": "C4Context",
       "source": "sources/C4Context.mmd",
-      "source_sha256": "47e113b970e2a8cf41bc58277ce2d1cf36440247a0721806d0b5fdd17b93b28d",
+      "source_sha256": "d3db50a30a9a7eb5d46df56a4f421cb1e1ee821c7c4e6154362149cac396b6b6",
       "svg": "rendered/C4Context.svg",
-      "svg_sha256": "93236bd06a8b319274f73f98af143e54098705ec32809eb90ae7f9d9f416b6e2",
+      "svg_sha256": "1d50d5a1c7dcba156abe3af28452d976e341516c0476d4145d8f2e8328ab7455",
       "semantic_object_count": 20,
       "configuration_fields": [
         {
@@ -36,6 +37,44 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "default",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "classic",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
           ],
           "witness": "fresh_svg"
         },
@@ -1345,7 +1384,7 @@
     {
       "diagram_id": "architecture-beta",
       "source": "sources/architecture-beta.mmd",
-      "source_sha256": "2816dbb0a94d9b8d5121da60912962af9fb3d51e98ee8e9915e9eff1aca9418e",
+      "source_sha256": "ebedc8acff22562ac6920f08827745c26484c8a1f9e999bc11cf6fbe6f6f8968",
       "svg": "rendered/architecture-beta.svg",
       "svg_sha256": "9d319400bde225326881f3533d9baba275d4023cf974c3a89ddb5f6e8c7fefce",
       "semantic_object_count": 28,
@@ -1374,6 +1413,44 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "default",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "classic",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
           ],
           "witness": "fresh_svg"
         },
@@ -1477,9 +1554,9 @@
     {
       "diagram_id": "block",
       "source": "sources/block.mmd",
-      "source_sha256": "6f2c9f7b3a585745f183af6b119471adc35200e8d7522adedd5ae4d564053d2a",
+      "source_sha256": "e89ac6f9a70319e7b52c1c54ef58f1055e72f2c9ba1a5c3c94c28019fd0e2dc5",
       "svg": "rendered/block.svg",
-      "svg_sha256": "31d71cfd945020824e0203ba0824242a111a1dedb3d55a9950f69c9a007a3981",
+      "svg_sha256": "859cd2c0a094564116cd166460defb5fe7da444ab7320884a854e179cddb21c7",
       "semantic_object_count": 12,
       "configuration_fields": [
         {
@@ -1510,6 +1587,44 @@
           "witness": "fresh_svg"
         },
         {
+          "name": "theme",
+          "showcase_value": "default",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "classic",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
           "name": "padding",
           "showcase_value": 8.0,
           "probes": [
@@ -1524,9 +1639,9 @@
     {
       "diagram_id": "classDiagram",
       "source": "sources/classDiagram.mmd",
-      "source_sha256": "55b001005eab0b3b53c8eb8e9b0a91a7668bf7a129e218e7b7a680b03eaae768",
+      "source_sha256": "9d986e453c46d0980f8d24350eb1d7e71049e59ca3108ae5cce457c4a9518e2a",
       "svg": "rendered/classDiagram.svg",
-      "svg_sha256": "c1a12f415ffd2b4e04c12797e4b7a4660bfb90ca6afbfaf84d86f6539e0df23b",
+      "svg_sha256": "27699ec8ca0cb3015a08a80a9510a5ee2b4b8577760c0e5df744de7a22ce6d2a",
       "semantic_object_count": 20,
       "configuration_fields": [
         {
@@ -1553,6 +1668,44 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "redux-color",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "neo",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
           ],
           "witness": "fresh_svg"
         },
@@ -1605,16 +1758,6 @@
             0.0,
             1.0,
             10.0
-          ],
-          "witness": "fresh_svg"
-        },
-        {
-          "name": "defaultRenderer",
-          "showcase_value": "dagre-wrapper",
-          "probes": [
-            "dagre-d3",
-            "dagre-wrapper",
-            "elk"
           ],
           "witness": "fresh_svg"
         },
@@ -1678,7 +1821,7 @@
     {
       "diagram_id": "cynefin-beta",
       "source": "sources/cynefin-beta.mmd",
-      "source_sha256": "b2414b9e24739f710ffb5f649c78830f9e7577e35483f91d4d483d2d99b3a154",
+      "source_sha256": "ca4d9c6312393edd21501d03516f32282fdc09e5830f828b2a898e58c5ce31e2",
       "svg": "rendered/cynefin-beta.svg",
       "svg_sha256": "a59b80bb6f8ce748305eceb07c3f670816ba44444c5b33d8e5ca7beca4732279",
       "semantic_object_count": 12,
@@ -1707,6 +1850,44 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "default",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "classic",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
           ],
           "witness": "fresh_svg"
         },
@@ -1773,9 +1954,9 @@
     {
       "diagram_id": "erDiagram",
       "source": "sources/erDiagram.mmd",
-      "source_sha256": "e170a67c9f88d5c52ab629b1e4794c9890dfc1760f3c65c739fe7c6afc11c1a5",
+      "source_sha256": "b8e5c7033633bfbf1170f0a93e0c00ec9e55ef2d58f85978b4845541526cf0ae",
       "svg": "rendered/erDiagram.svg",
-      "svg_sha256": "9118b0acd1f9b27c54f54ceba8700b846ce36c4372d906c762af9a201010563c",
+      "svg_sha256": "1a8a00414ce93878fb75cafaf5a2e081085ba08085313009a597676ca6112b1c",
       "semantic_object_count": 17,
       "configuration_fields": [
         {
@@ -1802,6 +1983,44 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "redux-color",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "neo",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
           ],
           "witness": "fresh_svg"
         },
@@ -1921,7 +2140,7 @@
     {
       "diagram_id": "eventmodeling",
       "source": "sources/eventmodeling.mmd",
-      "source_sha256": "37737726fae4e921685753b9b4e90ac1ad902c09709836c87686513f7358068e",
+      "source_sha256": "dccc6c7589e45db5c039f7bc13e8687af7df854263e327e097fba61d398b5887",
       "svg": "rendered/eventmodeling.svg",
       "svg_sha256": "c609a15d7448387e92f691925edd5e9626a6c15b3fc076916259e68c6ac6f69d",
       "semantic_object_count": 16,
@@ -1954,6 +2173,44 @@
           "witness": "fresh_svg"
         },
         {
+          "name": "theme",
+          "showcase_value": "default",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "classic",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
           "name": "padding",
           "showcase_value": 30.0,
           "probes": [
@@ -1978,9 +2235,9 @@
     {
       "diagram_id": "flowchart",
       "source": "sources/flowchart.mmd",
-      "source_sha256": "24178868f759b12c618d70cc4a3cfadee3411579c167219a6b84b00bac5fda55",
+      "source_sha256": "244e48af9fb8ab56d3f4cf77b25e0c6c78142c64c30a1417f631b6b568a6ad40",
       "svg": "rendered/flowchart.svg",
-      "svg_sha256": "d43a999be4f550084a37e2df691ab0cca9bae81adb0f6debdfd3b148ead59c3c",
+      "svg_sha256": "ede3ad8684b8a50b64aee2a4d259d2c189cb805d7627da724cfd1becd4361892",
       "semantic_object_count": 27,
       "configuration_fields": [
         {
@@ -2007,6 +2264,44 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "redux-color",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "neo",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
           ],
           "witness": "fresh_svg"
         },
@@ -2106,22 +2401,23 @@
           "witness": "fresh_svg"
         },
         {
-          "name": "defaultRenderer",
-          "showcase_value": "dagre-wrapper",
-          "probes": [
-            "dagre-wrapper",
-            "elk"
-          ],
-          "witness": "fresh_svg"
-        },
-        {
           "name": "wrappingWidth",
-          "showcase_value": 200.0,
+          "showcase_value": 120.0,
           "probes": [
             -1.0,
             0.0,
             1.0,
-            200.0
+            120.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "minNodeWidth",
+          "showcase_value": 120.0,
+          "probes": [
+            0.25,
+            1.0,
+            120.0
           ],
           "witness": "fresh_svg"
         },
@@ -2139,9 +2435,9 @@
     {
       "diagram_id": "gantt",
       "source": "sources/gantt.mmd",
-      "source_sha256": "964cbc77c40f690e26610a87c7241eda4656f16399996d34a6c1ccc823020cc1",
+      "source_sha256": "c846991846a7c47a46ccba9bd21852ccc8c79ded29693418456f7ed3621e079b",
       "svg": "rendered/gantt.svg",
-      "svg_sha256": "81bf39073e5b33c9b2681b38dba1955180f6747e88a5d6d9f176e69ef828079a",
+      "svg_sha256": "7bed428d03ef2070fe9a7eb3627af147e042e61b0e8781566a1268ed7b7ed3aa",
       "semantic_object_count": 12,
       "configuration_fields": [
         {
@@ -2168,6 +2464,44 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "default",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "classic",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
           ],
           "witness": "fresh_svg"
         },
@@ -2325,7 +2659,7 @@
     {
       "diagram_id": "gitGraph",
       "source": "sources/gitGraph.mmd",
-      "source_sha256": "0010c4b3eeef80361a3b8198c89625dd6456a191689e1e5264e1f497347b0e89",
+      "source_sha256": "9e34ecd66ea3fa340e9c2c44800f8e44fb1c2e4328b04ff3bf10805464a01f3f",
       "svg": "rendered/gitGraph.svg",
       "svg_sha256": "f5f6334b48039001a1594ece73e85be0fa6fd3647aed73e4bbb1146cfb4d7a37",
       "semantic_object_count": 12,
@@ -2354,6 +2688,44 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "default",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "classic",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
           ],
           "witness": "fresh_svg"
         },
@@ -2471,7 +2843,7 @@
     {
       "diagram_id": "ishikawa-beta",
       "source": "sources/ishikawa-beta.mmd",
-      "source_sha256": "6c117ea24e1512d1fa0425da85cd005a4235ef80a498c135b18b52dfb5785135",
+      "source_sha256": "af0f6c415723f4fc7c76661b4071a6ab394a8468e2bb7c0b8c4790b77cc725ac",
       "svg": "rendered/ishikawa-beta.svg",
       "svg_sha256": "08601f58e253673e8129d9a2416f16d17f083f2b64025c1795826d73b1ea929e",
       "semantic_object_count": 13,
@@ -2504,6 +2876,44 @@
           "witness": "fresh_svg"
         },
         {
+          "name": "theme",
+          "showcase_value": "default",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "classic",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
           "name": "diagramPadding",
           "showcase_value": 20,
           "probes": [
@@ -2518,9 +2928,9 @@
     {
       "diagram_id": "journey",
       "source": "sources/journey.mmd",
-      "source_sha256": "e50c04a9e3ed9399951d0716436e5b0010e601bdc62842955ea4d44eb26509b2",
+      "source_sha256": "b28c9e7efd1b185349aa3106c39b0a8d874770eef413a9e9a01768be4185ef42",
       "svg": "rendered/journey.svg",
-      "svg_sha256": "7882deea2a47f049c02ecad6b4a7d3af6c3226389e29f2adb68a7842f146e547",
+      "svg_sha256": "fecd12f8eb449a04a05d587f9c21805985ff9de9a871258524be2a2d0f1a0315",
       "semantic_object_count": 12,
       "configuration_fields": [
         {
@@ -2547,6 +2957,44 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "default",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "classic",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
           ],
           "witness": "fresh_svg"
         },
@@ -2830,7 +3278,7 @@
     {
       "diagram_id": "kanban",
       "source": "sources/kanban.mmd",
-      "source_sha256": "446f4dc9a3e9c68cd78e4a422f3db7f730ec6a8687be12b3d0f3350699722619",
+      "source_sha256": "93b0bc20e977066a025c4b984533ee8e2eb1342ae4c67c9ad47f499b6c09a344",
       "svg": "rendered/kanban.svg",
       "svg_sha256": "1c2317070d440756a4c0baf3918d310c846b12ce85d0a575f77fbb287662fb7f",
       "semantic_object_count": 12,
@@ -2859,6 +3307,44 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "default",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "classic",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
           ],
           "witness": "fresh_svg"
         },
@@ -2898,9 +3384,9 @@
     {
       "diagram_id": "mindmap",
       "source": "sources/mindmap.mmd",
-      "source_sha256": "432b5f3137368e827af9de74f565b9cd4ed39c07e65bb31fce4a3a83fa78d0e9",
+      "source_sha256": "cd0a7e2321dc94887027e735787911fc0c7196a7d77b832c56e4c3d857ca6cde",
       "svg": "rendered/mindmap.svg",
-      "svg_sha256": "4201898a0690e74592bef8664e7756e2684fdb5229090bea652503cbbaf85c80",
+      "svg_sha256": "078404835fde291b1ad1e982622f709875d156b2e831f221bcffa9649773957b",
       "semantic_object_count": 12,
       "configuration_fields": [
         {
@@ -2927,6 +3413,53 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "default",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "classic",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "colorBy",
+          "showcase_value": "branch",
+          "probes": [
+            "branch",
+            "depth"
           ],
           "witness": "fresh_svg"
         },
@@ -2966,7 +3499,7 @@
     {
       "diagram_id": "packet",
       "source": "sources/packet.mmd",
-      "source_sha256": "955234920effdc16c8e41fd7ce92d06b08306c2f185bf69775ba482688b90fc7",
+      "source_sha256": "4b9292378e7bf08811dd0a982dea20b3f41b7312513226543042f7489e02d20e",
       "svg": "rendered/packet.svg",
       "svg_sha256": "13b9ff28761ddc06cf445dd1d9951e2565717c5f82486e44265bc6e7821639f2",
       "semantic_object_count": 12,
@@ -2995,6 +3528,44 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "default",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "classic",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
           ],
           "witness": "fresh_svg"
         },
@@ -3035,6 +3606,15 @@
           "witness": "fresh_svg"
         },
         {
+          "name": "bitOrder",
+          "showcase_value": "ascending",
+          "probes": [
+            "ascending",
+            "descending"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
           "name": "paddingX",
           "showcase_value": 5.0,
           "probes": [
@@ -3059,7 +3639,7 @@
     {
       "diagram_id": "pie",
       "source": "sources/pie.mmd",
-      "source_sha256": "d30dcd92df932b5cf044e083ba402adc45f8e01a99422c84e7d8ae0bd27ba329",
+      "source_sha256": "1104b9fb98375051f385381f93d4461ef05ebd90cba064e7771d222bb9c795d7",
       "svg": "rendered/pie.svg",
       "svg_sha256": "df828105a63a48f52ed4c70ce662fd45f46427296743e8dd825c9cc4c45d8ea4",
       "semantic_object_count": 12,
@@ -3088,6 +3668,44 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "default",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "classic",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
           ],
           "witness": "fresh_svg"
         },
@@ -3138,7 +3756,7 @@
     {
       "diagram_id": "radar-beta",
       "source": "sources/radar-beta.mmd",
-      "source_sha256": "421fa9e64f405d195f697312bc3166d9566ef2d20774a2726258d12d2641d42c",
+      "source_sha256": "0c6f1779b56ea295734dd2ec92a2b814ca0a9848efe1200d738e368c96776be3",
       "svg": "rendered/radar-beta.svg",
       "svg_sha256": "25a822dd998a23edc1c0d5a9054b81c8998bafe856f899f6c630a73c262e6366",
       "semantic_object_count": 12,
@@ -3167,6 +3785,44 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "default",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "classic",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
           ],
           "witness": "fresh_svg"
         },
@@ -3263,7 +3919,7 @@
     {
       "diagram_id": "railroad-ebnf-beta",
       "source": "sources/railroad-ebnf-beta.mmd",
-      "source_sha256": "28ae75fe42ab99430e1c6cfb0af63851353f56acfce93ffc8a1e5aabd9c40ecf",
+      "source_sha256": "a1e444791ec072d18a42d200fa482e768597c814267695cd961901dd76241ddd",
       "svg": "rendered/railroad-ebnf-beta.svg",
       "svg_sha256": "59a98c2068fe59c2bc91228386cf28c248fe759d6843dd0216c0559eef6282c0",
       "semantic_object_count": 13,
@@ -3292,6 +3948,44 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "default",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "classic",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
           ],
           "witness": "fresh_svg"
         },
@@ -3537,9 +4231,9 @@
     {
       "diagram_id": "requirementDiagram",
       "source": "sources/requirementDiagram.mmd",
-      "source_sha256": "2a859a61454ebf480c935663800ce98d4c71fb3da1e5d66b6a952bc27b1ca788",
+      "source_sha256": "a0d3a01ecf68bb01b936e188cf72521338ea56ddea3ff308b390b844eb7b0461",
       "svg": "rendered/requirementDiagram.svg",
-      "svg_sha256": "c6489c6a7faa46f169061238683ea5f4f7478eb3e9550a19f105ff33ee82ff72",
+      "svg_sha256": "ab9a9fcccf89bc7116075808696d9848281baa8d1029596d665cfccc68ed999b",
       "semantic_object_count": 15,
       "configuration_fields": [
         {
@@ -3570,7 +4264,45 @@
           "witness": "fresh_svg"
         },
         {
-          "name": "rectFill",
+          "name": "theme",
+          "showcase_value": "redux-color",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "neo",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "rect_fill",
           "showcase_value": "#f9f9f9",
           "probes": [
             "#2F80ED",
@@ -3580,7 +4312,7 @@
           "witness": "fresh_svg"
         },
         {
-          "name": "textColor",
+          "name": "text_color",
           "showcase_value": "#333",
           "probes": [
             "#2F80ED",
@@ -3590,7 +4322,7 @@
           "witness": "fresh_svg"
         },
         {
-          "name": "rectBorderSize",
+          "name": "rect_border_size",
           "showcase_value": "0.5px",
           "probes": [
             "proof",
@@ -3599,7 +4331,7 @@
           "witness": "fresh_svg"
         },
         {
-          "name": "rectBorderColor",
+          "name": "rect_border_color",
           "showcase_value": "#bbb",
           "probes": [
             "#2F80ED",
@@ -3609,7 +4341,7 @@
           "witness": "fresh_svg"
         },
         {
-          "name": "rectMinWidth",
+          "name": "rect_min_width",
           "showcase_value": 200.0,
           "probes": [
             -1.0,
@@ -3620,7 +4352,7 @@
           "witness": "fresh_svg"
         },
         {
-          "name": "rectMinHeight",
+          "name": "rect_min_height",
           "showcase_value": 200.0,
           "probes": [
             -1.0,
@@ -3642,7 +4374,7 @@
           "witness": "fresh_svg"
         },
         {
-          "name": "rectPadding",
+          "name": "rect_padding",
           "showcase_value": 10.0,
           "probes": [
             -1.0,
@@ -3653,7 +4385,7 @@
           "witness": "fresh_svg"
         },
         {
-          "name": "lineHeight",
+          "name": "line_height",
           "showcase_value": 20.0,
           "probes": [
             -1.0,
@@ -3668,7 +4400,7 @@
     {
       "diagram_id": "sankey",
       "source": "sources/sankey.mmd",
-      "source_sha256": "c74fac7ff79f6e8ca53f822c46c5746f62ea5edb8bff2636939140742a35c988",
+      "source_sha256": "7ad18e2ae15c7a812710c87cbf8fbff0577fb714f0117530abfe5beac79a6c38",
       "svg": "rendered/sankey.svg",
       "svg_sha256": "cdf2059635c791db2a36a60952b8922620f7c67ee14dba924153381cf2be8b8e",
       "semantic_object_count": 16,
@@ -3697,6 +4429,44 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "default",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "classic",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
           ],
           "witness": "fresh_svg"
         },
@@ -3818,9 +4588,9 @@
     {
       "diagram_id": "sequenceDiagram",
       "source": "sources/sequenceDiagram.mmd",
-      "source_sha256": "77daeaf8a30e61b5b17eb4263b69b185843dae72990d8e98ca911f96fdd17375",
+      "source_sha256": "07f951a0735b5caf18df00ba79b6cbeb7107550eebfa21c8a5de1d06f41163af",
       "svg": "rendered/sequenceDiagram.svg",
-      "svg_sha256": "814b2752e26c013e2e7861cb70c32cc5966420224dc19a8a866e948522dc578a",
+      "svg_sha256": "3f1bda5706916c26ca1cfc09122ecc1e8aef3575cfa2862f5e4aa6aba2b2faa2",
       "semantic_object_count": 25,
       "configuration_fields": [
         {
@@ -3847,6 +4617,44 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "redux-color",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "neo",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
           ],
           "witness": "fresh_svg"
         },
@@ -4179,9 +4987,9 @@
     {
       "diagram_id": "stateDiagram-v2",
       "source": "sources/stateDiagram-v2.mmd",
-      "source_sha256": "001f816f94c8657dc5d87c9cd5f976d7aaf31b9559c840dcf3ef9df8f0c32ac4",
+      "source_sha256": "19085939e72016cce1bebb58b563aa52096ee89e1116f738c6224fb9d8918273",
       "svg": "rendered/stateDiagram-v2.svg",
-      "svg_sha256": "88be98796d214ce1aeb6eabee28938303766981e47336c1896c6fbc4d62d9d65",
+      "svg_sha256": "08c691c39efd07626260978fd9ae9969a7ffd5082503222149e84e00c5a6057e",
       "semantic_object_count": 31,
       "configuration_fields": [
         {
@@ -4208,6 +5016,64 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "redux-color",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "neo",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "elk",
+          "probes": [
+            "dagre",
+            "elk"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "wrappingWidth",
+          "showcase_value": 120.0,
+          "probes": [
+            0.25,
+            1.0,
+            120.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "minNodeWidth",
+          "showcase_value": 120.0,
+          "probes": [
+            0.25,
+            1.0,
+            120.0
           ],
           "witness": "fresh_svg"
         },
@@ -4410,25 +5276,15 @@
             5.0
           ],
           "witness": "fresh_svg"
-        },
-        {
-          "name": "defaultRenderer",
-          "showcase_value": "dagre-wrapper",
-          "probes": [
-            "dagre-d3",
-            "dagre-wrapper",
-            "elk"
-          ],
-          "witness": "fresh_svg"
         }
       ]
     },
     {
       "diagram_id": "swimlane-beta",
       "source": "sources/swimlane-beta.mmd",
-      "source_sha256": "5a4e3a6a8548ab474f30394d19535ea7a0a1586539dd337ff78bb68d11d11f53",
+      "source_sha256": "53905f2ed81c6ed71cdcbecb75d88a367140f4949c687aad5c6707dbd4b9c7f5",
       "svg": "rendered/swimlane-beta.svg",
-      "svg_sha256": "b02f1438e13bfa90e63b65cc04812181a3f191d75f4ef7ab335c3c4dad4dd981",
+      "svg_sha256": "bf81d260035aefa9e31162997cd912b33689de93b7f5c22b6a52b2c5956dc86c",
       "semantic_object_count": 17,
       "configuration_fields": [
         {
@@ -4455,6 +5311,45 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "redux-color",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "neo",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "swimlane",
+          "probes": [
+            "dagre",
+            "elk",
+            "swimlane"
           ],
           "witness": "fresh_svg"
         },
@@ -4501,7 +5396,7 @@
     {
       "diagram_id": "timeline",
       "source": "sources/timeline.mmd",
-      "source_sha256": "b7546d397ba713b0d8c22768f5c9a9da7a9abef9f1a0498f1a90f58ee883ea09",
+      "source_sha256": "6c654a2fcbbb6436ffc298027d29470fd6c6a53e288a9af723a22734894af547",
       "svg": "rendered/timeline.svg",
       "svg_sha256": "fefab0eeb323d428920191c4155f02d92c0e8c12d3733ee4b608fb525f41d8ac",
       "semantic_object_count": 12,
@@ -4530,6 +5425,44 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "default",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "classic",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
           ],
           "witness": "fresh_svg"
         },
@@ -4791,7 +5724,7 @@
     {
       "diagram_id": "treeView-beta",
       "source": "sources/treeView-beta.mmd",
-      "source_sha256": "39e194f4f1ab00f7120412902b9daad7bb8dda5395ca9ca7282a12704ab5e92f",
+      "source_sha256": "ce4f94dd32e6d3cf5823d67990593b0f7efbe42787d2c3bd6fa51d4c77cf068d",
       "svg": "rendered/treeView-beta.svg",
       "svg_sha256": "769b207e9521e5fdde8c0d0ef02480c823412cf1c52ef5454a9746ad39ecfd79",
       "semantic_object_count": 38,
@@ -4820,6 +5753,44 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "default",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "classic",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
           ],
           "witness": "fresh_svg"
         },
@@ -4913,9 +5884,9 @@
     {
       "diagram_id": "venn-beta",
       "source": "sources/venn-beta.mmd",
-      "source_sha256": "36276d8e0e089860a74c3c4b0e0b00bdee07b875d54f86edeb054299abb93082",
+      "source_sha256": "0346ea7280a5fc5cc450be0b40a93f7dc571234b9b1ed861e7fafb44aa7451cd",
       "svg": "rendered/venn-beta.svg",
-      "svg_sha256": "fa3aceedf26c6f7bc8463d5e0c88c8d86a18ea0f3837959cdaf29ed993390ca7",
+      "svg_sha256": "1ebc8c24ba1212ef8920f3dd5196375f8ae72d5b67ce92b416f04e95d1b37d62",
       "semantic_object_count": 14,
       "configuration_fields": [
         {
@@ -4942,6 +5913,44 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "redux-color",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "neo",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
           ],
           "witness": "fresh_svg"
         },
@@ -4987,7 +5996,7 @@
     {
       "diagram_id": "wardley-beta",
       "source": "sources/wardley-beta.mmd",
-      "source_sha256": "078ed01be0f17ef30a5e154b92fddf3bfb01b23bead11663018b78f9374f6b2e",
+      "source_sha256": "ed8a6e8462ed919169a937e88f2f9455a449006848846cc2f975d930d9e60730",
       "svg": "rendered/wardley-beta.svg",
       "svg_sha256": "68ac71d5b2d2cf9d8816c648989b6a78f270ffcfe5f550437ca276dedcad3e8c",
       "semantic_object_count": 14,
@@ -5016,6 +6025,44 @@
           "probes": [
             false,
             true
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "theme",
+          "showcase_value": "default",
+          "probes": [
+            "default",
+            "base",
+            "dark",
+            "forest",
+            "neutral",
+            "neo",
+            "neo-dark",
+            "redux",
+            "redux-dark",
+            "redux-color",
+            "redux-dark-color",
+            "null"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "look",
+          "showcase_value": "classic",
+          "probes": [
+            "classic",
+            "handDrawn",
+            "neo"
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "layout",
+          "showcase_value": "dagre",
+          "probes": [
+            "dagre",
+            "elk"
           ],
           "witness": "fresh_svg"
         },

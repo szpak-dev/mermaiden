@@ -1,4 +1,4 @@
-.PHONY: architecture ci compat compatibility configuration-proofs configuration-render-shard diagrams-preview diagrams-test diagrams-validate diagrams-validate-core documentation-check documentation-linkcheck documentation-links fast-check format integration integration-core mermaid-sync mutation-contract package-check pytest quality
+.PHONY: architecture ci compat compatibility configuration-proofs configuration-render-shard diagrams-preview diagrams-test diagrams-validate diagrams-validate-core documentation-check documentation-linkcheck documentation-links fast-check format integration integration-core mermaid-freshness mermaid-sync mutation-contract package-check pytest quality
 
 UV := uv
 RUN := $(UV) run --no-sync
@@ -24,7 +24,12 @@ documentation-linkcheck:
 
 mermaid-sync:
 	@mermaid_version="$$(PYTHONPATH=src $(PYTHON) -c 'from mermaiden import Application; print(Application.create().mermaid_version)')"; \
-	PUPPETEER_SKIP_DOWNLOAD=true npm install --save-dev --save-exact "@mermaid-js/mermaid-cli@$$mermaid_version"
+	mermaid_cli_version="$$(PYTHONPATH=src $(PYTHON) -c 'from mermaiden import Application; print(Application.create().mermaid_cli_version)')"; \
+	PUPPETEER_SKIP_DOWNLOAD=true npm install --save-dev --save-exact \
+		"mermaid@$$mermaid_version" "@mermaid-js/mermaid-cli@$$mermaid_cli_version"
+
+mermaid-freshness:
+	@NPM_CONFIG_CACHE=.dev/npm-cache PYTHONPATH=. $(PYTHON) -m pytest -m freshness tests/mermaiden/cli/test_freshness.py
 
 format:
 	@$(RUN) ruff format .

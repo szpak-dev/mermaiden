@@ -31,13 +31,6 @@
         "realization"
       ]
     },
-    "ClassRenderer values": {
-      "enum": [
-        "dagre-d3",
-        "dagre-wrapper",
-        "elk"
-      ]
-    },
     "CommitType values": {
       "enum": [
         "NORMAL",
@@ -135,12 +128,6 @@
         "rounded"
       ]
     },
-    "FlowchartRenderer values": {
-      "enum": [
-        "dagre-wrapper",
-        "elk"
-      ]
-    },
     "GanttDisplayMode values": {
       "enum": [
         "",
@@ -196,6 +183,29 @@
       "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
       "description": "ASCII class member name."
     },
+    "MermaidLook values": {
+      "enum": [
+        "classic",
+        "handDrawn",
+        "neo"
+      ]
+    },
+    "MermaidTheme values": {
+      "enum": [
+        "default",
+        "base",
+        "dark",
+        "forest",
+        "neutral",
+        "neo",
+        "neo-dark",
+        "redux",
+        "redux-dark",
+        "redux-color",
+        "redux-dark-color",
+        "null"
+      ]
+    },
     "MessageKind values": {
       "enum": [
         "solid",
@@ -211,6 +221,12 @@
         "abstract"
       ]
     },
+    "MindmapColorBy values": {
+      "enum": [
+        "branch",
+        "depth"
+      ]
+    },
     "NotePosition values": {
       "enum": [
         "left",
@@ -224,6 +240,12 @@
     "OptionalText": {
       "pattern": "^(?:[^\\s\\x00-\\x1f\\x7f-\\x9f](?:[^\\x00-\\x1f\\x7f-\\x9f]*[^\\s\\x00-\\x1f\\x7f-\\x9f])?)?$",
       "description": "Empty or single-line text without surrounding whitespace or control characters."
+    },
+    "PacketBitOrder values": {
+      "enum": [
+        "ascending",
+        "descending"
+      ]
     },
     "ParticipantKind values": {
       "enum": [
@@ -316,12 +338,8 @@
         "right"
       ]
     },
-    "StateRenderer values": {
-      "enum": [
-        "dagre-d3",
-        "dagre-wrapper",
-        "elk"
-      ]
+    "Supported Mermaid layout algorithm.": {
+      "pattern": "^(?:dagre|elk|swimlane)$"
     },
     "TargetKind values": {
       "enum": [

@@ -14,7 +14,7 @@ class ObjectMapping(RootModel[dict[str, object]]):
 
 class TestMermaidConfigurationSiege:
     def _contains_json_null(self, value: object) -> bool:
-        return "null" in json.dumps(value, separators=(",", ":"))
+        return "null" in json.dumps(value, separators=(",", ":")).replace('"null"', "")
 
     def test_diagram_configuration_validates_its_values_and_rejects_unknown_fields(self) -> None:
         application = Application.create()
@@ -61,10 +61,12 @@ class TestMermaidConfigurationSiege:
             ("C4Context", "boundaryFontSize", 0, 0.5),
             ("C4Context", "messageFontSize", "proof", "12"),
             ("architecture-beta", "iconSize", 0, 1),
-            ("flowchart", "defaultRenderer", "dagre-d3", "elk"),
+            ("flowchart", "minNodeWidth", 0, 1),
             ("gantt", "numberSectionStyles", 0, 1),
             ("journey", "taskFontSize", "proof", "12"),
             ("packet", "bitsPerRow", 1.5, 2),
+            ("stateDiagram-v2", "wrappingWidth", 0, 1),
+            ("stateDiagram-v2", "minNodeWidth", -1, 1),
         ),
     )
     def test_renderer_unsafe_configuration_is_rejected_without_mutation_and_recovers(
@@ -226,7 +228,7 @@ class TestMermaidConfigurationEvidence:
         )
 
         assert '"nodeLabel": {"width": 75.0, "height": 100.0, "x": -25.0, "y": 0.0}' in application.render(git_graph)
-        assert '"rectFill": "#f9f9f9"' in application.render(requirement)
+        assert '"rect_fill": "#f9f9f9"' in application.render(requirement)
 
     def test_configuration_serialization_preserves_false_zero_and_empty_values(self) -> None:
         application = Application.create()

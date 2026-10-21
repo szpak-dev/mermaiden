@@ -26,6 +26,7 @@ class MermaidRenderDiagnostic:
 class MermaidRenderReport:
     diagram_id: str
     mermaid_version: str
+    mermaid_cli_version: str
     svg: str = ""
     diagnostics: tuple[MermaidRenderDiagnostic, ...] = ()
 
@@ -40,4 +41,4 @@ class MermaidCliResult:
     svgs: Mapping[str, str]
     output: str = ""
     timed_out: bool = False
-    observed_version: str = ""
+    observed_cli_version: str = ""

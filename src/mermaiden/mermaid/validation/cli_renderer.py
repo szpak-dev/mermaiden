@@ -18,8 +18,12 @@ class MermaidCliRenderer(MermaidCli):
     timeout_seconds: int = field(default=60, init=False)
 
     @property
+    def mermaid_version(self) -> str:
+        return self.schemas.mermaid_version
+
+    @property
     def version(self) -> str:
-        return self.schemas.version
+        return self.schemas.mermaid_cli_version
 
     def render(self, sources: Mapping[str, str]) -> MermaidCliResult:
         try:
@@ -41,9 +45,9 @@ class MermaidCliRenderer(MermaidCli):
             return MermaidCliResult(None, {}, str(error))
         if version.returncode:
             return MermaidCliResult(version.returncode, {}, version.stderr.strip() or version.stdout.strip())
-        observed_version = version.stdout.strip() or "<empty>"
-        if observed_version != self.version:
-            return MermaidCliResult(0, {}, observed_version=observed_version)
+        observed_cli_version = version.stdout.strip() or "<empty>"
+        if observed_cli_version != self.version:
+            return MermaidCliResult(0, {}, observed_cli_version=observed_cli_version)
         with tempfile.TemporaryDirectory(prefix="mermaiden-") as temporary:
             root = Path(temporary)
             input_path = root / "diagrams.md"
@@ -78,7 +82,7 @@ class MermaidCliRenderer(MermaidCli):
                 if (path := root / f"diagrams.rendered-{index}.svg").exists()
             }
             output = process.stderr.strip() or process.stdout.strip()
-            return MermaidCliResult(process.returncode, svgs, output, observed_version=observed_version)
+            return MermaidCliResult(process.returncode, svgs, output, observed_cli_version=observed_cli_version)
 
     def markdown(self, sources: Mapping[str, str]) -> str:
         return "\n".join(f"## {diagram_id}\n```mermaid\n{source}```" for diagram_id, source in sources.items())

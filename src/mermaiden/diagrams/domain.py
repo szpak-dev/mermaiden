@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from enum import StrEnum
 from typing import Annotated, ClassVar
 
 from pydantic import BaseModel, ConfigDict, Field, InstanceOf, RootModel, SerializeAsAny
@@ -119,6 +120,57 @@ class OmittableText(
     pass
 
 
+class MermaidTheme(StrEnum):
+    DEFAULT = "default"
+    BASE = "base"
+    DARK = "dark"
+    FOREST = "forest"
+    NEUTRAL = "neutral"
+    NEO = "neo"
+    NEO_DARK = "neo-dark"
+    REDUX = "redux"
+    REDUX_DARK = "redux-dark"
+    REDUX_COLOR = "redux-color"
+    REDUX_DARK_COLOR = "redux-dark-color"
+    NONE = "null"
+
+
+class MermaidLook(StrEnum):
+    CLASSIC = "classic"
+    HAND_DRAWN = "handDrawn"
+    NEO = "neo"
+
+
+class OmittableTheme(OmittableConfigurationValue[MermaidTheme]):
+    pass
+
+
+class OmittableLook(OmittableConfigurationValue[MermaidLook]):
+    pass
+
+
+class OmittableLayout(
+    OmittableConfigurationValue[
+        Annotated[str, Field(pattern=r"^(?:dagre|elk|swimlane)$", description="Supported Mermaid layout algorithm.")]
+    ]
+):
+    pass
+
+
+MermaidThemeField = Annotated[
+    OmittableTheme,
+    Field(alias="theme", exclude_if=OmittableTheme().excludes),
+]
+MermaidLookField = Annotated[
+    OmittableLook,
+    Field(alias="look", exclude_if=OmittableLook().excludes),
+]
+MermaidLayoutField = Annotated[
+    OmittableLayout,
+    Field(alias="layout", exclude_if=OmittableLayout().excludes),
+]
+
+
 class MermaidConfiguration(MermaidConfigurationModel):
     wrap: bool
     diagrams: Mapping[str, SerializeAsAny["MermaidDiagramConfiguration"]]
@@ -138,6 +190,9 @@ class MermaidDiagramConfiguration(MermaidConfigurationModel):
         Field(alias="useWidth", exclude_if=OmittableNumber().excludes),
     ] = Field(default_factory=OmittableNumber)
     use_max_width: Annotated[bool, Field(alias="useMaxWidth")] = True
+    theme: MermaidThemeField = Field(default_factory=OmittableTheme)
+    look: MermaidLookField = Field(default_factory=OmittableLook)
+    layout: MermaidLayoutField = Field(default_factory=OmittableLayout)
 
     def document(self, source: str) -> MermaidConfiguration:
         return MermaidConfiguration(wrap=self.wrap, diagrams={source: self})

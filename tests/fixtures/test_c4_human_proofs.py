@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict
 
 from mermaiden import Application
 from tests.fixtures.c4_human_proofs import C4HumanProofCatalog
+from tests.fixtures.configuration_proofs import has_invalid_geometry
 
 ROOT = Path(__file__).resolve().parents[2]
 PROOF_ROOT = ROOT / "docs" / "contracts" / "configuration-rendering" / "c4-human-layout"
@@ -25,6 +26,7 @@ class C4HumanProofManifest(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     mermaid_version: str
+    mermaid_cli_version: str
     diagram_count: int
     diagrams: tuple[C4HumanProofManifestDiagram, ...]
 
@@ -87,7 +89,7 @@ class TestC4HumanProofs:
             assert document.tag == "{http://www.w3.org/2000/svg}svg"
             assert document.attrib.get("viewBox")
             assert len(shapes) >= 12
-            assert not any(token in svg for token in ("NaN", "Infinity"))
+            assert not has_invalid_geometry(svg)
             assert not any(
                 {"error-icon", "error-text"}.intersection(element.attrib.get("class", "").split())
                 for element in document.iter()
@@ -96,7 +98,8 @@ class TestC4HumanProofs:
     def test_manifest_binds_every_c4_human_proof(self) -> None:
         manifest = C4HumanProofManifest.model_validate_json((PROOF_ROOT / "manifest.json").read_text(encoding="utf-8"))
 
-        assert manifest.mermaid_version == "11.16.0"
+        assert manifest.mermaid_version == "12.2.0"
+        assert manifest.mermaid_cli_version == "12.0.0"
         assert manifest.diagram_count == 5
         for diagram in manifest.diagrams:
             source = (PROOF_ROOT / diagram.source).read_text(encoding="utf-8")

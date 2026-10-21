@@ -94,8 +94,17 @@
       ]
     },
     "configure": {
+      "$.layout": [
+        "Supported Mermaid layout algorithm."
+      ],
       "$.lineHops": [
         "LineHops values"
+      ],
+      "$.look": [
+        "MermaidLook values"
+      ],
+      "$.theme": [
+        "MermaidTheme values"
       ]
     },
     "move_element": {

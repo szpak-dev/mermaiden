@@ -307,9 +307,9 @@ class TestClassMembers:
 
         assert (
             application.render(diagram) == "---\nconfig:\n  wrap: false\n"
-            '  class: {"useMaxWidth": true, "titleTopMargin": 25, "arrowMarkerAbsolute": false, '
-            '"dividerMargin": 10.0, "padding": 5.0, "textHeight": 10.0, '
-            '"defaultRenderer": "dagre-wrapper", "diagramPadding": 20, "htmlLabels": false, '
+            '  class: {"useMaxWidth": true, "theme": "redux-color", "look": "neo", '
+            '"titleTopMargin": 25, "arrowMarkerAbsolute": false, "dividerMargin": 10.0, "padding": 5.0, '
+            '"textHeight": 10.0, "diagramPadding": 20, "htmlLabels": false, '
             '"hideEmptyMembersBox": false, "hierarchicalNamespaces": true}\n'
             "---\nclassDiagram\n"
             f'class c_v_order["Order"] {{\n  +submit() void{suffix}\n}}\n'

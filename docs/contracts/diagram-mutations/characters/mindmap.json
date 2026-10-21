@@ -88,8 +88,20 @@
       ]
     },
     "configure": {
+      "$.colorBy": [
+        "MindmapColorBy values"
+      ],
+      "$.layout": [
+        "Supported Mermaid layout algorithm."
+      ],
       "$.layoutAlgorithm": [
         "Identifier"
+      ],
+      "$.look": [
+        "MermaidLook values"
+      ],
+      "$.theme": [
+        "MermaidTheme values"
       ]
     },
     "move_element": {
