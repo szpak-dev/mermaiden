@@ -19,11 +19,9 @@ class TestMermaidConfigurationSiege:
     def test_diagram_configuration_validates_its_values_and_rejects_unknown_fields(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("block")
-
-        with pytest.raises(RuntimeError, match="'configure' has invalid arguments"):
+        with pytest.raises(RuntimeError, match=r"'configure' has invalid arguments"):
             application.execute(diagram, "configure", {"padding": "invalid"})
-
-        with pytest.raises(RuntimeError, match="'configure' has invalid arguments"):
+        with pytest.raises(RuntimeError, match=r"'configure' has invalid arguments"):
             application.execute(diagram, "configure", {"paddding": 12})
 
     @pytest.mark.parametrize(
@@ -45,14 +43,10 @@ class TestMermaidConfigurationSiege:
             {"message_font_size": "12px"},
         ),
     )
-    def test_c4_configuration_rejects_invalid_layout_values(
-        self,
-        values: Mapping[str, object],
-    ) -> None:
+    def test_c4_configuration_rejects_invalid_layout_values(self, values: Mapping[str, object]) -> None:
         application = Application.create()
         diagram = application.create_diagram("C4Context")
-
-        with pytest.raises(RuntimeError, match="'configure' has invalid arguments"):
+        with pytest.raises(RuntimeError, match=r"'configure' has invalid arguments"):
             application.execute(diagram, "configure", values)
 
     @pytest.mark.parametrize(
@@ -70,26 +64,18 @@ class TestMermaidConfigurationSiege:
         ),
     )
     def test_renderer_unsafe_configuration_is_rejected_without_mutation_and_recovers(
-        self,
-        diagram_id: str,
-        field: str,
-        rejected: object,
-        recovery: object,
+        self, diagram_id: str, field: str, rejected: object, recovery: object
     ) -> None:
         application = Application.create()
         fixture = FixtureCatalog(application).fixture(diagram_id)
         diagram = application.restore(fixture.snapshot)
         before_snapshot = application.snapshot(diagram).to_dict()
         before_source = application.render(diagram)
-
-        with pytest.raises(RuntimeError, match="'configure' has invalid arguments"):
+        with pytest.raises(RuntimeError, match=r"'configure' has invalid arguments"):
             application.execute(diagram, "configure", {field: rejected})
-
         assert application.snapshot(diagram).to_dict() == before_snapshot
         assert application.render(diagram) == before_source
-
         application.execute(diagram, "configure", {field: recovery})
-
         assert application.snapshot(diagram).to_dict() != before_snapshot
         assert application.render(diagram) != before_source
 
@@ -148,46 +134,31 @@ class TestMermaidConfigurationSiege:
         ),
     )
     def test_configuration_enforces_mermaid_numeric_boundaries(
-        self,
-        diagram_id: str,
-        field: str,
-        boundary: float,
-        outside: float,
+        self, diagram_id: str, field: str, boundary: float, outside: float
     ) -> None:
         application = Application.create()
         diagram = application.create_diagram(diagram_id)
-
         application.execute(diagram, "configure", {field: boundary})
-
-        with pytest.raises(RuntimeError, match="'configure' has invalid arguments"):
+        with pytest.raises(RuntimeError, match=r"'configure' has invalid arguments"):
             application.execute(diagram, "configure", {field: outside})
 
     @pytest.mark.parametrize(
-        ("diagram_id", "values"),
-        (
-            ("erDiagram", {"layoutDirection": "XX"}),
-            ("gantt", {"weekday": "funday"}),
-        ),
+        ("diagram_id", "values"), (("erDiagram", {"layoutDirection": "XX"}), ("gantt", {"weekday": "funday"}))
     )
     def test_configuration_rejects_values_outside_mermaid_enums(
-        self,
-        diagram_id: str,
-        values: Mapping[str, object],
+        self, diagram_id: str, values: Mapping[str, object]
     ) -> None:
         application = Application.create()
         diagram = application.create_diagram(diagram_id)
-
-        with pytest.raises(RuntimeError, match="'configure' has invalid arguments"):
+        with pytest.raises(RuntimeError, match=r"'configure' has invalid arguments"):
             application.execute(diagram, "configure", values)
 
     def test_every_diagram_has_strict_non_nullable_configuration_defaults(self) -> None:
         application = Application.create()
-
         for info in application.available_diagrams():
             payload_type = application.command_payload(info.id, "configure")
             schema = payload_type.schema()
             configuration = payload_type.validate({})
-
             assert schema["additionalProperties"] is False
             assert "Unconfigured" not in json.dumps(schema)
             properties = ObjectMapping.model_validate(schema["properties"]).root
@@ -200,7 +171,6 @@ class TestMermaidConfigurationSiege:
             assert "useWidth" not in configuration.values
             assert not self._contains_json_null(schema)
             assert not self._contains_json_null(configuration.values)
-
             with pytest.raises(ValidationError):
                 payload_type.validate({"unknown_configuration_field": True})
 
@@ -211,7 +181,6 @@ class TestMermaidConfigurationEvidence:
         diagram = application.create_diagram("block")
         application.execute(diagram, "configure", {"padding": 12})
         application.execute(diagram, "add_block", {"id": "example", "label": "Example"})
-
         assert application.render(diagram).startswith(
             '---\nconfig:\n  wrap: true\n  block: {"useMaxWidth": true, "padding": 12.0}\n---\nblock\n'
         )
@@ -220,13 +189,12 @@ class TestMermaidConfigurationEvidence:
         application = Application.create()
         git_graph = application.create_diagram("gitGraph")
         requirement = application.create_diagram("requirementDiagram")
-        application.execute(git_graph, "add_commit", {"id": "commit", "label": "Commit"})
+        application.execute(git_graph, "add_commit", {"id": "commit_example", "label": "Commit"})
         application.execute(
             requirement,
             "add_requirement",
-            {"id": "requirement", "requirement_id": "REQ-1", "text": "Requirement"},
+            {"id": "requirement_example", "requirement_id": "REQ-1", "text": "Requirement"},
         )
-
         assert '"nodeLabel": {"width": 75.0, "height": 100.0, "x": -25.0, "y": 0.0}' in application.render(git_graph)
         assert '"rect_fill": "#f9f9f9"' in application.render(requirement)
 
@@ -238,7 +206,6 @@ class TestMermaidConfigurationEvidence:
         application.execute(architecture, "add_service", {"id": "example_service", "label": "Example Service"})
         application.execute(pie, "add_slice", {"id": "example_slice", "label": "Example Slice", "value": 1})
         application.execute(tree, "add_directory", {"id": "example_root", "label": "Example Root"})
-
         assert '"randomize": false' in application.render(architecture)
         assert '"donutHole": 0.0' in application.render(pie)
         tree_source = application.render(tree)
@@ -250,7 +217,6 @@ class TestMermaidConfigurationEvidence:
         diagram = application.create_diagram("architecture-beta")
         application.execute(diagram, "add_service", {"id": "example", "label": "Example"})
         source = application.render(diagram)
-
         assert '"useMaxWidth": true' in source
         assert '"padding": 40.0' in source
         assert '"nodeSeparation": 75.0' in source
@@ -270,12 +236,10 @@ class TestMermaidConfigurationEvidence:
         ),
     )
     def test_architecture_configuration_accepts_values_left_unbounded_by_mermaid(
-        self,
-        values: Mapping[str, object],
+        self, values: Mapping[str, object]
     ) -> None:
         application = Application.create()
         diagram = application.create_diagram("architecture-beta")
-
         application.execute(diagram, "configure", values)
 
     def test_c4_configuration_uses_mermaids_concrete_layout_defaults(self) -> None:
@@ -283,19 +247,14 @@ class TestMermaidConfigurationEvidence:
         diagram = application.create_diagram("C4Context")
         application.execute(diagram, "add_person", {"id": "example", "label": "Example"})
         source = application.render(diagram)
-
         assert '"diagramMarginX": 50' in source
         assert '"c4ShapePadding": 20' in source
         assert '"width": 216' in source
         assert '"c4ShapeInRow": 4' in source
         assert '"messageFontSize": 12.0' in source
 
-    @pytest.mark.parametrize(
-        "weekday",
-        ("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"),
-    )
+    @pytest.mark.parametrize("weekday", ("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"))
     def test_gantt_configuration_accepts_every_mermaid_weekday(self, weekday: str) -> None:
         application = Application.create()
         diagram = application.create_diagram("gantt")
-
         application.execute(diagram, "configure", {"weekday": weekday})

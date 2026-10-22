@@ -1,9 +1,0 @@
-[importlinter]
-root_package = example
-
-[importlinter:contract:sibling_features]
-name = Sibling features do not import each other
-type = independence
-modules =
-    example.alpha
-    example.beta

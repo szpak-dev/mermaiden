@@ -14,17 +14,10 @@ class TestSequenceAndStateTextRendering:
         application.execute(
             diagram,
             "add_participant",
-            {
-                "id": "first_example",
-                "label": "Old First Example",
-                "kind": "actor",
-                "box_id": "box_example",
-            },
+            {"id": "first_example", "label": "Old First Example", "kind": "actor", "box_id": "box_example"},
         )
         application.execute(
-            diagram,
-            "add_participant",
-            {"id": "second_example", "label": "Second Example", "kind": "control"},
+            diagram, "add_participant", {"id": "second_example", "label": "Second Example", "kind": "control"}
         )
         application.execute(diagram, "control", {"id": "control_example", "kind": "loop", "label": "Old Loop"})
         application.execute(
@@ -48,63 +41,37 @@ class TestSequenceAndStateTextRendering:
                 "text": "Old Note Example",
             },
         )
-
         application.execute(
             diagram,
             "update_element",
-            {
-                "id": "box_example",
-                "kind": "participant_box",
-                "changes": {"label": "Box; literal #59; example"},
-            },
+            {"id": "box_example", "kind": "participant_box", "changes": {"label": "Box; literal #59; example"}},
         )
         application.execute(
             diagram,
             "update_element",
-            {
-                "id": "first_example",
-                "kind": "participant",
-                "changes": {"label": "Participant; literal #59; example"},
-            },
+            {"id": "first_example", "kind": "participant", "changes": {"label": "Participant; literal #59; example"}},
         )
         application.execute(
             diagram,
             "update_relation",
-            {
-                "id": "message_example",
-                "kind": "message",
-                "changes": {"label": "Message; literal #59; example"},
-            },
+            {"id": "message_example", "kind": "message", "changes": {"label": "Message; literal #59; example"}},
         )
         application.execute(
             diagram,
             "update_relation",
-            {
-                "id": "control_example",
-                "kind": "control",
-                "changes": {"label": "Loop; literal #59; example"},
-            },
+            {"id": "control_example", "kind": "control", "changes": {"label": "Loop; literal #59; example"}},
         )
         application.execute(
             diagram,
             "update_annotation",
-            {
-                "id": "note_example",
-                "kind": "sequence_note",
-                "changes": {"text": "Note; literal #59; example"},
-            },
+            {"id": "note_example", "kind": "sequence_note", "changes": {"text": "Note; literal #59; example"}},
         )
-
         snapshot = application.snapshot(diagram).to_dict()
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(snapshot)))
-
         for original, encoded in (
             ("Box; literal #59; example", "box Box#59; literal #35;59#59; example"),
-            (
-                "Participant; literal #59; example",
-                "actor first_example as Participant#59; literal #35;59#59; example",
-            ),
+            ("Participant; literal #59; example", "actor first_example as Participant#59; literal #35;59#59; example"),
             ("Message; literal #59; example", ": Message#59; literal #35;59#59; example"),
             ("Loop; literal #59; example", "loop Loop#59; literal #35;59#59; example"),
             ("Note; literal #59; example", ": Note#59; literal #35;59#59; example"),
@@ -132,9 +99,7 @@ class TestSequenceAndStateTextRendering:
             {"id": "first_example", "label": expected[1], "kind": "actor", "box_id": "box_example"},
         )
         application.execute(
-            diagram,
-            "add_participant",
-            {"id": "second_example", "label": "Second Example", "kind": "control"},
+            diagram, "add_participant", {"id": "second_example", "label": "Second Example", "kind": "control"}
         )
         application.execute(diagram, "control", {"id": "control_example", "kind": "loop", "label": expected[3]})
         application.execute(
@@ -159,9 +124,7 @@ class TestSequenceAndStateTextRendering:
             },
         )
         before = application.snapshot(diagram).to_dict()
-
         report = application.validate_render(diagram)
-
         assert report.success, report.diagnostics
         svg = ElementTree.fromstring(report.svg)
         text = " ".join(
@@ -181,18 +144,11 @@ class TestSequenceAndStateTextRendering:
         application.execute(
             diagram,
             "add_note",
-            {
-                "id": "note_example",
-                "state_id": "state_example",
-                "position": "left",
-                "text": "Annotation; proof",
-            },
+            {"id": "note_example", "state_id": "state_example", "position": "left", "text": "Annotation; proof"},
         )
         before = application.snapshot(diagram).to_dict()
-
         source = application.render(diagram)
         report = application.validate_render(diagram)
-
         assert '"Annotation; proof"' in source
         assert report.success, report.diagnostics
         svg = ElementTree.fromstring(report.svg)
@@ -221,14 +177,10 @@ class TestRenderValidation:
         }
         for relation_kind in markers:
             application.execute(
-                diagram,
-                "add_class",
-                {"id": f"{relation_kind}_source", "label": f"{relation_kind} source"},
+                diagram, "add_class", {"id": f"{relation_kind}_source", "label": f"{relation_kind} source"}
             )
             application.execute(
-                diagram,
-                "add_class",
-                {"id": f"{relation_kind}_target", "label": f"{relation_kind} target"},
+                diagram, "add_class", {"id": f"{relation_kind}_target", "label": f"{relation_kind} target"}
             )
             application.execute(
                 diagram,
@@ -240,9 +192,7 @@ class TestRenderValidation:
                     "relation_kind": relation_kind,
                 },
             )
-
         report = application.validate_render(diagram)
-
         assert report.success, report.diagnostics
         svg = ElementTree.fromstring(report.svg)
         relation_paths = tuple(
@@ -274,9 +224,7 @@ class TestRenderValidation:
                     "annotations": ["injectable", "immutable"],
                 },
             )
-
         report = application.validate_render(diagram)
-
         assert not report.success
         assert report.diagnostics[0].code == "svg_error"
         assert report.diagnostics[0].message == "Mermaid produced an error SVG."
@@ -286,17 +234,16 @@ class TestRenderValidation:
     def test_class_text_preserves_slashes_in_mermaid_source_and_svg(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("classDiagram")
-        application.execute(diagram, "add_class", {"id": "diagrams/api", "label": "diagrams/api"})
-
+        application.execute(diagram, "add_class", {"id": "diagrams/api_example", "label": "diagrams/api_example"})
         snapshot = application.snapshot(diagram).to_dict()
         source = application.render(diagram)
         report = application.validate_render(diagram)
-        assert '"id": "diagrams/api"' in json.dumps(snapshot)
-        assert '["diagrams/api"]' in source
+        assert '"id": "diagrams/api_example"' in json.dumps(snapshot)
+        assert '["diagrams/api_example"]' in source
         assert "#47;" not in source
         assert report.success, report.diagnostics
         svg = ElementTree.fromstring(report.svg)
-        assert any("diagrams/api" in "".join(element.itertext()) for element in svg.iter())
+        assert any("diagrams/api_example" in "".join(element.itertext()) for element in svg.iter())
         assert "&#47;" not in report.svg
 
     @pytest.mark.integration
@@ -313,18 +260,16 @@ class TestRenderValidation:
             diagram,
             "add_relationship",
             {
-                "id": "project_publications",
+                "id": "project_publications_example",
                 "source_id": project_id,
                 "target_id": publication_id,
                 "label": "publishes",
                 "target_cardinality": "zero_or_more",
             },
         )
-
         snapshot = application.snapshot(diagram).to_dict()
         source = application.render(diagram)
         report = application.validate_render(application.restore(snapshot))
-
         assert project_id in json.dumps(snapshot)
         assert project_id not in source
         assert "e_h_" in source
@@ -334,25 +279,23 @@ class TestRenderValidation:
     def test_class_text_is_rendered_literally_in_labels_relations_and_notes(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("classDiagram")
-        application.execute(diagram, "add_namespace", {"id": "sales", "label": "Old name"})
-        application.execute(diagram, "add_class", {"id": "Order[Item]", "label": 'Order "żółć"', "parent_id": "sales"})
-        application.execute(diagram, "add_class", {"id": "invoice", "label": "Invoice"})
+        application.execute(diagram, "add_namespace", {"id": "sales_example", "label": "Old name"})
+        application.execute(
+            diagram, "add_class", {"id": "Order[Item]_example", "label": 'Order "żółć"', "parent_id": "sales_example"}
+        )
+        application.execute(diagram, "add_class", {"id": "invoice_example", "label": "Invoice"})
         application.execute(
             diagram,
             "update_element",
-            {
-                "id": "sales",
-                "kind": "class_namespace",
-                "changes": {"label": 'Sales "core"'},
-            },
+            {"id": "sales_example", "kind": "class_namespace", "changes": {"label": 'Sales "core"'}},
         )
         application.execute(
             diagram,
             "add_relation",
             {
-                "id": "billing",
-                "source_id": "Order[Item]",
-                "target_id": "invoice",
+                "id": "billing_example",
+                "source_id": "Order[Item]_example",
+                "target_id": "invoice_example",
                 "label": "bills: order",
                 "source_label": 'one "order"',
                 "target_label": "0..*",
@@ -361,16 +304,10 @@ class TestRenderValidation:
         application.execute(
             diagram,
             "add_note",
-            {
-                "id": "note",
-                "class_id": "Order[Item]",
-                "text": 'Use "quotes"; <b>literal</b> & #quot;',
-            },
+            {"id": "note_example", "class_id": "Order[Item]_example", "text": 'Use "quotes"; <b>literal</b> & #quot;'},
         )
         before = application.snapshot(diagram).to_dict()
-
         report = application.validate_render(application.restore(before))
-
         assert report.success, report.diagnostics
         svg = ElementTree.fromstring(report.svg)
         text = " ".join(
@@ -400,7 +337,7 @@ class TestRenderValidation:
             diagram,
             "add_class",
             {
-                "id": "catalog",
+                "id": "catalog_example",
                 "label": "Catalog",
                 "attributes": [
                     {
@@ -419,12 +356,7 @@ class TestRenderValidation:
                                 {"name": "Key"},
                                 {
                                     "name": "List",
-                                    "arguments": [
-                                        {
-                                            "name": "Pair",
-                                            "arguments": [{"name": "Left"}, {"name": "Right"}],
-                                        }
-                                    ],
+                                    "arguments": [{"name": "Pair", "arguments": [{"name": "Left"}, {"name": "Right"}]}],
                                 },
                             ],
                         },
@@ -434,10 +366,7 @@ class TestRenderValidation:
                                 "name": "key",
                                 "type": {
                                     "name": "Map",
-                                    "arguments": [
-                                        {"name": "Key"},
-                                        {"name": "List", "arguments": [{"name": "Value"}]},
-                                    ],
+                                    "arguments": [{"name": "Key"}, {"name": "List", "arguments": [{"name": "Value"}]}],
                                 },
                             },
                             {"name": "limit", "type": {"name": "int"}},
@@ -452,9 +381,7 @@ class TestRenderValidation:
                 ],
             },
         )
-
         report = application.validate_render(diagram)
-
         assert report.success, report.diagnostics
         svg = ElementTree.fromstring(report.svg)
         text = " ".join(
@@ -483,11 +410,9 @@ class TestRenderValidation:
     def test_draft_diagram_can_be_persisted_but_not_rendered(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("sequenceDiagram")
-
         payload = application.snapshot(diagram).to_dict()
         restored = application.restore(payload)
         report = application.validate_render(diagram)
-
         assert application.snapshot(restored).to_dict() == payload
         assert not report.success
         assert report.diagram_id == "sequenceDiagram"
@@ -495,36 +420,25 @@ class TestRenderValidation:
         assert report.mermaid_cli_version == application.mermaid_cli_version
         assert report.diagnostics[0].code == "diagram_invalid"
         assert "Diagram requires at least one element" in report.diagnostics[0].details
-        with pytest.raises(RuntimeError, match="Cannot render invalid diagram 'sequenceDiagram'"):
+        with pytest.raises(RuntimeError, match=r"Cannot render invalid diagram 'sequenceDiagram'"):
             application.render(restored)
 
     def test_a_valid_snapshot_tampered_into_an_invalid_state_cannot_be_restored(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("sequenceDiagram")
-        application.execute(
-            diagram,
-            "add_participant",
-            {"id": "participant_example", "label": "Participant Example"},
-        )
+        application.execute(diagram, "add_participant", {"id": "participant_example", "label": "Participant Example"})
         payload = application.snapshot(diagram).to_dict()
         payload["elements"] = []
-
-        with pytest.raises(RuntimeError, match="Cannot restore invalid diagram 'sequenceDiagram'"):
+        with pytest.raises(RuntimeError, match=r"Cannot restore invalid diagram 'sequenceDiagram'"):
             application.restore(payload)
 
     @pytest.mark.integration
     def test_full_render_validation_is_a_non_mutating_application_operation(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("sequenceDiagram")
-        application.execute(
-            diagram,
-            "add_participant",
-            {"id": "participant_example", "label": "Participant Example"},
-        )
+        application.execute(diagram, "add_participant", {"id": "participant_example", "label": "Participant Example"})
         before = application.snapshot(diagram).to_dict()
-
         report = application.validate_render(diagram)
-
         assert report.success
         assert report.diagram_id == "sequenceDiagram"
         assert report.mermaid_version == application.mermaid_version
