@@ -11,39 +11,32 @@ REMOVAL_COMMANDS = {"remove_element", "remove_relation", "remove_annotation"}
 class TestDiagramCatalog:
     def test_discovers_pydantic_models_and_command_payloads_from_a_diagram_type(self) -> None:
         application = Application.create()
-
         description = application.diagram_description("sequenceDiagram")
         payload = application.command_payload("sequenceDiagram", "add_participant")
-
         assert set(description.elements) == {"participant", "participant_box"}
         assert description.placements["participant"].allowed_parents == ("$root", "participant_box")
         assert description.placements["participant_box"].allowed_parents == ("$root",)
         assert {"message", "participant_event", "control", "directive"} == set(description.relations)
         assert "add_participant" in description.commands
-        validated = payload.validate({"id": "api", "label": "API", "kind": "actor"})
+        validated = payload.validate({"id": "api_example", "label": "API", "kind": "actor"})
         assert validated.values["kind"] == "actor"
 
     def test_every_catalogued_element_has_one_public_placement_policy(self) -> None:
         application = Application.create()
-
         for info in application.available_diagrams():
             description = application.diagram_description(info.id)
-
             assert tuple(description.placements) == tuple(description.elements)
             assert all(placement.allowed_parents for placement in description.placements.values())
 
     def test_discovers_each_diagrams_concrete_configuration_as_a_command_payload(self) -> None:
         application = Application.create()
-
         for info in application.available_diagrams():
             payload_type = application.command_payload(info.id, "configure")
-
             assert application.diagram_description(info.id).commands["configure"] == payload_type.schema()
             payload_type.validate({})
 
     def test_advertises_removal_commands_for_each_supported_object_category(self) -> None:
         application = Application.create()
-
         for info in application.available_diagrams():
             description = application.diagram_description(info.id)
             expected = {
@@ -55,7 +48,6 @@ class TestDiagramCatalog:
                 )
                 if objects
             }
-
             assert set(description.commands).intersection(REMOVAL_COMMANDS) == expected
             for command in expected:
                 schema = application.command_payload(info.id, command).schema()
@@ -76,7 +68,6 @@ class TestDiagramCatalog:
     def test_requires_human_facing_labels(self, diagram_id: str, command_name: str) -> None:
         application = Application.create()
         schema = application.command_payload(diagram_id, command_name).schema()
-
         assert "label" in cast(list[str], schema["required"])
 
     @pytest.mark.parametrize(
@@ -91,7 +82,6 @@ class TestDiagramCatalog:
     )
     def test_keeps_symbolic_and_relation_labels_optional(self, diagram_id: str, command_name: str) -> None:
         schema = Application.create().command_payload(diagram_id, command_name).schema()
-
         assert "label" not in cast(list[str], schema["required"])
         properties = cast(dict[str, dict[str, object]], schema["properties"])
         assert properties["label"]["default"] == ""
@@ -103,19 +93,19 @@ class TestDiagramCatalog:
         definitions = cast(dict[str, dict[str, object]], schema["$defs"])
         reference = cast(str, properties["participant_ids"]["$ref"])
         targets = definitions[reference.removeprefix("#/$defs/")]
-
         assert "participant_ids" in cast(list[str], schema["required"])
         assert targets["type"] == "array"
         assert targets["minItems"] == 1
         assert targets["maxItems"] == 2
-        one_target = payload.validate({"id": "note", "text": "One", "participant_ids": ["api"]})
-
-        assert one_target.values["participant_ids"] == ["api"]
-        two_targets = payload.validate({"id": "note", "text": "Two", "participant_ids": ["api", "worker"]})
-        assert two_targets.values["participant_ids"] == ["api", "worker"]
-        for participant_ids in ([], ["api", "worker", "queue"]):
+        one_target = payload.validate({"id": "note_example", "text": "One", "participant_ids": ["api_example"]})
+        assert one_target.values["participant_ids"] == ["api_example"]
+        two_targets = payload.validate(
+            {"id": "note_example", "text": "Two", "participant_ids": ["api_example", "worker"]}
+        )
+        assert two_targets.values["participant_ids"] == ["api_example", "worker"]
+        for participant_ids in ([], ["api_example", "worker", "queue"]):
             with pytest.raises(ValidationError):
-                payload.validate({"id": "note", "text": "Invalid", "participant_ids": participant_ids})
+                payload.validate({"id": "note_example", "text": "Invalid", "participant_ids": participant_ids})
 
     def test_class_types_publish_unbounded_ordered_recursive_arguments(self) -> None:
         payload = Application.create().command_payload("classDiagram", "add_class")
@@ -124,24 +114,19 @@ class TestDiagramCatalog:
         class_type = definitions["ClassType"]
         properties = cast(dict[str, dict[str, object]], class_type["properties"])
         arguments = properties["arguments"]
-
         assert arguments["type"] == "array"
         assert arguments["items"] == {"$ref": "#/$defs/ClassType"}
         assert "maxItems" not in arguments
-
         payload.validate(
             {
-                "id": "catalog",
+                "id": "catalog_example",
                 "label": "Catalog",
                 "attributes": [
                     {
                         "name": "items",
                         "type": {
                             "name": "Map",
-                            "arguments": [
-                                {"name": "Key"},
-                                {"name": "List", "arguments": [{"name": "Value"}]},
-                            ],
+                            "arguments": [{"name": "Key"}, {"name": "List", "arguments": [{"name": "Value"}]}],
                         },
                     }
                 ],
@@ -149,13 +134,7 @@ class TestDiagramCatalog:
                     {
                         "name": "find",
                         "parameters": [
-                            {
-                                "name": "key",
-                                "type": {
-                                    "name": "Map",
-                                    "arguments": [{"name": "Key"}, {"name": "Value"}],
-                                },
-                            }
+                            {"name": "key", "type": {"name": "Map", "arguments": [{"name": "Key"}, {"name": "Value"}]}}
                         ],
                         "return_type": {
                             "name": "Map",
@@ -163,12 +142,7 @@ class TestDiagramCatalog:
                                 {"name": "Key"},
                                 {
                                     "name": "List",
-                                    "arguments": [
-                                        {
-                                            "name": "Pair",
-                                            "arguments": [{"name": "Left"}, {"name": "Right"}],
-                                        }
-                                    ],
+                                    "arguments": [{"name": "Pair", "arguments": [{"name": "Left"}, {"name": "Right"}]}],
                                 },
                             ],
                         },

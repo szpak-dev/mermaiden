@@ -3,27 +3,23 @@ import json
 import pytest
 
 from mermaiden import Application
-from mermaiden.domain import DiagramCommand, UnknownCommand
 
 
 class TestPie:
     def test_exercises_every_public_command_and_restores_identical_mermaid(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("pie")
-
-        commands = (
-            DiagramCommand("configure", {"donutHole": 0.4, "legendPosition": "top"}),
-            DiagramCommand("set_title", {"title": 'Adopted "pets"'}),
-            DiagramCommand("show_values", {}),
-            DiagramCommand("add_slice", {"id": "dogs", "label": 'Dogs "large"', "value": 386}),
-        )
-        for command in commands:
-            application.apply(diagram, command)
-
+        application.execute(diagram, "configure", {"donutHole": 0.4, "legendPosition": "top"})
+        application.execute(diagram, "set_title", {"title": 'Adopted "pets"'})
+        application.execute(diagram, "show_values", {})
+        application.execute(diagram, "add_slice", {"id": "dogs_example", "label": 'Dogs "large"', "value": 386})
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
-
-        assert set(application.diagram_description("pie").commands) == {item.operation for item in commands} | {
+        assert set(application.diagram_description("pie").commands) == {
+            "configure",
+            "set_title",
+            "show_values",
+            "add_slice",
             "update_element",
             "remove_element",
             "move_element",
@@ -37,11 +33,10 @@ class TestPie:
     def test_rejects_invalid_values_duplicate_ids_and_bad_configuration(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("pie")
-        application.apply(diagram, DiagramCommand("add_slice", {"id": "dogs", "label": "Dogs", "value": 1}))
-
+        application.execute(diagram, "add_slice", {"id": "dogs_example", "label": "Dogs", "value": 1})
         with pytest.raises(RuntimeError, match=r"greater than zero"):
-            application.apply(diagram, DiagramCommand("add_slice", {"id": "bad", "label": "Bad", "value": -1}))
-        with pytest.raises(UnknownCommand):
-            application.apply(diagram, DiagramCommand("configure", {"legendPosition": "side"}))
+            application.execute(diagram, "add_slice", {"id": "bad_example", "label": "Bad", "value": -1})
+        with pytest.raises(RuntimeError):
+            application.execute(diagram, "configure", {"legendPosition": "side"})
         with pytest.raises(RuntimeError, match=r"already exists"):
-            application.apply(diagram, DiagramCommand("add_slice", {"id": "dogs", "label": "Again", "value": 2}))
+            application.execute(diagram, "add_slice", {"id": "dogs_example", "label": "Again", "value": 2})

@@ -3,28 +3,24 @@ import json
 import pytest
 
 from mermaiden import Application
-from mermaiden.domain import DiagramCommand, UnknownCommand
 
 
 class TestEventModeling:
     def test_exercises_every_public_command_and_restores_identical_mermaid(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("eventmodeling")
-
         for command in (
-            DiagramCommand("configure", {"wrap": False}),
-            DiagramCommand("add_swimlane", {"id": "checkout", "label": 'Check "out"'}),
-            DiagramCommand("add_actor", {"id": "actor", "label": "Actor", "swimlane_id": "checkout"}),
-            DiagramCommand("add_command", {"id": "command", "label": "Command", "swimlane_id": "checkout"}),
-            DiagramCommand("add_event", {"id": "event", "label": "Event", "swimlane_id": "checkout"}),
-            DiagramCommand("add_view", {"id": "view", "label": "View", "swimlane_id": "checkout"}),
-            DiagramCommand("add_flow", {"id": "submit", "source_id": "actor", "target_id": "command"}),
+            ("configure", {"wrap": False}),
+            ("add_swimlane", {"id": "checkout_example", "label": 'Check "out"'}),
+            ("add_actor", {"id": "actor_example", "label": "Actor", "swimlane_id": "checkout_example"}),
+            ("add_command", {"id": "command_example", "label": "Command", "swimlane_id": "checkout_example"}),
+            ("add_event", {"id": "event_example", "label": "Event", "swimlane_id": "checkout_example"}),
+            ("add_view", {"id": "view_example", "label": "View", "swimlane_id": "checkout_example"}),
+            ("add_flow", {"id": "submit_example", "source_id": "actor_example", "target_id": "command_example"}),
         ):
-            application.apply(diagram, command)
-
+            application.execute(diagram, *command)
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
-
         assert set(application.diagram_description("eventmodeling").commands) == {
             "configure",
             "add_swimlane",
@@ -40,20 +36,19 @@ class TestEventModeling:
             "update_relation",
             "remove_relation",
         }
-        for fragment in ("ui actor", "cmd command", "evt event", "rmo view"):
+        for fragment in ("ui actor_example", "cmd command_example", "evt event_example", "rmo view_example"):
             assert fragment in source
         assert application.render(restored) == source
 
     def test_rejects_invalid_commands_duplicates_and_unknown_swimlanes(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("eventmodeling")
-        application.apply(diagram, DiagramCommand("add_swimlane", {"id": "lane", "label": "Lane"}))
-
-        with pytest.raises(UnknownCommand):
-            application.apply(diagram, DiagramCommand("configure", {"unknown": True}))
+        application.execute(diagram, "add_swimlane", {"id": "lane_example", "label": "Lane"})
+        with pytest.raises(RuntimeError):
+            application.execute(diagram, "configure", {"unknown": True})
         with pytest.raises(RuntimeError, match=r"already exists"):
-            application.apply(diagram, DiagramCommand("add_swimlane", {"id": "lane", "label": "Again"}))
+            application.execute(diagram, "add_swimlane", {"id": "lane_example", "label": "Again"})
         with pytest.raises(RuntimeError, match=r"unknown|does not exist"):
-            application.apply(
-                diagram, DiagramCommand("add_actor", {"id": "actor", "label": "Actor", "swimlane_id": "missing"})
+            application.execute(
+                diagram, "add_actor", {"id": "actor_example", "label": "Actor", "swimlane_id": "missing"}
             )

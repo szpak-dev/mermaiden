@@ -2,9 +2,10 @@ import hashlib
 import json
 from pathlib import Path
 
+from configuration_proof_renderer import ConfigurationProofRenderer
+
 from mermaiden import Application
 from tests.fixtures.c4_human_proofs import C4HumanProofCatalog
-from tests.fixtures.configuration_proofs import ConfigurationProofRenderer
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "docs" / "contracts" / "configuration-rendering" / "c4-human-layout"

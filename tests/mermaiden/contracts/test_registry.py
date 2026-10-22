@@ -54,6 +54,15 @@ class TestDiagramRegistry:
             with pytest.raises(RuntimeError, match=f"Cannot render invalid diagram '{info.id}'"):
                 application.render(diagram)
 
-    def test_explains_unknown_diagram_ids(self) -> None:
-        with pytest.raises(KeyError, match="Unknown diagram 'unknown'"):
-            Application.create().diagram_info("unknown")
+    def test_every_discovery_and_creation_operation_explains_unknown_contracts(self) -> None:
+        application = Application.create()
+        with pytest.raises(KeyError, match=r"Unknown diagram 'unknown'"):
+            application.diagram_info("unknown")
+        with pytest.raises(KeyError, match=r"Unknown diagram 'unknown'"):
+            application.create_diagram("unknown")
+        with pytest.raises(KeyError, match=r"Unknown diagram 'unknown'"):
+            application.diagram_description("unknown")
+        with pytest.raises(KeyError, match=r"Unknown diagram 'unknown'"):
+            application.command_payload("unknown", "missing_example")
+        with pytest.raises(KeyError, match=r"Unknown command 'missing_example' for diagram 'block'"):
+            application.command_payload("block", "missing_example")

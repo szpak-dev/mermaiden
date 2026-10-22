@@ -4,7 +4,7 @@ import sys
 from packaging.version import InvalidVersion, Version
 from pydantic import RootModel, ValidationError
 
-from mermaiden.mermaid.schema import MermaidSchemaStore
+from mermaiden import Application
 
 
 class NpmVersionsPayload(RootModel[tuple[str, ...]]):
@@ -57,10 +57,10 @@ def assert_current(package: str, current_version: str) -> None:
 
 
 def main() -> None:
-    schemas = MermaidSchemaStore()
     try:
-        assert_current("mermaid", schemas.mermaid_version)
-        assert_current("@mermaid-js/mermaid-cli", schemas.mermaid_cli_version)
+        with Application.create() as application:
+            assert_current("mermaid", application.mermaid_version)
+            assert_current("@mermaid-js/mermaid-cli", application.mermaid_cli_version)
     except RuntimeError as error:
         print(f"Mermaid freshness check failed: {error}", file=sys.stderr)
         raise SystemExit(1) from error

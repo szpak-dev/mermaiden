@@ -3,32 +3,28 @@ import json
 import pytest
 
 from mermaiden import Application
-from mermaiden.domain import DiagramCommand, UnknownCommand
 
 
 class TestRadar:
     def test_exercises_every_public_command_including_legend_and_restores_mermaid(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("radar-beta")
-
         commands = (
-            DiagramCommand("configure", {"width": 720, "curveTension": 0.25}),
-            DiagramCommand("set_title", {"title": 'Quality "comparison"'}),
-            DiagramCommand("add_axis", {"id": "speed", "label": "Speed"}),
-            DiagramCommand("add_axis", {"id": "quality", "label": "Quality"}),
-            DiagramCommand("add_curve", {"id": "one", "label": "Option one", "values": [4, 3]}),
-            DiagramCommand("set_range", {"minimum": 0, "maximum": 5}),
-            DiagramCommand("set_graticule", {"graticule": "polygon"}),
-            DiagramCommand("set_ticks", {"ticks": 5}),
-            DiagramCommand("set_legend", {"visible": False}),
+            ("configure", {"width": 720, "curveTension": 0.25}),
+            ("set_title", {"title": 'Quality "comparison"'}),
+            ("add_axis", {"id": "speed_example", "label": "Speed"}),
+            ("add_axis", {"id": "quality_example", "label": "Quality"}),
+            ("add_curve", {"id": "one_example", "label": "Option one_example", "values": [4, 3]}),
+            ("set_range", {"minimum": 0, "maximum": 5}),
+            ("set_graticule", {"graticule": "polygon"}),
+            ("set_ticks", {"ticks": 5}),
+            ("set_legend", {"visible": False}),
         )
         for command in commands:
-            application.apply(diagram, command)
-
+            application.execute(diagram, *command)
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
-
-        assert set(application.diagram_description("radar-beta").commands) == {item.operation for item in commands} | {
+        assert set(application.diagram_description("radar-beta").commands) == {item[0] for item in commands} | {
             "update_element",
             "remove_element",
             "move_element",
@@ -36,8 +32,8 @@ class TestRadar:
         }
         for fragment in (
             'title Quality "comparison"',
-            'axis speed["Speed"], quality["Quality"]',
-            'curve one["Option one"]{ 4, 3 }',
+            'axis speed_example["Speed"], quality_example["Quality"]',
+            'curve one_example["Option one_example"]{ 4, 3 }',
             "showLegend false",
             "max 5",
             "min 0",
@@ -50,12 +46,11 @@ class TestRadar:
     def test_rejects_curve_cardinality_invalid_ranges_and_duplicate_axes(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("radar-beta")
-        application.apply(diagram, DiagramCommand("add_axis", {"id": "speed", "label": "Speed"}))
-        application.apply(diagram, DiagramCommand("add_axis", {"id": "quality", "label": "Quality"}))
-
+        application.execute(diagram, "add_axis", {"id": "speed_example", "label": "Speed"})
+        application.execute(diagram, "add_axis", {"id": "quality_example", "label": "Quality"})
         with pytest.raises(RuntimeError, match=r"values|axes|cardinality"):
-            application.apply(diagram, DiagramCommand("add_curve", {"id": "bad", "label": "Bad", "values": [1]}))
-        with pytest.raises(UnknownCommand):
-            application.apply(diagram, DiagramCommand("set_ticks", {"ticks": "many"}))
+            application.execute(diagram, "add_curve", {"id": "bad_example", "label": "Bad", "values": [1]})
+        with pytest.raises(RuntimeError):
+            application.execute(diagram, "set_ticks", {"ticks": "many"})
         with pytest.raises(RuntimeError, match=r"already exists"):
-            application.apply(diagram, DiagramCommand("add_axis", {"id": "speed", "label": "Again"}))
+            application.execute(diagram, "add_axis", {"id": "speed_example", "label": "Again"})

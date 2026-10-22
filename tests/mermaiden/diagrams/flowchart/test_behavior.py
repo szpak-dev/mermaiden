@@ -3,54 +3,78 @@ import json
 import pytest
 
 from mermaiden import Application
-from mermaiden.domain import DiagramCommand, UnknownCommand
 
 
 class TestFlowchart:
     def test_exercises_every_public_command_and_restores_identical_mermaid(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("flowchart")
-
         commands = (
-            DiagramCommand("configure", {"wrap": False}),
-            DiagramCommand("add_group", {"id": "group", "label": "Group", "direction": "LR"}),
-            DiagramCommand("add_start", {"id": "start", "label": "Start", "parent_id": "group"}),
-            DiagramCommand("add_action", {"id": "action", "label": 'Act "now"', "parent_id": "group"}),
-            DiagramCommand("add_decision", {"id": "decision", "label": "Decide", "parent_id": "group"}),
-            DiagramCommand("add_data_store", {"id": "data", "label": "Data"}),
-            DiagramCommand("add_document", {"id": "document", "label": "Document"}),
-            DiagramCommand("add_end", {"id": "end", "label": "End"}),
-            DiagramCommand("add_input_output", {"id": "io", "label": "I/O"}),
-            DiagramCommand("add_junction", {"id": "junction", "label": "Junction"}),
-            DiagramCommand("add_node", {"id": "node", "label": "Node"}),
-            DiagramCommand("add_subprocess", {"id": "subprocess", "label": "Subprocess"}),
-            DiagramCommand("add_flow", {"id": "plain", "source_id": "start", "target_id": "action", "label": "go"}),
-            DiagramCommand("remove_flow", {"id": "plain"}),
-            DiagramCommand("add_flow", {"id": "start_action", "source_id": "start", "target_id": "action"}),
-            DiagramCommand("add_flow", {"id": "action_decision", "source_id": "action", "target_id": "decision"}),
-            DiagramCommand(
-                "add_conditional_flow",
-                {"id": "yes", "source_id": "decision", "target_id": "data", "condition": "yes"},
+            ("configure", {"wrap": False}),
+            ("add_group", {"id": "group_example", "label": "Group", "direction": "LR"}),
+            ("add_start", {"id": "start_example", "label": "Start", "parent_id": "group_example"}),
+            ("add_action", {"id": "action_example", "label": 'Act "now"', "parent_id": "group_example"}),
+            ("add_decision", {"id": "decision_example", "label": "Decide", "parent_id": "group_example"}),
+            ("add_data_store", {"id": "data_example", "label": "Data"}),
+            ("add_document", {"id": "document_example", "label": "Document"}),
+            ("add_end", {"id": "end_example", "label": "End"}),
+            ("add_input_output", {"id": "io_example", "label": "I/O"}),
+            ("add_junction", {"id": "junction_example", "label": "Junction"}),
+            ("add_node", {"id": "node_example", "label": "Node"}),
+            ("add_subprocess", {"id": "subprocess_example", "label": "Subprocess"}),
+            (
+                "add_flow",
+                {"id": "plain_example", "source_id": "start_example", "target_id": "action_example", "label": "go"},
             ),
-            DiagramCommand(
-                "add_conditional_flow",
-                {"id": "no", "source_id": "decision", "target_id": "io", "condition": "no"},
+            ("remove_flow", {"id": "plain_example"}),
+            ("add_flow", {"id": "start_action_example", "source_id": "start_example", "target_id": "action_example"}),
+            (
+                "add_flow",
+                {"id": "action_decision_example", "source_id": "action_example", "target_id": "decision_example"},
             ),
-            DiagramCommand("add_flow", {"id": "data_document", "source_id": "data", "target_id": "document"}),
-            DiagramCommand("add_flow", {"id": "document_junction", "source_id": "document", "target_id": "junction"}),
-            DiagramCommand("add_flow", {"id": "io_junction", "source_id": "io", "target_id": "junction"}),
-            DiagramCommand("add_flow", {"id": "junction_node", "source_id": "junction", "target_id": "node"}),
-            DiagramCommand("add_flow", {"id": "node_subprocess", "source_id": "node", "target_id": "subprocess"}),
-            DiagramCommand("add_flow", {"id": "subprocess_end", "source_id": "subprocess", "target_id": "end"}),
-            DiagramCommand("add_note", {"id": "note", "text": 'Use "care"', "element_ids": ["action", "decision"]}),
+            (
+                "add_conditional_flow",
+                {
+                    "id": "yes_example",
+                    "source_id": "decision_example",
+                    "target_id": "data_example",
+                    "condition": "yes_example",
+                },
+            ),
+            (
+                "add_conditional_flow",
+                {
+                    "id": "no_example",
+                    "source_id": "decision_example",
+                    "target_id": "io_example",
+                    "condition": "no_example",
+                },
+            ),
+            ("add_flow", {"id": "data_document_example", "source_id": "data_example", "target_id": "document_example"}),
+            (
+                "add_flow",
+                {"id": "document_junction_example", "source_id": "document_example", "target_id": "junction_example"},
+            ),
+            ("add_flow", {"id": "io_junction_example", "source_id": "io_example", "target_id": "junction_example"}),
+            ("add_flow", {"id": "junction_node_example", "source_id": "junction_example", "target_id": "node_example"}),
+            (
+                "add_flow",
+                {"id": "node_subprocess_example", "source_id": "node_example", "target_id": "subprocess_example"},
+            ),
+            (
+                "add_flow",
+                {"id": "subprocess_end_example", "source_id": "subprocess_example", "target_id": "end_example"},
+            ),
+            (
+                "add_note",
+                {"id": "note_example", "text": 'Use "care"', "element_ids": ["action_example", "decision_example"]},
+            ),
         )
         for command in commands:
-            application.apply(diagram, command)
-
+            application.execute(diagram, *command)
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
-
-        assert set(application.diagram_description("flowchart").commands) == {item.operation for item in commands} | {
+        assert set(application.diagram_description("flowchart").commands) == {item[0] for item in commands} | {
             "update_element",
             "remove_element",
             "move_element",
@@ -72,24 +96,25 @@ class TestFlowchart:
             "shape: f-circ",
         ):
             assert fragment in source
-        assert 'e_v_start -->|"go"| e_v_action' not in source
-        assert "yes" in source
+        assert 'e_v_start_example -->|"go"| e_v_action_example' not in source
+        assert "yes_example" in source
         assert application.render(restored) == source
 
     def test_rejects_invalid_arguments_duplicates_and_unknown_flow_targets(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("flowchart")
-        with pytest.raises(UnknownCommand):
-            application.apply(
-                diagram, DiagramCommand("add_group", {"id": "bad", "label": "Bad", "direction": "SIDEWAYS"})
-            )
-        application.apply(diagram, DiagramCommand("add_start", {"id": "start", "label": "Start"}))
-        application.apply(diagram, DiagramCommand("add_end", {"id": "end", "label": "End"}))
-        application.apply(diagram, DiagramCommand("add_flow", {"id": "path", "source_id": "start", "target_id": "end"}))
-
+        with pytest.raises(RuntimeError):
+            application.execute(diagram, "add_group", {"id": "bad_example", "label": "Bad", "direction": "SIDEWAYS"})
+        application.execute(diagram, "add_start", {"id": "start_example", "label": "Start"})
+        application.execute(diagram, "add_end", {"id": "end_example", "label": "End"})
+        application.execute(
+            diagram, "add_flow", {"id": "path_example", "source_id": "start_example", "target_id": "end_example"}
+        )
         with pytest.raises(RuntimeError, match=r"already exists"):
-            application.apply(diagram, DiagramCommand("add_end", {"id": "end", "label": "Again"}))
+            application.execute(diagram, "add_end", {"id": "end_example", "label": "Again"})
         with pytest.raises(RuntimeError, match=r"unknown|does not exist"):
-            application.apply(
-                diagram, DiagramCommand("add_flow", {"id": "flow", "source_id": "start", "target_id": "missing"})
+            application.execute(
+                diagram,
+                "add_flow",
+                {"id": "flow_example", "source_id": "start_example", "target_id": "missing_example"},
             )

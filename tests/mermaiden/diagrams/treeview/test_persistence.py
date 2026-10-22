@@ -18,11 +18,9 @@ class TestTreeViewPersistence:
         properties = cast(Mapping[str, object], element_schema["properties"])
         item_type_property = cast(Mapping[str, object], properties["item_type"])
         command_properties = cast(Mapping[str, object], schema["properties"])
-
         assert "parent_id" not in command_properties
         assert item_type_schema["enum"] == ["item", "directory", "file"]
         assert item_type_property["default"] == "item"
-
         removal_schema = application.command_payload("treeView-beta", "remove_element").schema()
         removal_description = cast(str, removal_schema["description"])
         assert "complete diagram-defined subtree" in removal_description
@@ -32,38 +30,34 @@ class TestTreeViewPersistence:
         application = Application.create()
         diagram = application.create_diagram("treeView-beta")
         revisions = (
-            ("add_directory", {"id": "example_root", "label": "root"}),
+            ("add_directory", {"id": "example_root", "label": "root_example"}),
             ("add_directory", {"id": "example_child_one", "label": "child-one"}),
             ("add_directory", {"id": "example_child_two", "label": "child-two"}),
-            ("add_file", {"id": "example_grandchild", "label": "leaf.txt"}),
+            ("add_file", {"id": "example_grandchild", "label": "leaf_example.txt"}),
+            ("add_annotation", {"id": "before_branch_example", "element_id": "example_child_one", "icon": "folder"}),
             (
-                "add_annotation",
-                {"id": "before_branch", "element_id": "example_child_one", "icon": "folder"},
+                "add_branch",
+                {"id": "first_sibling_example", "parent_id": "example_root", "child_id": "example_child_one"},
             ),
             (
                 "add_branch",
-                {"id": "first_sibling", "parent_id": "example_root", "child_id": "example_child_one"},
-            ),
-            (
-                "add_branch",
-                {"id": "second_sibling", "parent_id": "example_root", "child_id": "example_child_two"},
+                {"id": "second_sibling_example", "parent_id": "example_root", "child_id": "example_child_two"},
             ),
             (
                 "add_annotation",
-                {"id": "after_branch", "element_id": "example_child_two", "description": "Second child"},
+                {"id": "after_branch_example", "element_id": "example_child_two", "description": "Second child"},
             ),
             (
                 "add_branch",
-                {"id": "nested", "parent_id": "example_child_one", "child_id": "example_grandchild"},
+                {"id": "nested_example", "parent_id": "example_child_one", "child_id": "example_grandchild"},
             ),
             (
                 "add_annotation",
-                {"id": "after_nested_branch", "element_id": "example_grandchild", "highlight": True},
+                {"id": "after_nested_branch_example", "element_id": "example_grandchild", "highlight": True},
             ),
         )
         expected_ids: set[str] = set()
         source = ""
-
         for operation, arguments in revisions:
             report = application.execute(diagram, operation, arguments)
             if operation in {"add_item", "add_directory", "add_file"}:
@@ -75,86 +69,77 @@ class TestTreeViewPersistence:
             }
             diagram = application.restore(json.loads(json.dumps(snapshot)))
             source = application.render(diagram)
-
             assert report is not None
             assert report.accepted
             assert persisted_ids == expected_ids
-            assert source.startswith(
-                "---\nconfig:\n  wrap: true\n"
-                '  treeView: {"useMaxWidth": true, "rowIndent": 10.0, "paddingX": 5.0, '
-                '"paddingY": 5.0, "lineThickness": 1.0, "showIcons": false, "defaultIconPack": "", '
-                '"filenameIcons": {}, "extensionIcons": {}}\n'
-                "---\ntreeView-beta\n"
+            expected_header = (
+                '---\nconfig:\n  wrap: true\n  treeView: {"useMaxWidth": true, "rowIndent": 10.0, '
+                '"paddingX": 5.0, "paddingY": 5.0, "lineThickness": 1.0, "showIcons": false, '
+                '"defaultIconPack": "", "filenameIcons": {}, "extensionIcons": {}}\n---\ntreeView-beta\n'
             )
-
+            assert source.startswith(expected_header)
         assert source.endswith(
-            "treeView-beta\nroot/\n  child-one/ icon(folder)\n    leaf.txt :::highlight\n  child-two/ ## Second child\n"
+            "treeView-beta\nroot_example/\n  child-one/ icon(folder)\n"
+            "    leaf_example.txt :::highlight\n  child-two/ ## Second child\n"
         )
 
     def test_rejects_items_missing_a_persisted_field(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("treeView-beta")
-        application.execute(diagram, "add_item", {"id": "legacy", "label": "legacy/"})
+        application.execute(diagram, "add_item", {"id": "legacy_example", "label": "legacy_example/"})
         snapshot = application.snapshot(diagram).to_dict()
         cast(dict[str, object], cast(Mapping[str, object], cast(list[object], snapshot["elements"])[0])["fields"]).pop(
             "item_type"
         )
-
-        with pytest.raises(RuntimeError, match="missing 'item_type'"):
+        with pytest.raises(RuntimeError, match=r"missing 'item_type'"):
             application.restore(json.loads(json.dumps(snapshot)))
 
     def test_round_trip_preserves_types_and_classification_preserves_branches(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("treeView-beta")
-        application.execute(diagram, "add_directory", {"id": "root", "label": "root"})
-        application.execute(diagram, "add_item", {"id": "leaf", "label": "README.md"})
-        application.execute(diagram, "add_file", {"id": "license", "label": "LICENSE"})
+        application.execute(diagram, "add_directory", {"id": "root_example", "label": "root_example"})
+        application.execute(diagram, "add_item", {"id": "leaf_example", "label": "README.md"})
+        application.execute(diagram, "add_file", {"id": "license_example", "label": "LICENSE"})
         application.execute(
-            diagram,
-            "add_branch",
-            {"id": "contains", "parent_id": "root", "child_id": "leaf"},
+            diagram, "add_branch", {"id": "contains_example", "parent_id": "root_example", "child_id": "leaf_example"}
         )
         application.execute(
             diagram,
             "add_branch",
-            {"id": "licenses", "parent_id": "root", "child_id": "license"},
+            {"id": "licenses_example", "parent_id": "root_example", "child_id": "license_example"},
         )
-
-        application.execute(diagram, "classify_item", {"id": "leaf", "item_type": "file"})
+        application.execute(diagram, "classify_item", {"id": "leaf_example", "item_type": "file"})
         snapshot = application.snapshot(diagram).to_dict()
         restored = application.restore(json.loads(json.dumps(snapshot)))
-
         fields_by_id = {
             cast(str, fields["id"]): fields
             for encoded in cast(list[object], snapshot["elements"])
             for fields in (cast(Mapping[str, object], cast(Mapping[str, object], encoded)["fields"]),)
         }
-        assert fields_by_id["root"]["item_type"] == {
+        assert fields_by_id["root_example"]["item_type"] == {
             "$enum": "mermaiden/enum/treeView-beta/tree_item_type",
             "value": "directory",
         }
-        assert fields_by_id["leaf"]["item_type"] == {
+        assert fields_by_id["leaf_example"]["item_type"] == {
             "$enum": "mermaiden/enum/treeView-beta/tree_item_type",
             "value": "file",
         }
-        assert fields_by_id["license"]["item_type"] == {
+        assert fields_by_id["license_example"]["item_type"] == {
             "$enum": "mermaiden/enum/treeView-beta/tree_item_type",
             "value": "file",
         }
         assert application.snapshot(restored).to_dict() == snapshot
-        assert application.render(restored).endswith("treeView-beta\nroot/\n  README.md\n  LICENSE\n")
+        assert application.render(restored).endswith("treeView-beta\nroot_example/\n  README.md\n  LICENSE\n")
 
     def test_restores_and_edits_the_empty_draft_after_removing_the_final_item(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("treeView-beta")
-        application.execute(diagram, "add_file", {"id": "only", "label": "only.txt"})
-
-        report = application.execute(diagram, "remove_element", {"id": "only"})
+        application.execute(diagram, "add_file", {"id": "only_example", "label": "only_example.txt"})
+        report = application.execute(diagram, "remove_element", {"id": "only_example"})
         snapshot = application.snapshot(diagram).to_dict()
         validation = application.validate_render(diagram)
-
         assert report is not None
-        assert tuple((item.kind, item.id) for item in report.removed) == (("element", "only"),)
+        assert tuple((item.kind, item.id) for item in report.removed) == (("element", "only_example"),)
         assert snapshot["draft"] is True
         assert snapshot["elements"] == []
         assert snapshot["relations"] == []
@@ -162,10 +147,8 @@ class TestTreeViewPersistence:
         assert not validation.success
         assert validation.svg == ""
         assert validation.diagnostics[0].code == "diagram_invalid"
-        with pytest.raises(RuntimeError, match="Cannot render invalid diagram 'treeView-beta'"):
+        with pytest.raises(RuntimeError, match=r"Cannot render invalid diagram 'treeView-beta'"):
             application.render(diagram)
-
         restored = application.restore(json.loads(json.dumps(snapshot)))
-        application.execute(restored, "add_directory", {"id": "replacement", "label": "replacement"})
-
-        assert application.render(restored).endswith("treeView-beta\nreplacement/\n")
+        application.execute(restored, "add_directory", {"id": "replacement_example", "label": "replacement_example"})
+        assert application.render(restored).endswith("treeView-beta\nreplacement_example/\n")

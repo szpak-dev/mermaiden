@@ -1,12 +1,17 @@
-.PHONY: architecture ci compat compatibility configuration-proofs configuration-render-shard diagrams-preview diagrams-test diagrams-validate diagrams-validate-core documentation-check documentation-linkcheck documentation-links fast-check format integration integration-core mermaid-freshness mermaid-sync mutation-contract package-check pytest quality
+.PHONY: application-test-freeze application-test-policy architecture architecture-matrix architecture-matrix-contract ci compat compatibility configuration-proofs configuration-render-shard diagrams-preview diagrams-test diagrams-validate diagrams-validate-core documentation-check documentation-linkcheck documentation-links fast-check format integration integration-core mermaid-freshness mermaid-lock mermaid-sync mutation-contract mutation-contract-check package-check pytest quality
 
 UV := uv
 RUN := $(UV) run --no-sync
 PYTHON := $(RUN) python
-CONFIGURATION_RENDER_TEST := tests/fixtures/test_configuration_proofs.py::test_every_configuration_probe_produces_a_real_svg
 
 architecture:
 	@$(RUN) lint-imports --cache-dir .dev/import_linter_cache
+
+architecture-matrix:
+	@PYTHONPATH=src $(PYTHON) scripts/check_module_matrix.py
+
+architecture-matrix-contract:
+	@PYTHONPATH=src $(PYTHON) scripts/check_module_matrix.py --contract-only
 
 compat:
 	@PYTHONPATH=src $(PYTHON) -m mermaiden.cli compat
@@ -29,7 +34,10 @@ mermaid-sync:
 		"mermaid@$$mermaid_version" "@mermaid-js/mermaid-cli@$$mermaid_cli_version"
 
 mermaid-freshness:
-	@NPM_CONFIG_CACHE=.dev/npm-cache PYTHONPATH=. $(PYTHON) -m pytest -m freshness tests/mermaiden/cli/test_freshness.py
+	@NPM_CONFIG_CACHE=.dev/npm-cache PYTHONPATH=src $(PYTHON) scripts/check_mermaid_freshness.py
+
+mermaid-lock:
+	@PYTHONPATH=src $(PYTHON) scripts/check_mermaid_lock.py
 
 format:
 	@$(RUN) ruff format .
@@ -37,6 +45,15 @@ format:
 
 mutation-contract:
 	@PYTHONPATH=src $(PYTHON) scripts/render_mutation_contract.py --write
+
+mutation-contract-check:
+	@PYTHONPATH=src $(PYTHON) scripts/render_mutation_contract.py --check
+
+application-test-policy:
+	@PYTHONPATH=src $(PYTHON) scripts/check_application_tests.py
+
+application-test-freeze:
+	@PYTHONPATH=src $(PYTHON) scripts/check_application_tests.py --check-freeze
 
 package-check:
 	@set -eu; \
@@ -54,6 +71,7 @@ quality:
 	@$(RUN) ruff check .
 	@$(RUN) pyright
 	@$(MAKE) architecture
+	@$(MAKE) application-test-freeze mermaid-lock mutation-contract-check
 
 pytest:
 	@$(RUN) pytest
@@ -71,7 +89,7 @@ integration-core:
 
 configuration-render-shard:
 	@PUPPETEER_SKIP_DOWNLOAD=true npm ci
-	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" $(PYTHON) -m pytest -m integration "$(CONFIGURATION_RENDER_TEST)[shard-$(SHARD)-of-4]"
+	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" PYTHONPATH=. $(PYTHON) scripts/check_configuration_rendering.py --shard $(SHARD)
 
 diagrams-validate: integration
 

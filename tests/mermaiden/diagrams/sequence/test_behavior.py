@@ -3,58 +3,64 @@ import json
 import pytest
 
 from mermaiden import Application
-from mermaiden.domain import DiagramCommand, UnknownCommand
 
 
 class TestSequenceDiagram:
     def test_exercises_every_public_command_including_explicit_activation(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("sequenceDiagram")
-
         commands = (
-            DiagramCommand("configure", {"wrap": False}),
-            DiagramCommand("add_box", {"id": "clients", "label": "Clients", "color": "#eee"}),
-            DiagramCommand(
-                "add_participant", {"id": "user", "label": 'User "one"', "kind": "actor", "box_id": "clients"}
+            ("configure", {"wrap": False}),
+            ("add_box", {"id": "clients_example", "label": "Clients", "color": "#eee"}),
+            (
+                "add_participant",
+                {"id": "user_example", "label": 'User "one"', "kind": "actor", "box_id": "clients_example"},
             ),
-            DiagramCommand("add_participant", {"id": "api", "label": "API", "kind": "control"}),
-            DiagramCommand("add_participant", {"id": "worker", "label": "Worker", "kind": "entity", "created": True}),
-            DiagramCommand("autonumber", {"id": "numbers"}),
-            DiagramCommand("activate", {"id": "activate_api", "participant_id": "api"}),
-            DiagramCommand(
-                "add_message",
-                {"id": "request", "source_id": "user", "target_id": "api", "label": 'Call "API"', "kind": "dotted"},
-            ),
-            DiagramCommand("control", {"id": "loop", "kind": "loop", "label": "retry"}),
-            DiagramCommand(
+            ("add_participant", {"id": "api_example", "label": "API", "kind": "control"}),
+            ("add_participant", {"id": "worker_example", "label": "Worker", "kind": "entity", "created": True}),
+            ("autonumber", {"id": "numbers_example"}),
+            ("activate", {"id": "activate_api_example", "participant_id": "api_example"}),
+            (
                 "add_message",
                 {
-                    "id": "work",
-                    "source_id": "api",
-                    "target_id": "worker",
+                    "id": "request_example",
+                    "source_id": "user_example",
+                    "target_id": "api_example",
+                    "label": 'Call "API"',
+                    "kind": "dotted",
+                },
+            ),
+            ("control", {"id": "loop_example", "kind": "loop", "label": "retry"}),
+            (
+                "add_message",
+                {
+                    "id": "work_example",
+                    "source_id": "api_example",
+                    "target_id": "worker_example",
                     "label": "Work",
                     "activate": True,
                     "deactivate": True,
                 },
             ),
-            DiagramCommand("control", {"id": "end", "kind": "end"}),
-            DiagramCommand("create", {"id": "create_worker", "participant_id": "worker"}),
-            DiagramCommand("deactivate", {"id": "deactivate_api", "participant_id": "api"}),
-            DiagramCommand("destroy", {"id": "destroy_worker", "participant_id": "worker"}),
-            DiagramCommand(
+            ("control", {"id": "end_example", "kind": "end"}),
+            ("create", {"id": "create_worker_example", "participant_id": "worker_example"}),
+            ("deactivate", {"id": "deactivate_api_example", "participant_id": "api_example"}),
+            ("destroy", {"id": "destroy_worker_example", "participant_id": "worker_example"}),
+            (
                 "add_note",
-                {"id": "note", "text": 'Across "both"', "participant_ids": ["user", "api"], "position": "over"},
+                {
+                    "id": "note_example",
+                    "text": 'Across "both"',
+                    "participant_ids": ["user_example", "api_example"],
+                    "position": "over",
+                },
             ),
         )
         for command in commands:
-            application.apply(diagram, command)
-
+            application.execute(diagram, *command)
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
-
-        assert set(application.diagram_description("sequenceDiagram").commands) == {
-            item.operation for item in commands
-        } | {
+        assert set(application.diagram_description("sequenceDiagram").commands) == {item[0] for item in commands} | {
             "update_element",
             "remove_element",
             "move_element",
@@ -66,16 +72,16 @@ class TestSequenceDiagram:
         }
         for fragment in (
             "box #eee Clients",
-            "actor user as User",
+            "actor user_example as User",
             "autonumber",
-            "activate api",
-            "user-->>api",
+            "activate api_example",
+            "user_example-->>api_example",
             "loop retry",
             "end",
             "create participant",
-            "deactivate api",
-            "destroy worker",
-            "Note over user,api",
+            "deactivate api_example",
+            "destroy worker_example",
+            "Note over user_example,api_example",
         ):
             assert fragment in source
         assert application.render(restored) == source
@@ -83,32 +89,28 @@ class TestSequenceDiagram:
     def test_rejects_invalid_note_cardinality_duplicates_and_unknown_participants(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("sequenceDiagram")
-        application.apply(diagram, DiagramCommand("add_participant", {"id": "user", "label": "User"}))
-
-        with pytest.raises(UnknownCommand):
-            application.apply(
-                diagram, DiagramCommand("add_note", {"id": "empty", "text": "Empty", "participant_ids": []})
-            )
-        with pytest.raises(UnknownCommand):
-            application.apply(
+        application.execute(diagram, "add_participant", {"id": "user_example", "label": "User"})
+        with pytest.raises(RuntimeError):
+            application.execute(diagram, "add_note", {"id": "empty_example", "text": "Empty", "participant_ids": []})
+        with pytest.raises(RuntimeError):
+            application.execute(
                 diagram,
-                DiagramCommand(
-                    "add_message",
-                    {
-                        "id": "syntax",
-                        "source_id": "user",
-                        "target_id": "user",
-                        "label": "syntax",
-                        "kind": "-->>",
-                    },
-                ),
+                "add_message",
+                {
+                    "id": "syntax_example",
+                    "source_id": "user_example",
+                    "target_id": "user_example",
+                    "label": "syntax_example",
+                    "kind": "-->>",
+                },
             )
-        with pytest.raises(UnknownCommand):
-            application.apply(
+        with pytest.raises(RuntimeError):
+            application.execute(
                 diagram,
-                DiagramCommand("add_note", {"id": "many", "text": "Many", "participant_ids": ["user", "two", "three"]}),
+                "add_note",
+                {"id": "many_example", "text": "Many", "participant_ids": ["user_example", "two", "three"]},
             )
         with pytest.raises(RuntimeError, match=r"already exists"):
-            application.apply(diagram, DiagramCommand("add_participant", {"id": "user", "label": "Again"}))
+            application.execute(diagram, "add_participant", {"id": "user_example", "label": "Again"})
         with pytest.raises(RuntimeError, match=r"unknown|does not exist"):
-            application.apply(diagram, DiagramCommand("activate", {"id": "bad", "participant_id": "missing"}))
+            application.execute(diagram, "activate", {"id": "bad_example", "participant_id": "missing_example"})

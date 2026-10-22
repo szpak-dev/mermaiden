@@ -16,7 +16,6 @@ class TestPersistence:
         payload = application.snapshot(diagram).to_dict()
         payload["version"] = version
         del payload["configuration"]
-
         with pytest.raises(RuntimeError, match=f"version '{version}'; expected version '9'"):
             application.restore(payload)
 
@@ -29,21 +28,15 @@ class TestPersistence:
         application.execute(
             diagram,
             "add_class",
-            {
-                "id": "order",
-                "label": "Order",
-                "attributes": [{"name": "total", "type": {"name": "Decimal"}}],
-            },
+            {"id": "order_example", "label": "Order", "attributes": [{"name": "total", "type": {"name": "Decimal"}}]},
         )
         payload = application.snapshot(diagram).to_dict()
         element = cast(list[dict[str, object]], payload["elements"])[0]
         attributes = cast(list[dict[str, object]], cast(dict[str, object], element["fields"])["attributes"])
         member = cast(dict[str, object], attributes[0]["fields"])
         member[field] = value
-
         with pytest.raises((RuntimeError, ValueError), match=field):
             application.restore(payload)
-
         restored = application.restore(application.snapshot(diagram).to_dict())
         assert application.render(restored) == application.render(diagram)
 
@@ -54,14 +47,11 @@ class TestPersistence:
             diagram,
             "add_class",
             {
-                "id": "order",
+                "id": "order_example",
                 "label": "Order",
-                "attributes": [
-                    {"name": "total", "type": {"name": "Decimal"}, "visibility": "private"},
-                ],
+                "attributes": [{"name": "total", "type": {"name": "Decimal"}, "visibility": "private"}],
             },
         )
-
         payload = application.snapshot(diagram).to_dict()
         encoded = json.dumps(payload)
         element = cast(Mapping[str, object], cast(list[object], payload["elements"])[0])
@@ -69,7 +59,6 @@ class TestPersistence:
         attribute = cast(Mapping[str, object], cast(list[object], fields["attributes"])[0])
         attribute_fields = cast(Mapping[str, object], attribute["fields"])
         visibility = cast(Mapping[str, object], attribute_fields["visibility"])
-
         assert element["$type"] == "mermaiden/element/classDiagram/class"
         assert attribute["$type"] == "mermaiden/value/classDiagram/class_attribute"
         assert visibility["$enum"] == "mermaiden/enum/classDiagram/visibility"
@@ -95,7 +84,6 @@ class TestPersistence:
             payload[added] = True
         if "version" in change:
             payload["version"] = change["version"]
-
         with pytest.raises(RuntimeError, match=message):
             application.restore(payload)
 
@@ -110,38 +98,33 @@ class TestPersistence:
     def test_rejects_unregistered_or_foreign_discriminators(self, discriminator: str) -> None:
         application = Application.create()
         diagram = application.create_diagram("classDiagram")
-        application.execute(diagram, "add_class", {"id": "order", "label": "Order"})
+        application.execute(diagram, "add_class", {"id": "order_example", "label": "Order"})
         payload = application.snapshot(diagram).to_dict()
         element = cast(dict[str, object], cast(list[object], payload["elements"])[0])
         element["$type"] = discriminator
-
         with pytest.raises(RuntimeError, match=r"discriminator|does not match"):
             application.restore(payload)
 
     def test_requires_the_exact_registered_model_fields_and_diagram_properties(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("flowchart")
-        application.execute(diagram, "add_start", {"id": "start", "label": "Start"})
+        application.execute(diagram, "add_start", {"id": "start_example", "label": "Start"})
         payload = application.snapshot(diagram).to_dict()
         element = cast(dict[str, object], cast(list[object], payload["elements"])[0])
         fields = cast(dict[str, object], element["fields"])
         del fields["label"]
-
-        with pytest.raises(RuntimeError, match="missing 'label'"):
+        with pytest.raises(RuntimeError, match=r"missing 'label'"):
             application.restore(payload)
-
         payload = application.snapshot(diagram).to_dict()
         properties = cast(dict[str, object], payload["properties"])
         properties["unexpected"] = True
-        with pytest.raises(RuntimeError, match="unsupported 'unexpected'"):
+        with pytest.raises(RuntimeError, match=r"unsupported 'unexpected'"):
             application.restore(payload)
 
     def test_every_registered_empty_snapshot_validates_and_round_trips(self) -> None:
         application = Application.create()
-
         for info in application.available_diagrams():
             payload = application.snapshot(application.create_diagram(info.id)).to_dict()
             restored = application.restore(json.loads(json.dumps(payload)))
-
             assert payload["version"] == 9
             assert application.snapshot(restored).to_dict() == payload

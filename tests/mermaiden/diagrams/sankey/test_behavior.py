@@ -3,27 +3,26 @@ import json
 import pytest
 
 from mermaiden import Application
-from mermaiden.domain import DiagramCommand, UnknownCommand
 
 
 class TestSankey:
     def test_exercises_every_public_command_and_restores_identical_mermaid(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("sankey")
-
         commands = (
-            DiagramCommand("configure", {"wrap": False}),
-            DiagramCommand("add_node", {"id": "grid", "label": 'Grid, "main"'}),
-            DiagramCommand("add_node", {"id": "homes", "label": "Homes"}),
-            DiagramCommand("add_flow", {"id": "supply", "source_id": "grid", "target_id": "homes", "value": 113.726}),
+            ("configure", {"wrap": False}),
+            ("add_node", {"id": "grid_example", "label": 'Grid, "main"'}),
+            ("add_node", {"id": "homes_example", "label": "Homes"}),
+            (
+                "add_flow",
+                {"id": "supply_example", "source_id": "grid_example", "target_id": "homes_example", "value": 113.726},
+            ),
         )
         for command in commands:
-            application.apply(diagram, command)
-
+            application.execute(diagram, *command)
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
-
-        assert set(application.diagram_description("sankey").commands) == {item.operation for item in commands} | {
+        assert set(application.diagram_description("sankey").commands) == {item[0] for item in commands} | {
             "update_element",
             "remove_element",
             "move_element",
@@ -37,19 +36,18 @@ class TestSankey:
     def test_rejects_non_positive_flows_duplicates_and_unknown_nodes(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("sankey")
-        application.apply(diagram, DiagramCommand("add_node", {"id": "grid", "label": "Grid"}))
-
-        with pytest.raises(UnknownCommand):
-            application.apply(
+        application.execute(diagram, "add_node", {"id": "grid_example", "label": "Grid"})
+        with pytest.raises(RuntimeError):
+            application.execute(
                 diagram,
-                DiagramCommand(
-                    "add_flow", {"id": "bad", "source_id": "grid", "target_id": "grid", "value": "negative"}
-                ),
+                "add_flow",
+                {"id": "bad_example", "source_id": "grid_example", "target_id": "grid_example", "value": "negative"},
             )
         with pytest.raises(RuntimeError, match=r"already exists"):
-            application.apply(diagram, DiagramCommand("add_node", {"id": "grid", "label": "Again"}))
+            application.execute(diagram, "add_node", {"id": "grid_example", "label": "Again"})
         with pytest.raises(RuntimeError, match=r"unknown|does not exist"):
-            application.apply(
+            application.execute(
                 diagram,
-                DiagramCommand("add_flow", {"id": "missing", "source_id": "grid", "target_id": "missing", "value": 1}),
+                "add_flow",
+                {"id": "missing_example", "source_id": "grid_example", "target_id": "missing_example", "value": 1},
             )
