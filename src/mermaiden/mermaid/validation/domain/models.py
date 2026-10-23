@@ -36,9 +36,17 @@ class MermaidRenderReport:
 
 
 @dataclass(frozen=True, slots=True)
-class MermaidCliResult:
-    return_code: int | None
+class RendererRuntimeResult:
+    return_code: int
     svgs: Mapping[str, str]
     output: str = ""
-    timed_out: bool = False
-    observed_cli_version: str = ""
+
+
+@dataclass(frozen=True, slots=True)
+class MermaidRenderFailure(RuntimeError):
+    code: MermaidRenderDiagnosticCode
+    message: str
+    details: str = ""
+
+    def __str__(self) -> str:
+        return self.message
