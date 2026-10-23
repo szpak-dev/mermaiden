@@ -31,7 +31,7 @@ nitpick_ignore = [
     ("py:class", "mermaiden.diagrams.catalog.models.DiagramDescription"),
     ("py:class", "mermaiden.diagrams.domain.DiagramInfo"),
     ("py:class", "mermaiden.diagrams.domain.DiagramModel"),
-    ("py:class", "mermaiden.mermaid.validation.domain.MermaidRenderReport"),
+    ("py:class", "mermaiden.mermaid.validation.domain.models.MermaidRenderReport"),
     ("py:class", "mermaiden.runtime.snapshot.domain.DiagramSnapshot"),
     ("py:class", "pathlib.Path"),
     ("py:class", "wireup.ioc.container.sync_container.ScopedSyncContainer"),
