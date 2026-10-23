@@ -1,17 +1,17 @@
 from abc import ABC, abstractmethod
 from collections.abc import Mapping
 
-from .domain import MermaidCliResult
+from .models import RendererRuntimeResult
 
 
-class MermaidCli(ABC):
+class RenderValidationRuntime(ABC):
     @property
     @abstractmethod
     def mermaid_version(self) -> str: ...
 
     @property
     @abstractmethod
-    def version(self) -> str: ...
+    def mermaid_cli_version(self) -> str: ...
 
     @abstractmethod
-    def render(self, sources: Mapping[str, str]) -> MermaidCliResult: ...
+    def render(self, sources: Mapping[str, str]) -> RendererRuntimeResult: ...
