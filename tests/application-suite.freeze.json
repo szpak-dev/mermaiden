@@ -42,6 +42,7 @@
     "tests/mermaiden/contracts/test_mutation_conformance.py": "41284edf8c277170530899159b062e0ee1f54f0cca89fc0faec7d70941fcc06d",
     "tests/mermaiden/contracts/test_persistence.py": "79a8bdfcaa65a8b7243b64e5a54b25f991bae7f38c9ac57d0f2c4b3476a98f73",
     "tests/mermaiden/contracts/test_registry.py": "31c1f7a1bc924a91c68dd5a6bf9e2ccfe2ca05a25435ca3bf3319aa60fd473cd",
+    "tests/mermaiden/contracts/test_render_environment.py": "98643179bb879ed3badc279ea2ee17ce8e00bfd8f0ca0de16f1cda0bf8164c22",
     "tests/mermaiden/contracts/test_render_validation.py": "5e48016a887ed05e9afa0f5023dd2979fc0d627f3ee448096b2dc3a4badfe434",
     "tests/mermaiden/contracts/test_updates.py": "17e45a9461311823e90d111c6de27d82f46e0d86f41acee4db61335c439795dd",
     "tests/mermaiden/diagrams/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
