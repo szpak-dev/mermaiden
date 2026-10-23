@@ -35,18 +35,27 @@ with Application.create() as application:
     svg = report.svg
 ```
 
-`validate_render()` invokes `mmdc` from `PATH`. The Mermaid engine and Mermaid CLI have independent release numbers.
-Read `application.mermaid_cli_version`, then install that exact CLI version:
+`validate_render()` invokes `mmdc` from `PATH`. Mermaiden does not package Node.js, Mermaid, Mermaid CLI, Puppeteer, or a
+browser. The calling environment owns that runtime and must install the exact Mermaid engine and CLI versions exposed by
+the installed Mermaiden release:
 
 ```sh
+MERMAID_VERSION="$(python -c 'from mermaiden import Application as A; print(A.create().mermaid_version)')"
 MMD_CLI_VERSION="$(python -c 'from mermaiden import Application as A; print(A.create().mermaid_cli_version)')"
-npm install --global "@mermaid-js/mermaid-cli@${MMD_CLI_VERSION}"
+npm install --save-exact "mermaid@${MERMAID_VERSION}" "@mermaid-js/mermaid-cli@${MMD_CLI_VERSION}"
+npx puppeteer browsers install
+export PATH="$PWD/node_modules/.bin:$PATH"
 mmdc --version
 ```
 
-The final command must print the same version. Mermaid CLI installs its Puppeteer browser by default. If that download
-was disabled or the environment supplies its own compatible Chrome or Chromium executable, set
-`PUPPETEER_EXECUTABLE_PATH` before calling `validate_render()`.
+The final command must print `MMD_CLI_VERSION`. `npx puppeteer browsers install` provisions the browser selected by the
+Puppeteer version installed with Mermaid CLI. A deployment image should run these installation commands while building
+the image; application startup should not download runtime dependencies. If the environment intentionally supplies a
+compatible Chrome or Chromium executable instead, it may configure Puppeteer through `PUPPETEER_EXECUTABLE_PATH`.
+
+Before rendering, Mermaiden resolves `mmdc` through `PATH` and reads the installed CLI and engine package metadata. A
+missing executable or package produces `renderer_unavailable`; either semver differing from the two public properties
+produces `version_mismatch`. The caller never supplies package paths or browser paths to Mermaiden.
 
 The report keeps SVG output, the expected Mermaid engine and CLI versions, and structured diagnostics together. Missing
 executables, CLI version mismatches, timeouts, Mermaid failures, and invalid SVG output each produce a distinct
