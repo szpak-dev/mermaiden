@@ -108,6 +108,13 @@ class InstalledWheelSmoke:
         source = application.render(restored)
         if "Updated First" not in source or "Second" in source:
             raise RuntimeError("The installed package did not render the applied CRUD operations.")
+        report = application.validate_render(restored)
+        if not report.success:
+            raise RuntimeError(f"The installed package did not validate a real render: {report.diagnostics!r}")
+        if not report.svg.startswith("<svg"):
+            raise RuntimeError(
+                "The installed package did not return rendered SVG through Application.validate_render()."
+            )
 
         classes = application.create_diagram("classDiagram")
         application.execute(
