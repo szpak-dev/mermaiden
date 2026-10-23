@@ -1,4 +1,4 @@
-.PHONY: application-test-freeze application-test-policy architecture architecture-matrix architecture-matrix-contract ci compat compatibility configuration-proofs configuration-render-shard diagrams-preview diagrams-test diagrams-validate diagrams-validate-core documentation-check documentation-linkcheck documentation-links fast-check format integration integration-core mermaid-freshness mermaid-lock mermaid-sync mutation-contract mutation-contract-check package-check pytest quality
+.PHONY: application-test-freeze application-test-policy architecture ci compat compatibility configuration-proofs configuration-render-shard diagrams-preview diagrams-test diagrams-validate diagrams-validate-core documentation-check documentation-linkcheck documentation-links fast-check format integration integration-core mermaid-freshness mermaid-lock mermaid-sync mutation-contract mutation-contract-check package-check pytest quality renderer-install
 
 UV := uv
 RUN := $(UV) run --no-sync
@@ -6,12 +6,6 @@ PYTHON := $(RUN) python
 
 architecture:
 	@$(RUN) lint-imports --cache-dir .dev/import_linter_cache
-
-architecture-matrix:
-	@PYTHONPATH=src $(PYTHON) scripts/check_module_matrix.py
-
-architecture-matrix-contract:
-	@PYTHONPATH=src $(PYTHON) scripts/check_module_matrix.py --contract-only
 
 compat:
 	@PYTHONPATH=src $(PYTHON) -m mermaiden.cli compat
@@ -55,7 +49,7 @@ application-test-policy:
 application-test-freeze:
 	@PYTHONPATH=src $(PYTHON) scripts/check_application_tests.py --check-freeze
 
-package-check:
+package-check: renderer-install
 	@set -eu; \
 	temporary=$$(mktemp -d); \
 	trap 'rm -rf "$$temporary"' EXIT; \
@@ -64,7 +58,7 @@ package-check:
 	$(UV) build --out-dir "$$artifacts"; \
 	$(PYTHON) -m twine check "$$artifacts"/*; \
 	cd "$$temporary"; \
-	$(UV) run --isolated --with "$$artifacts"/*.whl python -I "$(CURDIR)/scripts/smoke_installed_wheel.py" "$$artifacts"/*.tar.gz
+	PATH="$(CURDIR)/node_modules/.bin:$$PATH" $(UV) run --isolated --with "$$artifacts"/*.whl python -I "$(CURDIR)/scripts/smoke_installed_wheel.py" "$$artifacts"/*.tar.gz
 
 quality:
 	@$(RUN) ruff format --check .
@@ -79,16 +73,17 @@ pytest:
 fast-check:
 	@$(MAKE) --jobs=3 quality pytest compat
 
-integration:
-	@PUPPETEER_SKIP_DOWNLOAD=true npm ci
+renderer-install:
+	@npm ci
+	@npx puppeteer browsers install
+
+integration: renderer-install
 	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" $(PYTHON) -m pytest -m integration
 
-integration-core:
-	@PUPPETEER_SKIP_DOWNLOAD=true npm ci
+integration-core: renderer-install
 	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" $(PYTHON) -m pytest -m integration -k "not test_every_configuration_probe_produces_a_real_svg"
 
-configuration-render-shard:
-	@PUPPETEER_SKIP_DOWNLOAD=true npm ci
+configuration-render-shard: renderer-install
 	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" PYTHONPATH=. $(PYTHON) scripts/check_configuration_rendering.py --shard $(SHARD)
 
 diagrams-validate: integration
