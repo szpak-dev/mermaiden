@@ -87,19 +87,7 @@ class StructuralFixtureBuilder:
                     FixtureCommand("add_file", {"id": "behavior", "label": "test_behavior.py"}),
                     FixtureCommand("add_file", {"id": "render", "label": "test_rendering.py"}),
                     FixtureCommand("add_item", {"id": "evidence", "label": "Release evidence"}),
-                    FixtureCommand(
-                        "add_annotation",
-                        {
-                            "id": "root_note",
-                            "element_id": "root",
-                            "highlight": True,
-                            "icon": "folder",
-                            "description": "Typed diagram toolkit",
-                        },
-                    ),
-                    FixtureCommand("add_annotation", {"id": "source_note", "element_id": "source", "icon": "folder"}),
                     FixtureCommand("add_branch", {"id": "root_source", "parent_id": "root", "child_id": "source"}),
-                    FixtureCommand("add_annotation", {"id": "tests_note", "element_id": "tests", "icon": "folder"}),
                     FixtureCommand("add_branch", {"id": "root_tests", "parent_id": "root", "child_id": "tests"}),
                     FixtureCommand(
                         "add_branch", {"id": "source_package", "parent_id": "source", "child_id": "package"}
@@ -133,44 +121,6 @@ class StructuralFixtureBuilder:
                         "add_branch", {"id": "root_pyproject", "parent_id": "root", "child_id": "pyproject"}
                     ),
                     FixtureCommand("add_branch", {"id": "root_evidence", "parent_id": "root", "child_id": "evidence"}),
-                    FixtureCommand(
-                        "add_annotation",
-                        {
-                            "id": "readme_note",
-                            "element_id": "readme",
-                            "highlight": True,
-                            "description": "Documentation",
-                        },
-                    ),
-                    FixtureCommand(
-                        "add_annotation",
-                        {
-                            "id": "configuration_note",
-                            "element_id": "configuration",
-                            "highlight": True,
-                            "icon": "file",
-                            "description": "Typed configuration",
-                        },
-                    ),
-                    FixtureCommand(
-                        "add_annotation",
-                        {
-                            "id": "render_note",
-                            "element_id": "render",
-                            "highlight": True,
-                            "icon": "file",
-                            "description": "Browser rendering",
-                        },
-                    ),
-                    FixtureCommand(
-                        "add_annotation",
-                        {
-                            "id": "evidence_note",
-                            "element_id": "evidence",
-                            "highlight": True,
-                            "description": "Release evidence",
-                        },
-                    ),
                 ),
             ),
             FixtureDefinition(
@@ -266,9 +216,6 @@ class StructuralFixtureBuilder:
                             "label": "visits",
                         },
                     ),
-                    FixtureCommand("add_note", {"id": "animal_note", "class_id": "Animal", "text": "Base type"}),
-                    FixtureCommand("add_note", {"id": "duck_note", "class_id": "Duck", "text": "Concrete type"}),
-                    FixtureCommand("add_note", {"id": "pond_note", "class_id": "Pond", "text": "Aggregate"}),
                 ),
             ),
             FixtureDefinition(

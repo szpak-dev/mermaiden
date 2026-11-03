@@ -2,20 +2,6 @@
   "diagram_id": "treeView-beta",
   "generated_from": "Application.diagram_description().commands",
   "commands": {
-    "add_annotation": {
-      "$.description": [
-        "OptionalIdentifier"
-      ],
-      "$.element_id": [
-        "Identifier"
-      ],
-      "$.icon": [
-        "TreeIcon"
-      ],
-      "$.id": [
-        "Identifier"
-      ]
-    },
     "add_branch": {
       "$.child_id": [
         "Identifier"
@@ -84,11 +70,6 @@
         "OptionalIdentifier"
       ]
     },
-    "remove_annotation": {
-      "$.id": [
-        "Identifier"
-      ]
-    },
     "remove_element": {
       "$.id": [
         "Identifier"
@@ -105,26 +86,6 @@
       ],
       "$.parent_id": [
         "OptionalIdentifier"
-      ]
-    },
-    "update_annotation": {
-      "$.changes.description": [
-        "OptionalIdentifier"
-      ],
-      "$.changes.icon": [
-        "TreeIcon"
-      ],
-      "$.changes.targets[].id": [
-        "Identifier"
-      ],
-      "$.changes.targets[].kind": [
-        "TargetKind values"
-      ],
-      "$.id": [
-        "Identifier"
-      ],
-      "$.kind": [
-        "constant 'tree_annotation'"
       ]
     },
     "update_element": {

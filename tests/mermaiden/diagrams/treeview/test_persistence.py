@@ -26,7 +26,7 @@ class TestTreeViewPersistence:
         assert "complete diagram-defined subtree" in removal_description
         assert "removed atomically" in removal_description
 
-    def test_preserves_addressability_through_incremental_branches_and_annotations(self) -> None:
+    def test_preserves_addressability_through_incremental_branches(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("treeView-beta")
         revisions = (
@@ -34,7 +34,6 @@ class TestTreeViewPersistence:
             ("add_directory", {"id": "example_child_one", "label": "child-one"}),
             ("add_directory", {"id": "example_child_two", "label": "child-two"}),
             ("add_file", {"id": "example_grandchild", "label": "leaf_example.txt"}),
-            ("add_annotation", {"id": "before_branch_example", "element_id": "example_child_one", "icon": "folder"}),
             (
                 "add_branch",
                 {"id": "first_sibling_example", "parent_id": "example_root", "child_id": "example_child_one"},
@@ -44,16 +43,8 @@ class TestTreeViewPersistence:
                 {"id": "second_sibling_example", "parent_id": "example_root", "child_id": "example_child_two"},
             ),
             (
-                "add_annotation",
-                {"id": "after_branch_example", "element_id": "example_child_two", "description": "Second child"},
-            ),
-            (
                 "add_branch",
                 {"id": "nested_example", "parent_id": "example_child_one", "child_id": "example_grandchild"},
-            ),
-            (
-                "add_annotation",
-                {"id": "after_nested_branch_example", "element_id": "example_grandchild", "highlight": True},
             ),
         )
         expected_ids: set[str] = set()
@@ -61,7 +52,7 @@ class TestTreeViewPersistence:
         for operation, arguments in revisions:
             report = application.execute(diagram, operation, arguments)
             if operation in {"add_item", "add_directory", "add_file"}:
-                expected_ids.add(cast(str, arguments["id"]))
+                expected_ids.add(arguments["id"])
             snapshot = application.snapshot(diagram).to_dict()
             persisted_ids = {
                 cast(str, cast(Mapping[str, object], cast(Mapping[str, object], element)["fields"])["id"])
@@ -78,10 +69,7 @@ class TestTreeViewPersistence:
                 '"defaultIconPack": "", "filenameIcons": {}, "extensionIcons": {}}\n---\ntreeView-beta\n'
             )
             assert source.startswith(expected_header)
-        assert source.endswith(
-            "treeView-beta\nroot_example/\n  child-one/ icon(folder)\n"
-            "    leaf_example.txt :::highlight\n  child-two/ ## Second child\n"
-        )
+        assert source.endswith("treeView-beta\nroot_example/\n  child-one/\n    leaf_example.txt\n  child-two/\n")
 
     def test_rejects_items_missing_a_persisted_field(self) -> None:
         application = Application.create()

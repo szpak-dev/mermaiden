@@ -1,5 +1,4 @@
 import json
-from typing import cast
 
 import pytest
 
@@ -18,16 +17,6 @@ class TestTreeView:
             ("add_file", {"id": "readme_example", "label": "README.md"}),
             ("add_branch", {"id": "branch_example", "parent_id": "root_example", "child_id": "child_example"}),
             ("add_branch", {"id": "readme_branch_example", "parent_id": "root_example", "child_id": "readme_example"}),
-            (
-                "add_annotation",
-                {
-                    "id": "annotation_example",
-                    "element_id": "child_example",
-                    "highlight": True,
-                    "icon": "folder",
-                    "description": "Docs",
-                },
-            ),
         )
         for operation, arguments in commands:
             application.execute(diagram, operation, arguments)
@@ -42,15 +31,13 @@ class TestTreeView:
             "reorder_elements",
             "update_relation",
             "remove_relation",
-            "update_annotation",
-            "remove_annotation",
         }
         assert "root_example/" in source
-        assert '"child_example \\"one\\"" :::highlight icon(folder) ## Docs' in source
+        assert '"child_example \\"one\\""' in source
         assert "  README.md" in source
         assert application.render(restored) == source
 
-    def test_rejects_invalid_configuration_and_unknown_annotation_targets(self) -> None:
+    def test_rejects_invalid_configuration_and_duplicate_items(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("treeView-beta")
         application.execute(diagram, "add_directory", {"id": "root_example", "label": "root_example"})
@@ -58,57 +45,6 @@ class TestTreeView:
             application.execute(diagram, "configure", {"missing_example": True})
         with pytest.raises(RuntimeError, match=r"already exists"):
             application.execute(diagram, "add_item", {"id": "root_example", "label": "again"})
-        with pytest.raises(RuntimeError, match=r"unknown|does not exist"):
-            application.execute(
-                diagram,
-                "add_annotation",
-                {"id": "annotation_example", "element_id": "missing_example", "description": "Missing"},
-            )
-
-    def test_rejects_unsupported_icon_characters_before_create_or_update(self) -> None:
-        application = Application.create()
-        diagram = application.create_diagram("treeView-beta")
-        application.execute(diagram, "add_directory", {"id": "root_example", "label": "Root"})
-        before_create = application.snapshot(diagram).to_dict()
-        with pytest.raises(RuntimeError) as rejected_create:
-            application.execute(
-                diagram, "add_annotation", {"id": "note_example", "element_id": "root_example", "icon": "📁"}
-            )
-        diagnostic = str(rejected_create.value)
-        assert "add_annotation" in diagnostic
-        assert "icon" in diagnostic
-        assert "'📁' (U+1F4C1)" in diagnostic
-        assert "rule pattern" in diagnostic
-        assert application.snapshot(diagram).to_dict() == before_create
-        application.execute(
-            diagram, "add_annotation", {"id": "note_example", "element_id": "root_example", "icon": "folder"}
-        )
-        before_update = application.snapshot(diagram).to_dict()
-        with pytest.raises(RuntimeError) as rejected_update:
-            application.execute(
-                diagram,
-                "update_annotation",
-                {"id": "note_example", "kind": "tree_annotation", "changes": {"icon": "📁"}},
-            )
-        diagnostic = str(rejected_update.value)
-        assert "update_annotation" in diagnostic
-        assert "changes.icon" in diagnostic
-        assert "'📁' (U+1F4C1)" in diagnostic
-        assert application.snapshot(diagram).to_dict() == before_update
-
-    def test_rejects_unsupported_icon_characters_during_restore(self) -> None:
-        application = Application.create()
-        diagram = application.create_diagram("treeView-beta")
-        application.execute(diagram, "add_directory", {"id": "root_example", "label": "Root"})
-        application.execute(
-            diagram, "add_annotation", {"id": "note_example", "element_id": "root_example", "icon": "folder"}
-        )
-        payload = application.snapshot(diagram).to_dict()
-        annotations = cast(list[dict[str, object]], payload["annotations"])
-        fields = cast(dict[str, object], annotations[0]["fields"])
-        fields["icon"] = "📁"
-        with pytest.raises(ValueError, match=r"icon"):
-            application.restore(payload)
 
     @pytest.mark.parametrize("operation", ["add_directory", "add_file"])
     @pytest.mark.parametrize("label", ["src/package", "src\\package"])
@@ -154,11 +90,6 @@ class TestTreeView:
             ("add_branch", {"id": "root_nested_example", "parent_id": "root_example", "child_id": "nested_example"}),
             ("add_branch", {"id": "nested_leaf_example", "parent_id": "nested_example", "child_id": "leaf_example"}),
             ("add_branch", {"id": "root_sibling_example", "parent_id": "root_example", "child_id": "sibling_example"}),
-            ("add_annotation", {"id": "root_note_example", "element_id": "root_example", "highlight": True}),
-            ("add_annotation", {"id": "nested_note_example", "element_id": "nested_example", "highlight": True}),
-            ("add_annotation", {"id": "leaf_note_example", "element_id": "leaf_example", "highlight": True}),
-            ("add_annotation", {"id": "sibling_note_example", "element_id": "sibling_example", "highlight": True}),
-            ("add_annotation", {"id": "outside_note_example", "element_id": "outside_example", "highlight": True}),
         ):
             application.execute(diagram, operation, arguments)
         before = application.snapshot(diagram).to_dict()
@@ -177,10 +108,6 @@ class TestTreeView:
             ("relation", "root_nested_example"),
             ("relation", "nested_leaf_example"),
             ("relation", "root_sibling_example"),
-            ("annotation", "root_note_example"),
-            ("annotation", "nested_note_example"),
-            ("annotation", "leaf_note_example"),
-            ("annotation", "sibling_note_example"),
         )
         assert application.snapshot(diagram).to_dict()["relations"] == []
-        assert application.render(diagram).endswith("treeView-beta\noutside_example/ :::highlight\n")
+        assert application.render(diagram).endswith("treeView-beta\noutside_example/\n")

@@ -61,9 +61,7 @@ class SvgGeometryProbe:
       || paths[0].getTotalLength() <= 0) failures.push("Inheritance connector lost");
   } else {
     if (labels.length !== 3) failures.push(`Expected three TreeView labels, found ${labels.length}`);
-    if (!document.querySelector("text.highlight")?.textContent.includes("example_long_filename")) {
-      failures.push("TreeView highlight lost");
-    }
+
   }
   if (document.fonts.status !== "loaded") failures.push("Fonts have not loaded");
   return { failures, label_count: labels.length,

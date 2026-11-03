@@ -365,10 +365,6 @@
         "right"
       ]
     },
-    "TreeIcon": {
-      "pattern": "^[\\w-]*(?::[\\w-]+)?$",
-      "description": "Empty or a Mermaid Tree View icon name with an optional pack prefix."
-    },
     "TreeItemType values": {
       "enum": [
         "item",

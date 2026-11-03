@@ -1,0 +1,104 @@
+{
+  "version": 9,
+  "kind": "treeView-beta",
+  "draft": false,
+  "configuration": {
+    "$type": "mermaiden/configuration/treeView-beta/tree_view_diagram_configuration",
+    "fields": {
+      "wrap": true,
+      "use_width": {
+        "$type": "mermaiden/value/treeView-beta/omittable_number",
+        "fields": {
+          "root": {
+            "$type": "mermaiden/value/treeView-beta/unconfigured",
+            "fields": {}
+          }
+        }
+      },
+      "use_max_width": true,
+      "theme": {
+        "$type": "mermaiden/value/treeView-beta/omittable_theme",
+        "fields": {
+          "root": {
+            "$type": "mermaiden/value/treeView-beta/unconfigured",
+            "fields": {}
+          }
+        }
+      },
+      "look": {
+        "$type": "mermaiden/value/treeView-beta/omittable_look",
+        "fields": {
+          "root": {
+            "$type": "mermaiden/value/treeView-beta/unconfigured",
+            "fields": {}
+          }
+        }
+      },
+      "layout": {
+        "$type": "mermaiden/value/treeView-beta/omittable_layout",
+        "fields": {
+          "root": {
+            "$type": "mermaiden/value/treeView-beta/unconfigured",
+            "fields": {}
+          }
+        }
+      },
+      "row_indent": 10.0,
+      "padding_x": 5.0,
+      "padding_y": 5.0,
+      "line_thickness": 1.0,
+      "show_icons": false,
+      "default_icon_pack": "",
+      "filename_icons": {
+        "$type": "mermaiden/value/treeView-beta/tree_view_icon_map",
+        "fields": {
+          "root": {}
+        }
+      },
+      "extension_icons": {
+        "$type": "mermaiden/value/treeView-beta/tree_view_icon_map",
+        "fields": {
+          "root": {}
+        }
+      }
+    }
+  },
+  "elements": [
+    {
+      "$type": "mermaiden/element/treeView-beta/tree_item",
+      "fields": {
+        "id": "element_example",
+        "label": "Element example",
+        "item_type": {
+          "$enum": "mermaiden/enum/treeView-beta/tree_item_type",
+          "value": "directory"
+        }
+      }
+    }
+  ],
+  "relations": [],
+  "annotations": [
+    {
+      "$type": "mermaiden/annotation/treeView-beta/tree_annotation",
+      "fields": {
+        "id": "note_example",
+        "targets": [
+          {
+            "$type": "mermaiden/value/treeView-beta/target_ref",
+            "fields": {
+              "kind": {
+                "$enum": "mermaiden/enum/treeView-beta/target_kind",
+                "value": "element"
+              },
+              "id": "element_example"
+            }
+          }
+        ],
+        "highlight": true,
+        "icon": "folder",
+        "description": "Description example"
+      }
+    }
+  ],
+  "properties": {}
+}

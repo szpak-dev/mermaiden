@@ -18,6 +18,4 @@ Root ordering: `reorder_elements` over the exact direct-member permutation.
 
 ## Annotations
 
-| Kind | Update command | Placement or retargeting | Fields |
-| --- | --- | --- | --- |
-| `tree_annotation` | `update_annotation` | `targets` via `update_annotation`; ordered: `true` | updateable: `targets`, `highlight`, `icon`, `description`; immutable: `id` |
+None.

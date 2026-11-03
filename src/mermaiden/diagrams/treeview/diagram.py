@@ -4,17 +4,15 @@ from typing import ClassVar
 
 from wireup import injectable
 
-from ...core.characters import Identifier, OptionalText, Text
+from ...core.characters import Identifier, Text
 from ...core.domain import ChangeReport, Container, Element
 from ...core.naming import ClassName
 from ..domain import (
-    CommandDefault,
     DiagramCommandFeature,
     DiagramDefinition,
     DiagramFeature,
     DiagramModel,
 )
-from .annotations import TreeAnnotation, TreeAnnotations, TreeIcon
 from .configuration import TreeViewDiagramConfiguration
 from .constraints.domain import TreeViewConstraint
 from .elements import TreeItem, TreeItemType
@@ -37,23 +35,12 @@ class TreeView(DiagramModel):
         configuration=TreeViewDiagramConfiguration,
         elements=(TreeItem,),
         relations=(TreeBranch,),
-        annotations=(TreeAnnotation,),
         commands=(
             DiagramCommandFeature("add_item", {"id": Identifier, "label": Text}),
             DiagramCommandFeature("add_directory", {"id": Identifier, "label": Text}),
             DiagramCommandFeature("add_file", {"id": Identifier, "label": Text}),
             DiagramCommandFeature("classify_item", {"id": Identifier, "item_type": TreeItemType}),
             DiagramCommandFeature("add_branch", {"id": Identifier, "parent_id": Identifier, "child_id": Identifier}),
-            DiagramCommandFeature(
-                "add_annotation",
-                {
-                    "id": Identifier,
-                    "element_id": Identifier,
-                    "highlight": CommandDefault(bool, False),
-                    "icon": CommandDefault(TreeIcon, ""),
-                    "description": CommandDefault(OptionalText, ""),
-                },
-            ),
         ),
     )
 
@@ -96,23 +83,6 @@ class TreeView(DiagramModel):
 
     def add_branch(self, id: str, parent_id: str, child_id: str) -> ChangeReport:
         return self._add_relation(f"add tree branch '{id}'", TreeBranch(id=id, element_ids=(parent_id, child_id)))
-
-    def add_annotation(
-        self,
-        id: str,
-        element_id: str,
-        *,
-        highlight: bool = False,
-        icon: str = "",
-        description: str = "",
-    ) -> ChangeReport:
-        return self._annotate(
-            f"add tree annotation '{id}'",
-            TreeAnnotations(),
-            id,
-            {"highlight": highlight, "icon": icon, "description": description},
-            (element_id,),
-        )
 
     def _add_typed_item(self, id: str, label: str, item_type: TreeItemType) -> ChangeReport:
         operation = f"add tree {item_type.value} '{id}'"

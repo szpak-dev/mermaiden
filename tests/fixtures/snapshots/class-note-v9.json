@@ -1,0 +1,114 @@
+{
+  "version": 9,
+  "kind": "classDiagram",
+  "draft": false,
+  "configuration": {
+    "$type": "mermaiden/configuration/classDiagram/class_diagram_configuration",
+    "fields": {
+      "wrap": true,
+      "use_width": {
+        "$type": "mermaiden/value/classDiagram/omittable_number",
+        "fields": {
+          "root": {
+            "$type": "mermaiden/value/classDiagram/unconfigured",
+            "fields": {}
+          }
+        }
+      },
+      "use_max_width": true,
+      "theme": {
+        "$type": "mermaiden/value/classDiagram/omittable_theme",
+        "fields": {
+          "root": {
+            "$enum": "mermaiden/enum/classDiagram/mermaid_theme",
+            "value": "redux-color"
+          }
+        }
+      },
+      "look": {
+        "$type": "mermaiden/value/classDiagram/omittable_look",
+        "fields": {
+          "root": {
+            "$enum": "mermaiden/enum/classDiagram/mermaid_look",
+            "value": "neo"
+          }
+        }
+      },
+      "layout": {
+        "$type": "mermaiden/value/classDiagram/omittable_layout",
+        "fields": {
+          "root": {
+            "$type": "mermaiden/value/classDiagram/unconfigured",
+            "fields": {}
+          }
+        }
+      },
+      "title_top_margin": 25,
+      "arrow_marker_absolute": false,
+      "divider_margin": 10.0,
+      "padding": 5.0,
+      "text_height": 10.0,
+      "node_spacing": {
+        "$type": "mermaiden/value/classDiagram/omittable_non_negative_integer",
+        "fields": {
+          "root": {
+            "$type": "mermaiden/value/classDiagram/unconfigured",
+            "fields": {}
+          }
+        }
+      },
+      "rank_spacing": {
+        "$type": "mermaiden/value/classDiagram/omittable_non_negative_integer",
+        "fields": {
+          "root": {
+            "$type": "mermaiden/value/classDiagram/unconfigured",
+            "fields": {}
+          }
+        }
+      },
+      "diagram_padding": 20,
+      "html_labels": false,
+      "hide_empty_members_box": false,
+      "hierarchical_namespaces": true
+    }
+  },
+  "elements": [
+    {
+      "$type": "mermaiden/element/classDiagram/class",
+      "fields": {
+        "id": "element_example",
+        "label": "Element example",
+        "attributes": [],
+        "methods": [],
+        "annotations": [
+          "interface",
+          "abstract"
+        ],
+        "comment": ""
+      }
+    }
+  ],
+  "relations": [],
+  "annotations": [
+    {
+      "$type": "mermaiden/annotation/classDiagram/class_note",
+      "fields": {
+        "id": "note_example",
+        "targets": [
+          {
+            "$type": "mermaiden/value/classDiagram/target_ref",
+            "fields": {
+              "kind": {
+                "$enum": "mermaiden/enum/classDiagram/target_kind",
+                "value": "element"
+              },
+              "id": "element_example"
+            }
+          }
+        ],
+        "text": "Note example"
+      }
+    }
+  ],
+  "properties": {}
+}

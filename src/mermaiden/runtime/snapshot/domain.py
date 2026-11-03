@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 from ...core.domain import DiagramSnapshotContractIdentity
 
-SNAPSHOT_VERSION = 9
+SNAPSHOT_VERSION = 10
 
 
 class SnapshotError(RuntimeError):

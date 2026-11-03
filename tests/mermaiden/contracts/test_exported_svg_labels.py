@@ -119,11 +119,6 @@ class TestExportedSvgLabels:
                 "add_branch",
                 {"id": "branch_example", "parent_id": "root_example", "child_id": "file_example"},
             )
-            application.execute(
-                diagram,
-                "add_annotation",
-                {"id": "annotation_example", "element_id": "file_example", "highlight": True},
-            )
             before = application.snapshot(diagram).to_dict()
             source = application.render(diagram)
             report = application.validate_render(diagram)

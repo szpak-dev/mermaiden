@@ -57,17 +57,6 @@
         "OptionalIdentifier"
       ]
     },
-    "add_note": {
-      "$.class_id": [
-        "Identifier"
-      ],
-      "$.id": [
-        "Identifier"
-      ],
-      "$.text": [
-        "Identifier"
-      ]
-    },
     "add_relation": {
       "$.id": [
         "Identifier"
@@ -114,11 +103,6 @@
         "OptionalIdentifier"
       ]
     },
-    "remove_annotation": {
-      "$.id": [
-        "Identifier"
-      ]
-    },
     "remove_element": {
       "$.id": [
         "Identifier"
@@ -135,23 +119,6 @@
       ],
       "$.parent_id": [
         "OptionalIdentifier"
-      ]
-    },
-    "update_annotation": {
-      "$.changes.targets[].id": [
-        "Identifier"
-      ],
-      "$.changes.targets[].kind": [
-        "TargetKind values"
-      ],
-      "$.changes.text": [
-        "Identifier"
-      ],
-      "$.id": [
-        "Identifier"
-      ],
-      "$.kind": [
-        "constant 'class_note'"
       ]
     },
     "update_element": {
