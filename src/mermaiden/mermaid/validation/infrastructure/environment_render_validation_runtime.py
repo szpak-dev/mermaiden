@@ -1,3 +1,4 @@
+import json
 import os
 import shutil
 import subprocess
@@ -130,6 +131,11 @@ class EnvironmentRenderValidationRuntime(RenderValidationRuntime):
         input_path: Path,
         output_path: Path,
     ) -> subprocess.CompletedProcess[str]:
+        puppeteer_config_path = input_path.parent / "puppeteer.json"
+        puppeteer_config_path.write_text(
+            json.dumps({"args": ["--font-render-hinting=none"]}),
+            encoding="utf-8",
+        )
         return subprocess.run(
             (
                 os.fspath(executable),
@@ -137,6 +143,8 @@ class EnvironmentRenderValidationRuntime(RenderValidationRuntime):
                 os.fspath(input_path),
                 "-o",
                 os.fspath(output_path),
+                "-p",
+                os.fspath(puppeteer_config_path),
             ),
             capture_output=True,
             check=False,

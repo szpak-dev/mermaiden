@@ -28,7 +28,15 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["import-linter>=2.11", "packaging>=25", "pyright>=1.1.403", "pytest>=9", "ruff>=0.14", "twine>=7"]
+dev = [
+    "import-linter>=2.11",
+    "packaging>=25",
+    "playwright>=1.64.1",
+    "pyright>=1.1.403",
+    "pytest>=9",
+    "ruff>=0.14",
+    "twine>=7",
+]
 
 [project.urls]
 Repository = "https://github.com/szpak-dev/mermaiden"

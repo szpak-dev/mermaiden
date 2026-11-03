@@ -76,6 +76,7 @@ fast-check:
 renderer-install:
 	@npm ci
 	@npx puppeteer browsers install
+	@$(RUN) playwright install chromium --no-shell
 
 integration: renderer-install
 	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" $(PYTHON) -m pytest -m integration

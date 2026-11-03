@@ -26,6 +26,7 @@
     "tests/fixtures/catalog.py": "a29391f48d3ba27a62ebe237dfd421475624a3b9c694e0052ba90e9591ddc849",
     "tests/fixtures/configuration_proofs.py": "916ea7105fc04200272168e6dd49646741182546e1a1c4343017bba181a8fc34",
     "tests/fixtures/models.py": "4876f1d9044a6d12e89ff8eafbf551c2ecab20e377b9858e6cdce6b3c41fb34f",
+    "tests/fixtures/svg_geometry.py": "fba3ee997f303e36fd9851bae5ee11b3695b47918af1bd4b1c8f4c0c7bdda7e5",
     "tests/fixtures/test_c4_human_proofs.py": "1122fb7abee3b6b2bf5e066f916523e56bd7c411823ea7257301e5d038a35af9",
     "tests/fixtures/test_catalog.py": "ca29258ea33ca0d59d1f55542bc0aecf6bc646035e11ca694894657d8d600c7f",
     "tests/fixtures/test_configuration_proofs.py": "c7eb127af64f2f3a3e69cdc5abde82862cdd73068ab174c147e0c7ce685677c4",
@@ -38,6 +39,7 @@
     "tests/mermaiden/contracts/test_configuration.py": "68a4247d502d1bbd7768ffe378e41ec5cbad5307f6f4351b68e167d43cbde9ed",
     "tests/mermaiden/contracts/test_deletion.py": "8652e9b69b552686fe61655aa3102d740b7c263219c2384bedec6436d75bc3b4",
     "tests/mermaiden/contracts/test_draft_persistence.py": "da069e33dbd6a53bfc69ea5ef39e0c3bae4179ff665f14db8bf1d28a64ed118a",
+    "tests/mermaiden/contracts/test_exported_svg_labels.py": "c5dd7073a02995940724d918dbd903dc493fcb962ba41ce88c655ca1a3ecff69",
     "tests/mermaiden/contracts/test_movement.py": "ecffb07485b3ef0fe696be6f623af55dffb5d2cde7631948d5dfe95e06370d37",
     "tests/mermaiden/contracts/test_mutation_conformance.py": "41284edf8c277170530899159b062e0ee1f54f0cca89fc0faec7d70941fcc06d",
     "tests/mermaiden/contracts/test_persistence.py": "79a8bdfcaa65a8b7243b64e5a54b25f991bae7f38c9ac57d0f2c4b3476a98f73",
@@ -102,6 +104,6 @@
     "tests/mermaiden/diagrams/venn/test_behavior.py": "8b84adf03c86e9d9c1eed4cb0419fd6b6db7709f27f37f2a5fc62631eba131b0",
     "tests/mermaiden/diagrams/wardley/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
     "tests/mermaiden/diagrams/wardley/test_behavior.py": "8de238ed68143c71928031fed29ffbad1452a0dece3095d44da74f69a4269e3d",
-    "pyproject.toml": "b30adceec65511beaaa1ed4a6f6d5f40e9d53b53e7321d34ba5926af630b5552"
+    "pyproject.toml": "51ba97127cb7c5af5c28fef380e8d08a31aae7170b0a6fd2b4e6e1e4f065fec0"
   }
 }
