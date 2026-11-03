@@ -63,19 +63,5 @@
       "kind_classification": "immutable"
     }
   },
-  "annotations": {
-    "class_note": {
-      "update_command": "update_annotation",
-      "fields": {
-        "id": "immutable",
-        "targets": "updateable",
-        "text": "updateable"
-      },
-      "retargeting": {
-        "field": "targets",
-        "ordered": true
-      },
-      "kind_classification": "immutable"
-    }
-  }
+  "annotations": {}
 }

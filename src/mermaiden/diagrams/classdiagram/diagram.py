@@ -13,7 +13,6 @@ from ..domain import (
     DiagramFeature,
     DiagramModel,
 )
-from .annotations import ClassNote, ClassNotes
 from .configuration import ClassDiagramConfiguration
 from .constraints import ClassDiagramConstraint
 from .elements import Class, ClassNamespace
@@ -38,7 +37,6 @@ class ClassDiagram(DiagramModel):
         configuration=ClassDiagramConfiguration,
         elements=(Class, ClassNamespace),
         relations=(ClassRelation,),
-        annotations=(ClassNote,),
         commands=(
             DiagramCommandFeature(
                 "add_class",
@@ -72,7 +70,6 @@ class ClassDiagram(DiagramModel):
                     "target_label": CommandDefault(OptionalClassText, ""),
                 },
             ),
-            DiagramCommandFeature("add_note", {"id": ClassIdentifier, "class_id": ClassIdentifier, "text": ClassText}),
         ),
     )
 
@@ -131,6 +128,3 @@ class ClassDiagram(DiagramModel):
                 target_label=target_label,
             ),
         )
-
-    def add_note(self, id: str, class_id: str, text: str) -> ChangeReport:
-        return self._annotate(f"add class note '{id}'", ClassNotes(), id, {"text": text}, (class_id,))

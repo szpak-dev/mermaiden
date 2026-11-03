@@ -28,6 +28,12 @@ with Application.create() as application:
 
 The description owns the discoverable element, relation, annotation, and command schemas for that diagram.
 
+Class diagrams default to the ELK layout for orthogonal relation routing. Callers may explicitly select another supported
+layout through `configure`.
+
+`classDiagram` and `treeView-beta` expose no standalone annotation schemas or annotation commands. Class stereotypes
+remain available through the `annotations` field of `add_class` and `update_element`.
+
 ## Validate command arguments
 
 ```python

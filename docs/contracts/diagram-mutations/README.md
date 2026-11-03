@@ -51,7 +51,7 @@ Dynamic schema sources:
 | [`C4Context`](diagrams/C4Context.md) | 5 | 1 | 0 |
 | [`architecture-beta`](diagrams/architecture-beta.md) | 3 | 2 | 1 |
 | [`block`](diagrams/block.md) | 3 | 0 | 0 |
-| [`classDiagram`](diagrams/classDiagram.md) | 2 | 1 | 1 |
+| [`classDiagram`](diagrams/classDiagram.md) | 2 | 1 | 0 |
 | [`cynefin-beta`](diagrams/cynefin-beta.md) | 1 | 1 | 0 |
 | [`erDiagram`](diagrams/erDiagram.md) | 2 | 1 | 0 |
 | [`eventmodeling`](diagrams/eventmodeling.md) | 5 | 1 | 0 |
@@ -72,6 +72,6 @@ Dynamic schema sources:
 | [`stateDiagram-v2`](diagrams/stateDiagram-v2.md) | 8 | 1 | 1 |
 | [`swimlane-beta`](diagrams/swimlane-beta.md) | 7 | 2 | 0 |
 | [`timeline`](diagrams/timeline.md) | 3 | 0 | 0 |
-| [`treeView-beta`](diagrams/treeView-beta.md) | 1 | 1 | 1 |
+| [`treeView-beta`](diagrams/treeView-beta.md) | 1 | 1 | 0 |
 | [`venn-beta`](diagrams/venn-beta.md) | 3 | 0 | 0 |
 | [`wardley-beta`](diagrams/wardley-beta.md) | 3 | 1 | 0 |

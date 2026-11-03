@@ -34,7 +34,6 @@ class TestClassDiagram:
                     "label": "extends",
                 },
             ),
-            ("add_note", {"id": "note_example", "class_id": "animal_example", "text": 'Base "type"'}),
         ):
             application.execute(diagram, *command)
         source = application.render(diagram)
@@ -42,7 +41,6 @@ class TestClassDiagram:
         assert 'namespace c_v_domain_example["Domain"]' in source
         assert "abstract" in source
         assert "--|>" in source
-        assert "note for c_v_animal_example" in source
         assert application.render(restored) == source
 
     @pytest.mark.parametrize(
@@ -95,7 +93,7 @@ class TestClassDiagram:
         updated = application.restore(json.loads(json.dumps(application.snapshot(restored).to_dict())))
         assert application.render(updated) == updated_source
 
-    def test_rejects_bad_relations_duplicate_classes_and_unknown_note_targets(self) -> None:
+    def test_rejects_bad_relations_and_duplicate_classes(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("classDiagram")
         application.execute(diagram, "add_class", {"id": "one_example", "label": "One"})
@@ -114,10 +112,6 @@ class TestClassDiagram:
             )
         with pytest.raises(RuntimeError, match=r"already exists"):
             application.execute(diagram, "add_class", {"id": "one_example", "label": "Again"})
-        with pytest.raises(RuntimeError, match=r"unknown|does not exist"):
-            application.execute(
-                diagram, "add_note", {"id": "note_example", "class_id": "missing_example", "text": "No"}
-            )
 
     def test_empty_namespace_persists_as_a_draft_and_becomes_renderable_when_populated(self) -> None:
         application = Application.create()
@@ -167,96 +161,3 @@ class TestClassDiagram:
         application.execute(diagram, operation, arguments)
         assert application.snapshot(diagram).draft is False
         assert 'c_v_invoice_example["Invoice"]' in application.render(diagram)
-
-    @pytest.mark.parametrize("operation", ("add_note", "update_annotation"))
-    def test_a_note_cannot_target_a_namespace(self, operation: str) -> None:
-        application = Application.create()
-        diagram = application.create_diagram("classDiagram")
-        application.execute(diagram, "add_namespace", {"id": "sales_example", "label": "Sales"})
-        application.execute(
-            diagram, "add_class", {"id": "order_example", "label": "Order", "parent_id": "sales_example"}
-        )
-        application.execute(
-            diagram, "add_note", {"id": "note_example", "class_id": "order_example", "text": "Pay before shipping"}
-        )
-        before = application.snapshot(diagram).to_dict()
-        source = application.render(diagram)
-        with pytest.raises(RuntimeError, match=r"class"):
-            if operation == "add_note":
-                application.execute(
-                    diagram, operation, {"id": "new_example", "class_id": "sales_example", "text": "Sales note_example"}
-                )
-            else:
-                application.execute(
-                    diagram,
-                    operation,
-                    {
-                        "id": "note_example",
-                        "kind": "class_note",
-                        "changes": {"targets": [{"kind": "element", "id": "sales_example"}]},
-                    },
-                )
-        assert application.snapshot(diagram).to_dict() == before
-        assert application.render(diagram) == source
-
-    @pytest.mark.parametrize(
-        "targets",
-        (
-            [],
-            [{"kind": "element", "id": "order_example"}, {"kind": "element", "id": "invoice_example"}],
-            [{"kind": "relation", "id": "billing_example"}],
-        ),
-    )
-    def test_note_target_edits_reject_unsupported_cardinality_and_kinds(self, targets: list[dict[str, str]]) -> None:
-        application = Application.create()
-        diagram = application.create_diagram("classDiagram")
-        application.execute(diagram, "add_class", {"id": "order_example", "label": "Order"})
-        application.execute(diagram, "add_class", {"id": "invoice_example", "label": "Invoice"})
-        application.execute(
-            diagram,
-            "add_relation",
-            {"id": "billing_example", "source_id": "order_example", "target_id": "invoice_example"},
-        )
-        application.execute(
-            diagram, "add_note", {"id": "note_example", "class_id": "order_example", "text": "Pay before shipping"}
-        )
-        before = application.snapshot(diagram).to_dict()
-        with pytest.raises(RuntimeError):
-            application.execute(
-                diagram,
-                "update_annotation",
-                {"id": "note_example", "kind": "class_note", "changes": {"targets": targets}},
-            )
-        assert application.snapshot(diagram).to_dict() == before
-        application.execute(
-            diagram,
-            "update_annotation",
-            {
-                "id": "note_example",
-                "kind": "class_note",
-                "changes": {"targets": [{"kind": "element", "id": "invoice_example"}]},
-            },
-        )
-        assert 'note for c_v_invoice_example "Pay before shipping"' in application.render(diagram)
-        assert "note for c_v_order_example" not in application.render(diagram)
-
-    @pytest.mark.parametrize("text", ("", " ", "Pay\nnow", "Pay\x00now"))
-    @pytest.mark.parametrize("operation", ("add_note", "update_annotation"))
-    def test_invalid_note_text_is_rejected_without_changing_existing_notes(self, text: str, operation: str) -> None:
-        application = Application.create()
-        diagram = application.create_diagram("classDiagram")
-        application.execute(diagram, "add_class", {"id": "order_example", "label": "Order"})
-        application.execute(
-            diagram, "add_note", {"id": "note_example", "class_id": "order_example", "text": "Pay before shipping"}
-        )
-        before = application.snapshot(diagram).to_dict()
-        with pytest.raises(RuntimeError, match=r"text"):
-            if operation == "add_note":
-                application.execute(
-                    diagram, operation, {"id": "new_example", "class_id": "order_example", "text": text}
-                )
-            else:
-                application.execute(
-                    diagram, operation, {"id": "note_example", "kind": "class_note", "changes": {"text": text}}
-                )
-        assert application.snapshot(diagram).to_dict() == before

@@ -274,7 +274,8 @@ class TestClassMembers:
         )
         expected = (
             '---\nconfig:\n  wrap: false\n  class: {"useMaxWidth": true, "theme": "redux-color", '
-            '"look": "neo", "titleTopMargin": 25, "arrowMarkerAbsolute": false, "dividerMargin": 10.0, '
+            '"look": "neo", "layout": "elk", "titleTopMargin": 25, "arrowMarkerAbsolute": false, '
+            '"dividerMargin": 10.0, '
             '"padding": 5.0, "textHeight": 10.0, "diagramPadding": 20, "htmlLabels": false, '
             '"hideEmptyMembersBox": false, "hierarchicalNamespaces": true}\n---\nclassDiagram\n'
             f'class c_v_order_example["Order"] {{\n  +submit() void{suffix}\n}}\n'

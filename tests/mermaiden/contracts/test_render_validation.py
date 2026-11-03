@@ -276,7 +276,7 @@ class TestRenderValidation:
         assert report.success, report.diagnostics
 
     @pytest.mark.integration
-    def test_class_text_is_rendered_literally_in_labels_relations_and_notes(self) -> None:
+    def test_class_text_is_rendered_literally_in_labels_and_relations(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("classDiagram")
         application.execute(diagram, "add_namespace", {"id": "sales_example", "label": "Old name"})
@@ -301,11 +301,6 @@ class TestRenderValidation:
                 "target_label": "0..*",
             },
         )
-        application.execute(
-            diagram,
-            "add_note",
-            {"id": "note_example", "class_id": "Order[Item]_example", "text": 'Use "quotes"; <b>literal</b> & #quot;'},
-        )
         before = application.snapshot(diagram).to_dict()
         report = application.validate_render(application.restore(before))
         assert report.success, report.diagnostics
@@ -322,7 +317,6 @@ class TestRenderValidation:
             "bills: order",
             'one "order"',
             "0..*",
-            'Use "quotes"; <b>literal</b> & #quot;',
         ):
             assert label in text
         assert "Old name" not in text
