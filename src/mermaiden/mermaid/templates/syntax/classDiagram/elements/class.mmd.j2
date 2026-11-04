@@ -1,6 +1,6 @@
 {% import "templates/syntax/classDiagram/macros/members.mmd.j2" as members %}
 {% if element.comment %}%% {{ element.comment }}{{ "\n" -}}{% endif %}
-class {{ element.id | mermaid_id("c") }}["{{ element.label | class_text }}"] { {{ "\n" -}}
+class {{ element.id | mermaid_id("c") }}["{{ element.label | literal_text }}"] { {{ "\n" -}}
 {% for annotation in element.annotations %}
   <<{{ annotation }}>>{{ "\n" -}}
 {% endfor %}

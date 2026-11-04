@@ -1,10 +1,11 @@
 from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import Annotated, ClassVar
 
+from pydantic import Field
 from wireup import injectable
 
-from ...core.characters import Identifier, Text, Texts
+from ...core.characters import Identifier, OptionalText, Text, Texts
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     DiagramCommandFeature,
@@ -33,7 +34,12 @@ class Journey(DiagramModel):
 
     feature: ClassVar[DiagramFeature] = DiagramFeature(
         configuration=JourneyDiagramConfiguration,
-        snapshot_properties=(PersistedDiagramProperty("title", str),),
+        snapshot_properties=(
+            PersistedDiagramProperty(
+                "title",
+                Annotated[str, Field(pattern=OptionalText.pattern, description=OptionalText.description)],
+            ),
+        ),
         elements=(JourneySection, JourneyTask),
         relations=(),
         annotations=(),

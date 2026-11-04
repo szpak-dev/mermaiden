@@ -2,6 +2,7 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from typing import cast
 
+from pydantic import ValidationError
 from wireup import injectable
 
 from ...core.domain import (
@@ -34,11 +35,17 @@ class DiagramCommandApplication:
         if command.operation == "configure":
             diagram.configure(cast(MermaidDiagramConfiguration, payload.invocation["configuration"]))
             return None
-        return self._invoke(
-            cast(Callable[..., ChangeReport], operation),
-            payload,
-            self.catalog.command_feature(diagram.kind, command.operation),
-        )
+        try:
+            return self._invoke(
+                cast(Callable[..., ChangeReport], operation),
+                payload,
+                self.catalog.command_feature(diagram.kind, command.operation),
+            )
+        except ValidationError as error:
+            details = "; ".join(
+                issue["msg"] for issue in error.errors(include_url=False, include_context=False, include_input=False)
+            )
+            raise UnknownCommand(f"Command '{command.operation}' has invalid arguments: {details}") from None
 
     def apply_batch(
         self,

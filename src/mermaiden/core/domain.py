@@ -93,6 +93,10 @@ class Element(ClassifiedValueModel, ABC):
     id: str = Field(pattern=Identifier.pattern, description=Identifier.description)
     label: str = Field(pattern=Text.pattern, description=Text.description)
 
+    @property
+    def child_placements(self) -> tuple[tuple["Element", type["Container"]], ...]:
+        return ()
+
 
 class Entity(Element):
     pass
@@ -100,6 +104,10 @@ class Entity(Element):
 
 class Container(Element):
     elements: tuple[Element, ...] = ()
+
+    @property
+    def child_placements(self) -> tuple[tuple[Element, type["Container"]], ...]:
+        return tuple((element, type(self)) for element in self.elements)
 
 
 class Relation(ClassifiedValueModel):
@@ -140,6 +148,13 @@ class DiagramObjectReference:
 
 
 class ConstraintDiagram(ABC):
+    @abstractmethod
+    def accepts_parent(
+        self,
+        element_type: type[Element],
+        parent_type: type[Container] | None,
+    ) -> bool: ...
+
     @property
     @abstractmethod
     def root_elements(self) -> Sequence[Element]: ...
@@ -256,13 +271,6 @@ class DiagramView(ConstraintDiagram):
 
 
 class Diagram(DiagramView):
-    @abstractmethod
-    def accepts_parent(
-        self,
-        element_type: type[Element],
-        parent_type: type[Container] | None,
-    ) -> bool: ...
-
     @abstractmethod
     def remove_element(self, id: str, *, cascade: bool) -> ChangeReport: ...
 

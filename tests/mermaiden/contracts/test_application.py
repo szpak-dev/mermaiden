@@ -57,8 +57,8 @@ class TestApplication:
         with Application.create() as application:
             identity = application.snapshot_contract_identity("sequenceDiagram")
         assert identity.kind == "sequenceDiagram"
-        assert identity.snapshot_version == 11
-        assert identity.registry_fingerprint == "7c49ed15e35707f219f43b463da9d25f687147dfe309cc83ea62ae2a90b62806"
+        assert identity.snapshot_version == 12
+        assert identity.registry_fingerprint == "15c1f9b40230fa0f00b889527101625ba723ac2246448322a6dd2556fdefd6f1"
 
     def test_returns_the_same_snapshot_contract_identity_across_applications(self) -> None:
         with Application.create() as first, Application.create() as second:
@@ -71,9 +71,9 @@ class TestApplication:
             advertised = application.available_diagrams()
             identities = tuple(application.snapshot_contract_identity(info.id) for info in advertised)
         assert tuple(identity.kind for identity in identities) == tuple(info.id for info in advertised)
-        assert {identity.snapshot_version for identity in identities} == {11}
+        assert {identity.snapshot_version for identity in identities} == {12}
         assert {identity.registry_fingerprint for identity in identities} == {
-            "7c49ed15e35707f219f43b463da9d25f687147dfe309cc83ea62ae2a90b62806"
+            "15c1f9b40230fa0f00b889527101625ba723ac2246448322a6dd2556fdefd6f1"
         }
 
     def test_rejects_snapshot_contract_identity_for_an_unknown_diagram(self) -> None:
@@ -195,7 +195,7 @@ class TestApplication:
         source = application.render(diagram)
         payload = application.snapshot(diagram).to_dict()
         restored = application.restore(json.loads(json.dumps(payload)))
-        assert payload["version"] == 11
+        assert payload["version"] == 12
         assert "configuration" not in cast(Mapping[str, object], payload["properties"])
         assert not self._contains_none(payload["configuration"])
         assert application.snapshot(restored).to_dict() == payload

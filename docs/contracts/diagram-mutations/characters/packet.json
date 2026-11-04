@@ -65,6 +65,10 @@
       "$.changes.label": [
         "Identifier"
       ],
+      "$.changes.position.kind": [
+        "constant 'bits'",
+        "constant 'range'"
+      ],
       "$.id": [
         "Identifier"
       ],

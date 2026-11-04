@@ -69,7 +69,7 @@ class TestClassLabels:
             snapshot = application.snapshot(diagram).to_dict()
             configuration = JsonObject.model_validate(snapshot["configuration"]).root
             assert "html_labels" not in JsonObject.model_validate(configuration["fields"]).root
-            assert snapshot["version"] == 11
+            assert snapshot["version"] == 12
             source = application.render(application.restore(snapshot))
             assert source == application.render(diagram)
             assert source.count("htmlLabels") == 1

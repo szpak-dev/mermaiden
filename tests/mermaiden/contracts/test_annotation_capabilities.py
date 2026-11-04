@@ -59,9 +59,9 @@ class TestAnnotationCapabilities:
         path = Path(__file__).parents[2] / "fixtures" / "snapshots" / filename
         legacy = JsonObject.model_validate_json(path.read_text(encoding="utf-8")).root
         with Application.create() as application:
-            with pytest.raises(RuntimeError, match="version '9'; expected version '11'"):
+            with pytest.raises(RuntimeError, match="version '9'; expected version '12'"):
                 application.restore(legacy)
-            legacy["version"] = 11
+            legacy["version"] = 12
             if legacy["kind"] == "classDiagram":
                 configuration = JsonObject.model_validate(legacy["configuration"]).root
                 fields = JsonObject.model_validate(configuration["fields"]).root
@@ -84,15 +84,15 @@ class TestAnnotationCapabilities:
                 assert "<<interface>>" in source
                 assert "<<abstract>>" in source
 
-    @pytest.mark.parametrize("version", (9, 10))
+    @pytest.mark.parametrize("version", (9, 10, 11))
     def test_rejects_unsupported_snapshot_versions_for_every_diagram_kind(self, version: int) -> None:
         with Application.create() as application:
             for info in application.available_diagrams():
                 snapshot = application.snapshot(application.create_diagram(info.id)).to_dict()
                 snapshot["version"] = version
-                with pytest.raises(RuntimeError, match=f"version '{version}'; expected version '11'"):
+                with pytest.raises(RuntimeError, match=f"version '{version}'; expected version '12'"):
                     application.restore(snapshot)
-                snapshot["version"] = 11
+                snapshot["version"] = 12
                 assert application.snapshot(application.restore(snapshot)).to_dict() == snapshot
 
     @pytest.mark.parametrize("kind", ("classDiagram", "treeView-beta"))

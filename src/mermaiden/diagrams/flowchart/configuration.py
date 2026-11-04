@@ -66,3 +66,5 @@ class FlowchartDiagramConfiguration(MermaidDiagramConfiguration):
     wrapping_width: Annotated[float, Field(alias="wrappingWidth")] = 120
     min_node_width: Annotated[float, Field(alias="minNodeWidth", gt=0)] = 120
     inherit_dir: Annotated[bool, Field(alias="inheritDir")] = False
+    step_duration: Annotated[float, Field(alias="stepDuration", gt=0)] = 1
+    step_numbers: Annotated[bool, Field(alias="stepNumbers")] = False

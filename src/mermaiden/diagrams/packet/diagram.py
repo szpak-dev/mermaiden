@@ -1,10 +1,11 @@
 from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import Annotated, ClassVar
 
+from pydantic import Field
 from wireup import injectable
 
-from ...core.characters import Identifier, Text
+from ...core.characters import Identifier, OptionalText, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -16,7 +17,7 @@ from ..domain import (
 )
 from .configuration import PacketConfiguration
 from .constraints import PacketConstraint
-from .elements import PacketField
+from .elements import PacketBitCount, PacketField, PacketPosition, PacketRange
 
 
 @injectable(as_type=DiagramModel, qualifier="packet", lifetime="transient")
@@ -34,7 +35,12 @@ class Packet(DiagramModel):
 
     feature: ClassVar[DiagramFeature] = DiagramFeature(
         configuration=PacketConfiguration,
-        snapshot_properties=(PersistedDiagramProperty("title", str),),
+        snapshot_properties=(
+            PersistedDiagramProperty(
+                "title",
+                Annotated[str, Field(pattern=OptionalText.pattern, description=OptionalText.description)],
+            ),
+        ),
         elements=(PacketField,),
         relations=(),
         annotations=(),
@@ -54,7 +60,9 @@ class Packet(DiagramModel):
         object.__setattr__(self, "title", title)
 
     def add_field(self, id: str, label: str, start: int, end: int | None = None) -> ChangeReport:
-        return self._add_element(f"add field '{id}'", PacketField(id=id, label=label, start=start, end=end))
+        position = PacketPosition(root=PacketRange(kind="range", start=start, end=start if end is None else end))
+        return self._add_element(f"add field '{id}'", PacketField(id=id, label=label, position=position))
 
     def add_bits(self, id: str, label: str, bits: int) -> ChangeReport:
-        return self._add_element(f"add field '{id}'", PacketField(id=id, label=label, start=None, end=None, bits=bits))
+        position = PacketPosition(root=PacketBitCount(kind="bits", bits=bits))
+        return self._add_element(f"add field '{id}'", PacketField(id=id, label=label, position=position))

@@ -1,11 +1,12 @@
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from enum import StrEnum
-from typing import ClassVar
+from typing import Annotated, ClassVar
 
+from pydantic import Field
 from wireup import injectable
 
-from ...core.characters import Identifier, Text
+from ...core.characters import Identifier, OptionalText, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     DiagramCommandFeature,
@@ -45,7 +46,10 @@ class Radar(DiagramModel):
     feature: ClassVar[DiagramFeature] = DiagramFeature(
         configuration=RadarConfiguration,
         snapshot_properties=(
-            PersistedDiagramProperty("title", str),
+            PersistedDiagramProperty(
+                "title",
+                Annotated[str, Field(pattern=OptionalText.pattern, description=OptionalText.description)],
+            ),
             PersistedDiagramProperty("show_legend", bool),
             PersistedDiagramProperty("minimum", float | None),
             PersistedDiagramProperty("maximum", float | None),

@@ -10,9 +10,7 @@
       "fields": {
         "id": "immutable",
         "label": "updateable",
-        "start": "updateable",
-        "end": "updateable",
-        "bits": "updateable"
+        "position": "updateable"
       },
       "kind_classification": "immutable",
       "placement": {

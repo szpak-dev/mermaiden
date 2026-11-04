@@ -3163,6 +3163,17 @@
           "type": "number",
           "default": 120
         },
+        "stepDuration": {
+          "description": "Seconds the travelling dot spends on each step of the step-by-step\nflow animation (edges with a `step` number). Diagrams without `step`\nedges are not affected.\n",
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 1
+        },
+        "stepNumbers": {
+          "description": "If true, each edge with a `step` number shows that number in a small\nbadge, so the order of the step-by-step flow can be read without\nwatching the animation.\n",
+          "type": "boolean",
+          "default": false
+        },
         "inheritDir": {
           "type": "boolean",
           "default": false,

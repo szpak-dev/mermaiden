@@ -23,6 +23,9 @@ Invalid drafts are rejected with their blocking diagnostics.
 Journey and Timeline serialize titles, labels, and actor names as text. Punctuation and words such as `title` or
 `section` remain literal values; they cannot introduce Mermaid delimiters or statements.
 
+Sankey labels must be unique because Mermaid identifies nodes by endpoint text. Literal encoding preserves distinct
+labels, including punctuation, Unicode, and HTML-looking text; `node_colors` keys use the original labels.
+
 Class diagrams use native SVG text for labels and default to ELK layout. Generated source sets root-level
 `config.htmlLabels: false`; the class-diagram `configure` command does not expose `htmlLabels`.
 
@@ -88,11 +91,11 @@ non-finite SVG geometry are rejected.
 
 | Authority | Supported version |
 | --- | --- |
-| Mermaid engine and configuration schema | `12.2.0` |
-| `@mermaid-js/mermaid-cli` / `mmdc` | `12.0.0` |
-| Required renderer correction | `native-svg-text-v2` |
+| Mermaid engine and configuration schema | `12.3.0` |
+| `@mermaid-js/mermaid-cli` / `mmdc` | `12.2.0` |
+| Required renderer correction | `native-svg-text-v3` |
 | Node.js | `>=22.13.0`; this checkout pins `24.17.0` |
-| Mermaiden snapshot contract | `v11` |
+| Mermaiden snapshot contract | `v12` |
 
 Run `make mermaid-freshness` to compare both configured authorities with the newest stable releases in the Mermaid
 `12.x` line. Prereleases and versions from other major lines are intentionally ignored.
