@@ -1,7 +1,8 @@
 import yaml
 
 from mermaiden import Application
-from tests.fixtures.configuration_proofs import ConfigurationProofCatalog
+
+from ..fixtures.configuration_proofs import ConfigurationProofCatalog
 
 
 def test_application_serializes_every_configuration_probe_exactly_after_snapshot_restoration() -> None:
@@ -10,8 +11,8 @@ def test_application_serializes_every_configuration_probe_exactly_after_snapshot
         probes = catalog.rendered_probes()
         config_keys = {info.id: info.config_key for info in application.available_diagrams()}
 
-    assert len({probe.probe.id for probe in probes}) == 549
-    assert len(probes) == 1929
+    assert len({probe.probe.id for probe in probes}) == 548
+    assert len(probes) == 1927
     for rendered in probes:
         document = yaml.safe_load(rendered.source.split("---\n", 2)[1])["config"]
         actual = (

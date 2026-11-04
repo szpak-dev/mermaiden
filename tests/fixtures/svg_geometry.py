@@ -1,7 +1,7 @@
 class SvgGeometryProbe:
     def script(self) -> str:
         return r"""
-({ expected, kind }) => {
+({ expected, kind, styled }) => {
   const failures = [];
   const svg = document.documentElement;
   svg.style.maxWidth = "none";
@@ -35,20 +35,28 @@ class SvgGeometryProbe:
       }
     }
     if (lines.length === 0) failures.push(`Label has no visible text: ${label.textContent}`);
-    rows.push({ label, lines, top: Math.min(...lines.map((line) => line.top)),
+    rows.push({ label, lines, wrapped: new Set(lines.map((line) => line.top)).size > 1,
+      top: Math.min(...lines.map((line) => line.top)),
       bottom: Math.max(...lines.map((line) => line.bottom)) });
   }
   const groups = kind === "class" ? [...document.querySelectorAll("g.node")] : [svg];
+  let mixedHeightNeighbors = 0;
   for (const group of groups) {
     const groupRows = rows.filter((row) => group.contains(row.label)).sort((a, b) => a.top - b.top);
     for (let index = 1; index < groupRows.length; index++) {
+      const previous = groupRows[index - 1];
+      const current = groupRows[index];
+      if (previous.wrapped !== current.wrapped
+        && Math.abs((previous.bottom - previous.top) - (current.bottom - current.top)) > 0.5) {
+        mixedHeightNeighbors++;
+      }
       if (groupRows[index - 1].bottom - groupRows[index].top > 0.5) {
         failures.push(`Overlapping rows: ${groupRows[index - 1].label.textContent}`
           + ` / ${groupRows[index].label.textContent}`);
       }
     }
   }
-  if (kind === "class") {
+  if (styled) {
     if (labels.length !== 6) failures.push(`Expected six class labels, found ${labels.length}`);
     const styles = [...document.querySelectorAll("g.label")];
     if (!styles.some((label) => label.textContent.includes("count_example")
@@ -59,12 +67,15 @@ class SvgGeometryProbe:
     if (paths.length !== 1 || !paths[0].getAttribute("marker-end")?.includes("extensionEnd")
       || paths[0].hasAttribute("marker-start") || !Number.isFinite(paths[0].getTotalLength())
       || paths[0].getTotalLength() <= 0) failures.push("Inheritance connector lost");
-  } else {
+  } else if (kind === "tree") {
     if (labels.length !== 3) failures.push(`Expected three TreeView labels, found ${labels.length}`);
 
   }
   if (document.fonts.status !== "loaded") failures.push("Fonts have not loaded");
   return { failures, label_count: labels.length,
-    wrapped_rows: rows.filter((row) => new Set(row.lines.map((line) => line.top)).size > 1).length };
+    wrapped_rows: rows.filter((row) => row.wrapped).length,
+    wrapped_labels: rows.filter((row) => row.wrapped).map((row) => normalize(row.label.textContent)),
+    mixed_height_neighbors: mixedHeightNeighbors,
+    foreign_object_count: document.querySelectorAll("foreignObject").length };
 }
 """

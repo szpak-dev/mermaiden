@@ -8,7 +8,7 @@ from mermaiden import Application
 
 
 class TestPersistence:
-    @pytest.mark.parametrize("version", (1, 2, 3, 4, 5, 6, 7, 8, 9, 11))
+    @pytest.mark.parametrize("version", (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12))
     def test_rejects_a_snapshot_from_an_unsupported_contract_version(self, version: int) -> None:
         application = Application.create()
         diagram = application.create_diagram("block")
@@ -16,7 +16,7 @@ class TestPersistence:
         payload = application.snapshot(diagram).to_dict()
         payload["version"] = version
         del payload["configuration"]
-        with pytest.raises(RuntimeError, match=f"version '{version}'; expected version '10'"):
+        with pytest.raises(RuntimeError, match=f"version '{version}'; expected version '11'"):
             application.restore(payload)
 
     @pytest.mark.parametrize("field,value", (("name", "submit()"), ("type", None), ("visibility", "+")))
@@ -126,5 +126,5 @@ class TestPersistence:
         for info in application.available_diagrams():
             payload = application.snapshot(application.create_diagram(info.id)).to_dict()
             restored = application.restore(json.loads(json.dumps(payload)))
-            assert payload["version"] == 10
+            assert payload["version"] == 11
             assert application.snapshot(restored).to_dict() == payload

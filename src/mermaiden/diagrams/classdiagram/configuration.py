@@ -34,6 +34,5 @@ class ClassDiagramConfiguration(MermaidDiagramConfiguration):
         Field(alias="rankSpacing", exclude_if=OmittableNonNegativeInteger().excludes),
     ] = Field(default_factory=OmittableNonNegativeInteger)
     diagram_padding: Annotated[int, Field(alias="diagramPadding", ge=0)] = 20
-    html_labels: Annotated[bool, Field(alias="htmlLabels")] = False
     hide_empty_members_box: Annotated[bool, Field(alias="hideEmptyMembersBox")] = False
     hierarchical_namespaces: Annotated[bool, Field(alias="hierarchicalNamespaces")] = True

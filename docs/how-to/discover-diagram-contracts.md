@@ -32,7 +32,7 @@ Class diagrams default to the ELK layout for orthogonal relation routing. Caller
 layout through `configure`.
 
 `classDiagram` and `treeView-beta` expose no standalone annotation schemas or annotation commands. Class stereotypes
-remain available through the `annotations` field of `add_class` and `update_element`.
+are available through the `annotations` field of `add_class` and `update_element`.
 
 ## Validate command arguments
 

@@ -27,6 +27,7 @@
   "c4.system_dbFont": {"facets":["unsupported"],"reason":"Mermaiden does not expose this upstream option."},
   "c4.system_queueFont": {"facets":["unsupported"],"reason":"Mermaiden does not expose this upstream option."},
   "c4.wrap": {"facets":["default"],"reason":"Mermaiden enables label wrapping by default."},
+  "class.htmlLabels": {"facets":["unsupported"],"reason":"Mermaiden fixes class diagrams to native SVG labels by emitting root-level htmlLabels=false."},
   "class.layout": {"facets":["default"],"reason":"Mermaiden explicitly defaults class diagrams to ELK for orthogonal relation routing."},
   "class.wrap": {"facets":["default"],"reason":"Mermaiden enables label wrapping by default."},
   "cynefin.seed": {"facets":["default"],"reason":"A non-zero default keeps Cynefin rendering deterministic."},

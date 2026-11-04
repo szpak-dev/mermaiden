@@ -231,10 +231,10 @@ class TestClassMembers:
         edited_snapshot = application.snapshot(restored).to_dict()
         edited_diagram = application.restore(json.loads(json.dumps(edited_snapshot)))
         source = application.render(edited_diagram)
-        assert "Result~Code, List&lt;Error&gt;~ items" in source
+        assert "Result&lt;Code, List&lt;Error&gt;&gt; items" in source
         assert (
-            "lookup(Mapping~Key, Set&lt;Value&gt;~ key) Either~Failure, List&lt;Pair&lt;Left&comma; Right&gt;&gt;~"
-            in source
+            "lookup(Mapping&lt;Key, Set&lt;Value&gt;&gt; key) "
+            "Either&lt;Failure, List&lt;Pair&lt;Left, Right&gt;&gt;&gt;" in source
         )
         assert "find(" not in source
 
@@ -276,8 +276,8 @@ class TestClassMembers:
             '---\nconfig:\n  wrap: false\n  class: {"useMaxWidth": true, "theme": "redux-color", '
             '"look": "neo", "layout": "elk", "titleTopMargin": 25, "arrowMarkerAbsolute": false, '
             '"dividerMargin": 10.0, '
-            '"padding": 5.0, "textHeight": 10.0, "diagramPadding": 20, "htmlLabels": false, '
-            '"hideEmptyMembersBox": false, "hierarchicalNamespaces": true}\n---\nclassDiagram\n'
+            '"padding": 5.0, "textHeight": 10.0, "diagramPadding": 20, '
+            '"hideEmptyMembersBox": false, "hierarchicalNamespaces": true}\n  htmlLabels: false\n---\nclassDiagram\n'
             f'class c_v_order_example["Order"] {{\n  +submit() void{suffix}\n}}\n'
         )
         assert application.render(diagram) == expected

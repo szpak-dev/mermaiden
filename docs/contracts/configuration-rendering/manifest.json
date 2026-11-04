@@ -2,8 +2,8 @@
   "mermaid_version": "12.2.0",
   "mermaid_cli_version": "12.0.0",
   "diagram_count": 27,
-  "configuration_field_count": 549,
-  "probe_count": 1929,
+  "configuration_field_count": 548,
+  "probe_count": 1927,
   "diagrams": [
     {
       "diagram_id": "C4Context",
@@ -1639,9 +1639,9 @@
     {
       "diagram_id": "classDiagram",
       "source": "sources/classDiagram.mmd",
-      "source_sha256": "9d986e453c46d0980f8d24350eb1d7e71049e59ca3108ae5cce457c4a9518e2a",
+      "source_sha256": "a435dbea7075347ea296320a760aa3d011c538a517e56bd807266244d6b75c2f",
       "svg": "rendered/classDiagram.svg",
-      "svg_sha256": "27699ec8ca0cb3015a08a80a9510a5ee2b4b8577760c0e5df744de7a22ce6d2a",
+      "svg_sha256": "989b88a322b429039f3152b3fb0a1ca316f713a6b1d015ecb8158f7400c8d5f2",
       "semantic_object_count": 20,
       "configuration_fields": [
         {
@@ -1702,7 +1702,7 @@
         },
         {
           "name": "layout",
-          "showcase_value": "dagre",
+          "showcase_value": "elk",
           "probes": [
             "dagre",
             "elk"
@@ -1786,15 +1786,6 @@
             0,
             1,
             20
-          ],
-          "witness": "fresh_svg"
-        },
-        {
-          "name": "htmlLabels",
-          "showcase_value": false,
-          "probes": [
-            false,
-            true
           ],
           "witness": "fresh_svg"
         },

@@ -13,16 +13,17 @@ class SvgMeasurement(BaseModel):
     failures: tuple[str, ...]
     label_count: int
     wrapped_rows: int
+    wrapped_labels: tuple[str, ...]
+    mixed_height_neighbors: int
+    foreign_object_count: int
 
 
 @pytest.mark.integration
 class TestExportedSvgLabels:
-    @pytest.mark.parametrize("html_labels", (True, False))
-    def test_attack_long_class_signatures_remain_visible(self, tmp_path: Path, html_labels: bool) -> None:
-        name = f"class-attack-{'html' if html_labels else 'svg'}"
+    def test_attack_long_class_signatures_remain_visible(self, tmp_path: Path) -> None:
+        name = "class-attack"
         with Application.create() as application:
             diagram = application.create_diagram("classDiagram")
-            application.execute(diagram, "configure", {"htmlLabels": html_labels})
             application.execute(
                 diagram,
                 "add_class",
@@ -58,7 +59,15 @@ class TestExportedSvgLabels:
                                 "name": "Map",
                                 "arguments": [
                                     {"name": "ExampleKey"},
-                                    {"name": "List", "arguments": [{"name": "ExampleResult"}]},
+                                    {
+                                        "name": "List",
+                                        "arguments": [
+                                            {
+                                                "name": "Pair",
+                                                "arguments": [{"name": "ExampleLeft"}, {"name": "ExampleRight"}],
+                                            }
+                                        ],
+                                    },
                                 ],
                             },
                         },
@@ -98,12 +107,85 @@ class TestExportedSvgLabels:
                     "-ExampleLongFieldType long_field_name_example",
                     "int count_example",
                     "+find_nested_example(Map<ExampleKey, List<ExampleValue>> values_example, int limit_example)",
-                    "Map<ExampleKey, List<ExampleResult>>",
+                    "Map<ExampleKey, List<Pair<ExampleLeft, ExampleRight>>>",
                     "refresh_example()",
                     "ExampleRefreshResult",
                     "ExampleTarget",
                 ),
             )
+
+    def test_attack_adjacent_wrapped_attributes_and_methods_do_not_overlap(self, tmp_path: Path) -> None:
+        with Application.create() as application:
+            diagram = application.create_diagram("classDiagram")
+            application.execute(
+                diagram,
+                "add_class",
+                {
+                    "id": "resolver_example",
+                    "label": "ExampleResolver",
+                    "attributes": [
+                        {"name": "active_example", "type": {"name": "bool"}},
+                        {
+                            "name": "configured_declaration_collection_example",
+                            "type": {
+                                "name": "ExampleDeclaration" * 10,
+                            },
+                        },
+                    ],
+                    "methods": [
+                        {"name": "name", "return_type": {"name": "str"}},
+                        {"name": "title", "return_type": {"name": "str"}},
+                        {
+                            "name": "resolve",
+                            "parameters": [
+                                {"name": "example_collection", "type": {"name": "ExampleCollectionMap"}},
+                                {"name": "config", "type": {"name": "ExampleRules"}},
+                            ],
+                            "return_type": {"name": "tuple.ExampleResult"},
+                        },
+                        {
+                            "name": "inspect_example_declarations",
+                            "parameters": [
+                                {"name": "example_id", "type": {"name": "str"}},
+                                {"name": "declaration", "type": {"name": "ExampleDeclaration"}},
+                                {"name": "config", "type": {"name": "ExampleRules"}},
+                            ],
+                            "return_type": {"name": "tuple.ExampleResult"},
+                        },
+                    ],
+                },
+            )
+            before = application.snapshot(diagram).to_dict()
+            source = application.render(diagram)
+            report = application.validate_render(application.restore(before))
+            assert report.success, report.diagnostics
+            measurement = self.check_export(
+                tmp_path,
+                "wrapped-members-attack",
+                source,
+                report.svg,
+                (
+                    "ExampleResolver",
+                    "active_example",
+                    "configured_declaration_collection_example",
+                    "ExampleDeclaration" * 10,
+                    "name()",
+                    "title()",
+                    "resolve(",
+                    "inspect_example_declarations(",
+                    "ExampleCollectionMap",
+                    "ExampleRules",
+                    "ExampleDeclaration",
+                    "tuple.ExampleResult",
+                ),
+            )
+            assert measurement.label_count == 7
+            assert measurement.wrapped_rows >= 2
+            assert measurement.mixed_height_neighbors >= 2
+            assert any("inspect_example_declarations" in label for label in measurement.wrapped_labels)
+            assert any("configured_declaration_collection_example" in label for label in measurement.wrapped_labels)
+            assert application.snapshot(diagram).to_dict() == before
+            assert application.render(diagram) == source
 
     def test_preserves_treeview_readability(self, tmp_path: Path) -> None:
         with Application.create() as application:
@@ -134,7 +216,9 @@ class TestExportedSvgLabels:
                 ("example_root", "example_long_filename_with_wide_characters_WWWW.py"),
             )
 
-    def check_export(self, directory: Path, name: str, source: str, svg: str, expected: tuple[str, ...]) -> None:
+    def check_export(
+        self, directory: Path, name: str, source: str, svg: str, expected: tuple[str, ...]
+    ) -> SvgMeasurement:
         path = directory / f"{name}.svg"
         path.write_text(svg, encoding="utf-8")
         (directory / f"{name}.mmd").write_text(source, encoding="utf-8")
@@ -149,11 +233,18 @@ class TestExportedSvgLabels:
                 measurement = SvgMeasurement.model_validate(
                     page.evaluate(
                         SvgGeometryProbe().script(),
-                        {"expected": expected, "kind": "tree" if name == "tree-invariant" else "class"},
+                        {
+                            "expected": expected,
+                            "kind": "tree" if name == "tree-invariant" else "class",
+                            "styled": name == "class-attack",
+                        },
                     )
                 )
                 (directory / f"{name}.json").write_text(measurement.model_dump_json(indent=2), encoding="utf-8")
                 assert measurement.label_count > 0
                 assert measurement.failures == ()
+                if name != "tree-invariant":
+                    assert measurement.foreign_object_count == 0
+                return measurement
             finally:
                 browser.close()

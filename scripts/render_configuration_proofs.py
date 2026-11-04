@@ -17,7 +17,7 @@ def digest(content: str) -> str:
     return hashlib.sha256(content.encode()).hexdigest()
 
 
-def generate(enclosure_audit: Path | None) -> None:
+def generate() -> None:
     with Application.create() as application:
         catalog = ConfigurationProofCatalog(application)
         proofs = catalog.proofs()
@@ -71,16 +71,12 @@ def generate(enclosure_audit: Path | None) -> None:
     }
     OUTPUT.mkdir(parents=True, exist_ok=True)
     (OUTPUT / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
-    if enclosure_audit is not None:
-        audit = json.loads(enclosure_audit.read_text(encoding="utf-8"))
-        (OUTPUT / "enclosure-corpus-audit.json").write_text(json.dumps(audit, indent=2) + "\n", encoding="utf-8")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--enclosure-audit", type=Path)
-    arguments = parser.parse_args()
-    generate(arguments.enclosure_audit)
+    parser.parse_args()
+    generate()
 
 
 if __name__ == "__main__":

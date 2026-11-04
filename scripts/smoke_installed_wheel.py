@@ -179,9 +179,9 @@ class InstalledWheelSmoke:
         if "c_v_caller ..> c_v_dependency" not in class_source:
             raise RuntimeError("The installed package reversed class relation source and target endpoints.")
         for rendered_type in (
-            "Map~Key, Value~ items",
-            "resolve(Map~Key, List&lt;Value&gt;~ items)",
-            "Map~Key, List&lt;Pair&lt;Left&comma; Right&gt;&gt;~",
+            "Map&lt;Key, Value&gt; items",
+            "resolve(Map&lt;Key, List&lt;Value&gt;&gt; items)",
+            "Map&lt;Key, List&lt;Pair&lt;Left, Right&gt;&gt;&gt;",
         ):
             if rendered_type not in class_source:
                 raise RuntimeError(f"The installed package did not preserve class type '{rendered_type}'.")

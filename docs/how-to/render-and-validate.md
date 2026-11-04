@@ -20,6 +20,9 @@ with Application.create() as application:
 `render()` validates the complete diagram and returns Mermaid text. It does not start Node.js, a browser, or `mmdc`.
 Invalid drafts are rejected with their blocking diagnostics.
 
+Class diagrams use native SVG text for labels and default to ELK layout. Generated source sets root-level
+`config.htmlLabels: false`; the class-diagram `configure` command does not expose `htmlLabels`.
+
 ## Run full SVG validation
 
 ```python
@@ -68,7 +71,7 @@ diagnostic.
 | Mermaid engine and configuration schema | `12.2.0` |
 | `@mermaid-js/mermaid-cli` / `mmdc` | `12.0.0` |
 | Node.js | `>=22.13.0`; this checkout pins `24.17.0` |
-| Mermaiden snapshot contract | `v9`; earlier snapshots are rejected without migration |
+| Mermaiden snapshot contract | `v11` |
 
 Run `make mermaid-freshness` to compare both configured authorities with the newest stable releases in the Mermaid
 `12.x` line. Prereleases and versions from other major lines are intentionally ignored.
