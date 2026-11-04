@@ -63,6 +63,8 @@ jobs:
       - run: uv sync --locked --group dev
       - run: make compat
       - run: make diagrams-preview
+        env:
+          PUPPETEER_DANGEROUS_NO_SANDBOX: "true"
       - run: make diagrams-validate-core
         env:
           PUPPETEER_DANGEROUS_NO_SANDBOX: "true"

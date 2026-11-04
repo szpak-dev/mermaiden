@@ -91,8 +91,8 @@ diagrams-validate: integration
 
 diagrams-validate-core: integration-core
 
-diagrams-preview:
-	@PYTHONPATH=. $(PYTHON) scripts/render_preview.py
+diagrams-preview: renderer-install
+	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" PYTHONPATH=. $(PYTHON) scripts/render_preview.py
 
 diagrams-test: diagrams-preview
 	@open .dev/preview/index.html

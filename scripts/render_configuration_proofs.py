@@ -24,8 +24,8 @@ def generate() -> None:
         probes = catalog.probes()
         version = application.mermaid_version
         cli_version = application.mermaid_cli_version
-    sources = {proof.diagram_id: proof.source for proof in proofs}
-    svgs = ConfigurationProofRenderer(cli_version).render(sources)
+        sources = {proof.diagram_id: proof.source for proof in proofs}
+        svgs = ConfigurationProofRenderer(application).render(sources)
     source_root = OUTPUT / "sources"
     svg_root = OUTPUT / "rendered"
     source_root.mkdir(parents=True, exist_ok=True)

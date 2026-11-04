@@ -33,6 +33,9 @@ class MermaidValueFormatter:
             character if character.isalnum() or character in " /" else f"#{ord(character)};" for character in str(value)
         )
 
+    def delimited_text(self, value: str) -> str:
+        return f"#{ord(value[0])};{self.class_text(value[1:])}"
+
     def number(self, value: float | int) -> str:
         return f"{value:g}"
 

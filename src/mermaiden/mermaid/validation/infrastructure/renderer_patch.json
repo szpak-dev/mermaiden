@@ -1,33 +1,204 @@
 {
-  "id": "native-svg-text-v1",
+  "id": "native-svg-text-v2",
   "mermaid_version": "12.2.0",
   "files": [
     {
       "path": "dist/chunks/mermaid.esm/chunk-VTNK77LY.mjs",
       "original_sha256": "5dde783b567a1d32c8b5d4764e833ac077ad1e6974fd5f12233b2283cdf6db14",
-      "patched_sha256": "08958566eb95863ac7b4d86a7469b97b76de5ba8edc96f9e761730e763ba8659"
+      "patched_sha256": "ae37b96cfcd8c175249a69859eb2556ea5d30c5feb0a1fa53202d1a9de60688e",
+      "replacement_groups": [
+        "native_svg"
+      ]
     },
     {
       "path": "dist/chunks/mermaid.core/chunk-AQDTSKZB.mjs",
       "original_sha256": "865c9ed39d183bbd3742cf98b0970ec4dd47af410da55ac0b4c4fd62429e40cd",
-      "patched_sha256": "13abfe140395ce1347c9fa6828017b513e1db67c7e8b98d40ce91a808a286aab"
+      "patched_sha256": "ba46b715d23ea3565cdfd6d34d9cfdd97c96cb74e4aa5c4c19e8d5cae7d7ecf8",
+      "replacement_groups": [
+        "native_svg"
+      ]
+    },
+    {
+      "path": "dist/chunks/mermaid.esm/journeyDiagram-PRESTHKM.mjs",
+      "original_sha256": "9898353e3d4ef62d4f8f85c5200aa388a831504570854e840dfac5f62624a6c8",
+      "patched_sha256": "3855712c43e7451cbff1c8966fd56386907dd4577acd36e90f5f5bed0a4fe7cc",
+      "replacement_groups": [
+        "journey_esm_import",
+        "journey"
+      ]
+    },
+    {
+      "path": "dist/chunks/mermaid.esm/timeline-definition-3H7UE7AR.mjs",
+      "original_sha256": "e47f767215fda455b566cccdfb409028cb83b21cb9314dd9fad92a5195b646c3",
+      "patched_sha256": "60d2617b574eb798cd0a29225db76b4c3168de2eeb4829d7111dd461e4d56392",
+      "replacement_groups": [
+        "timeline_esm_import",
+        "timeline"
+      ]
+    },
+    {
+      "path": "dist/chunks/mermaid.core/journeyDiagram-BOSHW7O7.mjs",
+      "original_sha256": "ca4ec4e53964814dae7b9d19dcf2c259ce74e64aacb819fae90631734ef52d7f",
+      "patched_sha256": "9f5de32fb01f04f21cfc8e54055c7f44d1e6e7acef17aa8f3ed5c7d3ff74c533",
+      "replacement_groups": [
+        "journey_core_import",
+        "journey"
+      ]
+    },
+    {
+      "path": "dist/chunks/mermaid.core/timeline-definition-JXYKGLGB.mjs",
+      "original_sha256": "f8afc76def4fe14a99db32ea7c3c210622aeeba47caa1ef09735e9b4911cbdf5",
+      "patched_sha256": "f99f25ddc4dc3b50d80032e144af77764b07fdc1ae2494dfb5ec465b6f4c155b",
+      "replacement_groups": [
+        "timeline_core_import",
+        "timeline"
+      ]
     }
   ],
-  "replacements": [
-    {
-      "before": "function decodeHTMLEntities(text) {\n  const regex = /&(amp|lt|gt);/g;\n  return text.replace(regex, (match, entity) => {\n    switch (entity) {\n      case \"amp\":\n        return \"&\";\n      case \"lt\":\n        return \"<\";\n      case \"gt\":\n        return \">\";\n      default:\n        return match;\n    }\n  });\n}\n__name(decodeHTMLEntities, \"decodeHTMLEntities\");",
-      "after": "function decodeHTMLEntities(text) {\n  const decoder = document.createElement(\"textarea\");\n  decoder.innerHTML = text.replace(/</g, \"&lt;\");\n  return decoder.value;\n}\n__name(decodeHTMLEntities, \"decodeHTMLEntities\");",
-      "count": 1
-    },
-    {
-      "before": "decodeHTMLEntities(word.content)",
-      "after": "word.content",
-      "count": 2
-    },
-    {
-      "before": "for (const line of structuredText) {",
-      "after": "for (const encodedLine of structuredText) {\n    const line = encodedLine.map(word => ({...word, content: decodeHTMLEntities(word.content)}));",
-      "count": 1
-    }
-  ]
+  "replacements": {
+    "native_svg": [
+      {
+        "before": "function decodeHTMLEntities(text) {\n  const regex = /&(amp|lt|gt);/g;\n  return text.replace(regex, (match, entity) => {\n    switch (entity) {\n      case \"amp\":\n        return \"&\";\n      case \"lt\":\n        return \"<\";\n      case \"gt\":\n        return \">\";\n      default:\n        return match;\n    }\n  });\n}\n__name(decodeHTMLEntities, \"decodeHTMLEntities\");",
+        "after": "function decodeHTMLEntities(text) {\n  const decoder = document.createElement(\"textarea\");\n  decoder.innerHTML = decodeEntities(text).replace(/</g, \"&lt;\");\n  return decoder.value;\n}\n__name(decodeHTMLEntities, \"decodeHTMLEntities\");",
+        "count": 1
+      },
+      {
+        "before": "decodeHTMLEntities(word.content)",
+        "after": "word.content",
+        "count": 2
+      },
+      {
+        "before": "for (const line of structuredText) {",
+        "after": "for (const encodedLine of structuredText) {\n    const line = encodedLine.map(word => ({...word, content: decodeHTMLEntities(word.content)}));",
+        "count": 1
+      },
+      {
+        "before": "export {\n",
+        "after": "export {\n  decodeHTMLEntities,\n",
+        "count": 1
+      }
+    ],
+    "journey_esm_import": [
+      {
+        "before": "import {\n  getIconStyles",
+        "after": "import { decodeHTMLEntities } from \"./chunk-VTNK77LY.mjs\";\nimport {\n  getIconStyles",
+        "count": 1
+      }
+    ],
+    "journey": [
+      {
+        "before": ".text(content)",
+        "after": ".text(decodeHTMLEntities(content))",
+        "count": 2
+      },
+      {
+        "before": ".text(lines[i])",
+        "after": ".text(decodeHTMLEntities(lines[i]))",
+        "count": 1
+      },
+      {
+        "before": ".text(circleData.title)",
+        "after": ".text(decodeHTMLEntities(circleData.title))",
+        "count": 1
+      },
+      {
+        "before": "const colour = actors[person].color;",
+        "after": "const colour = actors[person].color;\n    const label = decodeHTMLEntities(person);",
+        "count": 1
+      },
+      {
+        "before": ".text(person)",
+        "after": ".text(label)",
+        "count": 1
+      },
+      {
+        "before": "lines = [person];",
+        "after": "lines = [label];",
+        "count": 1
+      },
+      {
+        "before": "person.split(\" \")",
+        "after": "label.split(\" \")",
+        "count": 1
+      },
+      {
+        "before": "measureText.text(brokenWord + \"-\");",
+        "after": "measureText.text(brokenWord);",
+        "count": 1
+      },
+      {
+        "before": "lines.push(brokenWord.slice(0, -1) + \"-\");",
+        "after": "lines.push(brokenWord.slice(0, -char.length));",
+        "count": 1
+      },
+      {
+        "before": "const textElement = svgDraw_default.drawText(diagram2, labelData);",
+        "after": "const textElement = svgDraw_default.drawText(diagram2, labelData);\n      textElement.select(\"tspan\").text(line);",
+        "count": 1
+      },
+      {
+        "before": "const title = diagObj.db.getDiagramTitle();",
+        "after": "const title = decodeHTMLEntities(diagObj.db.getDiagramTitle());",
+        "count": 1
+      }
+    ],
+    "timeline_esm_import": [
+      {
+        "before": "import {\n  selectSvgElement",
+        "after": "import { decodeHTMLEntities } from \"./chunk-VTNK77LY.mjs\";\nimport {\n  selectSvgElement",
+        "count": 1
+      }
+    ],
+    "timeline": [
+      {
+        "before": ".text(content)",
+        "after": ".text(decodeHTMLEntities(content))",
+        "count": 2
+      },
+      {
+        "before": ".text(lines[i])",
+        "after": ".text(decodeHTMLEntities(lines[i]))",
+        "count": 1
+      },
+      {
+        "before": "span.text(nText);",
+        "after": "span.text(decodeHTMLEntities(nText));",
+        "count": 1
+      },
+      {
+        "before": "word = words[words.length - 1 - j];",
+        "after": "const encodedWord = words[words.length - 1 - j];\n      word = decodeHTMLEntities(encodedWord);",
+        "count": 1
+      },
+      {
+        "before": "line.join(\" \")",
+        "after": "line.join(\"\")",
+        "count": 2
+      },
+      {
+        "before": "word === \"<br>\"",
+        "after": "encodedWord === \"<br>\"",
+        "count": 2
+      },
+      {
+        "before": "const title = diagObj.db.getCommonDb().getDiagramTitle();",
+        "after": "const title = decodeHTMLEntities(diagObj.db.getCommonDb().getDiagramTitle());",
+        "count": 2
+      }
+    ],
+    "journey_core_import": [
+      {
+        "before": "import {\n  getIconStyles",
+        "after": "import { decodeHTMLEntities } from \"./chunk-AQDTSKZB.mjs\";\nimport {\n  getIconStyles",
+        "count": 1
+      }
+    ],
+    "timeline_core_import": [
+      {
+        "before": "import {\n  selectSvgElement",
+        "after": "import { decodeHTMLEntities } from \"./chunk-AQDTSKZB.mjs\";\nimport {\n  selectSvgElement",
+        "count": 1
+      }
+    ]
+  }
 }

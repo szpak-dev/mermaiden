@@ -20,6 +20,9 @@ with Application.create() as application:
 `render()` validates the complete diagram and returns Mermaid text. It does not start Node.js, a browser, or `mmdc`.
 Invalid drafts are rejected with their blocking diagnostics.
 
+Journey and Timeline serialize titles, labels, and actor names as text. Punctuation and words such as `title` or
+`section` remain literal values; they cannot introduce Mermaid delimiters or statements.
+
 Class diagrams use native SVG text for labels and default to ELK layout. Generated source sets root-level
 `config.htmlLabels: false`; the class-diagram `configure` command does not expose `htmlLabels`.
 
@@ -76,13 +79,18 @@ The report keeps SVG output, the expected Mermaid engine and CLI versions, and s
 executables, CLI version mismatches, timeouts, Mermaid failures, and invalid SVG output each produce a distinct
 diagnostic.
 
+`Application.validate_sources(sources)` validates a mapping of names to Mermaid sources and returns reports in the
+same order. It uses the same runtime checks and SVG validation as `validate_render()` and preview generation.
+Configuration proof generation uses this operation as well. Empty input returns no reports; error placeholders and
+non-finite SVG geometry are rejected.
+
 ## Supported Mermaid 12 line
 
 | Authority | Supported version |
 | --- | --- |
 | Mermaid engine and configuration schema | `12.2.0` |
 | `@mermaid-js/mermaid-cli` / `mmdc` | `12.0.0` |
-| Required renderer correction | `native-svg-text-v1` |
+| Required renderer correction | `native-svg-text-v2` |
 | Node.js | `>=22.13.0`; this checkout pins `24.17.0` |
 | Mermaiden snapshot contract | `v11` |
 

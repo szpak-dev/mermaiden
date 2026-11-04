@@ -33,7 +33,7 @@ class RendererPatchInstaller {
         throw new Error(`Refusing to patch unexpected Mermaid content: ${file.path}`);
       }
       let patched = original;
-      for (const replacement of recipe.replacements) {
+      for (const replacement of file.replacement_groups.flatMap((group) => recipe.replacements[group])) {
         if (patched.split(replacement.before).length - 1 !== replacement.count) {
           throw new Error(`Renderer patch does not match ${file.path}.`);
         }

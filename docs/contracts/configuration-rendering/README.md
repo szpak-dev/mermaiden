@@ -17,5 +17,6 @@ make configuration-proofs
 ```
 
 The checked-in files are evidence, not the test oracle. Tests regenerate Mermaid source through the public
-`Application` boundary, render it with the pinned browser-backed CLI, reject Mermaid error placeholders, and inspect
-the resulting SVG.
+`Application` boundary and validate it with `Application.validate_sources()`. The same pinned runtime, patch checks,
+and SVG error checks apply to proofs, previews, and diagram validation. Proof scripts only orchestrate batches and
+write evidence after successful validation.

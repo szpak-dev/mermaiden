@@ -10,13 +10,12 @@ class ConfigurationRenderingCheck:
     def run(self, shard_index: int, shard_count: int) -> None:
         with Application.create() as application:
             probes = ConfigurationProofCatalog(application).rendered_probes()
-            cli_version = application.mermaid_cli_version
-        sources = {
-            f"{index:04d}-{probe.id}": probe.source
-            for index, probe in enumerate(probes)
-            if index % shard_count == shard_index
-        }
-        rendered = ConfigurationProofRenderer(cli_version).render(sources)
+            sources = {
+                f"{index:04d}-{probe.id}": probe.source
+                for index, probe in enumerate(probes)
+                if index % shard_count == shard_index
+            }
+            rendered = ConfigurationProofRenderer(application).render(sources)
         if tuple(rendered) != tuple(sources):
             raise RuntimeError("Configuration rendering returned an incomplete or reordered result.")
 

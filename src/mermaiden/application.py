@@ -122,6 +122,11 @@ class Application:
         self._ensure_open()
         return self._scope.get(MermaidRenderValidator).validate(diagram)
 
+    def validate_sources(self, sources: Mapping[str, str]) -> tuple[MermaidRenderReport, ...]:
+        """Validate named Mermaid sources through the same pinned runtime as diagrams."""
+        self._ensure_open()
+        return self._scope.get(MermaidRenderValidator).validate_sources(sources)
+
     @property
     def mermaid_version(self) -> str:
         """Return the upstream Mermaid version supported by the checked-in schema."""

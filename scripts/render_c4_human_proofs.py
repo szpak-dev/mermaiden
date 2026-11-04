@@ -18,7 +18,7 @@ def digest(content: str) -> str:
 def main() -> None:
     with Application.create() as application:
         sources = C4HumanProofCatalog().sources(application)
-        rendered = ConfigurationProofRenderer(application.mermaid_cli_version).render(sources)
+        rendered = ConfigurationProofRenderer(application).render(sources)
         version = application.mermaid_version
         cli_version = application.mermaid_cli_version
     source_root = OUTPUT / "sources"
