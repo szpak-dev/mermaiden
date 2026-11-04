@@ -37,7 +37,8 @@ class EnvironmentRenderValidationRuntime(RenderValidationRuntime):
     def render(self, sources: Mapping[str, str]) -> RendererRuntimeResult:
         try:
             executable = self._executable()
-            observed_versions = self._versions(executable)
+            engine_version, cli_version, engine_root = self._versions(executable)
+            observed_versions = (engine_version, cli_version)
             supported_versions = (self.mermaid_version, self.mermaid_cli_version)
             if observed_versions != supported_versions:
                 raise MermaidRenderFailure(
@@ -48,6 +49,7 @@ class EnvironmentRenderValidationRuntime(RenderValidationRuntime):
                     f"the environment provides Mermaid '{observed_versions[0]}' "
                     f"and Mermaid CLI '{observed_versions[1]}'.",
                 )
+            self.check_renderer_patch(engine_root)
             with tempfile.TemporaryDirectory(prefix="mermaiden-") as temporary:
                 root = Path(temporary)
                 input_path = root / "diagrams.md"
@@ -82,10 +84,36 @@ class EnvironmentRenderValidationRuntime(RenderValidationRuntime):
             )
         return Path(executable)
 
-    def _versions(self, executable: Path) -> tuple[str, str]:
+    def setup_renderer(self, prefix: Path) -> str:
+        process = self.patch((), prefix)
+        if process.returncode:
+            raise RuntimeError(process.stderr.strip() or process.stdout.strip())
+        return process.stdout.strip()
+
+    def check_renderer_patch(self, root: Path) -> None:
+        process = self.patch(("--check", os.fspath(root)), root)
+        if process.returncode:
+            raise MermaidRenderFailure(
+                MermaidRenderDiagnosticCode.RENDERER_UNAVAILABLE,
+                "Mermaid renderer patch is missing or does not match.",
+                process.stderr.strip() or process.stdout.strip(),
+            )
+
+    def patch(self, arguments: tuple[str, ...], directory: Path) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            ("node", os.fspath(Path(__file__).with_name("renderer_patch.mjs")), *arguments),
+            cwd=directory,
+            capture_output=True,
+            check=False,
+            env=self._environment(),
+            text=True,
+            timeout=self.timeout_seconds,
+        )
+
+    def _versions(self, executable: Path) -> tuple[str, str, Path]:
         cli_root, cli = self._package(executable.resolve(), "@mermaid-js/mermaid-cli")
-        _, mermaid = self._dependency(cli_root, "mermaid")
-        return mermaid.version, cli.version
+        engine_root, mermaid = self._dependency(cli_root, "mermaid")
+        return mermaid.version, cli.version, engine_root
 
     def _package(self, entrypoint: Path, name: str) -> tuple[Path, NpmPackageMetadata]:
         for root in entrypoint.parents:

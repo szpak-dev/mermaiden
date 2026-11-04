@@ -1,0 +1,33 @@
+{
+  "id": "native-svg-text-v1",
+  "mermaid_version": "12.2.0",
+  "files": [
+    {
+      "path": "dist/chunks/mermaid.esm/chunk-VTNK77LY.mjs",
+      "original_sha256": "5dde783b567a1d32c8b5d4764e833ac077ad1e6974fd5f12233b2283cdf6db14",
+      "patched_sha256": "08958566eb95863ac7b4d86a7469b97b76de5ba8edc96f9e761730e763ba8659"
+    },
+    {
+      "path": "dist/chunks/mermaid.core/chunk-AQDTSKZB.mjs",
+      "original_sha256": "865c9ed39d183bbd3742cf98b0970ec4dd47af410da55ac0b4c4fd62429e40cd",
+      "patched_sha256": "13abfe140395ce1347c9fa6828017b513e1db67c7e8b98d40ce91a808a286aab"
+    }
+  ],
+  "replacements": [
+    {
+      "before": "function decodeHTMLEntities(text) {\n  const regex = /&(amp|lt|gt);/g;\n  return text.replace(regex, (match, entity) => {\n    switch (entity) {\n      case \"amp\":\n        return \"&\";\n      case \"lt\":\n        return \"<\";\n      case \"gt\":\n        return \">\";\n      default:\n        return match;\n    }\n  });\n}\n__name(decodeHTMLEntities, \"decodeHTMLEntities\");",
+      "after": "function decodeHTMLEntities(text) {\n  const decoder = document.createElement(\"textarea\");\n  decoder.innerHTML = text.replace(/</g, \"&lt;\");\n  return decoder.value;\n}\n__name(decodeHTMLEntities, \"decodeHTMLEntities\");",
+      "count": 1
+    },
+    {
+      "before": "decodeHTMLEntities(word.content)",
+      "after": "word.content",
+      "count": 2
+    },
+    {
+      "before": "for (const line of structuredText) {",
+      "after": "for (const encodedLine of structuredText) {\n    const line = encodedLine.map(word => ({...word, content: decodeHTMLEntities(word.content)}));",
+      "count": 1
+    }
+  ]
+}

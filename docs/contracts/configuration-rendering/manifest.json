@@ -1641,7 +1641,7 @@
       "source": "sources/classDiagram.mmd",
       "source_sha256": "a435dbea7075347ea296320a760aa3d011c538a517e56bd807266244d6b75c2f",
       "svg": "rendered/classDiagram.svg",
-      "svg_sha256": "989b88a322b429039f3152b3fb0a1ca316f713a6b1d015ecb8158f7400c8d5f2",
+      "svg_sha256": "a99f0c0a4400ecf2531de2a4f32bd0283af1f6de2ab043f773d1801e769ddca9",
       "semantic_object_count": 20,
       "configuration_fields": [
         {

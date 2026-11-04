@@ -1,12 +1,22 @@
 import argparse
 from collections.abc import Mapping
+from pathlib import Path
 from types import TracebackType
 
+from pydantic import BaseModel, ConfigDict
 from wireup import ScopedSyncContainer
 
 from .bootstrap import process_scope
 from .mermaid.compatibility import CompatibilityReport, MermaidCompatibilityService
 from .mermaid.schema import MermaidDiagramConfig, MermaidSchemaStore
+from .mermaid.validation.domain import RenderValidationRuntime
+
+
+class CliArguments(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    command: str
+    prefix: Path
 
 
 class MermaidenCli:
@@ -47,6 +57,10 @@ class MermaidenCli:
         self._ensure_open()
         return self._scope.get(MermaidCompatibilityService).verify(sources)
 
+    def setup_renderer(self, prefix: Path) -> str:
+        self._ensure_open()
+        return self._scope.get(RenderValidationRuntime).setup_renderer(prefix)
+
     def _ensure_open(self) -> None:
         if self._closed:
             raise RuntimeError("Mermaiden CLI is closed.")
@@ -54,9 +68,14 @@ class MermaidenCli:
 
 def run() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_subparsers(dest="command", required=True).add_parser("compat")
-    parser.parse_args()
+    commands = parser.add_subparsers(dest="command", required=True)
+    commands.add_parser("compat").set_defaults(prefix=Path.cwd())
+    commands.add_parser("renderer-setup").add_argument("--prefix", type=Path, default=Path.cwd())
+    arguments = CliArguments.model_validate(vars(parser.parse_args()))
     with MermaidenCli.create() as cli:
+        if arguments.command == "renderer-setup":
+            print(cli.setup_renderer(arguments.prefix))
+            return
         report = cli.compatibility_report()
         for diagram in report.diagrams:
             print(f"{diagram.diagram_id}: {'valid' if report.diagram_valid(diagram) else 'invalid'}")

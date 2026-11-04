@@ -103,8 +103,15 @@ class MermaidRenderValidator:
             for element in document.iter()
             if {"error-icon", "error-text"}.intersection(element.attrib.get("class", "").split())
         )
-        oversized = "Maximum text size in diagram exceeded" in svg
-        syntax_error = "Syntax error in text" in svg
+        rendered_text = " ".join(
+            text.strip()
+            for element in document.iter()
+            if element.tag in {"{http://www.w3.org/2000/svg}text", "{http://www.w3.org/1999/xhtml}span"}
+            for text in element.itertext()
+            if text.strip()
+        )
+        oversized = "Maximum text size in diagram exceeded" in rendered_text
+        syntax_error = "Syntax error in text" in rendered_text
         if error_elements or oversized or syntax_error:
             details = " ".join(
                 text.strip() for element in error_elements for text in element.itertext() if text.strip()

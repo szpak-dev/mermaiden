@@ -1,3 +1,4 @@
+from base64 import b64encode
 from collections.abc import Mapping
 from dataclasses import dataclass
 from html import escape
@@ -5,35 +6,44 @@ from pathlib import Path
 
 from wireup import injectable
 
-from .schema import MermaidSchemaStore
+from .validation.application.mermaid_render_validator import MermaidRenderValidator
 
 
 @injectable
 @dataclass(frozen=True, slots=True)
 class MermaidPreview:
-    schemas: MermaidSchemaStore
+    validator: MermaidRenderValidator
 
     def write_sources(self, sources: Mapping[str, str], output: Path) -> Path:
-        sections = "\n".join(self._source_section(name, source) for name, source in sources.items())
+        reports = self.validator.validate_sources(sources)
+        failures = tuple(diagnostic for report in reports for diagnostic in report.diagnostics)
+        if failures:
+            raise RuntimeError("\n".join(f"{failure.message} {failure.details}" for failure in failures))
+        sections = "\n".join(
+            self._source_section(report.diagram_id, sources[report.diagram_id], report.svg) for report in reports
+        )
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(self._document(sections), encoding="utf-8")
         return output
 
-    def _source_section(self, name: str, source: str) -> str:
-        return f'<section><h2>{escape(name)}</h2><pre class="mermaid">{escape(source)}</pre></section>'
+    def _source_section(self, name: str, source: str, svg: str) -> str:
+        encoded = b64encode(svg.encode("utf-8")).decode("ascii")
+        return (
+            f"<section><h2>{escape(name)}</h2>"
+            f'<img alt="{escape(name, quote=True)}" src="data:image/svg+xml;base64,{encoded}">'
+            f"<details><summary>Mermaid source</summary><pre>{escape(source)}</pre></details></section>"
+        )
 
     def _document(self, sections: str) -> str:
         return f"""<!doctype html>
 <html lang="en">
 <meta charset="utf-8">
 <title>Mermaid previews</title>
-<style>body {{ font-family: sans-serif; margin: 2rem; }} section {{ margin-block: 3rem; }}</style>
+<style>
+body {{ font-family: sans-serif; margin: 2rem; }} section {{ margin-block: 3rem; }} img {{ max-width: 100%; }}
+</style>
 <body>
 {sections}
-<script type="module">
-import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@{self.schemas.mermaid_version}/dist/mermaid.esm.min.mjs";
-mermaid.initialize({{ startOnLoad: true }});
-</script>
 </body>
 </html>
 """

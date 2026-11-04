@@ -76,7 +76,7 @@ class TestClassDiagram:
             },
         )
         source = application.render(diagram)
-        assert f'c_v_source_example "one_example" {connector} "many" c_v_target_example : uses' in source
+        assert f'c_v_source_example "one#95;example" {connector} "many" c_v_target_example : uses' in source
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
         assert application.render(restored) == source
         application.execute(
@@ -89,7 +89,7 @@ class TestClassDiagram:
             },
         )
         updated_source = application.render(restored)
-        assert f'c_v_source_example "one_example" {connector} "many" c_v_new_target_example : uses' in updated_source
+        assert f'c_v_source_example "one#95;example" {connector} "many" c_v_new_target_example : uses' in updated_source
         updated = application.restore(json.loads(json.dumps(application.snapshot(restored).to_dict())))
         assert application.render(updated) == updated_source
 

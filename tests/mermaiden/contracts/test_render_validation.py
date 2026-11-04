@@ -239,7 +239,7 @@ class TestRenderValidation:
         source = application.render(diagram)
         report = application.validate_render(diagram)
         assert '"id": "diagrams/api_example"' in json.dumps(snapshot)
-        assert '["diagrams/api_example"]' in source
+        assert '["diagrams/api#95;example"]' in source
         assert "#47;" not in source
         assert report.success, report.diagnostics
         svg = ElementTree.fromstring(report.svg)
@@ -322,6 +322,57 @@ class TestRenderValidation:
         assert "Old name" not in text
         assert "#59;" not in application.render(diagram)
         assert application.snapshot(diagram).to_dict() == before
+
+    @pytest.mark.integration
+    @pytest.mark.parametrize(
+        "value",
+        (
+            '"żółć" 😀',
+            "&amp; &#34; #quot;",
+            "%22 %u0041 %26",
+            "<tag> & </tag>",
+            "*literal*",
+            "_literal_",
+            "**literal**",
+            "[x](url)",
+            "{x}: y; 0..*",
+            "!#$%&'()*+",
+            ",-./:;<=>?",
+            "@[\\]^_`{|}~",
+        ),
+    )
+    def test_class_text_preserves_punctuation_and_entity_looking_input(self, value: str) -> None:
+        with Application.create() as application:
+            diagram = application.create_diagram("classDiagram")
+            labels = tuple(f"{role} {value}" for role in ("Namespace", "Class", "Relation", "Source", "Target"))
+            application.execute(diagram, "add_namespace", {"id": "namespace_example", "label": labels[0]})
+            application.execute(
+                diagram,
+                "add_class",
+                {"id": "class_example", "label": labels[1], "parent_id": "namespace_example"},
+            )
+            application.execute(diagram, "add_class", {"id": "target_example", "label": "Example"})
+            application.execute(
+                diagram,
+                "add_relation",
+                {
+                    "id": "relation_example",
+                    "source_id": "class_example",
+                    "target_id": "target_example",
+                    "label": labels[2],
+                    "source_label": labels[3],
+                    "target_label": labels[4],
+                },
+            )
+            before = application.snapshot(diagram).to_dict()
+            source = application.render(diagram)
+            report = application.validate_render(application.restore(before))
+            assert report.success, report.diagnostics
+            document = ElementTree.fromstring(report.svg)
+            text = tuple("".join(element.itertext()) for element in document.iter("{http://www.w3.org/2000/svg}text"))
+            assert all(label in text for label in labels), text
+            assert application.snapshot(diagram).to_dict() == before
+            assert application.render(diagram) == source
 
     @pytest.mark.integration
     def test_class_members_render_with_their_types_visibility_and_parameter_order(self) -> None:
