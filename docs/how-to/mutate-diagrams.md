@@ -89,7 +89,7 @@ unchanged. With `cascade=True`, Mermaiden removes the diagram-defined subtree pl
 annotation as one atomic change:
 
 ```python
-from mermaiden import Application
+from mermaiden import Application, ChangeRejected
 
 with Application.create() as application:
     diagram = application.create_diagram("sequenceDiagram")
@@ -109,7 +109,7 @@ with Application.create() as application:
 
     try:
         application.execute(diagram, "remove_element", {"id": "group"})
-    except RuntimeError:
+    except ChangeRejected:
         pass
     assert application.snapshot(diagram).to_dict() == before
 

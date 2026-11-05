@@ -5,7 +5,7 @@ from typing import cast
 
 import pytest
 
-from mermaiden import Application
+from mermaiden import Application, UnknownCatalogCommand, UnknownCommand
 
 ROOT = Path(__file__).resolve().parents[3]
 CONTRACT_ROOT = ROOT / "docs" / "contracts" / "diagram-mutations"
@@ -154,10 +154,10 @@ class TestMutationConformance:
             unsupported = contract_operations.difference(self._expected_operations(matrix))
             for operation in unsupported:
                 assert operation not in description.commands
-                with pytest.raises(KeyError, match=r"Unknown command"):
+                with pytest.raises(UnknownCatalogCommand, match=r"Unknown command"):
                     application.command_payload(diagram_id, operation)
                 diagram = application.create_diagram(diagram_id)
-                with pytest.raises(RuntimeError, match=r"invalid arguments"):
+                with pytest.raises(UnknownCommand, match=r"Unknown command"):
                     application.execute(diagram, operation, {})
 
     def _matrices(self) -> dict[str, Mapping[str, object]]:

@@ -4,9 +4,8 @@ import json
 from collections import defaultdict
 from pathlib import Path
 
-from configuration_proof_renderer import ConfigurationProofRenderer
-
 from mermaiden import Application
+from tests.fixtures.configuration_proof_renderer import ConfigurationProofRenderer
 from tests.fixtures.configuration_proofs import ConfigurationProofCatalog
 
 ROOT = Path(__file__).resolve().parents[1]

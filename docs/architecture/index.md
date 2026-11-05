@@ -5,13 +5,14 @@
 A caller or agent enters through the `Application` facade. The operation routes below show the concrete owners behind
 that boundary: `DiagramCatalog` derives discovery contracts, `DiagramCommandApplication` validates and applies commands,
 `DiagramPersistenceApplication` snapshots and hydrates typed state, `MermaidApplication` generates source, and
-`MermaidRenderValidator` performs full rendering validation.
+`MermaidRenderValidator` performs full rendering validation. `RenderValidationRuntime` exports PNG bytes through the
+same pinned renderer.
 
 ![Mermaiden public capability relationships](public-capability-flow.svg)
 
 [View the generated Mermaid source](public-capability-flow.mmd).
 
-<!-- enclosure-diagram: KvSDfVAjB2fEdgjv2yp2Ah revision: 1 -->
+<!-- enclosure-diagram: KvSDfVAjB2fEdgjv2yp2Ah revision: 3 -->
 
 ## Entry points and lifetimes
 

@@ -1,5 +1,5 @@
 {
-  "id": "native-svg-text-v3",
+  "id": "native-svg-text-v4",
   "mermaid_version": "12.3.0",
   "files": [
     {
@@ -71,6 +71,22 @@
       ],
       "original_sha256": "7755295d31147825c25852ffcf0efbd63873b1b08636ca0b5fcb6cb4a95a1e6a",
       "patched_sha256": "0d114e4c313a6f2809a78911b444d9775f111267afb8a3993ff66c6c611720b5"
+    },
+    {
+      "path": "dist/mermaid.esm.mjs",
+      "original_sha256": "729810febbb66f740dc7cfca0a60b219c1209025d592ac57a9da076d639f43e0",
+      "patched_sha256": "ecb7f25ee4b8f326d3859708bfc883c055d443cee1e60f99c9ab2591ff4e42be",
+      "replacement_groups": [
+        "render_limit"
+      ]
+    },
+    {
+      "path": "dist/mermaid.core.mjs",
+      "original_sha256": "fafa28691baf87948a63ec13009437278f25d43ca7d85e74b71f3b53897e1738",
+      "patched_sha256": "97f38b9d434991a60ecd0063b74bc85114e850a13c19201b8aedd849360d5a80",
+      "replacement_groups": [
+        "render_limit"
+      ]
     }
   ],
   "replacements": {
@@ -246,6 +262,18 @@
       {
         "before": "import {\n  clear,",
         "after": "import { decodeHTMLEntities } from \"./chunk-STOXU5M4.mjs\";\nimport {\n  clear,",
+        "count": 1
+      }
+    ],
+    "render_limit": [
+      {
+        "before": "var MAX_TEXTLENGTH_EXCEEDED_MSG = \"graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa\";",
+        "after": "class MermaidTextLimitError extends Error {\n  constructor(length, limit) {\n    super(`Maximum text size in diagram exceeded: ${length} characters exceeds the configured limit of ${limit}.`);\n    this.name = \"MermaidTextLimitError\";\n  }\n}",
+        "count": 1
+      },
+      {
+        "before": "    text = MAX_TEXTLENGTH_EXCEEDED_MSG;\n    code = { raw: text, cleaned: text };",
+        "after": "    throw new MermaidTextLimitError(text.length, config?.maxTextSize ?? MAX_TEXTLENGTH);",
         "count": 1
       }
     ]

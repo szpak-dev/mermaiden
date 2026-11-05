@@ -1,6 +1,7 @@
 from .core.domain import (
     ApplicationClosed,
     ApplicationError,
+    ChangeRejected,
     CliClosed,
     CommandArguments,
     CommandPayload,
@@ -13,10 +14,12 @@ from .core.domain import (
 from .diagrams.catalog.domain import InvalidCommandPayload, UnknownCatalogCommand
 from .diagrams.domain import InvalidDiagramConfiguration, UnknownConfigurationKey, UnknownDiagram
 from .mermaid.validation.domain.models import MermaidPreviewFailure, MermaidRenderFailure, PngExportOptionsError
+from .runtime.snapshot.domain import SnapshotError
 
 __all__ = [
     "ApplicationClosed",
     "ApplicationError",
+    "ChangeRejected",
     "CliClosed",
     "CommandArguments",
     "CommandPayload",
@@ -29,6 +32,7 @@ __all__ = [
     "MermaidPreviewFailure",
     "MermaidRenderFailure",
     "PngExportOptionsError",
+    "SnapshotError",
     "UnknownCatalogCommand",
     "UnknownCommand",
     "UnknownConfigurationKey",

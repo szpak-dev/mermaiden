@@ -72,14 +72,29 @@ class TestDelimitedTextRendering:
 
 class TestNamedSourceValidation:
     @pytest.mark.integration
-    def test_error_svg_is_rejected_then_valid_sources_recover_in_order(self) -> None:
+    def test_source_cannot_override_the_runtime_text_limit_and_recovers(self) -> None:
+        with Application.create() as application:
+            source = 'classDiagram\nclass Example["' + "x" * 60000 + '"]\n'
+            rejected = application.validate_sources({"example": "---\nconfig:\n  maxTextSize: 200000\n---\n" + source})[
+                0
+            ]
+            assert not rejected.success
+            assert rejected.diagnostics[0].code == "render_failed"
+            assert "configured limit of 50000" in rejected.diagnostics[0].details
+            accepted = application.validate_sources(
+                {"example": '---\nconfig:\n  maxTextSize: 1\n---\nclassDiagram\nclass Example["Example"]\n'}
+            )[0]
+            assert accepted.success, accepted.diagnostics
+
+    @pytest.mark.integration
+    def test_oversized_source_is_rejected_then_valid_sources_recover_in_order(self) -> None:
         with Application.create() as application:
             oversized = '---\nconfig:\n  htmlLabels: false\n---\nclassDiagram\nclass Example["' + "x" * 60000 + '"]\n'
             failed = application.validate_sources({"oversized_example": oversized})
             assert len(failed) == 1
             assert failed[0].diagram_id == "oversized_example"
             assert not failed[0].success
-            assert failed[0].diagnostics[0].code == "svg_error"
+            assert failed[0].diagnostics[0].code == "render_failed"
             assert "Maximum text size" in failed[0].diagnostics[0].details
             sources = {"second_example": "flowchart LR\nA[Example]\n", "first_example": "classDiagram\nclass Example\n"}
             reports = application.validate_sources(sources)

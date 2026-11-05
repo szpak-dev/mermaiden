@@ -209,26 +209,36 @@ class TestRenderValidation:
             assert path.attrib["marker-end"].endswith(f"classDiagram-{marker}-margin)")
 
     @pytest.mark.integration
-    def test_renderer_rejects_a_real_exit_zero_mermaid_error_svg(self) -> None:
+    def test_renderer_rejects_oversized_input_without_an_error_illustration(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("classDiagram")
-        for index in range(550):
-            application.execute(
-                diagram,
-                "add_class",
-                {
-                    "id": f"class_{index}_{'x' * 180}",
-                    "label": f"Oversized {index}",
-                    "comment": f"Contract evidence {index} {'y' * 80}",
-                    "attributes": [{"name": f"field_{field}", "type": {"name": "string"}} for field in range(20)],
-                    "annotations": ["injectable", "immutable"],
-                },
-            )
+        application.execute(diagram, "add_class", {"id": "oversized_example", "label": "Example " + "x" * 60000})
         report = application.validate_render(diagram)
         assert not report.success
-        assert report.diagnostics[0].code == "svg_error"
-        assert report.diagnostics[0].message == "Mermaid produced an error SVG."
+        assert report.svg == ""
+        assert report.diagnostics[0].code == "render_failed"
+        assert "MermaidTextLimitError" in report.diagnostics[0].message
         assert "Maximum text size in diagram exceeded" in report.diagnostics[0].details
+
+    @pytest.mark.integration
+    @pytest.mark.parametrize("kind", ("classDiagram", "flowchart"))
+    @pytest.mark.parametrize(
+        "label",
+        (
+            "Syntax error in text",
+            "Maximum text size in diagram exceeded",
+            "Example: Syntax error in text; Maximum text size in diagram exceeded; error-text",
+        ),
+    )
+    def test_error_phrases_in_ordinary_labels_are_preserved(self, kind: str, label: str) -> None:
+        with Application.create() as application:
+            source = f'classDiagram\nclass Example["{label}"]\n'
+            if kind == "flowchart":
+                source = f'flowchart LR\nExample["{label}"]\n'
+            report = application.validate_sources({"example": source})[0]
+            assert report.success, report.diagnostics
+            document = ElementTree.fromstring(report.svg)
+            assert label in " ".join(" ".join(document.itertext()).split())
 
     @pytest.mark.integration
     def test_class_text_preserves_slashes_in_mermaid_source_and_svg(self) -> None:

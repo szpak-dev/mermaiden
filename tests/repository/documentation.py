@@ -1,5 +1,4 @@
 import re
-import sys
 from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
@@ -100,18 +99,3 @@ class DocumentationCrawler:
 
     def relative(self, path: Path) -> str:
         return path.resolve().relative_to(self.root).as_posix()
-
-
-def main() -> int:
-    root = Path(__file__).resolve().parents[1]
-    try:
-        pages = DocumentationCrawler(root).crawl(root / "README.md")
-    except (OSError, UnicodeError, ValueError) as error:
-        print(error, file=sys.stderr)
-        return 1
-    print(f"Documentation graph: {len(pages)} Markdown pages reachable from README.md.")
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())

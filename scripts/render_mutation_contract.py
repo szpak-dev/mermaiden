@@ -387,9 +387,7 @@ def _strings(value: object, path: str) -> tuple[str, ...]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Render the public diagram mutation contract.")
-    mode = parser.add_mutually_exclusive_group()
-    mode.add_argument("--write", action="store_true", help="replace generated Markdown")
-    mode.add_argument("--check", action="store_true", help="fail when generated Markdown has drifted")
+    parser.add_argument("--write", action="store_true", help="replace generated Markdown")
     arguments = parser.parse_args()
     artifacts = render_artifacts(load_contract())
     if arguments.write:
@@ -405,27 +403,6 @@ def main() -> None:
         ):
             if path not in expected:
                 path.unlink()
-        return
-    if arguments.check:
-        drifted = [
-            path
-            for path, rendered in artifacts.items()
-            if not path.exists() or path.read_text(encoding="utf-8") != rendered
-        ]
-        expected = set(artifacts)
-        drifted.extend(
-            path
-            for path in (
-                *DIAGRAMS_PATH.glob("*.json"),
-                *DIAGRAMS_PATH.glob("*.md"),
-                *CHARACTER_DIAGRAMS_PATH.glob("*.json"),
-                *CHARACTER_DIAGRAMS_PATH.glob("*.md"),
-            )
-            if path not in expected
-        )
-        if drifted:
-            names = ", ".join(str(path.relative_to(ROOT)) for path in sorted(drifted))
-            raise SystemExit(f"Generated mutation contract is stale ({names}); run `make mutation-contract`.")
         return
     print(artifacts[DOCUMENT_PATH], end="")
 

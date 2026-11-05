@@ -32,8 +32,7 @@ Class diagrams use native SVG text for labels and default to ELK layout. Generat
 ## Run full SVG validation
 
 ```python
-from mermaiden import Application
-from mermaiden.domain import MermaidRenderFailure
+from mermaiden import Application, MermaidRenderFailure
 
 with Application.create() as application:
     diagram = application.create_diagram("pie")
@@ -114,7 +113,10 @@ image: enlarging it beyond its exported resolution reduces sharpness, and text a
 
 Invalid export options raise `PngExportOptionsError`, identifying the invalid option and constraint. Invalid diagrams,
 runtime/version/patch failures, rendering timeouts, and missing or invalid PNG output raise `MermaidRenderFailure`,
-with a diagnostic code, specific message, and cause details. Both types are available from `mermaiden.domain`.
+with a diagnostic code, specific message, and cause details. Both types are imported directly from `mermaiden`.
+The patched renderer rejects input exceeding Mermaid's configured text limit with `render_failed` for both SVG
+validation and PNG export. It never substitutes an error illustration for successful output. Diagnostic phrases in
+ordinary labels remain literal text and do not cause validation failures.
 Export leaves diagram state and its snapshot unchanged, manages
 its own temporary files, and never writes to a caller destination unless the caller saves the returned bytes.
 
@@ -124,7 +126,7 @@ its own temporary files, and never writes to a caller destination unless the cal
 | --- | --- |
 | Mermaid engine and configuration schema | `12.3.0` |
 | `@mermaid-js/mermaid-cli` / `mmdc` | `12.2.0` |
-| Required renderer correction | `native-svg-text-v3` |
+| Required renderer correction | `native-svg-text-v4` |
 | Node.js | `>=22.13.0`; this checkout pins `24.17.0` |
 | Mermaiden snapshot contract | `v12` |
 
@@ -138,6 +140,12 @@ make integration
 ```
 
 Repository contributors should use the lock rather than a global installation; it pins the same CLI version used in CI.
+
+Verification lives under `tests/`: ordinary contracts run with `make pytest`, browser rendering with `make integration`,
+and isolated distribution checks with `make package-check`. To verify caller snapshot copies, set
+`MERMAIDEN_CALLER_SNAPSHOTS` to their directory and run `pytest -m caller_snapshots tests/installed/test_caller_snapshots.py`
+against the installed wheel. That test updates the envelope version and removes the retired class `html_labels` field
+in memory; any other required data migration, including Packet positions, must already be applied to the copies.
 
 ## Write a preview
 
