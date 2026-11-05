@@ -5,6 +5,10 @@ from pydantic import ConfigDict, Field, RootModel, model_validator
 from ...core.domain import Entity, ValueModel
 
 
+class InvalidPacketRange(ValueError):
+    pass
+
+
 class PacketRange(ValueModel):
     kind: Literal["range"]
     start: int = Field(ge=0)
@@ -13,7 +17,7 @@ class PacketRange(ValueModel):
     @model_validator(mode="after")
     def require_ordered_range(self) -> Self:
         if self.end < self.start:
-            raise ValueError("Packet range end must be at least its start.")
+            raise InvalidPacketRange("Packet range end must be at least its start.")
         return self
 
 

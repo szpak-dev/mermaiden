@@ -290,7 +290,7 @@ class TestObjectUpdates:
             item = self._mapping(value)
             if self._mapping(item["fields"])["id"] == id:
                 return item
-        raise AssertionError(f"Object '{id}' is absent from '{collection}'.")
+        pytest.fail(f"Object '{id}' is absent from '{collection}'.")
 
     def _fields(self, snapshot: Mapping[str, object], collection: str, id: str) -> Mapping[str, object]:
         return self._mapping(self._object(snapshot, collection, id)["fields"])

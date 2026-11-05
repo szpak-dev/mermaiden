@@ -4,6 +4,30 @@ from collections.abc import Mapping
 from ...core.domain import Annotation, CommandPayload, Element, Relation
 
 
+class UnknownCatalogCommand(KeyError):
+    pass
+
+
+class InvalidCommandPayload(ValueError):
+    pass
+
+
+class MissingPlacementPolicy(ValueError):
+    pass
+
+
+class IncompleteDiagramCatalog(RuntimeError):
+    pass
+
+
+class MissingCommandPayloads(ValueError):
+    pass
+
+
+class EmptyMutationChanges(ValueError):
+    pass
+
+
 class MutationPayloadFactory(ABC):
     @abstractmethod
     def element(

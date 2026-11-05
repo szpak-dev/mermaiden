@@ -8,7 +8,7 @@ from wireup import injectable
 from ...core.characters import OptionalIdentifier
 from ...core.domain import Annotation, ClassifiedValueModel, CommandPayload, Element, Relation
 from ...core.services.command_payload import PydanticCommandPayload
-from ...diagrams.catalog.domain import MutationPayloadFactory
+from ...diagrams.catalog.domain import EmptyMutationChanges, MissingCommandPayloads, MutationPayloadFactory
 
 
 @injectable(as_type=MutationPayloadFactory, lifetime="scoped")
@@ -63,7 +63,7 @@ class PydanticMutationPayloadFactory(MutationPayloadFactory):
         invocation_defaults: Sequence[str],
     ) -> CommandPayload:
         if not variants:
-            raise ValueError(f"Command '{command_name}' has no object payloads.")
+            raise MissingCommandPayloads(f"Command '{command_name}' has no object payloads.")
         schema = core_schema.tagged_union_schema(dict(variants), discriminator="kind")
         return PydanticCommandPayload(schema, invocation_defaults)
 
@@ -134,5 +134,5 @@ class PydanticMutationPayloadFactory(MutationPayloadFactory):
 
     def _require_changes(self, value: dict[str, object]) -> dict[str, object]:
         if not value:
-            raise ValueError("Changes must contain at least one field.")
+            raise EmptyMutationChanges("Changes must contain at least one field.")
         return value

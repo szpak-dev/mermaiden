@@ -7,6 +7,7 @@ from ...core.domain import Annotation, ClassifiedValueModel, Container, Diagram,
 from ...core.naming import ClassName
 from ..application import DiagramsApplication
 from ..domain import DiagramInfo
+from .domain import MissingPlacementPolicy
 from .models import ElementPlacement
 
 
@@ -46,7 +47,7 @@ class DiagramObjectCatalog:
                 ),
             )
             if not allowed:
-                raise ValueError(f"Element '{diagram.kind}.{kind}' has no placement policy.")
+                raise MissingPlacementPolicy(f"Element '{diagram.kind}.{kind}' has no placement policy.")
             placements[kind] = ElementPlacement(allowed_parents=allowed)
         return placements
 

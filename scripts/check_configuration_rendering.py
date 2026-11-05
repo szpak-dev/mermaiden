@@ -6,6 +6,10 @@ from mermaiden import Application
 from tests.fixtures.configuration_proofs import ConfigurationProofCatalog
 
 
+class ConfigurationRenderMismatch(RuntimeError):
+    pass
+
+
 class ConfigurationRenderingCheck:
     def run(self, shard_index: int, shard_count: int) -> None:
         with Application.create() as application:
@@ -17,7 +21,7 @@ class ConfigurationRenderingCheck:
             }
             rendered = ConfigurationProofRenderer(application).render(sources)
         if tuple(rendered) != tuple(sources):
-            raise RuntimeError("Configuration rendering returned an incomplete or reordered result.")
+            raise ConfigurationRenderMismatch("Configuration rendering returned an incomplete or reordered result.")
 
 
 def main() -> None:
@@ -26,7 +30,7 @@ def main() -> None:
     parser.add_argument("--shard-count", type=int, default=4)
     arguments = parser.parse_args()
     if arguments.shard < 1 or arguments.shard > arguments.shard_count:
-        raise RuntimeError("Shard must be between 1 and shard-count.")
+        parser.error("Shard must be between 1 and shard-count.")
     ConfigurationRenderingCheck().run(arguments.shard - 1, arguments.shard_count)
 
 

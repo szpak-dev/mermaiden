@@ -10,9 +10,11 @@ from ...core.domain import (
     ChangeReport,
     CommandArguments,
     DiagramCommand,
+    InvalidCommandArguments,
     UnknownCommand,
     ValidationReport,
 )
+from ...diagrams.catalog.domain import InvalidCommandPayload, UnknownCatalogCommand
 from ...diagrams.catalog.service import DiagramCatalog
 from ...diagrams.domain import DiagramCommandFeature, DiagramModel, MermaidDiagramConfiguration
 from ...diagrams.services.persistence import DiagramPersistenceApplication
@@ -30,8 +32,10 @@ class DiagramCommandApplication:
             raise UnknownCommand(f"Command '{command.operation}' is not supported for '{diagram.kind}'.")
         try:
             payload = self.catalog.validate_command(diagram, command.operation, command.arguments)
-        except (KeyError, ValueError) as error:
-            raise UnknownCommand(f"Command '{command.operation}' has invalid arguments: {error}") from error
+        except UnknownCatalogCommand as error:
+            raise UnknownCommand(str(error)) from None
+        except InvalidCommandPayload as error:
+            raise InvalidCommandArguments(f"Command '{command.operation}' has invalid arguments: {error}") from None
         if command.operation == "configure":
             diagram.configure(cast(MermaidDiagramConfiguration, payload.invocation["configuration"]))
             return None
@@ -45,7 +49,7 @@ class DiagramCommandApplication:
             details = "; ".join(
                 issue["msg"] for issue in error.errors(include_url=False, include_context=False, include_input=False)
             )
-            raise UnknownCommand(f"Command '{command.operation}' has invalid arguments: {details}") from None
+            raise InvalidCommandArguments(f"Command '{command.operation}' has invalid arguments: {details}") from None
 
     def apply_batch(
         self,

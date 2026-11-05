@@ -3,6 +3,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from xml.etree import ElementTree
 
+from jinja2 import TemplateError
 from wireup import injectable
 
 from ....core.domain import DiagramView
@@ -15,6 +16,7 @@ from ..domain import (
     RendererRuntimeResult,
     RenderValidationRuntime,
 )
+from ..domain.models import RendererProcessDiagnostic
 
 
 @injectable
@@ -46,7 +48,7 @@ class MermaidRenderValidator:
             )
         try:
             source = self.renderer.render(diagram)
-        except Exception as error:
+        except TemplateError as error:
             return self.failure(
                 diagram.kind,
                 MermaidRenderFailure(
@@ -72,7 +74,7 @@ class MermaidRenderValidator:
                 diagram_id,
                 MermaidRenderFailure(
                     MermaidRenderDiagnosticCode.RENDER_FAILED,
-                    self._message(result.output),
+                    RendererProcessDiagnostic(result.output).message,
                     result.output,
                 ),
             )
@@ -175,13 +177,3 @@ class MermaidRenderValidator:
             self.mermaid_cli_version,
             diagnostics=(MermaidRenderDiagnostic(failure.code, failure.message, failure.details),),
         )
-
-    def _message(self, output: str) -> str:
-        lines = tuple(line.strip() for line in output.splitlines() if line.strip())
-        parse_error = next((line for line in lines if line.startswith("Error: Parse error on line ")), "")
-        if parse_error:
-            line = parse_error.removeprefix("Error: Parse error on line ").rstrip(":")
-            expected = next((item for item in lines if " got " in item), "")
-            token = expected.rsplit(" got ", 1)[-1].strip("'.") if expected else "unknown token"
-            return f"syntax error on line {line} (got {token})"
-        return lines[0].removeprefix("Error: ") if lines else "Mermaid rendering failed without diagnostic output."

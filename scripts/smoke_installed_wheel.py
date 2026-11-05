@@ -13,6 +13,10 @@ from wireup import create_sync_container, injectable
 from mermaiden import Application
 
 
+class InstalledWheelVerificationError(RuntimeError):
+    pass
+
+
 @injectable
 class InstalledWheelConsumerService:
     pass
@@ -42,16 +46,18 @@ class InstalledWheelSmoke:
             if not any(path == Path(include) or path.is_relative_to(include) for path in contents)
         ]
         if missing:
-            raise RuntimeError(f"Source distribution is missing configured content: {', '.join(missing)}.")
+            raise InstalledWheelVerificationError(
+                f"Source distribution is missing configured content: {', '.join(missing)}."
+            )
         if Path("LICENSE") not in contents:
-            raise RuntimeError("Source distribution is missing the proprietary license terms.")
+            raise InstalledWheelVerificationError("Source distribution is missing the proprietary license terms.")
 
     def verify_distribution_license(self) -> None:
         distribution = importlib.metadata.distribution("mermaiden")
         if distribution.metadata["License-Expression"] != "LicenseRef-Proprietary":
-            raise RuntimeError("Installed distribution does not declare the proprietary license.")
+            raise InstalledWheelVerificationError("Installed distribution does not declare the proprietary license.")
         if not any(path.parts[-2:] == ("licenses", "LICENSE") for path in distribution.files or ()):
-            raise RuntimeError("Installed distribution is missing the proprietary license terms.")
+            raise InstalledWheelVerificationError("Installed distribution is missing the proprietary license terms.")
 
     def verify_consumer_wireup_scan(self) -> Application:
         container = create_sync_container(injectables=[sys.modules[__name__]], config={})
@@ -63,9 +69,9 @@ class InstalledWheelSmoke:
 
     def verify_application(self, application: Application) -> None:
         if not application.mermaid_version:
-            raise RuntimeError("The installed package does not expose its pinned Mermaid version.")
+            raise InstalledWheelVerificationError("The installed package does not expose its pinned Mermaid version.")
         if not any(info.id == "block" for info in application.available_diagrams()):
-            raise RuntimeError("The installed diagram catalog does not contain 'block'.")
+            raise InstalledWheelVerificationError("The installed diagram catalog does not contain 'block'.")
         description = application.diagram_description("block")
         expected_commands = {
             "add_group",
@@ -76,7 +82,9 @@ class InstalledWheelSmoke:
             "remove_element",
         }
         if not expected_commands <= set(description.commands):
-            raise RuntimeError("The installed diagram catalog does not expose the public CRUD commands.")
+            raise InstalledWheelVerificationError(
+                "The installed diagram catalog does not expose the public CRUD commands."
+            )
 
         diagram = application.create_diagram("block")
         application.execute(diagram, "add_group", {"id": "source", "label": "Source"})
@@ -104,15 +112,17 @@ class InstalledWheelSmoke:
         snapshot = application.snapshot(diagram).to_dict()
         restored = application.restore(snapshot)
         if application.snapshot(restored).to_dict() != snapshot:
-            raise RuntimeError("The installed package did not preserve the public snapshot.")
+            raise InstalledWheelVerificationError("The installed package did not preserve the public snapshot.")
         source = application.render(restored)
         if "Updated First" not in source or "Second" in source:
-            raise RuntimeError("The installed package did not render the applied CRUD operations.")
+            raise InstalledWheelVerificationError("The installed package did not render the applied CRUD operations.")
         report = application.validate_render(restored)
         if not report.success:
-            raise RuntimeError(f"The installed package did not validate a real render: {report.diagnostics!r}")
+            raise InstalledWheelVerificationError(
+                f"The installed package did not validate a real render: {report.diagnostics!r}"
+            )
         if not report.svg.startswith("<svg"):
-            raise RuntimeError(
+            raise InstalledWheelVerificationError(
                 "The installed package did not return rendered SVG through Application.validate_render()."
             )
 
@@ -177,14 +187,18 @@ class InstalledWheelSmoke:
         restored_classes = application.restore(application.snapshot(classes).to_dict())
         class_source = application.render(restored_classes)
         if "c_v_caller ..> c_v_dependency" not in class_source:
-            raise RuntimeError("The installed package reversed class relation source and target endpoints.")
+            raise InstalledWheelVerificationError(
+                "The installed package reversed class relation source and target endpoints."
+            )
         for rendered_type in (
             "Map&lt;Key, Value&gt; items",
             "resolve(Map&lt;Key, List&lt;Value&gt;&gt; items)",
             "Map&lt;Key, List&lt;Pair&lt;Left, Right&gt;&gt;&gt;",
         ):
             if rendered_type not in class_source:
-                raise RuntimeError(f"The installed package did not preserve class type '{rendered_type}'.")
+                raise InstalledWheelVerificationError(
+                    f"The installed package did not preserve class type '{rendered_type}'."
+                )
 
     def verify_durable_draft_workflow(self) -> None:
         with Application.create() as application:
@@ -207,9 +221,11 @@ class InstalledWheelSmoke:
             except RuntimeError:
                 pass
             else:
-                raise RuntimeError("The installed package accepted an invalid draft operation.")
+                raise InstalledWheelVerificationError("The installed package accepted an invalid draft operation.")
             if application.snapshot(diagram).to_dict() != persisted:
-                raise RuntimeError("A failed operation altered the last successfully persisted draft state.")
+                raise InstalledWheelVerificationError(
+                    "A failed operation altered the last successfully persisted draft state."
+                )
 
             application.execute(diagram, "add_end", {"id": "end", "label": "End"})
             persisted = self.persist(application, diagram)
@@ -226,18 +242,22 @@ class InstalledWheelSmoke:
         with Application.create() as application:
             restored = application.restore(persisted)
             if "e_v_start r_v_path@--> e_v_end" not in application.render(restored):
-                raise RuntimeError("The installed package did not render the completed restored flowchart.")
+                raise InstalledWheelVerificationError(
+                    "The installed package did not render the completed restored flowchart."
+                )
 
     def persist(self, application: Application, diagram: Any) -> dict[str, object]:
         encoded = json.dumps(application.snapshot(diagram).to_dict())
         if "mermaiden." in encoded:
-            raise RuntimeError("The installed package leaked Python module paths into its snapshot contract.")
+            raise InstalledWheelVerificationError(
+                "The installed package leaked Python module paths into its snapshot contract."
+            )
         return cast(dict[str, object], json.loads(encoded))
 
     def verify_cli(self, temporary: Path) -> None:
         help_result = self.run_cli(temporary, "--help")
         if "compat" not in help_result.stdout:
-            raise RuntimeError("The installed CLI help does not expose compatibility validation.")
+            raise InstalledWheelVerificationError("The installed CLI help does not expose compatibility validation.")
 
         self.run_cli(temporary, "compat")
 

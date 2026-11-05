@@ -8,6 +8,7 @@ from ...core.domain import CommandArguments, CommandPayload
 from ..application import DiagramsApplication
 from ..domain import DiagramCommandFeature, DiagramInfo, DiagramModel
 from .commands import DiagramCommandCatalog
+from .domain import IncompleteDiagramCatalog
 from .models import DiagramDescription
 from .objects import DiagramObjectCatalog
 
@@ -42,7 +43,10 @@ class DiagramCatalog:
 
     def validate(self) -> None:
         if len(self._descriptions) != len(self.registry.available()):
-            raise RuntimeError("Diagram catalog is incomplete.")
+            missing = sorted({info.id for info in self.registry.available()} - self._descriptions.keys())
+            raise IncompleteDiagramCatalog(
+                f"Diagram catalog is incomplete; missing descriptions: {', '.join(missing)}."
+            )
 
     def command_names(self, info: DiagramInfo) -> tuple[str, ...]:
         return self.commands.names(info)

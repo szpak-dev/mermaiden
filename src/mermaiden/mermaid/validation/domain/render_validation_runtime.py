@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Mapping
 from pathlib import Path
 
-from .models import RendererRuntimeResult
+from .models import PngRenderOptions, RendererRuntimeResult
 
 
 class RenderValidationRuntime(ABC):
@@ -19,3 +19,6 @@ class RenderValidationRuntime(ABC):
 
     @abstractmethod
     def render(self, sources: Mapping[str, str]) -> RendererRuntimeResult: ...
+
+    @abstractmethod
+    def render_png(self, source: str, options: PngRenderOptions) -> bytes: ...

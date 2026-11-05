@@ -5,6 +5,10 @@ from pydantic import BaseModel, ConfigDict
 from mermaiden import Application
 
 
+class MermaidLockMismatch(RuntimeError):
+    pass
+
+
 class PackageManifest(BaseModel):
     model_config = ConfigDict(extra="ignore")
 
@@ -23,7 +27,7 @@ class MermaidLockCheck:
                 "mermaid": application.mermaid_version,
             }
         if package.devDependencies != expected:
-            raise RuntimeError("package.json does not match the public Application Mermaid versions.")
+            raise MermaidLockMismatch("package.json does not match the public Application Mermaid versions.")
 
 
 if __name__ == "__main__":

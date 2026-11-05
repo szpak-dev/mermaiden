@@ -30,7 +30,7 @@ services share that process scope.
   descriptors. Concrete feature packages are independent and may share diagram concepts only through `diagrams.shared`.
 - `src/mermaiden/mutations` validates and dispatches public command payloads against the catalog.
 - `src/mermaiden/mermaid` owns Mermaid configuration compatibility, Jinja templates, source rendering,
-  previews, and optional `mmdc` validation.
+  previews, optional `mmdc` validation, and PNG export.
 - [`application.py`](../../src/mermaiden/application.py) is the public facade;
   [`bootstrap.py`](../../src/mermaiden/bootstrap.py) is the only composition root. The
   [import-linter contract](../../.importlinter) enforces feature independence.
@@ -86,5 +86,7 @@ Generated mutation documentation
 
 The package reads its checked-in Mermaid schema and templates while rendering or checking compatibility. Persistent
 output is written only through caller-requested preview operations. `Application.validate_render()` owns its temporary
-files and is the external-process boundary that invokes the locked Mermaid CLI. Ordinary source generation does not
-invoke a browser, npm, or Mermaid executable.
+files and invokes the locked Mermaid CLI through `RenderValidationRuntime`. `Application.render_png()` uses that same
+runtime for PNG bytes, sharing version and patch checks, browser settings, timeout handling, and temporary-file
+ownership. Export options are validated once into `PngRenderOptions` at the public boundary. Ordinary source generation
+does not invoke a browser, npm, or Mermaid executable.

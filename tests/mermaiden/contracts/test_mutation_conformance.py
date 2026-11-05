@@ -257,7 +257,7 @@ class TestMutationConformance:
             properties = self._mapping(schema.get("properties", {}))
             required = self._strings(schema.get("required", []))
             return {name: self._example(root, self._mapping(properties[name])) for name in required}
-        raise AssertionError(f"Cannot derive example from schema: {schema}")
+        pytest.fail(f"Cannot derive example from schema: {schema}")
 
     def _string_example(self, schema: Mapping[str, object]) -> str:
         value = "value_example"

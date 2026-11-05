@@ -22,6 +22,22 @@ class UnknownCommand(ApplicationError):
     pass
 
 
+class ApplicationClosed(ApplicationError):
+    pass
+
+
+class CliClosed(ApplicationError):
+    pass
+
+
+class InvalidBatchCommand(ValueError):
+    pass
+
+
+class InvalidCommandArguments(ApplicationError):
+    pass
+
+
 @dataclass(frozen=True, slots=True)
 class DiagramSnapshotContractIdentity:
     kind: str

@@ -160,7 +160,7 @@ class DiagramSnapshotRegistry(SnapshotTypeRegistry):
 
             discriminators = [item.discriminator for item in registered.values()]
             if len(discriminators) != len(set(discriminators)):
-                raise RuntimeError(f"Snapshot discriminators for '{info.id}' are not unique.")
+                raise SnapshotError(f"Snapshot discriminators for '{info.id}' are not unique.")
             contracts[info.id] = SnapshotContract(
                 owner=info.id,
                 configuration=roots[0],

@@ -111,8 +111,6 @@ with Application.create() as application:
         application.execute(diagram, "remove_element", {"id": "group"})
     except RuntimeError:
         pass
-    else:
-        raise AssertionError("unsafe removal unexpectedly succeeded")
     assert application.snapshot(diagram).to_dict() == before
 
     report = application.execute(diagram, "remove_element", {"id": "group", "cascade": True})

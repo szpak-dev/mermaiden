@@ -94,9 +94,9 @@ class TestExportedSvgLabels:
             source = application.render(diagram)
             report = application.validate_render(application.restore(before))
             if not report.success:
-                raise RuntimeError(str(report.diagnostics))
+                pytest.fail(str(report.diagnostics))
             if application.snapshot(diagram).to_dict() != before or application.render(diagram) != source:
-                raise RuntimeError("Rendering changed the accepted diagram content.")
+                pytest.fail("Rendering changed the accepted diagram content.")
             self.check_export(
                 tmp_path,
                 name,
@@ -205,9 +205,9 @@ class TestExportedSvgLabels:
             source = application.render(diagram)
             report = application.validate_render(diagram)
             if not report.success:
-                raise RuntimeError(str(report.diagnostics))
+                pytest.fail(str(report.diagnostics))
             if application.snapshot(diagram).to_dict() != before or application.render(diagram) != source:
-                raise RuntimeError("Rendering changed the accepted TreeView content.")
+                pytest.fail("Rendering changed the accepted TreeView content.")
             self.check_export(
                 tmp_path,
                 "tree-invariant",

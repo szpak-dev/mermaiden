@@ -7,6 +7,10 @@ from pydantic import RootModel, ValidationError
 from mermaiden import Application
 
 
+class MermaidVersionStale(RuntimeError):
+    pass
+
+
 class NpmVersionsPayload(RootModel[tuple[str, ...]]):
     pass
 
@@ -53,7 +57,7 @@ def assert_current(package: str, current_version: str) -> None:
     latest_version = latest_package_version(package, current_version)
     print(f"{package}: configured {current_version}, latest {latest_version}")
     if current_version != latest_version:
-        raise RuntimeError(f"{package} is stale: configured {current_version}, latest {latest_version}.")
+        raise MermaidVersionStale(f"{package} is stale: configured {current_version}, latest {latest_version}.")
 
 
 def main() -> None:

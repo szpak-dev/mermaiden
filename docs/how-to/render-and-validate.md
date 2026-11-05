@@ -33,6 +33,7 @@ Class diagrams use native SVG text for labels and default to ELK layout. Generat
 
 ```python
 from mermaiden import Application
+from mermaiden.domain import MermaidRenderFailure
 
 with Application.create() as application:
     diagram = application.create_diagram("pie")
@@ -40,7 +41,8 @@ with Application.create() as application:
     application.execute(diagram, "add_slice", {"id": "other", "label": "Other", "value": 30})
     report = application.validate_render(diagram)
     if not report.success:
-        raise RuntimeError(report.diagnostics)
+        failure = report.diagnostics[0]
+        raise MermaidRenderFailure(failure.code, failure.message, failure.details)
     svg = report.svg
 ```
 
@@ -86,6 +88,35 @@ diagnostic.
 same order. It uses the same runtime checks and SVG validation as `validate_render()` and preview generation.
 Configuration proof generation uses this operation as well. Empty input returns no reports; error placeholders and
 non-finite SVG geometry are rejected.
+
+## Export PNG
+
+```python
+from pathlib import Path
+
+from mermaiden import Application
+
+with Application.create() as application:
+    diagram = application.create_diagram("pie")
+    application.execute(diagram, "add_slice", {"id": "typed", "label": "Typed", "value": 70})
+    application.execute(diagram, "add_slice", {"id": "other", "label": "Other", "value": 30})
+    png = application.render_png(diagram, scale=2, background="white")
+    Path("diagram.png").write_bytes(png)
+```
+
+`render_png()` returns PNG bytes suitable for an `image/png` response or a caller-owned file. It uses the same pinned,
+patched Mermaid CLI and browser setup described above. The browser loads the diagram fonts before rendering; viewers
+of the resulting PNG need no fonts, browser runtime, or Mermaid installation.
+
+`scale` is a finite positive number, defaulting to `2`. It controls pixel density without changing the diagram's
+layout. `background` accepts `"white"` (the default) or `"transparent"`. Both options are keyword-only. PNG is a raster
+image: enlarging it beyond its exported resolution reduces sharpness, and text and links are no longer interactive.
+
+Invalid export options raise `PngExportOptionsError`, identifying the invalid option and constraint. Invalid diagrams,
+runtime/version/patch failures, rendering timeouts, and missing or invalid PNG output raise `MermaidRenderFailure`,
+with a diagnostic code, specific message, and cause details. Both types are available from `mermaiden.domain`.
+Export leaves diagram state and its snapshot unchanged, manages
+its own temporary files, and never writes to a caller destination unless the caller saves the returned bytes.
 
 ## Supported Mermaid 12 line
 

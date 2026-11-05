@@ -7,6 +7,7 @@ from pathlib import Path
 from wireup import injectable
 
 from .validation.application.mermaid_render_validator import MermaidRenderValidator
+from .validation.domain.models import MermaidPreviewFailure
 
 
 @injectable
@@ -18,7 +19,13 @@ class MermaidPreview:
         reports = self.validator.validate_sources(sources)
         failures = tuple(diagnostic for report in reports for diagnostic in report.diagnostics)
         if failures:
-            raise RuntimeError("\n".join(f"{failure.message} {failure.details}" for failure in failures))
+            raise MermaidPreviewFailure(
+                "\n".join(
+                    f"{report.diagram_id}: {failure.code}: {failure.message} {failure.details}".rstrip()
+                    for report in reports
+                    for failure in report.diagnostics
+                )
+            )
         sections = "\n".join(
             self._source_section(report.diagram_id, sources[report.diagram_id], report.svg) for report in reports
         )

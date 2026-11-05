@@ -7,6 +7,10 @@ from ...core.characters import Identifier
 from ...core.domain import Relation
 
 
+class DuplicateAlignmentMember(ValueError):
+    pass
+
+
 class Port(StrEnum):
     TOP = "top"
     RIGHT = "right"
@@ -37,5 +41,5 @@ class Alignment(Relation):
     @model_validator(mode="after")
     def require_unique_members(self) -> Self:
         if len(set(self.element_ids)) != len(self.element_ids):
-            raise ValueError("Alignment members must be unique.")
+            raise DuplicateAlignmentMember("Alignment members must be unique.")
         return self

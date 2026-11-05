@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict
 from wireup import ScopedSyncContainer
 
 from .bootstrap import process_scope
+from .core.domain import CliClosed
 from .mermaid.compatibility import CompatibilityReport, MermaidCompatibilityService
 from .mermaid.schema import MermaidDiagramConfig, MermaidSchemaStore
 from .mermaid.validation.domain import RenderValidationRuntime
@@ -63,7 +64,7 @@ class MermaidenCli:
 
     def _ensure_open(self) -> None:
         if self._closed:
-            raise RuntimeError("Mermaiden CLI is closed.")
+            raise CliClosed("Mermaiden CLI is closed.")
 
 
 def run() -> None:

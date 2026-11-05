@@ -4,6 +4,10 @@ from dataclasses import dataclass
 from mermaiden import Application
 
 
+class ConfigurationRenderFailure(RuntimeError):
+    pass
+
+
 @dataclass(frozen=True, slots=True)
 class ConfigurationProofRenderer:
     application: Application
@@ -17,6 +21,6 @@ class ConfigurationProofRenderer:
             for report in reports:
                 if not report.success:
                     details = "; ".join(f"{item.message} {item.details}" for item in report.diagnostics)
-                    raise RuntimeError(f"Mermaid proof '{report.diagram_id}' failed: {details}")
+                    raise ConfigurationRenderFailure(f"Mermaid proof '{report.diagram_id}' failed: {details}")
                 rendered[report.diagram_id] = report.svg
         return rendered

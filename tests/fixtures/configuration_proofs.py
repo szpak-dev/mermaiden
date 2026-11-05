@@ -10,6 +10,10 @@ from ._specialized import GitGraphFixture
 from .catalog import FixtureCatalog
 
 
+class ConfigurationProofError(ValueError):
+    pass
+
+
 class SchemaMapping(RootModel[dict[str, object]]):
     pass
 
@@ -110,7 +114,7 @@ class ConfigurationProofCatalog:
                     if value not in validated:
                         validated.append(value)
                 if not validated:
-                    raise ValueError(f"No valid configuration probe for '{info.id}.{field}'.")
+                    raise ConfigurationProofError(f"No valid configuration probe for '{info.id}.{field}'.")
                 probes.extend(ConfigurationProbe(info.id, field, value) for value in validated)
         return tuple(probes)
 
@@ -130,7 +134,7 @@ class ConfigurationProofCatalog:
             snapshot = self.application.snapshot(diagram).to_dict()
             source = self.application.render(diagram)
             if self.application.render(self.application.restore(snapshot)) != source:
-                raise ValueError(f"Configuration probe '{probe.id}' changed after snapshot restoration.")
+                raise ConfigurationProofError(f"Configuration probe '{probe.id}' changed after snapshot restoration.")
             rendered.append(RenderedConfigurationProbe(probe, source))
         return tuple(rendered)
 
@@ -151,7 +155,7 @@ class ConfigurationProofCatalog:
                     continue
                 break
             else:
-                raise ValueError(f"No explicit configuration value for '{field}'.")
+                raise ConfigurationProofError(f"No explicit configuration value for '{field}'.")
         values.update(
             {
                 "C4Context": {
@@ -184,7 +188,7 @@ class ConfigurationProofCatalog:
         validated = payload.validate(values).values
         if set(validated) != set(properties):
             missing = ", ".join(sorted(set(properties) - set(validated)))
-            raise ValueError(f"Configuration proof is missing fields: {missing}")
+            raise ConfigurationProofError(f"Configuration proof is missing fields: {missing}")
         return validated
 
     def candidates(
@@ -249,7 +253,7 @@ class ConfigurationProofCatalog:
             return (dict[str, object](),)
         if default is not None:
             return (default,)
-        raise ValueError(f"Unsupported configuration schema for '{field}': {node}")
+        raise ConfigurationProofError(f"Unsupported configuration schema for '{field}': {node}")
 
     def numeric_candidates(
         self,
@@ -335,16 +339,16 @@ class ConfigurationProofCatalog:
         try:
             return StrictText.model_validate(value).root
         except ValidationError as error:
-            raise ValueError(f"Expected {description} to be text.") from error
+            raise ConfigurationProofError(f"Expected {description} to be text.") from error
 
     def mapping(self, value: object, description: str) -> Mapping[str, object]:
         try:
             return SchemaMapping.model_validate(value).root
         except ValueError as error:
-            raise ValueError(f"Expected {description} to be a mapping.") from error
+            raise ConfigurationProofError(f"Expected {description} to be a mapping.") from error
 
     def sequence(self, value: object, description: str) -> tuple[object, ...]:
         try:
             return tuple(ObjectSequence.model_validate(value).root)
         except ValueError as error:
-            raise ValueError(f"Expected {description} to be a sequence.") from error
+            raise ConfigurationProofError(f"Expected {description} to be a sequence.") from error
