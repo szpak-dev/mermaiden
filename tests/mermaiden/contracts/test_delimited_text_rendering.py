@@ -72,6 +72,34 @@ class TestDelimitedTextRendering:
 
 class TestNamedSourceValidation:
     @pytest.mark.integration
+    def test_internal_error_diagram_is_rejected_then_normal_source_recovers(self) -> None:
+        with Application.create() as application:
+            rejected = application.validate_sources({"example": "error\n"})[0]
+            assert not rejected.success
+            assert rejected.svg == ""
+            assert rejected.diagnostics[0].code == "render_failed"
+            assert "MermaidErrorDiagramError" in rejected.diagnostics[0].message
+            accepted = application.validate_sources({"example": "flowchart LR\nA[Example]\n"})[0]
+            assert accepted.success, accepted.diagnostics
+
+    @pytest.mark.integration
+    @pytest.mark.parametrize("css_class", ("error-text", "error-icon"))
+    @pytest.mark.parametrize("html_labels", ("true", "false"))
+    def test_user_css_classes_do_not_reclassify_valid_diagrams_as_errors(
+        self, css_class: str, html_labels: str
+    ) -> None:
+        with Application.create() as application:
+            source = (
+                f"---\nconfig:\n  htmlLabels: {html_labels}\n---\n"
+                f"flowchart LR\nA[Example NaN Infinity]:::{css_class}\nclassDef {css_class} fill:red\n"
+            )
+            report = application.validate_sources({"example": source})[0]
+            assert report.success, report.diagnostics
+            document = ElementTree.fromstring(report.svg)
+            node = next(element for element in document.iter() if css_class in element.attrib.get("class", "").split())
+            assert " ".join(" ".join(node.itertext()).split()) == "Example NaN Infinity"
+
+    @pytest.mark.integration
     def test_source_cannot_override_the_runtime_text_limit_and_recovers(self) -> None:
         with Application.create() as application:
             source = 'classDiagram\nclass Example["' + "x" * 60000 + '"]\n'

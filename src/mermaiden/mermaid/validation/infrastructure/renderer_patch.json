@@ -1,5 +1,5 @@
 {
-  "id": "native-svg-text-v4",
+  "id": "native-svg-text-v5",
   "mermaid_version": "12.3.0",
   "files": [
     {
@@ -75,17 +75,19 @@
     {
       "path": "dist/mermaid.esm.mjs",
       "original_sha256": "729810febbb66f740dc7cfca0a60b219c1209025d592ac57a9da076d639f43e0",
-      "patched_sha256": "ecb7f25ee4b8f326d3859708bfc883c055d443cee1e60f99c9ab2591ff4e42be",
+      "patched_sha256": "b90a1fbc3b7268a4efe66b6f65a5e12e374b8d37dde0be591c93621850cd2c9f",
       "replacement_groups": [
-        "render_limit"
+        "render_limit",
+        "render_output"
       ]
     },
     {
       "path": "dist/mermaid.core.mjs",
       "original_sha256": "fafa28691baf87948a63ec13009437278f25d43ca7d85e74b71f3b53897e1738",
-      "patched_sha256": "97f38b9d434991a60ecd0063b74bc85114e850a13c19201b8aedd849360d5a80",
+      "patched_sha256": "1a520d188c95e2192b1a1a1c69e71b225d71b47f8a4bbc021380c17bccc0af74",
       "replacement_groups": [
-        "render_limit"
+        "render_limit",
+        "render_output"
       ]
     }
   ],
@@ -274,6 +276,18 @@
       {
         "before": "    text = MAX_TEXTLENGTH_EXCEEDED_MSG;\n    code = { raw: text, cleaned: text };",
         "after": "    throw new MermaidTextLimitError(text.length, config?.maxTextSize ?? MAX_TEXTLENGTH);",
+        "count": 1
+      }
+    ],
+    "render_output": [
+      {
+        "before": "var MAX_TEXTLENGTH = 5e4;",
+        "after": "class MermaidSvgGeometryError extends Error {\n  constructor(element, attribute, value) {\n    super(`Mermaid produced invalid SVG geometry: <${element}> ${attribute}=\"${value}\" contains NaN or Infinity.`);\n    this.name = \"MermaidSvgGeometryError\";\n  }\n}\nclass MermaidErrorDiagramError extends Error {\n  constructor() {\n    super(\"Mermaid produced an error diagram.\");\n    this.name = \"MermaidErrorDiagramError\";\n  }\n}\nvar MAX_TEXTLENGTH = 5e4;",
+        "count": 1
+      },
+      {
+        "before": "  if (parseEncounteredException) {\n    throw parseEncounteredException;\n  }\n  removeTempElements();",
+        "after": "  if (parseEncounteredException) {\n    throw parseEncounteredException;\n  }\n  if (diagramType === \"error\") {\n    removeTempElements();\n    throw new MermaidErrorDiagramError();\n  }\n  const geometryAttributes = new Set([\n    \"d\", \"points\", \"transform\", \"viewBox\", \"x\", \"y\", \"x1\", \"x2\", \"y1\", \"y2\",\n    \"cx\", \"cy\", \"r\", \"rx\", \"ry\", \"width\", \"height\"\n  ]);\n  const renderedSvg = svgNode.node();\n  for (const element of [renderedSvg, ...renderedSvg.querySelectorAll(\"*\")]) {\n    for (const attribute of element.attributes) {\n      if (geometryAttributes.has(attribute.name) && /(?<![A-Za-z0-9])(?:NaN|Infinity)(?![A-Za-z0-9])/.test(attribute.value)) {\n        removeTempElements();\n        throw new MermaidSvgGeometryError(element.localName, attribute.name, attribute.value);\n      }\n    }\n  }\n  removeTempElements();",
         "count": 1
       }
     ]

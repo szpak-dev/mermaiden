@@ -67,7 +67,9 @@ compatible Chrome or Chromium executable instead, it may configure Puppeteer thr
 `renderer-setup` applies Mermaiden's pinned native SVG text correction to the installed Mermaid package. It checks the
 original and corrected file hashes, preserves already-correct installations, and rejects unexpected package contents.
 Run it after installing or reinstalling npm dependencies. For a separate npm installation directory, use
-`python -m mermaiden.cli renderer-setup --prefix /path/to/renderer`. In this repository, `npm install` and `npm ci`
+`python -m mermaiden.cli renderer-setup --prefix /path/to/renderer`. When upgrading from a previous correction, reinstall
+the locked npm packages with `npm ci` before running setup; previously patched files are not pristine upstream files.
+In this repository, `npm install` and `npm ci`
 apply the correction automatically through the package's installation script.
 
 The correction decodes text once before measuring and wrapping SVG labels. Punctuation, Unicode, and literal
@@ -114,9 +116,10 @@ image: enlarging it beyond its exported resolution reduces sharpness, and text a
 Invalid export options raise `PngExportOptionsError`, identifying the invalid option and constraint. Invalid diagrams,
 runtime/version/patch failures, rendering timeouts, and missing or invalid PNG output raise `MermaidRenderFailure`,
 with a diagnostic code, specific message, and cause details. Both types are imported directly from `mermaiden`.
-The patched renderer rejects input exceeding Mermaid's configured text limit with `render_failed` for both SVG
-validation and PNG export. It never substitutes an error illustration for successful output. Diagnostic phrases in
-ordinary labels remain literal text and do not cause validation failures.
+The patched renderer rejects oversized input, Mermaid error diagrams, and non-finite SVG geometry with `render_failed`
+before SVG or PNG output. Geometry rejection uses `MermaidSvgGeometryError` with the offending element, attribute and
+value. Error diagrams are identified by Mermaid's parsed diagram type. Ordinary labels and user CSS classes such as
+`error-text` and `error-icon` remain valid content.
 Export leaves diagram state and its snapshot unchanged, manages
 its own temporary files, and never writes to a caller destination unless the caller saves the returned bytes.
 
@@ -126,7 +129,7 @@ its own temporary files, and never writes to a caller destination unless the cal
 | --- | --- |
 | Mermaid engine and configuration schema | `12.3.0` |
 | `@mermaid-js/mermaid-cli` / `mmdc` | `12.2.0` |
-| Required renderer correction | `native-svg-text-v4` |
+| Required renderer correction | `native-svg-text-v5` |
 | Node.js | `>=22.13.0`; this checkout pins `24.17.0` |
 | Mermaiden snapshot contract | `v12` |
 

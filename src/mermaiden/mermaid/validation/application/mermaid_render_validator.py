@@ -1,4 +1,3 @@
-import re
 from collections.abc import Mapping
 from dataclasses import dataclass
 from xml.etree import ElementTree
@@ -93,7 +92,7 @@ class MermaidRenderValidator:
                 MermaidRenderFailure(MermaidRenderDiagnosticCode.SVG_EMPTY, "Mermaid produced an empty SVG."),
             )
         try:
-            document = ElementTree.fromstring(svg)
+            ElementTree.fromstring(svg)
         except ElementTree.ParseError as error:
             return self.failure(
                 diagram_id,
@@ -101,57 +100,6 @@ class MermaidRenderValidator:
                     MermaidRenderDiagnosticCode.SVG_ERROR,
                     "Mermaid produced invalid SVG.",
                     str(error),
-                ),
-            )
-        invalid_geometry = any(
-            re.search(r"(?<![A-Za-z0-9])(?:NaN|Infinity)(?![A-Za-z0-9])", value)
-            for element in document.iter()
-            for name, value in element.attrib.items()
-            if name
-            in {
-                "d",
-                "points",
-                "transform",
-                "viewBox",
-                "x",
-                "y",
-                "x1",
-                "x2",
-                "y1",
-                "y2",
-                "cx",
-                "cy",
-                "r",
-                "rx",
-                "ry",
-                "width",
-                "height",
-            }
-        )
-        if invalid_geometry:
-            return self.failure(
-                diagram_id,
-                MermaidRenderFailure(
-                    MermaidRenderDiagnosticCode.SVG_ERROR,
-                    "Mermaid produced invalid SVG geometry.",
-                    "A geometry attribute contains NaN or Infinity.",
-                ),
-            )
-        error_elements = tuple(
-            element
-            for element in document.iter()
-            if {"error-icon", "error-text"}.intersection(element.attrib.get("class", "").split())
-        )
-        if error_elements:
-            details = " ".join(
-                text.strip() for element in error_elements for text in element.itertext() if text.strip()
-            )
-            return self.failure(
-                diagram_id,
-                MermaidRenderFailure(
-                    MermaidRenderDiagnosticCode.SVG_ERROR,
-                    "Mermaid produced an error SVG.",
-                    details,
                 ),
             )
         return MermaidRenderReport(

@@ -17,6 +17,43 @@ class PngMeasurement(BaseModel):
 
 
 class TestPngRendering:
+    @pytest.mark.integration
+    @pytest.mark.parametrize("value", (0, -1))
+    def test_invalid_geometry_fails_in_both_formats_then_same_handle_recovers(self, value: int) -> None:
+        with Application.create() as application:
+            diagram = application.create_diagram("sankey")
+            application.execute(diagram, "add_node", {"id": "source_example", "label": "Example NaN"})
+            application.execute(diagram, "add_node", {"id": "target_example", "label": "Example Infinity"})
+            application.execute(
+                diagram,
+                "add_flow",
+                {
+                    "id": "flow_example",
+                    "source_id": "source_example",
+                    "target_id": "target_example",
+                    "value": value,
+                },
+            )
+            before = application.snapshot(diagram).to_dict()
+            report = application.validate_render(diagram)
+            assert not report.success
+            assert report.svg == ""
+            assert report.diagnostics[0].code == "render_failed"
+            assert "MermaidSvgGeometryError" in report.diagnostics[0].details
+            with pytest.raises(MermaidRenderFailure) as failure:
+                application.render_png(diagram)
+            assert failure.value.code == report.diagnostics[0].code
+            assert "MermaidSvgGeometryError" in failure.value.details
+            assert application.snapshot(diagram).to_dict() == before
+            application.execute(
+                diagram, "update_relation", {"id": "flow_example", "kind": "sankey_link", "changes": {"value": 1}}
+            )
+            recovered = application.snapshot(diagram).to_dict()
+            report = application.validate_render(diagram)
+            assert report.success, report.diagnostics
+            assert self.measure(application.render_png(diagram)).painted_pixels > 100
+            assert application.snapshot(diagram).to_dict() == recovered
+
     @pytest.mark.parametrize("scale", (0, -1, float("nan"), float("inf"), float("-inf"), True))
     def test_invalid_scale_is_rejected_without_changing_state(self, scale: float) -> None:
         with Application.create() as application:
