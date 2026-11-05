@@ -209,26 +209,36 @@ class TestRenderValidation:
             assert path.attrib["marker-end"].endswith(f"classDiagram-{marker}-margin)")
 
     @pytest.mark.integration
-    def test_renderer_rejects_a_real_exit_zero_mermaid_error_svg(self) -> None:
+    def test_renderer_rejects_oversized_input_without_an_error_illustration(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("classDiagram")
-        for index in range(550):
-            application.execute(
-                diagram,
-                "add_class",
-                {
-                    "id": f"class_{index}_{'x' * 180}",
-                    "label": f"Oversized {index}",
-                    "comment": f"Contract evidence {index} {'y' * 80}",
-                    "attributes": [{"name": f"field_{field}", "type": {"name": "string"}} for field in range(20)],
-                    "annotations": ["injectable", "immutable"],
-                },
-            )
+        application.execute(diagram, "add_class", {"id": "oversized_example", "label": "Example " + "x" * 60000})
         report = application.validate_render(diagram)
         assert not report.success
-        assert report.diagnostics[0].code == "svg_error"
-        assert report.diagnostics[0].message == "Mermaid produced an error SVG."
+        assert report.svg == ""
+        assert report.diagnostics[0].code == "render_failed"
+        assert "MermaidTextLimitError" in report.diagnostics[0].message
         assert "Maximum text size in diagram exceeded" in report.diagnostics[0].details
+
+    @pytest.mark.integration
+    @pytest.mark.parametrize("kind", ("classDiagram", "flowchart"))
+    @pytest.mark.parametrize(
+        "label",
+        (
+            "Syntax error in text",
+            "Maximum text size in diagram exceeded",
+            "Example: Syntax error in text; Maximum text size in diagram exceeded; error-text",
+        ),
+    )
+    def test_error_phrases_in_ordinary_labels_are_preserved(self, kind: str, label: str) -> None:
+        with Application.create() as application:
+            source = f'classDiagram\nclass Example["{label}"]\n'
+            if kind == "flowchart":
+                source = f'flowchart LR\nExample["{label}"]\n'
+            report = application.validate_sources({"example": source})[0]
+            assert report.success, report.diagnostics
+            document = ElementTree.fromstring(report.svg)
+            assert label in " ".join(" ".join(document.itertext()).split())
 
     @pytest.mark.integration
     def test_class_text_preserves_slashes_in_mermaid_source_and_svg(self) -> None:
@@ -239,7 +249,7 @@ class TestRenderValidation:
         source = application.render(diagram)
         report = application.validate_render(diagram)
         assert '"id": "diagrams/api_example"' in json.dumps(snapshot)
-        assert '["diagrams/api_example"]' in source
+        assert '["diagrams/api#95;example"]' in source
         assert "#47;" not in source
         assert report.success, report.diagnostics
         svg = ElementTree.fromstring(report.svg)
@@ -322,6 +332,57 @@ class TestRenderValidation:
         assert "Old name" not in text
         assert "#59;" not in application.render(diagram)
         assert application.snapshot(diagram).to_dict() == before
+
+    @pytest.mark.integration
+    @pytest.mark.parametrize(
+        "value",
+        (
+            '"żółć" 😀',
+            "&amp; &#34; #quot;",
+            "%22 %u0041 %26",
+            "<tag> & </tag>",
+            "*literal*",
+            "_literal_",
+            "**literal**",
+            "[x](url)",
+            "{x}: y; 0..*",
+            "!#$%&'()*+",
+            ",-./:;<=>?",
+            "@[\\]^_`{|}~",
+        ),
+    )
+    def test_class_text_preserves_punctuation_and_entity_looking_input(self, value: str) -> None:
+        with Application.create() as application:
+            diagram = application.create_diagram("classDiagram")
+            labels = tuple(f"{role} {value}" for role in ("Namespace", "Class", "Relation", "Source", "Target"))
+            application.execute(diagram, "add_namespace", {"id": "namespace_example", "label": labels[0]})
+            application.execute(
+                diagram,
+                "add_class",
+                {"id": "class_example", "label": labels[1], "parent_id": "namespace_example"},
+            )
+            application.execute(diagram, "add_class", {"id": "target_example", "label": "Example"})
+            application.execute(
+                diagram,
+                "add_relation",
+                {
+                    "id": "relation_example",
+                    "source_id": "class_example",
+                    "target_id": "target_example",
+                    "label": labels[2],
+                    "source_label": labels[3],
+                    "target_label": labels[4],
+                },
+            )
+            before = application.snapshot(diagram).to_dict()
+            source = application.render(diagram)
+            report = application.validate_render(application.restore(before))
+            assert report.success, report.diagnostics
+            document = ElementTree.fromstring(report.svg)
+            text = tuple("".join(element.itertext()) for element in document.iter("{http://www.w3.org/2000/svg}text"))
+            assert all(label in text for label in labels), text
+            assert application.snapshot(diagram).to_dict() == before
+            assert application.render(diagram) == source
 
     @pytest.mark.integration
     def test_class_members_render_with_their_types_visibility_and_parameter_order(self) -> None:

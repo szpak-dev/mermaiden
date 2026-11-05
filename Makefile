@@ -11,7 +11,7 @@ compat:
 	@PYTHONPATH=src $(PYTHON) -m mermaiden.cli compat
 
 documentation-links:
-	@$(PYTHON) scripts/check_docs_links.py
+	@$(RUN) pytest tests/repository/test_documentation.py::test_documentation_links_resolve_and_every_page_is_reachable
 
 documentation-check: documentation-links
 	@$(UV) pip install --requirement docs/requirements.lock
@@ -28,10 +28,10 @@ mermaid-sync:
 		"mermaid@$$mermaid_version" "@mermaid-js/mermaid-cli@$$mermaid_cli_version"
 
 mermaid-freshness:
-	@NPM_CONFIG_CACHE=.dev/npm-cache PYTHONPATH=src $(PYTHON) scripts/check_mermaid_freshness.py
+	@NPM_CONFIG_CACHE=.dev/npm-cache $(RUN) pytest -m freshness tests/repository/test_mermaid_versions.py
 
 mermaid-lock:
-	@PYTHONPATH=src $(PYTHON) scripts/check_mermaid_lock.py
+	@$(RUN) pytest tests/repository/test_mermaid_versions.py::test_node_dependencies_match_public_supported_versions
 
 format:
 	@$(RUN) ruff format .
@@ -41,13 +41,13 @@ mutation-contract:
 	@PYTHONPATH=src $(PYTHON) scripts/render_mutation_contract.py --write
 
 mutation-contract-check:
-	@PYTHONPATH=src $(PYTHON) scripts/render_mutation_contract.py --check
+	@$(RUN) pytest tests/repository/test_documentation.py::test_generated_mutation_contract_matches_public_discovery
 
 application-test-policy:
-	@PYTHONPATH=src $(PYTHON) scripts/check_application_tests.py
+	@$(RUN) pytest tests/repository/test_application_policy.py::test_product_tests_use_public_gates_and_cover_public_operations
 
 application-test-freeze:
-	@PYTHONPATH=src $(PYTHON) scripts/check_application_tests.py --check-freeze
+	@$(RUN) pytest tests/repository/test_application_policy.py::test_verification_inputs_match_the_accepted_freeze
 
 package-check: renderer-install
 	@set -eu; \
@@ -57,15 +57,23 @@ package-check: renderer-install
 	mkdir -p "$$artifacts"; \
 	$(UV) build --out-dir "$$artifacts"; \
 	$(PYTHON) -m twine check "$$artifacts"/*; \
+	set -- "$$artifacts"/*.tar.gz; \
+	export MERMAIDEN_SDIST="$$1"; \
 	cd "$$temporary"; \
-	PATH="$(CURDIR)/node_modules/.bin:$$PATH" $(UV) run --isolated --with "$$artifacts"/*.whl python -I "$(CURDIR)/scripts/smoke_installed_wheel.py" "$$artifacts"/*.tar.gz
+	PATH="$(CURDIR)/node_modules/.bin:$$PATH" $(UV) run --isolated --no-project --with "$$artifacts"/*.whl --with pytest --with playwright \
+		python -I -m pytest -c "$(CURDIR)/pyproject.toml" -o "cache_dir=$$temporary/pytest-cache" \
+		-m "not freshness and not configuration_render and not caller_snapshots" "$(CURDIR)/tests/installed" \
+		"$(CURDIR)/tests/mermaiden/contracts/test_png_rendering.py" \
+		"$(CURDIR)/tests/mermaiden/contracts/test_exported_svg_labels.py" \
+		"$(CURDIR)/tests/mermaiden/contracts/test_mutation_conformance.py" \
+		"$(CURDIR)/tests/mermaiden/contracts/test_application.py" \
+		"$(CURDIR)/tests/mermaiden/contracts/test_updates.py"
 
 quality:
 	@$(RUN) ruff format --check .
 	@$(RUN) ruff check .
 	@$(RUN) pyright
 	@$(MAKE) architecture
-	@$(MAKE) application-test-freeze mermaid-lock mutation-contract-check
 
 pytest:
 	@$(RUN) pytest
@@ -82,17 +90,18 @@ integration: renderer-install
 	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" $(PYTHON) -m pytest -m integration
 
 integration-core: renderer-install
-	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" $(PYTHON) -m pytest -m integration -k "not test_every_configuration_probe_produces_a_real_svg"
+	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" $(PYTHON) -m pytest -m "integration and not configuration_render"
 
 configuration-render-shard: renderer-install
-	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" PYTHONPATH=. $(PYTHON) scripts/check_configuration_rendering.py --shard $(SHARD)
+	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" $(RUN) pytest -m configuration_render \
+		"tests/mermaiden/contracts/test_configuration_rendering.py::test_configuration_probes_produce_valid_svg_in_order[$(SHARD)]"
 
 diagrams-validate: integration
 
 diagrams-validate-core: integration-core
 
-diagrams-preview:
-	@PYTHONPATH=. $(PYTHON) scripts/render_preview.py
+diagrams-preview: renderer-install
+	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" PYTHONPATH=. $(PYTHON) scripts/render_preview.py
 
 diagrams-test: diagrams-preview
 	@open .dev/preview/index.html

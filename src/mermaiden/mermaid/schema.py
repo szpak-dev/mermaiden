@@ -8,6 +8,14 @@ from pydantic import TypeAdapter
 from wireup import injectable
 
 
+class MermaidSchemaMismatch(ValueError):
+    pass
+
+
+class InvalidConfigurationOverride(ValueError):
+    pass
+
+
 @dataclass(frozen=True, slots=True)
 class MermaidSchemaLock:
     mermaid_version: str
@@ -55,7 +63,7 @@ class MermaidSchemaStore:
         lock = self.lock()
         checksum = hashlib.sha256(content).hexdigest()
         if checksum != lock.sha256:
-            raise ValueError(
+            raise MermaidSchemaMismatch(
                 "Mermaid schema version mismatch: authority 'schema.lock.json' "
                 f"expected checksum '{lock.sha256}', consumer '{path.name}' observed '{checksum}'."
             )
@@ -75,7 +83,9 @@ class MermaidSchemaStore:
                 or len(facets) != len(set(facets))
                 or not reason.strip()
             ):
-                raise ValueError(f"Mermaid configuration override '{key}' requires unique facets and a reason.")
+                raise InvalidConfigurationOverride(
+                    f"Mermaid configuration override '{key}' requires a known config key, unique facets, and a reason."
+                )
             overrides[key] = MermaidConfigurationOverride(frozenset(facets), reason)
         return overrides
 

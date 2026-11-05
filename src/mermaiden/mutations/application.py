@@ -75,7 +75,7 @@ class DiagramMutationKernel(MutationKernel):
         if position is not None and (type(position) is not int or position < 0):
             diagram.runtime.transaction.reject(operation, "position must be a nonnegative integer or None.")
         try:
-            candidate = diagram.elements.move(id, kind, parent_id, position, diagram)
+            candidate = diagram.elements.move(id, kind, parent_id, position)
         except OperationError as error:
             diagram.runtime.transaction.reject(operation, str(error))
         except Exception:

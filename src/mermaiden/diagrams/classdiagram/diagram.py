@@ -1,4 +1,4 @@
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import ClassVar
 
@@ -72,6 +72,10 @@ class ClassDiagram(DiagramModel):
             ),
         ),
     )
+
+    @property
+    def mermaid_configuration(self) -> Mapping[str, object]:
+        return {**super(ClassDiagram, self).mermaid_configuration, "htmlLabels": False}
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
         if element_type is ClassNamespace:

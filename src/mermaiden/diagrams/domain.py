@@ -26,6 +26,18 @@ from ..runtime.diagrams.aggregate import DiagramAggregate
 from ..runtime.domain import ConstraintInspection
 
 
+class UnknownDiagram(KeyError):
+    pass
+
+
+class UnknownConfigurationKey(KeyError):
+    pass
+
+
+class InvalidDiagramConfiguration(TypeError):
+    pass
+
+
 class MutationKernel(ABC):
     @abstractmethod
     def update_element(
@@ -365,7 +377,7 @@ class DiagramModel(DiagramAggregate):
     def configure(self, configuration: MermaidDiagramConfiguration) -> None:
         expected = type(self.configuration)
         if type(configuration) is not expected:
-            raise TypeError(
+            raise InvalidDiagramConfiguration(
                 f"Configuration for '{self.kind}' must be '{expected.__name__}', "
                 f"received '{type(configuration).__name__}'."
             )

@@ -7,6 +7,14 @@ from .values.members import ClassAttribute, ClassMethod
 from .values.text import ClassIdentifier, ClassText, MemberName, OptionalClassText
 
 
+class DuplicateClassAttribute(ValueError):
+    pass
+
+
+class DuplicateClassOverload(ValueError):
+    pass
+
+
 class Class(Entity):
     id: str = Field(pattern=ClassIdentifier.pattern, description=ClassIdentifier.description)
     label: str = Field(pattern=ClassText.pattern, description=ClassText.description)
@@ -19,7 +27,7 @@ class Class(Entity):
     @classmethod
     def unique_attributes(cls, values: tuple[ClassAttribute, ...]) -> tuple[ClassAttribute, ...]:
         if len({item.name for item in values}) != len(values):
-            raise ValueError("Attribute names must be unique within a class.")
+            raise DuplicateClassAttribute("Attribute names must be unique within a class.")
         return values
 
     @field_validator("methods")
@@ -27,7 +35,7 @@ class Class(Entity):
     def unique_methods(cls, values: tuple[ClassMethod, ...]) -> tuple[ClassMethod, ...]:
         signatures = {(item.name, tuple(parameter.type for parameter in item.parameters)) for item in values}
         if len(signatures) != len(values):
-            raise ValueError("Method overloads must have distinct names or ordered parameter types.")
+            raise DuplicateClassOverload("Method overloads must have distinct names or ordered parameter types.")
         return values
 
 

@@ -2,6 +2,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from xml.etree import ElementTree
 
+from jinja2 import TemplateError
 from wireup import injectable
 
 from ....core.domain import DiagramView
@@ -14,6 +15,7 @@ from ..domain import (
     RendererRuntimeResult,
     RenderValidationRuntime,
 )
+from ..domain.models import RendererProcessDiagnostic
 
 
 @injectable
@@ -45,7 +47,7 @@ class MermaidRenderValidator:
             )
         try:
             source = self.renderer.render(diagram)
-        except Exception as error:
+        except TemplateError as error:
             return self.failure(
                 diagram.kind,
                 MermaidRenderFailure(
@@ -57,6 +59,8 @@ class MermaidRenderValidator:
         return self.validate_sources({diagram.kind: source})[0]
 
     def validate_sources(self, sources: Mapping[str, str]) -> tuple[MermaidRenderReport, ...]:
+        if not sources:
+            return ()
         try:
             result = self.runtime.render(sources)
         except MermaidRenderFailure as failure:
@@ -69,7 +73,7 @@ class MermaidRenderValidator:
                 diagram_id,
                 MermaidRenderFailure(
                     MermaidRenderDiagnosticCode.RENDER_FAILED,
-                    self._message(result.output),
+                    RendererProcessDiagnostic(result.output).message,
                     result.output,
                 ),
             )
@@ -88,7 +92,7 @@ class MermaidRenderValidator:
                 MermaidRenderFailure(MermaidRenderDiagnosticCode.SVG_EMPTY, "Mermaid produced an empty SVG."),
             )
         try:
-            document = ElementTree.fromstring(svg)
+            ElementTree.fromstring(svg)
         except ElementTree.ParseError as error:
             return self.failure(
                 diagram_id,
@@ -96,25 +100,6 @@ class MermaidRenderValidator:
                     MermaidRenderDiagnosticCode.SVG_ERROR,
                     "Mermaid produced invalid SVG.",
                     str(error),
-                ),
-            )
-        error_elements = tuple(
-            element
-            for element in document.iter()
-            if {"error-icon", "error-text"}.intersection(element.attrib.get("class", "").split())
-        )
-        oversized = "Maximum text size in diagram exceeded" in svg
-        syntax_error = "Syntax error in text" in svg
-        if error_elements or oversized or syntax_error:
-            details = " ".join(
-                text.strip() for element in error_elements for text in element.itertext() if text.strip()
-            )
-            return self.failure(
-                diagram_id,
-                MermaidRenderFailure(
-                    MermaidRenderDiagnosticCode.SVG_ERROR,
-                    "Mermaid produced an error SVG.",
-                    details or ("Maximum text size in diagram exceeded" if oversized else "Syntax error in text"),
                 ),
             )
         return MermaidRenderReport(
@@ -131,13 +116,3 @@ class MermaidRenderValidator:
             self.mermaid_cli_version,
             diagnostics=(MermaidRenderDiagnostic(failure.code, failure.message, failure.details),),
         )
-
-    def _message(self, output: str) -> str:
-        lines = tuple(line.strip() for line in output.splitlines() if line.strip())
-        parse_error = next((line for line in lines if line.startswith("Error: Parse error on line ")), "")
-        if parse_error:
-            line = parse_error.removeprefix("Error: Parse error on line ").rstrip(":")
-            expected = next((item for item in lines if " got " in item), "")
-            token = expected.rsplit(" got ", 1)[-1].strip("'.") if expected else "unknown token"
-            return f"syntax error on line {line} (got {token})"
-        return lines[0].removeprefix("Error: ") if lines else "Mermaid rendering failed without diagnostic output."

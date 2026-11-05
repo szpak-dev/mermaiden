@@ -21,8 +21,8 @@ These files are generated from public `Application` discovery and contract seman
 
 The `classDiagram` command schemas use one recursive `ClassType` value for attribute types, method parameter types, and
 method return types. `name` is the outer named type. `arguments` is an ordered sequence of nested `ClassType` values and
-defaults to an empty sequence. There is no one-argument limit, so mappings, tuples, and deeper combinations retain their
-declared order:
+defaults to an empty sequence. Mappings, tuples, and deeper combinations support multiple arguments in their declared
+order:
 
 ```python
 from mermaiden import Application

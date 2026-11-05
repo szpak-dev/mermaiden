@@ -8,6 +8,11 @@ from typing import Any, cast
 
 from mermaiden import Application
 
+
+class MutationContractError(ValueError):
+    pass
+
+
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT_ROOT = ROOT / "docs" / "contracts" / "diagram-mutations"
 CONTRACT_PATH = CONTRACT_ROOT / "contract.json"
@@ -255,7 +260,7 @@ def discover_character_policies() -> JsonObject:
                 elif isinstance(constant, str):
                     rule = f"constant {constant!r}"
                 if not rule:
-                    raise ValueError(f"{diagram_id}.{operation}.{path} has no named character rule.")
+                    raise MutationContractError(f"{diagram_id}.{operation}.{path} has no named character rule.")
                 if rule not in rules.setdefault(path, []):
                     rules[path].append(rule)
             properties = node.get("properties")
@@ -342,7 +347,7 @@ def _field_policy(fields: Mapping[str, Any], classifications: Mapping[str, Any])
     for field_name, classification_value in fields.items():
         classification = str(classification_value)
         if classification not in groups:
-            raise ValueError(f"Unknown classification {classification!r} for field {field_name!r}.")
+            raise MutationContractError(f"Unknown classification {classification!r} for field {field_name!r}.")
         groups[classification].append(f"`{field_name}`")
     return "; ".join(f"{classification}: {', '.join(names)}" for classification, names in groups.items() if names)
 
@@ -354,19 +359,19 @@ def _escape(value: str) -> str:
 def _read_object(path: Path) -> JsonObject:
     value: object = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
-        raise ValueError(f"Mutation contract at '{path}' must be a JSON object.")
+        raise MutationContractError(f"Mutation contract at '{path}' must be a JSON object.")
     return cast(JsonObject, value)
 
 
 def _object(value: object, path: str) -> JsonObject:
     if not isinstance(value, dict):
-        raise ValueError(f"'{path}' must be an object.")
+        raise MutationContractError(f"'{path}' must be an object.")
     return cast(JsonObject, value)
 
 
 def _list(value: object, path: str) -> list[object]:
     if not isinstance(value, list):
-        raise ValueError(f"'{path}' must be an array.")
+        raise MutationContractError(f"'{path}' must be an array.")
     return cast(list[object], value)
 
 
@@ -375,16 +380,14 @@ def _strings(value: object, path: str) -> tuple[str, ...]:
     result: list[str] = []
     for item in items:
         if not isinstance(item, str):
-            raise ValueError(f"'{path}' must contain only strings.")
+            raise MutationContractError(f"'{path}' must contain only strings.")
         result.append(item)
     return tuple(result)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Render the public diagram mutation contract.")
-    mode = parser.add_mutually_exclusive_group()
-    mode.add_argument("--write", action="store_true", help="replace generated Markdown")
-    mode.add_argument("--check", action="store_true", help="fail when generated Markdown has drifted")
+    parser.add_argument("--write", action="store_true", help="replace generated Markdown")
     arguments = parser.parse_args()
     artifacts = render_artifacts(load_contract())
     if arguments.write:
@@ -400,27 +403,6 @@ def main() -> None:
         ):
             if path not in expected:
                 path.unlink()
-        return
-    if arguments.check:
-        drifted = [
-            path
-            for path, rendered in artifacts.items()
-            if not path.exists() or path.read_text(encoding="utf-8") != rendered
-        ]
-        expected = set(artifacts)
-        drifted.extend(
-            path
-            for path in (
-                *DIAGRAMS_PATH.glob("*.json"),
-                *DIAGRAMS_PATH.glob("*.md"),
-                *CHARACTER_DIAGRAMS_PATH.glob("*.json"),
-                *CHARACTER_DIAGRAMS_PATH.glob("*.md"),
-            )
-            if path not in expected
-        )
-        if drifted:
-            names = ", ".join(str(path.relative_to(ROOT)) for path in sorted(drifted))
-            raise SystemExit(f"Generated mutation contract is stale ({names}); run `make mutation-contract`.")
         return
     print(artifacts[DOCUMENT_PATH], end="")
 

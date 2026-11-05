@@ -1,1 +1,1 @@
-{{ element.label }}: {{ element.score }}: {{ element.actors | join(", ") }}{{ "\n" -}}
+{{ element.label | delimited_text }}: {{ element.score }}: {{ element.actors | map("delimited_text") | join(", ") }}{{ "\n" -}}

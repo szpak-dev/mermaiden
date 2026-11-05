@@ -1,16 +1,16 @@
 {
-  "mermaid_version": "12.2.0",
-  "mermaid_cli_version": "12.0.0",
+  "mermaid_version": "12.3.0",
+  "mermaid_cli_version": "12.2.0",
   "diagram_count": 27,
-  "configuration_field_count": 549,
-  "probe_count": 1929,
+  "configuration_field_count": 550,
+  "probe_count": 1931,
   "diagrams": [
     {
       "diagram_id": "C4Context",
       "source": "sources/C4Context.mmd",
       "source_sha256": "d3db50a30a9a7eb5d46df56a4f421cb1e1ee821c7c4e6154362149cac396b6b6",
       "svg": "rendered/C4Context.svg",
-      "svg_sha256": "1d50d5a1c7dcba156abe3af28452d976e341516c0476d4145d8f2e8328ab7455",
+      "svg_sha256": "920a1db4e8638affb63af4848b26b1a6cf628fbee5b7f171d65b19b5386ae04c",
       "semantic_object_count": 20,
       "configuration_fields": [
         {
@@ -1639,10 +1639,10 @@
     {
       "diagram_id": "classDiagram",
       "source": "sources/classDiagram.mmd",
-      "source_sha256": "9d986e453c46d0980f8d24350eb1d7e71049e59ca3108ae5cce457c4a9518e2a",
+      "source_sha256": "a435dbea7075347ea296320a760aa3d011c538a517e56bd807266244d6b75c2f",
       "svg": "rendered/classDiagram.svg",
-      "svg_sha256": "27699ec8ca0cb3015a08a80a9510a5ee2b4b8577760c0e5df744de7a22ce6d2a",
-      "semantic_object_count": 20,
+      "svg_sha256": "9b273b6e02678648359939f1a3473c377cc2547d24cd16c9af9b2076732a7544",
+      "semantic_object_count": 17,
       "configuration_fields": [
         {
           "name": "wrap",
@@ -1702,7 +1702,7 @@
         },
         {
           "name": "layout",
-          "showcase_value": "dagre",
+          "showcase_value": "elk",
           "probes": [
             "dagre",
             "elk"
@@ -1786,15 +1786,6 @@
             0,
             1,
             20
-          ],
-          "witness": "fresh_svg"
-        },
-        {
-          "name": "htmlLabels",
-          "showcase_value": false,
-          "probes": [
-            false,
-            true
           ],
           "witness": "fresh_svg"
         },
@@ -1956,7 +1947,7 @@
       "source": "sources/erDiagram.mmd",
       "source_sha256": "b8e5c7033633bfbf1170f0a93e0c00ec9e55ef2d58f85978b4845541526cf0ae",
       "svg": "rendered/erDiagram.svg",
-      "svg_sha256": "1a8a00414ce93878fb75cafaf5a2e081085ba08085313009a597676ca6112b1c",
+      "svg_sha256": "c95fd212df4612ddeb383aab08e622adfd5e0ccfb4bea678bed7dc0d535c1bca",
       "semantic_object_count": 17,
       "configuration_fields": [
         {
@@ -2235,9 +2226,9 @@
     {
       "diagram_id": "flowchart",
       "source": "sources/flowchart.mmd",
-      "source_sha256": "244e48af9fb8ab56d3f4cf77b25e0c6c78142c64c30a1417f631b6b568a6ad40",
+      "source_sha256": "d8b19860a9ad1d6b31c077ba8ca712fa47c1aff5df76d9b1aa00989dfb38d1ce",
       "svg": "rendered/flowchart.svg",
-      "svg_sha256": "ede3ad8684b8a50b64aee2a4d259d2c189cb805d7627da724cfd1becd4361892",
+      "svg_sha256": "5925cda17524184c22a8fcc81a9a90b0310cc2934efcac9b8b428e98bd95ada0",
       "semantic_object_count": 27,
       "configuration_fields": [
         {
@@ -2429,6 +2420,24 @@
             true
           ],
           "witness": "fresh_svg"
+        },
+        {
+          "name": "stepDuration",
+          "showcase_value": 1.0,
+          "probes": [
+            0.25,
+            1.0
+          ],
+          "witness": "fresh_svg"
+        },
+        {
+          "name": "stepNumbers",
+          "showcase_value": false,
+          "probes": [
+            false,
+            true
+          ],
+          "witness": "fresh_svg"
         }
       ]
     },
@@ -2437,7 +2446,7 @@
       "source": "sources/gantt.mmd",
       "source_sha256": "c846991846a7c47a46ccba9bd21852ccc8c79ded29693418456f7ed3621e079b",
       "svg": "rendered/gantt.svg",
-      "svg_sha256": "7bed428d03ef2070fe9a7eb3627af147e042e61b0e8781566a1268ed7b7ed3aa",
+      "svg_sha256": "780d3bdf3182549100a6c3d61ad91d7fa0ee1ec49de0b2a23d3bc2bad3ad9f6b",
       "semantic_object_count": 12,
       "configuration_fields": [
         {
@@ -2928,7 +2937,7 @@
     {
       "diagram_id": "journey",
       "source": "sources/journey.mmd",
-      "source_sha256": "b28c9e7efd1b185349aa3106c39b0a8d874770eef413a9e9a01768be4185ef42",
+      "source_sha256": "6ebac1beeb995b8cdff22bcc86394a76b86e28913a62cc312e579350a9877bfb",
       "svg": "rendered/journey.svg",
       "svg_sha256": "fecd12f8eb449a04a05d587f9c21805985ff9de9a871258524be2a2d0f1a0315",
       "semantic_object_count": 12,
@@ -4233,7 +4242,7 @@
       "source": "sources/requirementDiagram.mmd",
       "source_sha256": "a0d3a01ecf68bb01b936e188cf72521338ea56ddea3ff308b390b844eb7b0461",
       "svg": "rendered/requirementDiagram.svg",
-      "svg_sha256": "ab9a9fcccf89bc7116075808696d9848281baa8d1029596d665cfccc68ed999b",
+      "svg_sha256": "1c1de3f0795b28b14642bf5d82e9e4ecc059b7439048b3946ee948d40776eda7",
       "semantic_object_count": 15,
       "configuration_fields": [
         {
@@ -4590,7 +4599,7 @@
       "source": "sources/sequenceDiagram.mmd",
       "source_sha256": "07f951a0735b5caf18df00ba79b6cbeb7107550eebfa21c8a5de1d06f41163af",
       "svg": "rendered/sequenceDiagram.svg",
-      "svg_sha256": "3f1bda5706916c26ca1cfc09122ecc1e8aef3575cfa2862f5e4aa6aba2b2faa2",
+      "svg_sha256": "882a56ac47b08ea14843f9f4047b3b99ca7dc2d0d4f6afd7f364574f252d174d",
       "semantic_object_count": 25,
       "configuration_fields": [
         {
@@ -4989,7 +4998,7 @@
       "source": "sources/stateDiagram-v2.mmd",
       "source_sha256": "19085939e72016cce1bebb58b563aa52096ee89e1116f738c6224fb9d8918273",
       "svg": "rendered/stateDiagram-v2.svg",
-      "svg_sha256": "08c691c39efd07626260978fd9ae9969a7ffd5082503222149e84e00c5a6057e",
+      "svg_sha256": "6ff3aec7aaa2ceb1c6c28c232c78f8888c5e872e6cc8edaf600fe3ed27023750",
       "semantic_object_count": 31,
       "configuration_fields": [
         {
@@ -5284,7 +5293,7 @@
       "source": "sources/swimlane-beta.mmd",
       "source_sha256": "53905f2ed81c6ed71cdcbecb75d88a367140f4949c687aad5c6707dbd4b9c7f5",
       "svg": "rendered/swimlane-beta.svg",
-      "svg_sha256": "bf81d260035aefa9e31162997cd912b33689de93b7f5c22b6a52b2c5956dc86c",
+      "svg_sha256": "0e706317194fd797c789b9f5a1d3b731c7c27d8fb10c4537e4c2359c83a8d628",
       "semantic_object_count": 17,
       "configuration_fields": [
         {
@@ -5396,9 +5405,9 @@
     {
       "diagram_id": "timeline",
       "source": "sources/timeline.mmd",
-      "source_sha256": "6c654a2fcbbb6436ffc298027d29470fd6c6a53e288a9af723a22734894af547",
+      "source_sha256": "2e720e1e2d9d00cad1caedc1494e09aa04229239faa8e6e79e38a6768298caf4",
       "svg": "rendered/timeline.svg",
-      "svg_sha256": "fefab0eeb323d428920191c4155f02d92c0e8c12d3733ee4b608fb525f41d8ac",
+      "svg_sha256": "dba54d74c8ca7fb04196425f121059c953de4481e21625456c24456aa9fde1fc",
       "semantic_object_count": 12,
       "configuration_fields": [
         {
@@ -5724,10 +5733,10 @@
     {
       "diagram_id": "treeView-beta",
       "source": "sources/treeView-beta.mmd",
-      "source_sha256": "ce4f94dd32e6d3cf5823d67990593b0f7efbe42787d2c3bd6fa51d4c77cf068d",
+      "source_sha256": "66c56f12089d0cf2aff6b52e11aabf8567676eb54036791a847a14dff6d67d19",
       "svg": "rendered/treeView-beta.svg",
-      "svg_sha256": "769b207e9521e5fdde8c0d0ef02480c823412cf1c52ef5454a9746ad39ecfd79",
-      "semantic_object_count": 38,
+      "svg_sha256": "c83a4ce89d68e533a05aff4e574ade1b339e52bcf4ac989d3192857605e9927d",
+      "semantic_object_count": 31,
       "configuration_fields": [
         {
           "name": "wrap",

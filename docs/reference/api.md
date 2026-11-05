@@ -19,20 +19,13 @@ duplicated, or unresolved.
 
 ## Command input and errors
 
-`mermaiden.domain` publishes the typed `DiagramCommand`, validating `CommandPayload`, validated `CommandArguments`,
-snapshot identity, and public application errors used with the facade.
-
-```{eval-rst}
-.. automodule:: mermaiden.domain
-   :members:
-   :imported-members:
-   :member-order: bysource
-```
+Import `DiagramCommand`, `CommandPayload`, `CommandArguments`, snapshot identity, and public exceptions directly
+from `mermaiden`, alongside `Application`. The generated package reference above includes these public contracts.
 
 ## Returned data contracts
 
 The tables below summarize values returned from `Application`. `CommandPayload`, `CommandArguments`, and
-`DiagramSnapshotContractIdentity` are also importable from `mermaiden.domain`. The remaining implementation-owned return
+`DiagramSnapshotContractIdentity` are also importable directly from `mermaiden`. The remaining implementation-owned return
 types are observed through the documented fields and properties rather than imported or constructed by callers.
 
 ### Discovery
@@ -89,24 +82,29 @@ unavailable or mismatched CLI, timeout, renderer failure, and missing, empty, or
 ## Failure behavior
 
 Unknown diagram or command contract
-: `diagram_info()`, `create_diagram()`, `diagram_description()`, and `command_payload()` raise `KeyError` for an unknown
-  diagram or command name.
+: Diagram lookup raises `UnknownDiagram`; command discovery raises `UnknownCatalogCommand` for an unknown command.
 
 Unsupported operation or invalid command arguments
-: `apply()` and `execute()` raise the public `UnknownCommand`, which is an `ApplicationError` and `RuntimeError`.
+: `apply()` and `execute()` raise `UnknownCommand` for unsupported operations and `InvalidCommandArguments` for
+  invalid arguments. Both derive from `ApplicationError`.
 
 Rejected state change
-: A command or final batch that violates diagram constraints raises `RuntimeError`. Rejected commands preserve the
+: A command or final batch that violates diagram constraints raises `ChangeRejected`. Rejected commands preserve the
   pre-command snapshot; failed batches restore their complete original snapshot.
 
 Malformed batch envelope
-: `apply_batch()` raises `ValueError` when an item lacks a string `operation` or mapping `arguments`. After the envelope
+: `apply_batch()` raises `InvalidBatchCommand` when an item lacks a string `operation` or mapping `arguments`. After the envelope
   is accepted, command and constraint failures follow the behavior above.
 
 Invalid snapshot or source render
-: `snapshot_contract_identity()` raises `RuntimeError` for an unregistered snapshot contract. `restore()` and `render()`
-  raise `RuntimeError` when their typed state cannot be accepted. `validate_render()` instead returns a failed
-  `MermaidRenderReport` for expected diagram, CLI, timeout, and SVG failures.
+: `snapshot_contract_identity()` raises `SnapshotError` for an unregistered snapshot contract. Malformed snapshots
+  and invalid persisted state raise `SnapshotError`. `render()` raises
+  `MermaidRenderFailure` for invalid diagram state. `validate_render()` returns a failed `MermaidRenderReport` for
+  expected diagram, CLI, timeout, and SVG failures.
+
+Invalid PNG export or renderer failure
+: `render_png()` raises `PngExportOptionsError` for invalid scale or background options and `MermaidRenderFailure`
+  for diagram or renderer failures. Its `code`, `message`, and `details` identify the failure.
 
 Closed application handle
-: Every operation after `close()` raises `RuntimeError`.
+: Diagram operations after `close()` raise `ApplicationClosed`. Repeated `close()` calls are harmless.

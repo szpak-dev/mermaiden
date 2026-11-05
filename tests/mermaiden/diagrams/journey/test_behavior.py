@@ -34,9 +34,9 @@ class TestJourney:
             "move_element",
             "reorder_elements",
         }
-        assert 'title Working "day"' in source
-        assert "section Go to work_example" in source
-        assert "Make tea_example: 5: Me, Cat" in source
+        assert "title #87;orking #34;day#34;" in source
+        assert "section #71;o to work#95;example" in source
+        assert "#77;ake tea#95;example: 5: #77;e, #67;at" in source
         assert application.render(restored) == source
 
     def test_rejects_invalid_scores_duplicate_sections_and_unknown_sections(self) -> None:

@@ -20,6 +20,7 @@ autodoc_typehints = "description"
 autodoc_class_signature = "separated"
 nitpicky = True
 nitpick_ignore = [
+    ("py:class", "abc.ABC"),
     ("py:class", "collections.abc.Mapping"),
     ("py:class", "collections.abc.Sequence"),
     ("py:class", "mermaiden.core.domain.ChangeReport"),

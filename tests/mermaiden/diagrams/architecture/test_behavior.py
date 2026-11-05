@@ -127,27 +127,151 @@ class TestArchitecture:
     @pytest.mark.parametrize(
         ("member_ids", "message"),
         (
-            (("client_example",), "requires at least two members"),
+            (("client_example",), "at least 2 items"),
             (("client_example", "client_example"), "members must be unique"),
-            (("client_example", "missing"), "references unknown member 'missing'"),
+            (("client_example", "missing"), "references unknown element 'missing'"),
         ),
     )
-    def test_rejects_invalid_alignment_members(self, member_ids: tuple[str, ...], message: str) -> None:
+    @pytest.mark.parametrize("operation", ("add_alignment", "update_relation"))
+    def test_rejects_invalid_alignment_members(self, member_ids: tuple[str, ...], message: str, operation: str) -> None:
         application, diagram = self._diagram_with_alignment_members()
-        with pytest.raises(RuntimeError, match=message):
+        arguments: dict[str, object] = {"id": "invalid_example", "axis": "row", "member_ids": member_ids}
+        if operation == "update_relation":
             application.execute(
-                diagram, "add_alignment", {"id": "invalid_example", "axis": "row", "member_ids": member_ids}
+                diagram,
+                "add_alignment",
+                {"id": "invalid_example", "axis": "row", "member_ids": ("client_example", "gateway_example")},
             )
+            arguments = {"id": "invalid_example", "kind": "alignment", "changes": {"element_ids": member_ids}}
+        before = application.snapshot(diagram).to_dict()
+        with pytest.raises(RuntimeError, match=message) as rejection:
+            application.execute(diagram, operation, arguments)
+        assert application.snapshot(diagram).to_dict() == before
+        if operation == "add_alignment":
+            assert "errors.pydantic.dev" not in str(rejection.value)
+            assert "input_value=" not in str(rejection.value)
 
     def test_rejects_groups_as_alignment_members(self) -> None:
         application, diagram = self._diagram_with_alignment_members()
         application.execute(diagram, "add_group", {"id": "platform_example", "label": "Platform"})
+        before = application.snapshot(diagram).to_dict()
         with pytest.raises(RuntimeError, match=r"member 'platform_example' must be a service or junction"):
             application.execute(
                 diagram,
                 "add_alignment",
                 {"id": "invalid_example", "axis": "column", "member_ids": ("client_example", "platform_example")},
             )
+        assert application.snapshot(diagram).to_dict() == before
+        application.execute(
+            diagram,
+            "add_alignment",
+            {"id": "invalid_example", "axis": "column", "member_ids": ("client_example", "gateway_example")},
+        )
+        assert "align column client_example gateway_example" in application.render(diagram)
+
+    def test_rejects_group_members_during_update_and_recovers_without_losing_the_alignment(self) -> None:
+        application, diagram = self._diagram_with_alignment_members()
+        application.execute(diagram, "add_group", {"id": "platform_example", "label": "Platform"})
+        application.execute(
+            diagram,
+            "add_alignment",
+            {"id": "primary_example", "axis": "row", "member_ids": ("client_example", "gateway_example")},
+        )
+        before = application.snapshot(diagram).to_dict()
+        with pytest.raises(RuntimeError, match=r"member 'platform_example' must be a service or junction"):
+            application.execute(
+                diagram,
+                "update_relation",
+                {
+                    "id": "primary_example",
+                    "kind": "alignment",
+                    "changes": {"element_ids": ("platform_example", "api_example")},
+                },
+            )
+        assert application.snapshot(diagram).to_dict() == before
+        application.execute(
+            diagram,
+            "update_relation",
+            {
+                "id": "primary_example",
+                "kind": "alignment",
+                "changes": {"element_ids": ("gateway_example", "api_example")},
+            },
+        )
+        assert "align row gateway_example api_example" in application.render(diagram)
+
+    def test_rejects_group_members_at_batch_commit_and_rolls_back_every_command(self) -> None:
+        application, diagram = self._diagram_with_alignment_members()
+        before = application.snapshot(diagram).to_dict()
+        with pytest.raises(RuntimeError, match=r"member 'platform_example' must be a service or junction"):
+            application.apply_batch(
+                diagram,
+                (
+                    {"operation": "configure", "arguments": {"padding": 40}},
+                    {"operation": "add_group", "arguments": {"id": "platform_example", "label": "Platform"}},
+                    {
+                        "operation": "add_alignment",
+                        "arguments": {
+                            "id": "primary_example",
+                            "axis": "row",
+                            "member_ids": ("platform_example", "api_example"),
+                        },
+                    },
+                ),
+            )
+        assert application.snapshot(diagram).to_dict() == before
+        report = application.apply_batch(
+            diagram,
+            (
+                {"operation": "add_junction", "arguments": {"id": "platform_example", "label": "Platform"}},
+                {
+                    "operation": "add_alignment",
+                    "arguments": {
+                        "id": "primary_example",
+                        "axis": "row",
+                        "member_ids": ("platform_example", "api_example"),
+                    },
+                },
+            ),
+        )
+        assert report.can_commit
+        assert "align row platform_example api_example" in application.render(diagram)
+
+    @pytest.mark.parametrize("draft", (False, True))
+    def test_restore_enforces_alignment_members_and_recovers_the_valid_source(self, draft: bool) -> None:
+        application, diagram = self._diagram_with_alignment_members()
+        application.execute(diagram, "add_group", {"id": "platform_example", "label": "Platform"})
+        application.execute(
+            diagram,
+            "add_alignment",
+            {"id": "primary_example", "axis": "row", "member_ids": ("client_example", "gateway_example")},
+        )
+        before = application.snapshot(diagram).to_dict()
+        payload = json.loads(json.dumps(before))
+        payload["draft"] = draft
+        payload["relations"][0]["fields"]["element_ids"] = ["platform_example", "api_example"]
+        if draft:
+            restored_draft = application.restore(payload)
+            assert application.snapshot(restored_draft).to_dict()["draft"] is True
+            with pytest.raises(RuntimeError, match=r"member 'platform_example' must be a service or junction"):
+                application.render(restored_draft)
+            application.execute(
+                restored_draft,
+                "update_relation",
+                {
+                    "id": "primary_example",
+                    "kind": "alignment",
+                    "changes": {"element_ids": ("client_example", "gateway_example")},
+                },
+            )
+            assert application.snapshot(restored_draft).to_dict()["draft"] is False
+            assert application.render(restored_draft) == application.render(diagram)
+        else:
+            with pytest.raises(RuntimeError, match=r"member 'platform_example' must be a service or junction"):
+                application.restore(payload)
+        assert application.snapshot(diagram).to_dict() == before
+        restored = application.restore(before)
+        assert application.render(restored) == application.render(diagram)
 
     def test_rejects_an_unknown_alignment_axis(self) -> None:
         application, diagram = self._diagram_with_alignment_members()

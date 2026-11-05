@@ -1,0 +1,295 @@
+{
+  "id": "native-svg-text-v5",
+  "mermaid_version": "12.3.0",
+  "files": [
+    {
+      "path": "dist/chunks/mermaid.esm/chunk-UVJ2HR4M.mjs",
+      "original_sha256": "b634c4281764bd7e723fd77214866695f6e398832eb4e9080324ba4ba12993ac",
+      "patched_sha256": "b89f5c44c44836974abb03725a8455e0c9d49d7d577d6dfbc805127ef8411834",
+      "replacement_groups": [
+        "native_svg"
+      ]
+    },
+    {
+      "path": "dist/chunks/mermaid.core/chunk-STOXU5M4.mjs",
+      "original_sha256": "b7170138aeac7e16ef6d7c8ae0a6c5d8093fcaad879193f34531f82e48f3f6f1",
+      "patched_sha256": "e3cadb647cb3126f93349bca0138dd81ffa75d1405b728d8040eb92deb9d7e14",
+      "replacement_groups": [
+        "native_svg"
+      ]
+    },
+    {
+      "path": "dist/chunks/mermaid.esm/journeyDiagram-WTJII5VG.mjs",
+      "original_sha256": "b42fde9f31fa0bd9d0c741b3f16f57dc198e021f25ae439792ce7fd0a827034d",
+      "patched_sha256": "f79a274fcd07fa0e679f57defc47323cf06730b7d9fcf8b5e3666dd5c4b5680f",
+      "replacement_groups": [
+        "journey_esm_import",
+        "journey"
+      ]
+    },
+    {
+      "path": "dist/chunks/mermaid.esm/timeline-definition-H7OFN73R.mjs",
+      "original_sha256": "a61a052964facebaf01c8828b3f16e90125bd85f9cbcab8869aa56d96cab4ce5",
+      "patched_sha256": "f16306e02f377e42b4301f70fa26c065cccfe147a04adfebfa0eb4aa9bdd94c7",
+      "replacement_groups": [
+        "timeline_esm_import",
+        "timeline"
+      ]
+    },
+    {
+      "path": "dist/chunks/mermaid.core/journeyDiagram-OPLOXDXO.mjs",
+      "original_sha256": "d2d534c96526e9b71e7ae228afadd3580b3305d07411527aeb85d6e0214660af",
+      "patched_sha256": "c4862c467167f3e565b3d4fa46c7abd214ca26d47257e951188293d5ad9e0b5b",
+      "replacement_groups": [
+        "journey_core_import",
+        "journey"
+      ]
+    },
+    {
+      "path": "dist/chunks/mermaid.core/timeline-definition-SEUHKTQE.mjs",
+      "original_sha256": "ca4d2d631be8b8280bcf6950d3767305bd73ad286b284fdae8bc37297212a65f",
+      "patched_sha256": "4b8d62c032bf73202d9b774c49f10ddbe2e9fd6b66b2716bac6afb59df094ce0",
+      "replacement_groups": [
+        "timeline_core_import",
+        "timeline"
+      ]
+    },
+    {
+      "path": "dist/chunks/mermaid.esm/sankeyDiagram-MQZYHTH2.mjs",
+      "replacement_groups": [
+        "sankey_esm_import",
+        "sankey"
+      ],
+      "original_sha256": "21fe8dbda930c7997c4fee25dd4c20df2dd7a1397b1ccd5f5ed8d44ff41cec14",
+      "patched_sha256": "b132034b4b3ac6dbdde4f0edc3bf112bca7f06c07d30f11799bfd0773edf8077"
+    },
+    {
+      "path": "dist/chunks/mermaid.core/sankeyDiagram-WGJFYUXA.mjs",
+      "replacement_groups": [
+        "sankey_core_import",
+        "sankey"
+      ],
+      "original_sha256": "7755295d31147825c25852ffcf0efbd63873b1b08636ca0b5fcb6cb4a95a1e6a",
+      "patched_sha256": "0d114e4c313a6f2809a78911b444d9775f111267afb8a3993ff66c6c611720b5"
+    },
+    {
+      "path": "dist/mermaid.esm.mjs",
+      "original_sha256": "729810febbb66f740dc7cfca0a60b219c1209025d592ac57a9da076d639f43e0",
+      "patched_sha256": "b90a1fbc3b7268a4efe66b6f65a5e12e374b8d37dde0be591c93621850cd2c9f",
+      "replacement_groups": [
+        "render_limit",
+        "render_output"
+      ]
+    },
+    {
+      "path": "dist/mermaid.core.mjs",
+      "original_sha256": "fafa28691baf87948a63ec13009437278f25d43ca7d85e74b71f3b53897e1738",
+      "patched_sha256": "1a520d188c95e2192b1a1a1c69e71b225d71b47f8a4bbc021380c17bccc0af74",
+      "replacement_groups": [
+        "render_limit",
+        "render_output"
+      ]
+    }
+  ],
+  "replacements": {
+    "native_svg": [
+      {
+        "before": "function decodeHTMLEntities(text) {\n  const regex = /&(amp|lt|gt);/g;\n  return text.replace(regex, (match, entity) => {\n    switch (entity) {\n      case \"amp\":\n        return \"&\";\n      case \"lt\":\n        return \"<\";\n      case \"gt\":\n        return \">\";\n      default:\n        return match;\n    }\n  });\n}\n__name(decodeHTMLEntities, \"decodeHTMLEntities\");",
+        "after": "function decodeHTMLEntities(text) {\n  const decoder = document.createElement(\"textarea\");\n  decoder.innerHTML = decodeEntities(text).replace(/</g, \"&lt;\");\n  return decoder.value;\n}\n__name(decodeHTMLEntities, \"decodeHTMLEntities\");",
+        "count": 1
+      },
+      {
+        "before": "decodeHTMLEntities(word.content)",
+        "after": "word.content",
+        "count": 2
+      },
+      {
+        "before": "for (const line of structuredText) {",
+        "after": "for (const encodedLine of structuredText) {\n    const line = encodedLine.map(word => ({...word, content: decodeHTMLEntities(word.content)}));",
+        "count": 1
+      },
+      {
+        "before": "export {\n",
+        "after": "export {\n  decodeHTMLEntities,\n",
+        "count": 1
+      }
+    ],
+    "journey_esm_import": [
+      {
+        "before": "import {\n  getIconStyles",
+        "after": "import { decodeHTMLEntities } from \"./chunk-UVJ2HR4M.mjs\";\nimport {\n  getIconStyles",
+        "count": 1
+      }
+    ],
+    "journey": [
+      {
+        "before": ".text(content)",
+        "after": ".text(decodeHTMLEntities(content))",
+        "count": 2
+      },
+      {
+        "before": ".text(lines[i])",
+        "after": ".text(decodeHTMLEntities(lines[i]))",
+        "count": 1
+      },
+      {
+        "before": ".text(circleData.title)",
+        "after": ".text(decodeHTMLEntities(circleData.title))",
+        "count": 1
+      },
+      {
+        "before": "const colour = actors[person].color;",
+        "after": "const colour = actors[person].color;\n    const label = decodeHTMLEntities(person);",
+        "count": 1
+      },
+      {
+        "before": ".text(person)",
+        "after": ".text(label)",
+        "count": 1
+      },
+      {
+        "before": "lines = [person];",
+        "after": "lines = [label];",
+        "count": 1
+      },
+      {
+        "before": "person.split(\" \")",
+        "after": "label.split(\" \")",
+        "count": 1
+      },
+      {
+        "before": "measureText.text(brokenWord + \"-\");",
+        "after": "measureText.text(brokenWord);",
+        "count": 1
+      },
+      {
+        "before": "lines.push(brokenWord.slice(0, -1) + \"-\");",
+        "after": "lines.push(brokenWord.slice(0, -char.length));",
+        "count": 1
+      },
+      {
+        "before": "const textElement = svgDraw_default.drawText(diagram2, labelData);",
+        "after": "const textElement = svgDraw_default.drawText(diagram2, labelData);\n      textElement.select(\"tspan\").text(line);",
+        "count": 1
+      },
+      {
+        "before": "const title = diagObj.db.getDiagramTitle();",
+        "after": "const title = decodeHTMLEntities(diagObj.db.getDiagramTitle());",
+        "count": 1
+      }
+    ],
+    "timeline_esm_import": [
+      {
+        "before": "import {\n  selectSvgElement",
+        "after": "import { decodeHTMLEntities } from \"./chunk-UVJ2HR4M.mjs\";\nimport {\n  selectSvgElement",
+        "count": 1
+      }
+    ],
+    "timeline": [
+      {
+        "before": ".text(content)",
+        "after": ".text(decodeHTMLEntities(content))",
+        "count": 2
+      },
+      {
+        "before": ".text(lines[i])",
+        "after": ".text(decodeHTMLEntities(lines[i]))",
+        "count": 1
+      },
+      {
+        "before": "span.text(nText);",
+        "after": "span.text(decodeHTMLEntities(nText));",
+        "count": 1
+      },
+      {
+        "before": "word = words[words.length - 1 - j];",
+        "after": "const encodedWord = words[words.length - 1 - j];\n      word = decodeHTMLEntities(encodedWord);",
+        "count": 1
+      },
+      {
+        "before": "line.join(\" \")",
+        "after": "line.join(\"\")",
+        "count": 2
+      },
+      {
+        "before": "word === \"<br>\"",
+        "after": "encodedWord === \"<br>\"",
+        "count": 2
+      },
+      {
+        "before": "const title = diagObj.db.getCommonDb().getDiagramTitle();",
+        "after": "const title = decodeHTMLEntities(diagObj.db.getCommonDb().getDiagramTitle());",
+        "count": 2
+      }
+    ],
+    "journey_core_import": [
+      {
+        "before": "import {\n  getIconStyles",
+        "after": "import { decodeHTMLEntities } from \"./chunk-STOXU5M4.mjs\";\nimport {\n  getIconStyles",
+        "count": 1
+      }
+    ],
+    "timeline_core_import": [
+      {
+        "before": "import {\n  selectSvgElement",
+        "after": "import { decodeHTMLEntities } from \"./chunk-STOXU5M4.mjs\";\nimport {\n  selectSvgElement",
+        "count": 1
+      }
+    ],
+    "sankey": [
+      {
+        "before": "\\u002D-\\u007E",
+        "after": "\\u002D-\\uFFFF",
+        "count": 2
+      },
+      {
+        "before": "return nodeColors[nodeId] ?? colorScheme(nodeId);",
+        "after": "return nodeColors[decodeHTMLEntities(nodeId)] ?? colorScheme(nodeId);",
+        "count": 1
+      },
+      {
+        "before": "    if (!showValues) {",
+        "after": "    id2 = decodeHTMLEntities(id2);\n    if (!showValues) {",
+        "count": 1
+      }
+    ],
+    "sankey_esm_import": [
+      {
+        "before": "import {\n  clear,",
+        "after": "import { decodeHTMLEntities } from \"./chunk-UVJ2HR4M.mjs\";\nimport {\n  clear,",
+        "count": 1
+      }
+    ],
+    "sankey_core_import": [
+      {
+        "before": "import {\n  clear,",
+        "after": "import { decodeHTMLEntities } from \"./chunk-STOXU5M4.mjs\";\nimport {\n  clear,",
+        "count": 1
+      }
+    ],
+    "render_limit": [
+      {
+        "before": "var MAX_TEXTLENGTH_EXCEEDED_MSG = \"graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa\";",
+        "after": "class MermaidTextLimitError extends Error {\n  constructor(length, limit) {\n    super(`Maximum text size in diagram exceeded: ${length} characters exceeds the configured limit of ${limit}.`);\n    this.name = \"MermaidTextLimitError\";\n  }\n}",
+        "count": 1
+      },
+      {
+        "before": "    text = MAX_TEXTLENGTH_EXCEEDED_MSG;\n    code = { raw: text, cleaned: text };",
+        "after": "    throw new MermaidTextLimitError(text.length, config?.maxTextSize ?? MAX_TEXTLENGTH);",
+        "count": 1
+      }
+    ],
+    "render_output": [
+      {
+        "before": "var MAX_TEXTLENGTH = 5e4;",
+        "after": "class MermaidSvgGeometryError extends Error {\n  constructor(element, attribute, value) {\n    super(`Mermaid produced invalid SVG geometry: <${element}> ${attribute}=\"${value}\" contains NaN or Infinity.`);\n    this.name = \"MermaidSvgGeometryError\";\n  }\n}\nclass MermaidErrorDiagramError extends Error {\n  constructor() {\n    super(\"Mermaid produced an error diagram.\");\n    this.name = \"MermaidErrorDiagramError\";\n  }\n}\nvar MAX_TEXTLENGTH = 5e4;",
+        "count": 1
+      },
+      {
+        "before": "  if (parseEncounteredException) {\n    throw parseEncounteredException;\n  }\n  removeTempElements();",
+        "after": "  if (parseEncounteredException) {\n    throw parseEncounteredException;\n  }\n  if (diagramType === \"error\") {\n    removeTempElements();\n    throw new MermaidErrorDiagramError();\n  }\n  const geometryAttributes = new Set([\n    \"d\", \"points\", \"transform\", \"viewBox\", \"x\", \"y\", \"x1\", \"x2\", \"y1\", \"y2\",\n    \"cx\", \"cy\", \"r\", \"rx\", \"ry\", \"width\", \"height\"\n  ]);\n  const renderedSvg = svgNode.node();\n  for (const element of [renderedSvg, ...renderedSvg.querySelectorAll(\"*\")]) {\n    for (const attribute of element.attributes) {\n      if (geometryAttributes.has(attribute.name) && /(?<![A-Za-z0-9])(?:NaN|Infinity)(?![A-Za-z0-9])/.test(attribute.value)) {\n        removeTempElements();\n        throw new MermaidSvgGeometryError(element.localName, attribute.name, attribute.value);\n      }\n    }\n  }\n  removeTempElements();",
+        "count": 1
+      }
+    ]
+  }
+}

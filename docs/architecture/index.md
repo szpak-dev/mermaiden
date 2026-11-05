@@ -5,13 +5,14 @@
 A caller or agent enters through the `Application` facade. The operation routes below show the concrete owners behind
 that boundary: `DiagramCatalog` derives discovery contracts, `DiagramCommandApplication` validates and applies commands,
 `DiagramPersistenceApplication` snapshots and hydrates typed state, `MermaidApplication` generates source, and
-`MermaidRenderValidator` performs full rendering validation.
+`MermaidRenderValidator` performs full rendering validation. `RenderValidationRuntime` exports PNG bytes through the
+same pinned renderer.
 
 ![Mermaiden public capability relationships](public-capability-flow.svg)
 
 [View the generated Mermaid source](public-capability-flow.mmd).
 
-<!-- enclosure-diagram: KvSDfVAjB2fEdgjv2yp2Ah revision: 1 -->
+<!-- enclosure-diagram: KvSDfVAjB2fEdgjv2yp2Ah revision: 3 -->
 
 ## Entry points and lifetimes
 
@@ -30,7 +31,7 @@ services share that process scope.
   descriptors. Concrete feature packages are independent and may share diagram concepts only through `diagrams.shared`.
 - `src/mermaiden/mutations` validates and dispatches public command payloads against the catalog.
 - `src/mermaiden/mermaid` owns Mermaid configuration compatibility, Jinja templates, source rendering,
-  previews, and optional `mmdc` validation.
+  previews, optional `mmdc` validation, and PNG export.
 - [`application.py`](../../src/mermaiden/application.py) is the public facade;
   [`bootstrap.py`](../../src/mermaiden/bootstrap.py) is the only composition root. The
   [import-linter contract](../../.importlinter) enforces feature independence.
@@ -54,7 +55,7 @@ Feature configuration
 
 Snapshot envelope and type identities
 : `SNAPSHOT_VERSION` in [`runtime/snapshot/domain.py`](../../src/mermaiden/runtime/snapshot/domain.py), the matching
-  [`schema.v10.json`](../../src/mermaiden/runtime/snapshot/schema.v10.json), and registry-derived discriminators in
+  [`schema.v12.json`](../../src/mermaiden/runtime/snapshot/schema.v12.json), and registry-derived discriminators in
   [`DiagramSnapshotRegistry`](../../src/mermaiden/diagrams/services/snapshot_registry.py).
 
 Dependency composition and lifetime
@@ -86,5 +87,7 @@ Generated mutation documentation
 
 The package reads its checked-in Mermaid schema and templates while rendering or checking compatibility. Persistent
 output is written only through caller-requested preview operations. `Application.validate_render()` owns its temporary
-files and is the external-process boundary that invokes the locked Mermaid CLI. Ordinary source generation does not
-invoke a browser, npm, or Mermaid executable.
+files and invokes the locked Mermaid CLI through `RenderValidationRuntime`. `Application.render_png()` uses that same
+runtime for PNG bytes, sharing version and patch checks, browser settings, timeout handling, and temporary-file
+ownership. Export options are validated once into `PngRenderOptions` at the public boundary. Ordinary source generation
+does not invoke a browser, npm, or Mermaid executable.

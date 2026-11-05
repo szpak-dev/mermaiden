@@ -1,4 +1,4 @@
 {% import template_prefix ~ "/macros/elements.mmd.j2" as elements with context %}
 {{ diagram.kind }}{{ "\n" -}}
-{% if diagram.title %}title {{ diagram.title }}{{ "\n" -}}{% endif %}
+{% if diagram.title %}title {{ diagram.title | delimited_text }}{{ "\n" -}}{% endif %}
 {{ elements.render(diagram.root_elements) }}

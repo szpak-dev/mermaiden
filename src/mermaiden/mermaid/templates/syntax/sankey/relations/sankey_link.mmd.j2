@@ -1,1 +1,1 @@
-{{ diagram.find_element(relation.source_id).label | mermaid_quote }},{{ diagram.find_element(relation.target_id).label | mermaid_quote }},{{ relation.value }}{{ "\n" -}}
+{{ diagram.find_element(relation.source_id).label | literal_text | mermaid_quote }},{{ diagram.find_element(relation.target_id).label | literal_text | mermaid_quote }},{{ relation.value }}{{ "\n" -}}

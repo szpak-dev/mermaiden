@@ -26,9 +26,9 @@ class TestTimeline:
             "move_element",
             "reorder_elements",
         }
-        assert 'title Project "history"' in source
-        assert "section Foundation" in source
-        assert "2026 : First release_example" in source
+        assert "title #80;roject #34;history#34;" in source
+        assert "section #70;oundation" in source
+        assert "#50;026 : #70;irst release#95;example" in source
         assert application.render(restored) == source
 
     def test_rejects_invalid_configuration_duplicates_and_unknown_periods(self) -> None:

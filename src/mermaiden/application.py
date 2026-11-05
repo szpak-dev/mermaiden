@@ -1,17 +1,20 @@
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from types import TracebackType
-from typing import cast
+from typing import Literal, cast
 
+from pydantic import ValidationError
 from wireup import ScopedSyncContainer
 
 from .bootstrap import process_scope
 from .core.domain import (
+    ApplicationClosed,
     ChangeReport,
     CommandPayload,
     Diagram,
     DiagramCommand,
     DiagramSnapshotContractIdentity,
+    InvalidBatchCommand,
     ValidationReport,
 )
 from .diagrams.application import DiagramsApplication
@@ -24,6 +27,13 @@ from .mermaid.application import MermaidApplication
 from .mermaid.schema import MermaidSchemaStore
 from .mermaid.services.preview import MermaidPreviewApplication
 from .mermaid.validation import MermaidRenderReport, MermaidRenderValidator
+from .mermaid.validation.domain.models import (
+    MermaidRenderDiagnosticCode,
+    MermaidRenderFailure,
+    PngExportOptionsError,
+    PngRenderOptions,
+)
+from .mermaid.validation.domain.render_validation_runtime import RenderValidationRuntime
 from .mutations.commands.application import DiagramCommandApplication
 from .runtime.snapshot import DiagramSnapshot
 from .runtime.snapshot.domain import SnapshotTypeRegistry
@@ -83,9 +93,9 @@ class Application:
             operation = command.get("operation")
             arguments = command.get("arguments")
             if not isinstance(operation, str):
-                raise ValueError(f"Batch command {index} must provide a string operation.")
+                raise InvalidBatchCommand(f"Batch command {index} must provide a string operation.")
             if not isinstance(arguments, Mapping):
-                raise ValueError(f"Batch command {index} must provide mapping arguments.")
+                raise InvalidBatchCommand(f"Batch command {index} must provide mapping arguments.")
             ordered.append(DiagramCommand(operation, cast(Mapping[str, object], arguments)))
         return self._scope.get(DiagramCommandApplication).apply_batch(diagram, ordered)
 
@@ -114,13 +124,37 @@ class Application:
         report = diagram.validate()
         if not report.can_commit:
             details = "; ".join(item.message for item in report.blocking)
-            raise RuntimeError(f"Cannot render invalid diagram '{diagram.kind}': {details}")
+            raise MermaidRenderFailure(
+                MermaidRenderDiagnosticCode.DIAGRAM_INVALID,
+                f"Cannot render invalid diagram '{diagram.kind}': {details}",
+            )
         return self._scope.get(MermaidApplication).render(diagram)
+
+    def render_png(
+        self, diagram: Diagram, *, scale: float = 2, background: Literal["white", "transparent"] = "white"
+    ) -> bytes:
+        """Export PNG bytes through the pinned browser runtime at the requested pixel scale."""
+        self._ensure_open()
+        try:
+            options = PngRenderOptions(scale=scale, background=background)
+        except ValidationError as error:
+            details = "; ".join(
+                f"{'.'.join(str(part) for part in item['loc'])}: {item['msg']}"
+                for item in error.errors(include_url=False, include_context=False, include_input=False)
+            )
+            raise PngExportOptionsError(f"Invalid PNG export options: {details}") from None
+        source = self.render(diagram)
+        return self._scope.get(RenderValidationRuntime).render_png(source, options)
 
     def validate_render(self, diagram: Diagram) -> MermaidRenderReport:
         """Render a diagram through the compatible Mermaid CLI and return its report."""
         self._ensure_open()
         return self._scope.get(MermaidRenderValidator).validate(diagram)
+
+    def validate_sources(self, sources: Mapping[str, str]) -> tuple[MermaidRenderReport, ...]:
+        """Validate named Mermaid sources through the same pinned runtime as diagrams."""
+        self._ensure_open()
+        return self._scope.get(MermaidRenderValidator).validate_sources(sources)
 
     @property
     def mermaid_version(self) -> str:
@@ -159,7 +193,7 @@ class Application:
 
     def _ensure_open(self) -> None:
         if self._closed:
-            raise RuntimeError("Application is closed.")
+            raise ApplicationClosed("Application is closed.")
 
     @classmethod
     def create(cls) -> "Application":

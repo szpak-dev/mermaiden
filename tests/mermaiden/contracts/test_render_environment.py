@@ -4,10 +4,51 @@ from pathlib import Path
 
 import pytest
 
-from mermaiden import Application
+from mermaiden import Application, MermaidRenderFailure
 
 
 class TestRenderEnvironmentSiege:
+    @pytest.mark.integration
+    def test_unpatched_renderer_is_rejected_without_execution_and_recovers(self, tmp_path: Path) -> None:
+        with Application.create() as application:
+            diagram = application.create_diagram("classDiagram")
+            application.execute(diagram, "add_class", {"id": "class_example", "label": "Example"})
+            before = application.snapshot(diagram).to_dict()
+            node_modules = tmp_path / "node_modules"
+            cli_root = node_modules / "@mermaid-js" / "mermaid-cli"
+            entrypoint = cli_root / "src" / "cli.js"
+            entrypoint.parent.mkdir(parents=True)
+            entrypoint.write_text("#!/bin/sh\nexit 99\n", encoding="utf-8")
+            entrypoint.chmod(0o755)
+            (cli_root / "package.json").write_text(
+                json.dumps({"name": "@mermaid-js/mermaid-cli", "version": application.mermaid_cli_version}),
+                encoding="utf-8",
+            )
+            engine = node_modules / "mermaid"
+            engine.mkdir()
+            (engine / "package.json").write_text(
+                json.dumps({"name": "mermaid", "version": application.mermaid_version}), encoding="utf-8"
+            )
+            binary = node_modules / ".bin"
+            binary.mkdir()
+            (binary / "mmdc").symlink_to(entrypoint)
+            original_path = os.environ["PATH"]
+            try:
+                os.environ["PATH"] = os.fspath(binary) + os.pathsep + original_path
+                report = application.validate_render(diagram)
+                assert not report.success
+                assert report.diagnostics[0].code == "renderer_unavailable"
+                assert report.diagnostics[0].message == "Mermaid renderer patch is missing or does not match."
+                with pytest.raises(MermaidRenderFailure) as failure:
+                    application.render_png(diagram)
+                assert failure.value.code == "renderer_unavailable"
+                assert application.snapshot(diagram).to_dict() == before
+            finally:
+                os.environ["PATH"] = original_path
+            assert application.validate_render(diagram).success
+            assert application.render_png(diagram).startswith(b"\x89PNG\r\n\x1a\n")
+            assert application.snapshot(diagram).to_dict() == before
+
     def test_missing_mermaid_cli_is_reported_without_mutating_the_diagram(self, tmp_path: Path) -> None:
         original_path = os.environ.get("PATH")
         try:
@@ -24,6 +65,9 @@ class TestRenderEnvironmentSiege:
                 assert report.mermaid_cli_version == application.mermaid_cli_version
                 assert report.diagnostics[0].code == "renderer_unavailable"
                 assert "does not provide 'mmdc' on PATH" in report.diagnostics[0].details
+                with pytest.raises(MermaidRenderFailure) as failure:
+                    application.render_png(diagram)
+                assert failure.value.code == "renderer_unavailable"
                 assert application.snapshot(diagram).to_dict() == before
         finally:
             if original_path is None:
@@ -51,6 +95,9 @@ class TestRenderEnvironmentSiege:
                 assert "does not belong to an installed '@mermaid-js/mermaid-cli' package" in (
                     report.diagnostics[0].details
                 )
+                with pytest.raises(MermaidRenderFailure) as failure:
+                    application.render_png(diagram)
+                assert failure.value.code == "renderer_unavailable"
                 assert application.snapshot(diagram).to_dict() == before
         finally:
             if original_path is None:
@@ -87,6 +134,9 @@ class TestRenderEnvironmentSiege:
                 assert not report.success
                 assert report.diagnostics[0].code == "renderer_unavailable"
                 assert "does not provide the 'mermaid' package required by 'mmdc'" in report.diagnostics[0].details
+                with pytest.raises(MermaidRenderFailure) as failure:
+                    application.render_png(diagram)
+                assert failure.value.code == "renderer_unavailable"
                 assert application.snapshot(diagram).to_dict() == before
             finally:
                 if original_path is None:
@@ -144,6 +194,9 @@ class TestRenderEnvironmentSiege:
                 assert f"provides Mermaid '{engine_version}' and Mermaid CLI '{cli_version}'" in (
                     report.diagnostics[0].details
                 )
+                with pytest.raises(MermaidRenderFailure) as failure:
+                    application.render_png(diagram)
+                assert failure.value.code == "version_mismatch"
                 assert application.snapshot(diagram).to_dict() == before
             finally:
                 if original_path is None:

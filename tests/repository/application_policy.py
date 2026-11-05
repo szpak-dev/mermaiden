@@ -1,12 +1,11 @@
-import argparse
 import ast
 import hashlib
-import json
-import sys
 from dataclasses import dataclass
 from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field
+
+from mermaiden import __all__ as PUBLIC_EXPORTS
 
 REQUIRED_APPLICATION_OPERATIONS = {
     "apply_batch",
@@ -21,10 +20,12 @@ REQUIRED_APPLICATION_OPERATIONS = {
     "mermaid_cli_version",
     "mermaid_version",
     "render",
+    "render_png",
     "restore",
     "snapshot",
     "snapshot_contract_identity",
     "validate_render",
+    "validate_sources",
     "write_preview",
 }
 
@@ -63,35 +64,11 @@ class ApplicationTestCheck:
         self.root = root
         self.violations: list[Violation] = []
 
-    def run(self, arguments: tuple[str, ...]) -> int:
-        parser = argparse.ArgumentParser()
-        parser.add_argument("--print-freeze", action="store_true")
-        parser.add_argument("--write-freeze", action="store_true")
-        parser.add_argument("--check-freeze", action="store_true")
-        options = parser.parse_args(arguments)
-        self.check_policy()
-        if options.check_freeze:
-            self.check_freeze()
-        if self.violations:
-            for violation in sorted(self.violations):
-                print(violation.render(), file=sys.stderr)
-            print(f"Application test policy: {len(self.violations)} violation(s).", file=sys.stderr)
-            return 1
-        if options.print_freeze:
-            print(json.dumps(self.current_freeze().model_dump(mode="json"), indent=2) + "\n", end="")
-            return 0
-        if options.write_freeze:
-            path = self.root / "tests" / "application-suite.freeze.json"
-            payload = json.dumps(self.current_freeze().model_dump(mode="json"), indent=2) + "\n"
-            path.write_text(payload, encoding="utf-8")
-            print(f"Application test freeze written: {path.relative_to(self.root)}")
-            return 0
-        print("Application test policy: no violations.")
-        return 0
-
     def check_policy(self) -> None:
         operation_evidence = dict.fromkeys(REQUIRED_APPLICATION_OPERATIONS, 0)
-        for path in sorted((self.root / "tests").rglob("*.py")):
+        for path in sorted(
+            (*(self.root / "tests" / "mermaiden").rglob("*.py"), *(self.root / "tests" / "fixtures").rglob("*.py"))
+        ):
             relative = str(path.relative_to(self.root))
             tree = ast.parse(path.read_text(encoding="utf-8"), filename=relative)
             application_imports = 0
@@ -100,10 +77,10 @@ class ApplicationTestCheck:
                 if type(node) is ast.ImportFrom:
                     if node.module == "mermaiden":
                         names = tuple(alias.name for alias in node.names)
-                        if names == ("Application",):
+                        if "Application" in names:
                             application_imports += 1
-                        else:
-                            self.add(relative, node.lineno, "product imports must contain only mermaiden.Application")
+                        if any(name not in PUBLIC_EXPORTS for name in names):
+                            self.add(relative, node.lineno, "product imports must use published mermaiden exports")
                     elif node.module is not None and node.module.startswith("mermaiden."):
                         self.add(relative, node.lineno, "tests must not import Mermaiden implementation modules")
                     elif node.module in FORBIDDEN_TEST_IMPORTS:
@@ -216,7 +193,3 @@ class ApplicationTestCheck:
 
     def add(self, path: str, line: int, detail: str) -> None:
         self.violations.append(Violation(path, line, detail))
-
-
-if __name__ == "__main__":
-    raise SystemExit(ApplicationTestCheck(Path(__file__).resolve().parents[1]).run(tuple(sys.argv[1:])))

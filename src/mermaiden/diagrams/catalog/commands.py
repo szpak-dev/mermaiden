@@ -12,7 +12,7 @@ from ...core.domain import CommandArguments, CommandPayload
 from ...core.services.command_payload import PydanticCommandPayload, PydanticModelCommandPayload
 from ..application import DiagramsApplication
 from ..domain import CommandDefault, CommandVariadic, DiagramCommandFeature, DiagramInfo, DiagramModel
-from .domain import MutationPayloadFactory
+from .domain import InvalidCommandPayload, MutationPayloadFactory, UnknownCatalogCommand
 from .objects import DiagramObjectCatalog
 
 
@@ -31,7 +31,7 @@ class DiagramCommandCatalog:
         try:
             return self._commands[diagram_id][command_name]
         except KeyError:
-            raise KeyError(f"Unknown command '{command_name}' for diagram '{diagram_id}'.") from None
+            raise UnknownCatalogCommand(f"Unknown command '{command_name}' for diagram '{diagram_id}'.") from None
 
     def payload(self, diagram_id: str, command_name: str) -> CommandPayload:
         self.feature(diagram_id, command_name)
@@ -155,4 +155,4 @@ class DiagramCommandCatalog:
                     rule = f"; rule {context['expected']}"
                 diagnostics.append(f"{location}: {item['msg']}{characters}{rule}")
             details = "; ".join(diagnostics)
-            raise ValueError(f"Command '{command_name}' has an invalid payload: {details}") from error
+            raise InvalidCommandPayload(f"Command '{command_name}' has an invalid payload: {details}") from None

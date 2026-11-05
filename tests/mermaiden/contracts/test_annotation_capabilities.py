@@ -2,8 +2,13 @@ import json
 from pathlib import Path
 
 import pytest
+from pydantic import RootModel
 
 from mermaiden import Application
+
+
+class JsonObject(RootModel[dict[str, object]]):
+    pass
 
 
 class TestAnnotationCapabilities:
@@ -52,11 +57,16 @@ class TestAnnotationCapabilities:
     @pytest.mark.parametrize("filename", ("class-note-v9.json", "tree-annotation-v9.json"))
     def test_legacy_annotations_require_explicit_removal_before_snapshot_migration(self, filename: str) -> None:
         path = Path(__file__).parents[2] / "fixtures" / "snapshots" / filename
-        legacy = json.loads(path.read_text(encoding="utf-8"))
+        legacy = JsonObject.model_validate_json(path.read_text(encoding="utf-8")).root
         with Application.create() as application:
-            with pytest.raises(RuntimeError, match="version '9'; expected version '10'"):
+            with pytest.raises(RuntimeError, match="version '9'; expected version '12'"):
                 application.restore(legacy)
-            legacy["version"] = 10
+            legacy["version"] = 12
+            if legacy["kind"] == "classDiagram":
+                configuration = JsonObject.model_validate(legacy["configuration"]).root
+                fields = JsonObject.model_validate(configuration["fields"]).root
+                del fields["html_labels"]
+                legacy["configuration"] = {**configuration, "fields": fields}
             untouched = json.dumps(legacy, sort_keys=True)
             with pytest.raises(RuntimeError, match=r"discriminator|annotation"):
                 application.restore(legacy)
@@ -74,14 +84,15 @@ class TestAnnotationCapabilities:
                 assert "<<interface>>" in source
                 assert "<<abstract>>" in source
 
-    def test_version_nine_requires_explicit_migration_for_every_diagram_kind(self) -> None:
+    @pytest.mark.parametrize("version", (9, 10, 11))
+    def test_rejects_unsupported_snapshot_versions_for_every_diagram_kind(self, version: int) -> None:
         with Application.create() as application:
             for info in application.available_diagrams():
                 snapshot = application.snapshot(application.create_diagram(info.id)).to_dict()
-                snapshot["version"] = 9
-                with pytest.raises(RuntimeError, match="version '9'; expected version '10'"):
+                snapshot["version"] = version
+                with pytest.raises(RuntimeError, match=f"version '{version}'; expected version '12'"):
                     application.restore(snapshot)
-                snapshot["version"] = 10
+                snapshot["version"] = 12
                 assert application.snapshot(application.restore(snapshot)).to_dict() == snapshot
 
     @pytest.mark.parametrize("kind", ("classDiagram", "treeView-beta"))

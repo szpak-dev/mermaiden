@@ -1,6 +1,7 @@
 ---
 config:
   wrap: true
+  flowchart: {"useMaxWidth": true, "theme": "redux-color", "look": "neo", "layout": "dagre", "titleTopMargin": 25, "subGraphTitleMargin": {"top": 0, "bottom": 0}, "diagramPadding": 8, "nodeSpacing": 50, "rankSpacing": 50, "curve": "basis", "padding": 15.0, "wrappingWidth": 200.0, "minNodeWidth": 120.0, "inheritDir": false}
 ---
 flowchart TD
 e_v_caller@{ shape: circle, label: "Caller or agent" }
@@ -9,7 +10,7 @@ e_v_route@{ shape: f-circ, label: "Public operations" }
 e_v_discovery@{ shape: rect, label: "DISCOVERY<br/>DiagramCatalog" }
 e_v_mutation@{ shape: rect, label: "MUTATION<br/>DiagramCommandApplication" }
 e_v_persistence@{ shape: rect, label: "PERSISTENCE<br/>DiagramPersistenceApplication" }
-e_v_output@{ shape: rect, label: "OUTPUT<br/>MermaidApplication<br/>MermaidRenderValidator" }
+e_v_output@{ shape: rect, label: "OUTPUT<br/>MermaidApplication<br/>MermaidRenderValidator<br/>RenderValidationRuntime (PNG)" }
 e_v_result@{ shape: dbl-circ, label: "Public result" }
 e_v_caller r_v_caller_application@--> e_v_application
 e_v_application r_v_application_route@--> e_v_route

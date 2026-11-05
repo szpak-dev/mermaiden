@@ -19,6 +19,14 @@ from .diagrams.relations import Relations
 from .diagrams.state import DiagramData, DiagramState
 
 
+class BatchAlreadyStarted(RuntimeError):
+    pass
+
+
+class BatchNotStarted(RuntimeError):
+    pass
+
+
 class ConstraintInspection(ABC):
     @abstractmethod
     def inspect(self, diagram: Diagram) -> ValidationReport: ...
@@ -37,12 +45,12 @@ class ChangeTransaction:
 
     def begin_batch(self) -> None:
         if self._batching:
-            raise RuntimeError("A diagram batch is already in progress.")
+            raise BatchAlreadyStarted("A diagram batch is already in progress.")
         self._batching.append(True)
 
     def end_batch(self) -> None:
         if not self._batching:
-            raise RuntimeError("No diagram batch is in progress.")
+            raise BatchNotStarted("No diagram batch is in progress.")
         self._batching.pop()
 
     def apply(

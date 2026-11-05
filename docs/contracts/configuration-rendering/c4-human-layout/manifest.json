@@ -1,6 +1,6 @@
 {
-  "mermaid_version": "12.2.0",
-  "mermaid_cli_version": "12.0.0",
+  "mermaid_version": "12.3.0",
+  "mermaid_cli_version": "12.2.0",
   "diagram_count": 5,
   "diagrams": [
     {
@@ -8,7 +8,7 @@
       "source": "sources/C4Context-human.mmd",
       "source_sha256": "5322b8536070b1006b5d8f3fc0e1ccfc891569afeee9a3b91485169fc8077796",
       "svg": "rendered/C4Context-human.svg",
-      "svg_sha256": "0ba19fea10283a9c6d15049ff3b422df06ce27250b016a3384758776d5d378cd"
+      "svg_sha256": "a356854b7984764eac9413d28dcea2dcf4735b5a3fd5504fcf1d33b6596e161c"
     },
     {
       "diagram_id": "C4Container-human",

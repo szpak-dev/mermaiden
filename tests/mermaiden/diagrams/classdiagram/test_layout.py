@@ -18,7 +18,7 @@ class TestClassLayout:
             assert f'"layout": "{layout or "elk"}"' in source
             assert '"theme": "redux-color"' in source
             assert '"look": "neo"' in source
-            assert '"htmlLabels": false' in source
+            assert "\n  htmlLabels: false\n" in source
             assert '"hierarchicalNamespaces": true' in source
             restored = application.restore(application.snapshot(diagram).to_dict())
             assert application.render(restored) == source

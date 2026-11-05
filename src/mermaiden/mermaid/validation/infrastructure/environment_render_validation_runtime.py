@@ -3,7 +3,8 @@ import os
 import shutil
 import subprocess
 import tempfile
-from collections.abc import Mapping
+from collections.abc import Generator, Mapping
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -17,6 +18,7 @@ from ..domain import (
     RendererRuntimeResult,
     RenderValidationRuntime,
 )
+from ..domain.models import PngRenderOptions, RendererProcessDiagnostic
 from .npm_package_metadata import NpmPackageMetadata
 
 
@@ -35,9 +37,55 @@ class EnvironmentRenderValidationRuntime(RenderValidationRuntime):
         return self.schema.mermaid_cli_version
 
     def render(self, sources: Mapping[str, str]) -> RendererRuntimeResult:
+        with self.execution() as executable, tempfile.TemporaryDirectory(prefix="mermaiden-") as temporary:
+            root = Path(temporary)
+            input_path = root / "diagrams.md"
+            output_path = root / "diagrams.rendered.md"
+            input_path.write_text(self._markdown(sources), encoding="utf-8")
+            process = self.execute(executable, input_path, output_path)
+            return RendererRuntimeResult(
+                process.returncode,
+                self._read_svgs(sources, root),
+                process.stderr.strip() or process.stdout.strip(),
+            )
+
+    def render_png(self, source: str, options: PngRenderOptions) -> bytes:
+        with self.execution() as executable, tempfile.TemporaryDirectory(prefix="mermaiden-") as temporary:
+            root = Path(temporary)
+            input_path = root / "diagram.mmd"
+            output_path = root / "diagram.png"
+            input_path.write_text(source, encoding="utf-8")
+            process = self.execute(
+                executable,
+                input_path,
+                output_path,
+                ("--scale", str(options.scale), "--backgroundColor", options.background),
+            )
+            if process.returncode:
+                raise MermaidRenderFailure(
+                    MermaidRenderDiagnosticCode.RENDER_FAILED,
+                    RendererProcessDiagnostic(process.stderr.strip() or process.stdout.strip()).message,
+                    process.stderr.strip() or process.stdout.strip(),
+                )
+            if not output_path.is_file():
+                raise MermaidRenderFailure(
+                    MermaidRenderDiagnosticCode.PNG_MISSING,
+                    "Mermaid completed without producing a PNG.",
+                )
+            content = output_path.read_bytes()
+            if not content.startswith(b"\x89PNG\r\n\x1a\n"):
+                raise MermaidRenderFailure(
+                    MermaidRenderDiagnosticCode.PNG_INVALID,
+                    f"Mermaid produced {len(content)} bytes without the required PNG signature.",
+                )
+            return content
+
+    @contextmanager
+    def execution(self) -> Generator[Path]:
         try:
             executable = self._executable()
-            observed_versions = self._versions(executable)
+            engine_version, cli_version, engine_root = self._versions(executable)
+            observed_versions = (engine_version, cli_version)
             supported_versions = (self.mermaid_version, self.mermaid_cli_version)
             if observed_versions != supported_versions:
                 raise MermaidRenderFailure(
@@ -48,17 +96,8 @@ class EnvironmentRenderValidationRuntime(RenderValidationRuntime):
                     f"the environment provides Mermaid '{observed_versions[0]}' "
                     f"and Mermaid CLI '{observed_versions[1]}'.",
                 )
-            with tempfile.TemporaryDirectory(prefix="mermaiden-") as temporary:
-                root = Path(temporary)
-                input_path = root / "diagrams.md"
-                output_path = root / "diagrams.rendered.md"
-                input_path.write_text(self._markdown(sources), encoding="utf-8")
-                process = self._execute(executable, input_path, output_path)
-                return RendererRuntimeResult(
-                    process.returncode,
-                    self._read_svgs(sources, root),
-                    process.stderr.strip() or process.stdout.strip(),
-                )
+            self.check_renderer_patch(engine_root)
+            yield executable
         except subprocess.TimeoutExpired as error:
             raise MermaidRenderFailure(
                 MermaidRenderDiagnosticCode.RENDER_TIMEOUT,
@@ -82,10 +121,41 @@ class EnvironmentRenderValidationRuntime(RenderValidationRuntime):
             )
         return Path(executable)
 
-    def _versions(self, executable: Path) -> tuple[str, str]:
+    def setup_renderer(self, prefix: Path) -> str:
+        process = self.patch((), prefix)
+        if process.returncode:
+            output = process.stderr.strip() or process.stdout.strip()
+            raise MermaidRenderFailure(
+                MermaidRenderDiagnosticCode.RENDERER_SETUP_FAILED,
+                RendererProcessDiagnostic(output).message,
+                output,
+            )
+        return process.stdout.strip()
+
+    def check_renderer_patch(self, root: Path) -> None:
+        process = self.patch(("--check", os.fspath(root)), root)
+        if process.returncode:
+            raise MermaidRenderFailure(
+                MermaidRenderDiagnosticCode.RENDERER_UNAVAILABLE,
+                "Mermaid renderer patch is missing or does not match.",
+                process.stderr.strip() or process.stdout.strip(),
+            )
+
+    def patch(self, arguments: tuple[str, ...], directory: Path) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            ("node", os.fspath(Path(__file__).with_name("renderer_patch.mjs")), *arguments),
+            cwd=directory,
+            capture_output=True,
+            check=False,
+            env=self._environment(),
+            text=True,
+            timeout=self.timeout_seconds,
+        )
+
+    def _versions(self, executable: Path) -> tuple[str, str, Path]:
         cli_root, cli = self._package(executable.resolve(), "@mermaid-js/mermaid-cli")
-        _, mermaid = self._dependency(cli_root, "mermaid")
-        return mermaid.version, cli.version
+        engine_root, mermaid = self._dependency(cli_root, "mermaid")
+        return mermaid.version, cli.version, engine_root
 
     def _package(self, entrypoint: Path, name: str) -> tuple[Path, NpmPackageMetadata]:
         for root in entrypoint.parents:
@@ -125,11 +195,12 @@ class EnvironmentRenderValidationRuntime(RenderValidationRuntime):
     def _environment(self) -> Mapping[str, str]:
         return os.environ | {"NO_COLOR": "1"}
 
-    def _execute(
+    def execute(
         self,
         executable: Path,
         input_path: Path,
         output_path: Path,
+        arguments: tuple[str, ...] = (),
     ) -> subprocess.CompletedProcess[str]:
         puppeteer_config_path = input_path.parent / "puppeteer.json"
         puppeteer_config_path.write_text(
@@ -145,6 +216,7 @@ class EnvironmentRenderValidationRuntime(RenderValidationRuntime):
                 os.fspath(output_path),
                 "-p",
                 os.fspath(puppeteer_config_path),
+                *arguments,
             ),
             capture_output=True,
             check=False,

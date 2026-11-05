@@ -1,10 +1,11 @@
 from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import Annotated, ClassVar
 
+from pydantic import Field
 from wireup import injectable
 
-from ...core.characters import Identifier, OptionalIdentifier, Text
+from ...core.characters import Identifier, OptionalIdentifier, OptionalText, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -36,8 +37,14 @@ class Gantt(DiagramModel):
     feature: ClassVar[DiagramFeature] = DiagramFeature(
         configuration=GanttConfiguration,
         snapshot_properties=(
-            PersistedDiagramProperty("title", str),
-            PersistedDiagramProperty("date_format", str),
+            PersistedDiagramProperty(
+                "title",
+                Annotated[str, Field(pattern=OptionalText.pattern, description=OptionalText.description)],
+            ),
+            PersistedDiagramProperty(
+                "date_format",
+                Annotated[str, Field(pattern=GanttDateFormat.pattern, description=GanttDateFormat.description)],
+            ),
         ),
         elements=(Task, Milestone, Marker, Section),
         relations=(),

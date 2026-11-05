@@ -7,6 +7,10 @@ from ....core.domain import ValueModel
 from .text import MemberName, TypeName
 
 
+class DuplicateMethodParameter(ValueError):
+    pass
+
+
 class Visibility(StrEnum):
     PUBLIC = "public"
     PRIVATE = "private"
@@ -51,5 +55,5 @@ class ClassMethod(ValueModel):
     @classmethod
     def unique_parameters(cls, values: tuple[ClassParameter, ...]) -> tuple[ClassParameter, ...]:
         if len({item.name for item in values}) != len(values):
-            raise ValueError("Parameter names must be unique within a method.")
+            raise DuplicateMethodParameter("Parameter names must be unique within a method.")
         return values
