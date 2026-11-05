@@ -1,5 +1,4 @@
 import base64
-import os
 from typing import Literal
 
 import pytest
@@ -132,7 +131,7 @@ class TestPngRendering:
 
     def measure(self, content: bytes) -> PngMeasurement:
         with sync_playwright() as playwright:
-            browser = playwright.chromium.launch(executable_path=os.environ.get("SVG_VIEWER_EXECUTABLE_PATH"))
+            browser = playwright.chromium.launch(channel="chromium")
             try:
                 page = browser.new_page()
                 return PngMeasurement.model_validate(

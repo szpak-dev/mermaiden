@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 import pytest
@@ -223,9 +222,7 @@ class TestExportedSvgLabels:
         path.write_text(svg, encoding="utf-8")
         (directory / f"{name}.mmd").write_text(source, encoding="utf-8")
         with sync_playwright() as playwright:
-            browser = playwright.chromium.launch(
-                channel="chromium", executable_path=os.environ.get("SVG_VIEWER_EXECUTABLE_PATH")
-            )
+            browser = playwright.chromium.launch(channel="chromium")
             try:
                 page = browser.new_page(viewport={"width": 1800, "height": 1600}, device_scale_factor=1)
                 page.goto(path.as_uri())
