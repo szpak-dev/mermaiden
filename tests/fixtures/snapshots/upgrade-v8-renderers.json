@@ -1,0 +1,206 @@
+{
+  "classDiagram": {
+    "version": 8,
+    "kind": "classDiagram",
+    "draft": true,
+    "configuration": {
+      "$type": "mermaiden/configuration/classDiagram/class_diagram_configuration",
+      "fields": {
+        "wrap": true,
+        "use_width": {
+          "$type": "mermaiden/value/classDiagram/omittable_number",
+          "fields": {
+            "root": {
+              "$type": "mermaiden/value/classDiagram/unconfigured",
+              "fields": {}
+            }
+          }
+        },
+        "use_max_width": true,
+        "title_top_margin": 25,
+        "arrow_marker_absolute": false,
+        "divider_margin": 10.0,
+        "padding": 5.0,
+        "text_height": 10.0,
+        "default_renderer": {
+          "$enum": "mermaiden/enum/classDiagram/class_renderer",
+          "value": "elk"
+        },
+        "node_spacing": {
+          "$type": "mermaiden/value/classDiagram/omittable_non_negative_integer",
+          "fields": {
+            "root": {
+              "$type": "mermaiden/value/classDiagram/unconfigured",
+              "fields": {}
+            }
+          }
+        },
+        "rank_spacing": {
+          "$type": "mermaiden/value/classDiagram/omittable_non_negative_integer",
+          "fields": {
+            "root": {
+              "$type": "mermaiden/value/classDiagram/unconfigured",
+              "fields": {}
+            }
+          }
+        },
+        "diagram_padding": 20,
+        "html_labels": false,
+        "hide_empty_members_box": false,
+        "hierarchical_namespaces": true
+      }
+    },
+    "elements": [],
+    "relations": [],
+    "annotations": [],
+    "properties": {}
+  },
+  "flowchart": {
+    "version": 8,
+    "kind": "flowchart",
+    "draft": true,
+    "configuration": {
+      "$type": "mermaiden/configuration/flowchart/flowchart_diagram_configuration",
+      "fields": {
+        "wrap": true,
+        "use_width": {
+          "$type": "mermaiden/value/flowchart/omittable_number",
+          "fields": {
+            "root": {
+              "$type": "mermaiden/value/flowchart/unconfigured",
+              "fields": {}
+            }
+          }
+        },
+        "use_max_width": true,
+        "title_top_margin": 25,
+        "sub_graph_title_margin": {
+          "$type": "mermaiden/value/flowchart/flowchart_subgraph_title_margin",
+          "fields": {
+            "top": {
+              "$type": "mermaiden/value/flowchart/omittable_non_negative_integer",
+              "fields": {
+                "root": 0
+              }
+            },
+            "bottom": {
+              "$type": "mermaiden/value/flowchart/omittable_non_negative_integer",
+              "fields": {
+                "root": 0
+              }
+            }
+          }
+        },
+        "arrow_marker_absolute": {
+          "$type": "mermaiden/value/flowchart/omittable_boolean",
+          "fields": {
+            "root": {
+              "$type": "mermaiden/value/flowchart/unconfigured",
+              "fields": {}
+            }
+          }
+        },
+        "diagram_padding": 8,
+        "node_spacing": 50,
+        "rank_spacing": 50,
+        "curve": {
+          "$enum": "mermaiden/enum/flowchart/flowchart_curve",
+          "value": "basis"
+        },
+        "padding": 15.0,
+        "default_renderer": {
+          "$enum": "mermaiden/enum/flowchart/flowchart_renderer",
+          "value": "elk"
+        },
+        "wrapping_width": 200.0,
+        "inherit_dir": false
+      }
+    },
+    "elements": [],
+    "relations": [],
+    "annotations": [],
+    "properties": {
+      "direction": {
+        "$enum": "mermaiden/enum/flowchart/direction",
+        "value": "TD"
+      }
+    }
+  },
+  "stateDiagram-v2": {
+    "version": 8,
+    "kind": "stateDiagram-v2",
+    "draft": true,
+    "configuration": {
+      "$type": "mermaiden/configuration/stateDiagram-v2/state_diagram_configuration",
+      "fields": {
+        "wrap": true,
+        "use_width": {
+          "$type": "mermaiden/value/stateDiagram-v2/omittable_number",
+          "fields": {
+            "root": {
+              "$type": "mermaiden/value/stateDiagram-v2/unconfigured",
+              "fields": {}
+            }
+          }
+        },
+        "use_max_width": true,
+        "title_top_margin": 25,
+        "arrow_marker_absolute": {
+          "$type": "mermaiden/value/stateDiagram-v2/omittable_boolean",
+          "fields": {
+            "root": {
+              "$type": "mermaiden/value/stateDiagram-v2/unconfigured",
+              "fields": {}
+            }
+          }
+        },
+        "divider_margin": 10.0,
+        "size_unit": 5.0,
+        "padding": 8.0,
+        "text_height": 10.0,
+        "title_shift": -15.0,
+        "note_margin": 10.0,
+        "node_spacing": {
+          "$type": "mermaiden/value/stateDiagram-v2/omittable_non_negative_integer",
+          "fields": {
+            "root": {
+              "$type": "mermaiden/value/stateDiagram-v2/unconfigured",
+              "fields": {}
+            }
+          }
+        },
+        "rank_spacing": {
+          "$type": "mermaiden/value/stateDiagram-v2/omittable_non_negative_integer",
+          "fields": {
+            "root": {
+              "$type": "mermaiden/value/stateDiagram-v2/unconfigured",
+              "fields": {}
+            }
+          }
+        },
+        "fork_width": 70.0,
+        "fork_height": 7.0,
+        "mini_padding": 2.0,
+        "font_size_factor": 5.02,
+        "font_size": 24.0,
+        "label_height": 16.0,
+        "edge_length_factor": "20",
+        "composit_title_size": 35.0,
+        "radius": 5.0,
+        "default_renderer": {
+          "$enum": "mermaiden/enum/stateDiagram-v2/state_renderer",
+          "value": "elk"
+        }
+      }
+    },
+    "elements": [],
+    "relations": [],
+    "annotations": [],
+    "properties": {
+      "direction": {
+        "$enum": "mermaiden/enum/stateDiagram-v2/direction",
+        "value": "TD"
+      }
+    }
+  }
+}

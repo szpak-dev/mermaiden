@@ -24,6 +24,7 @@ REQUIRED_APPLICATION_OPERATIONS = {
     "restore",
     "snapshot",
     "snapshot_contract_identity",
+    "upgrade_snapshot",
     "validate_render",
     "validate_sources",
     "write_preview",

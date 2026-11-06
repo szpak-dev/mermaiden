@@ -1,0 +1,85 @@
+{
+  "version": 11,
+  "kind": "packet",
+  "draft": false,
+  "configuration": {
+    "$type": "mermaiden/configuration/packet/packet_configuration",
+    "fields": {
+      "wrap": true,
+      "use_width": {
+        "$type": "mermaiden/value/packet/omittable_number",
+        "fields": {
+          "root": {
+            "$type": "mermaiden/value/packet/unconfigured",
+            "fields": {}
+          }
+        }
+      },
+      "use_max_width": true,
+      "theme": {
+        "$type": "mermaiden/value/packet/omittable_theme",
+        "fields": {
+          "root": {
+            "$type": "mermaiden/value/packet/unconfigured",
+            "fields": {}
+          }
+        }
+      },
+      "look": {
+        "$type": "mermaiden/value/packet/omittable_look",
+        "fields": {
+          "root": {
+            "$type": "mermaiden/value/packet/unconfigured",
+            "fields": {}
+          }
+        }
+      },
+      "layout": {
+        "$type": "mermaiden/value/packet/omittable_layout",
+        "fields": {
+          "root": {
+            "$type": "mermaiden/value/packet/unconfigured",
+            "fields": {}
+          }
+        }
+      },
+      "row_height": 32.0,
+      "bit_width": 32.0,
+      "bits_per_row": 32,
+      "show_bits": true,
+      "bit_order": {
+        "$enum": "mermaiden/enum/packet/packet_bit_order",
+        "value": "ascending"
+      },
+      "padding_x": 5.0,
+      "padding_y": 5.0
+    }
+  },
+  "elements": [
+    {
+      "$type": "mermaiden/element/packet/packet_field",
+      "fields": {
+        "id": "range_example",
+        "label": "Range example",
+        "start": 0,
+        "end": 7,
+        "bits": null
+      }
+    },
+    {
+      "$type": "mermaiden/element/packet/packet_field",
+      "fields": {
+        "id": "bits_example",
+        "label": "Bits example",
+        "start": null,
+        "end": null,
+        "bits": 8
+      }
+    }
+  ],
+  "relations": [],
+  "annotations": [],
+  "properties": {
+    "title": ""
+  }
+}

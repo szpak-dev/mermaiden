@@ -90,6 +90,8 @@ with Application.create() as application:
 Snapshots use a closed, versioned envelope with registry-owned identities rather than Python import paths. Drafts may be
 persisted and restored, but rendering requires every blocking constraint to be resolved. See
 [Persist and restore diagrams](docs/how-to/persist-and-restore.md) for the exact boundary.
+Use `application.upgrade_snapshot(payload)` to upgrade historical v6–v11 snapshots explicitly to v12, with structured
+change and loss reports. `restore()` stays strict; documented information loss requires `allow_loss=True`.
 
 To validate the generated source as SVG, first follow the consumer setup in
 [Render and validate Mermaid](docs/how-to/render-and-validate.md).
