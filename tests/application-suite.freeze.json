@@ -36,6 +36,7 @@
     "tests/installed/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "tests/installed/test_caller_snapshots.py": "5b115df61f04c33455f4c387fa36c5c8e3d5353500d9fa42c3140e852a81d4ea",
     "tests/installed/test_distribution.py": "1fe9284edda0bb6c50440ce8e75826c263ff9e1703a4eddab1edc888f233bcc9",
+    "tests/installed/test_er_snapshot_upgrades.py": "60af80988cbec3632f607f70ca34f087ff46b683424ba486d9fd70136c987fc3",
     "tests/mermaiden/contracts/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
     "tests/mermaiden/contracts/test_annotation_capabilities.py": "ed10de8fa83789aeef06549b0ab2222bd2bbcda8866bca53b6af468035870529",
     "tests/mermaiden/contracts/test_application.py": "651ac7dd64eba6bd205a8e937f8bdd59f50fde5c0dd987a2264a0848fa2669f1",

@@ -1,13 +1,13 @@
 import json
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, fields
-from functools import partial
+from decimal import Decimal
 
 from pydantic import TypeAdapter, ValidationError
 from wireup import injectable
 
 from ....runtime.snapshot.domain import DiagramSnapshot, SnapshotError, SnapshotTypeRegistry
-from ....runtime.snapshot.value_validator import SnapshotMapping, SnapshotString
+from ....runtime.snapshot.value_validator import SnapshotEncodedValue, SnapshotMapping, SnapshotString
 from ..persistence import DiagramPersistenceApplication
 from .domain import (
     SnapshotChange,
@@ -79,11 +79,19 @@ class SnapshotUpgradeService:
         normalized = tuple(
             f"/{name}"
             for name in ("configuration", "elements", "relations", "annotations", "properties")
-            if candidate[name] != encoded[name]
+            if self.comparable(candidate[name]) != self.comparable(encoded[name])
         )
         if normalized:
             raise SnapshotUpgradeError("Snapshot values require implicit normalization.", normalized, changes)
         return SnapshotUpgradeResult(state.current, changes)
+
+    def comparable(self, value: object) -> object:
+        return TypeAdapter(object).validate_python(
+            json.loads(json.dumps(value, allow_nan=False), parse_int=self.number, parse_float=self.number)
+        )
+
+    def number(self, value: str) -> tuple[Decimal]:
+        return (Decimal(value),)
 
     def pointer_segment(self, name: str) -> str:
         return name.replace("~", "~0").replace("/", "~1")
@@ -125,29 +133,6 @@ class SnapshotUpgradeService:
             changes.append(SnapshotChange((path,), description, {}, False))
         return tuple(changes)
 
-    def decode_object(self, kind: str, value: dict[str, object]) -> object:
-        if value.keys() == {"$type", "fields"}:
-            discriminator = SnapshotString.model_validate(value["$type"]).root
-            model = self.contracts.resolve_model(kind, discriminator)
-            members = SnapshotMapping.model_validate(value["fields"]).root
-            if members.keys() != model.model_fields.keys():
-                raise SnapshotError("Invalid persisted model field set.")
-            parameters: object = members["root"] if model.__pydantic_root_model__ else members
-            return model.model_validate_json(TypeAdapter(object).dump_json(parameters), strict=True, by_name=True)
-        if value.keys() == {"$enum", "value"}:
-            discriminator = SnapshotString.model_validate(value["$enum"]).root
-            member = SnapshotString.model_validate(value["value"]).root
-            return self.contracts.resolve_enum(kind, discriminator)(member)
-        return value
-
-    def decode(self, kind: str, value: object, path: str) -> object:
-        try:
-            return TypeAdapter(object).validate_python(
-                json.loads(json.dumps(value, allow_nan=False), object_hook=partial(self.decode_object, kind))
-            )
-        except (ValidationError, SnapshotError, ValueError, TypeError, KeyError):
-            raise SnapshotUpgradeError("Invalid persisted value for the current contract.", (path,)) from None
-
     def validate(self, snapshot: DiagramSnapshot) -> None:
         contract = self.contracts.contract(snapshot.kind)
         if (
@@ -155,7 +140,6 @@ class SnapshotUpgradeService:
             or snapshot.configuration["$type"] != contract.configuration.discriminator
         ):
             raise SnapshotUpgradeError("Invalid configuration discriminator.", ("/configuration/$type",))
-        self.decode(snapshot.kind, snapshot.configuration, "/configuration")
         for name, objects, registered in (
             ("elements", snapshot.elements, contract.elements),
             ("relations", snapshot.relations, contract.relations),
@@ -172,7 +156,6 @@ class SnapshotUpgradeService:
                     raise SnapshotUpgradeError("Invalid persisted object discriminator.", (f"{path}/$type",)) from None
                 if discriminator not in allowed:
                     raise SnapshotUpgradeError("Unsupported persisted object type.", (f"{path}/$type",))
-                self.decode(snapshot.kind, value, path)
         differences = sorted(snapshot.properties.keys() ^ contract.properties.keys())
         if differences:
             raise SnapshotUpgradeError(
@@ -181,8 +164,10 @@ class SnapshotUpgradeService:
             )
         for name, annotation in contract.properties.items():
             path = f"/properties/{self.pointer_segment(name)}"
-            decoded = self.decode(snapshot.kind, snapshot.properties[name], path)
             try:
+                decoded = SnapshotEncodedValue.model_validate(snapshot.properties[name]).decode(
+                    self.contracts, contract
+                )
                 TypeAdapter[object](annotation).validate_json(TypeAdapter(object).dump_json(decoded), strict=True)
-            except ValidationError:
+            except (ValidationError, SnapshotError, ValueError, TypeError):
                 raise SnapshotUpgradeError("Invalid persisted property.", (path,)) from None
