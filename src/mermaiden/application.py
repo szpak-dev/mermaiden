@@ -23,6 +23,8 @@ from .diagrams.catalog.service import DiagramCatalog
 from .diagrams.domain import DiagramInfo, DiagramModel
 from .diagrams.services.diagram_factory import DiagramFactory
 from .diagrams.services.persistence import DiagramPersistenceApplication
+from .diagrams.services.snapshot_upgrades.application import SnapshotUpgradeService
+from .diagrams.services.snapshot_upgrades.domain import SnapshotUpgradeResult
 from .mermaid.application import MermaidApplication
 from .mermaid.schema import MermaidSchemaStore
 from .mermaid.services.preview import MermaidPreviewApplication
@@ -117,6 +119,11 @@ class Application:
         """Restore typed diagram state from a supported snapshot envelope."""
         self._ensure_open()
         return self._scope.get(DiagramPersistenceApplication).restore(payload)
+
+    def upgrade_snapshot(self, payload: Mapping[str, object], *, allow_loss: bool = False) -> SnapshotUpgradeResult:
+        """Upgrade a historical snapshot explicitly, requiring consent for reported information loss."""
+        self._ensure_open()
+        return self._scope.get(SnapshotUpgradeService).upgrade_snapshot(payload, allow_loss=allow_loss)
 
     def render(self, diagram: Diagram) -> str:
         """Render a valid diagram as deterministic Mermaid source."""

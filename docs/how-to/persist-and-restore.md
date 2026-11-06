@@ -47,3 +47,49 @@ with Application.create() as application:
 ```
 
 Treat that identity as a contract value, not as a Python import instruction.
+
+## Upgrade historical snapshots
+
+Use `Application.upgrade_snapshot(payload, allow_loss=False)` explicitly before restoring an older snapshot.
+The operation supports source versions **6 through 11**, upgrading them to **12**. A valid v12 snapshot returns the
+same JSON values with an empty change report. `restore()` continues to accept only the current contract.
+
+| Source transition | Upgrade behavior |
+| --- | --- |
+| v6 to v7 | Validate the single generic-argument limit and preserve existing class types and argument order. |
+| v7 to v8 | Expand configuration with fixed introduction values and encode the required wrappers. |
+| v8 to v9 | Introduce theme, look, and layout; translate supported renderer selections into layouts. |
+| v9 to v10 | Retire standalone Class and TreeView annotations with explicit loss acceptance. Preserve class stereotypes and explicit layouts. |
+| v10 to v11 | Retire the Class `html_labels` field and report its original value. |
+| v11 to v12 | Convert unambiguous Packet ranges and bit counts to tagged positions; introduce Flowchart step settings. |
+
+Version 11 is an intermediate historical contract, rather than a separately tagged package release.
+
+```python
+from mermaiden import Application, SnapshotUpgradeError
+
+with Application.create() as application:
+    try:
+        result = application.upgrade_snapshot(payload)
+    except SnapshotUpgradeError as error:
+        print(error.paths)
+        for change in error.changes:
+            print(change.paths, change.description, change.discarded)
+        raise
+
+    restored = application.restore(result.snapshot.to_dict())
+    for change in result.changes:
+        print(change.paths, change.description)
+```
+
+`payload` is the dictionary loaded from storage. Each `SnapshotChange` contains JSON Pointer `paths`, a `description`,
+`discarded` original values keyed by their original pointers, and `requires_loss_acceptance`.
+Inspect the proposed changes before choosing `allow_loss=True`. That option permits the documented removals: nonempty
+standalone Class or TreeView annotations, and enabled Class HTML labels. Retiring `html_labels=False` is reported but
+does not require loss acceptance. Fields introduced and retired inside the upgrade are not reported as lost caller data.
+
+The input stays untouched on success and failure. Upgrades preserve identifiers, relationships, ordering, stereotypes,
+and supported explicit configuration. Unknown fields or types, unsupported versions, invalid annotation targets,
+ambiguous Packet coordinates, and values requiring implicit normalization raise `SnapshotUpgradeError`, even when loss
+is allowed. Persisted titles or date formats incompatible with current constraints also fail; they are not repaired.
+Successful results pass current restoration without rendering, network access, or filesystem writes.

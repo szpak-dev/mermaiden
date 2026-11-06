@@ -25,7 +25,8 @@ from `mermaiden`, alongside `Application`. The generated package reference above
 ## Returned data contracts
 
 The tables below summarize values returned from `Application`. `CommandPayload`, `CommandArguments`, and
-`DiagramSnapshotContractIdentity` are also importable directly from `mermaiden`. The remaining implementation-owned return
+`DiagramSnapshotContractIdentity`, `SnapshotUpgradeResult`, and `SnapshotChange` are also importable directly from
+`mermaiden`. The remaining implementation-owned return
 types are observed through the documented fields and properties rather than imported or constructed by callers.
 
 ### Discovery
@@ -68,6 +69,16 @@ command returns a `ChangeReport`, including accepted no-ops that preserve the sn
 `DiagramSnapshotContractIdentity`
 : `kind`, `snapshot_version`, and `registry_fingerprint` identify the accepted persisted contract.
 
+`SnapshotUpgradeResult`
+: `snapshot` is the validated current `DiagramSnapshot`; `changes` is an ordered tuple of `SnapshotChange` values.
+
+`SnapshotChange`
+: `paths` contains affected JSON Pointers, `description` explains the change, `discarded` maps original pointers to
+  complete discarded values, and `requires_loss_acceptance` identifies removals requiring explicit consent.
+
+`upgrade_snapshot(payload, *, allow_loss=False)` upgrades v6–v11 snapshots to v12. A valid current snapshot returns
+unchanged JSON values and no changes. The operation preserves its input and does not render or perform I/O.
+
 ### Full render validation
 
 `MermaidRenderReport`
@@ -105,6 +116,11 @@ Invalid snapshot or source render
 Invalid PNG export or renderer failure
 : `render_png()` raises `PngExportOptionsError` for invalid scale or background options and `MermaidRenderFailure`
   for diagram or renderer failures. Its `code`, `message`, and `details` identify the failure.
+
+Invalid snapshot upgrade or unaccepted loss
+: `upgrade_snapshot()` raises `SnapshotUpgradeError`, a public `SnapshotError` subclass. `paths` identifies affected
+  locations using JSON Pointers; `changes` carries proposed changes when loss is refused. There is no partial-success
+  snapshot. `allow_loss=True` permits only documented removals and never permits malformed input.
 
 Closed application handle
 : Diagram operations after `close()` raise `ApplicationClosed`. Repeated `close()` calls are harmless.

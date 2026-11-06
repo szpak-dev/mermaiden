@@ -1,0 +1,56 @@
+{
+  "version": 6,
+  "kind": "classDiagram",
+  "draft": false,
+  "configuration": {
+    "$type": "mermaiden/configuration/classDiagram/class_diagram_configuration",
+    "fields": {
+      "wrap": true
+    }
+  },
+  "elements": [
+    {
+      "$type": "mermaiden/element/classDiagram/class",
+      "fields": {
+        "id": "class_example",
+        "label": "Class example",
+        "attributes": [
+          {
+            "$type": "mermaiden/value/classDiagram/class_attribute",
+            "fields": {
+              "name": "value_example",
+              "type": {
+                "$type": "mermaiden/value/classDiagram/class_type",
+                "fields": {
+                  "name": "ContainerExample",
+                  "arguments": [
+                    {
+                      "$type": "mermaiden/value/classDiagram/class_type",
+                      "fields": {
+                        "name": "ValueExample",
+                        "arguments": []
+                      }
+                    }
+                  ]
+                }
+              },
+              "visibility": {
+                "$enum": "mermaiden/enum/classDiagram/visibility",
+                "value": "public"
+              },
+              "static": false
+            }
+          }
+        ],
+        "methods": [],
+        "annotations": [
+          "interface"
+        ],
+        "comment": ""
+      }
+    }
+  ],
+  "relations": [],
+  "annotations": [],
+  "properties": {}
+}
